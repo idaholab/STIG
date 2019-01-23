@@ -1,0 +1,20 @@
+{
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint:recommended"
+    ],
+    "jsRules": {},
+    "rules": {
+        "variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore", "allow-snake-case"],
+        "max-line-length": [false, 120],
+        "object-literal-sort-keys": [false],
+        "ordered-imports": [false],
+        "quotemark": [false],
+        "max-classes-per-file": [true, 5],
+        "member-ordering": [false],
+        "no-console": [true, "log"],
+        "interface-name":false,
+        "jsdoc-format":false
+    },
+    "rulesDirectory": []
+}

@@ -1,0 +1,16 @@
+.idea
+build
+node_modules
+.bowerrc
+.DS_Store
+**/*.log
+dist
+built
+**/*.map
+src/**/*.js
+**/._*
+out
+.vscode
+**/*.old
+**/*.bak
+**/*.swp

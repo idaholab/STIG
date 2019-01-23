@@ -1,0 +1,96 @@
+{
+    "title": "indicator",
+    "description": "Indicators contain a pattern that can be used to detect suspicious or malicious cyber activity.",
+    "type": "object",
+    "$ref": "static/jsedit/core.json",
+    "properties": {
+        "type": {
+            "type": "string",
+            "description": "The type of this object, which MUST be the literal `indicator`.",
+            "default": "indicator"
+        },
+        "id": {
+            "type": "string",
+            "title": "id",
+            "pattern": "^indicator--",
+            "default": "indicator--"
+        },
+        "labels": {
+            "type": "array",
+            "title": "labels",
+            "description": "This field is an Open Vocabulary that specifies the type of indicator. Open vocab - indicator-label-ov",
+            "items": {
+                "type": "string",
+                "$ref": "#/definitions/indicator-label-ov"
+            },
+            "minItems": 1
+        },
+        "name": {
+            "type": "string",
+            "description": "The name used to identify the Indicator."
+        },
+        "description": {
+            "type": "string",
+            "description": "A description that provides the recipient with context about this Indicator potentially including its purpose and its key characteristics.",
+            "format": "textarea"
+        },
+        "pattern": {
+            "type": "string",
+            "description": "The detection pattern for this indicator. The default language is STIX Patterning.",
+            "format": "textarea"
+        },
+        "valid_from": {
+            "type": "string",
+            "format": "datetime",
+            "description": "The time from which this indicator should be considered valuable intelligence."
+        },
+        "valid_until": {
+            "type": "string",
+            "format": "datetime",
+            "description": "The time at which this indicator should no longer be considered valuable intelligence."
+        },
+        "kill_chain_phases": {
+            "type": "array",
+            "items": {
+                "title": "kill-chain-phase",
+                "description": "The kill-chain-phase represents a phase in a kill chain.",
+                "type": "object",
+                "properties": {
+                    "kill_chain_name": {
+                        "type": "string",
+                        "description": "The name of the kill chain."
+                    },
+                    "phase_name": {
+                        "type": "string",
+                        "description": "The name of the phase in the kill chain."
+                    }
+                },
+                "required": [
+                    "kill_chain_name",
+                    "phase_name"
+                ]
+            }
+        }
+    },
+    "required": [
+        "pattern",
+        "labels",
+        "valid_from",
+        "name",
+        "type",
+        "id"
+    ],
+    "definitions": {
+        "indicator-label-ov": {
+            "type": "string",
+            "enum": [
+                "anomalous-activity",
+                "anonymization",
+                "benign",
+                "compromised",
+                "malicious-activity",
+                "attribution"
+            ]
+        }
+    }
+}

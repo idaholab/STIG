@@ -1,0 +1,107 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "marking-definition",
+    "description": "The marking-definition object represents a specific marking.",
+    "type": "object",
+    "properties": {
+        "type": {
+            "type": "string",
+            "description": "The type of this object, which MUST be the literal `marking-definition`.",
+            "default": "marking-definition"
+        },
+        "id": {
+            "type": "string",
+            "pattern": "^marking-definition--"
+        },
+        "created_by_ref": {
+            "type": "string"
+        },
+        "created": {
+            "title": "created",
+            "$ref": "static/jsedit/common/timestamp.json",
+            "description": "The created property represents the time at which the first version of this Marking Definition object was created."
+        },
+        "external_references": {
+            "type": "array",
+            "description": "A list of external references which refers to non-STIX information.",
+            "items": {
+                "$ref": "static/jsedit/common/external-reference.json"
+            },
+            "minItems": 1
+        },
+        "object_marking_refs": {
+            "type": "array",
+            "format": "table",
+            "uniqueItems": true,
+            "items": {
+                "type": "string"
+            },
+            "description": "The list of marking-definition objects to be applied to this object."
+        },
+        "granular_markings": {
+            "type": "array",
+            "format": "tabs",
+            "items": {
+                "title": "granular-marking",
+                "description": "The granular-marking type defines how the list of marking-definition objects referenced by the marking_refs property to apply to a set of content identified by the list of selectors in the selectors property.",
+                "type": "object",
+                "properties": {
+                    "marking_ref": {
+                        "type": "string",
+                        "title": "identifier",
+                        "pattern": "^[a-z][a-z-]+[a-z]--[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+                        "description": "Represents identifiers across the CTI specifications. The format consists of the name of the top-level object being identified, followed by two dashes (--), followed by a UUIDv4."
+                    },
+                    "selectors": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "minItems": 1
+                        },
+                        "description": "A list of selectors for content contained within the STIX object in which this property appears."
+                    }
+                },
+                "required": [
+                    "selectors",
+                    "marking_ref"
+                ]
+            }
+        },
+        "definition_type": {
+            "title": "Defintion Type",
+            "type": "string",
+            "description": "The definition_type property identifies the type of Marking Definition.",
+            "pattern": "^statement$",
+            "value": "statement",
+            "default": "statement"
+        },
+        "definition": {
+            "title": "Definition Statement",
+            "$ref": "#/definitions/statement",
+            "description": "The definition property contains the marking object itself."
+        }
+    },
+    "required": [
+        "id",
+        "type",
+        "definition",
+        "definition_type",
+        "created"
+    ],
+    "definitions": {
+        "statement": {
+            "type": "object",
+            "title": "statement",
+            "description": "The Statement marking type defines the representation of a textual marking statement (e.g., copyright, terms of use, etc.) in a definition",
+            "properties": {
+                "statement": {
+                    "type": "string",
+                    "description": "A statement (e.g., copyright, terms of use) applied to the content marked by this marking definition."
+                }
+            },
+            "required": [
+                "statement"
+            ]
+        }
+    }
+}

@@ -1,0 +1,156 @@
+<!-- Copyright 2018 Southern California Edison Company
+
+ALL RIGHTS RESERVED
+ -->
+ 
+ <!doctype html>
+<html>
+
+<head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Stig</title>
+
+    <!-- <link rel="stylesheet" href="../node_modules/foundation-sites/dist/css/foundation.min.css">
+        <script src="../node_modules/what-input/dist/what-input.min.js"></script>
+        <script src="../node_modules/foundation-sites/dist/js/foundation.min.js"></script> -->
+    <link rel="stylesheet" href="../node_modules/normalize.css/normalize.css" type="text/css">
+    <link rel="stylesheet" href="../node_modules/jquery-ui-themes/jquery-ui.css" type="text/css" />
+    <link rel="stylesheet" href="../node_modules/jquery-ui-themes/themes/base/jquery-ui.min.css" type="text/css" />
+    <link href="../node_modules/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="static/index.css" type="text/css" />
+    <script>
+        if (typeof module === 'object') {
+            window.module = module;
+            module = undefined;
+        }
+    </script>
+    <script src="../node_modules/jquery/dist/jquery.js"></script>
+    <script src="../node_modules/jquery-ui-dist/jquery-ui.js"></script>
+    <script src="../node_modules/split.js/dist/split.js"></script>
+    <link rel="stylesheet" href="../node_modules/flatpickr/dist/flatpickr.min.css" />
+    <script src="../node_modules/flatpickr/dist/flatpickr.js"></script>
+    <script src="../node_modules/@json-editor/json-editor/dist/jsoneditor.js"></script>
+
+    <script src='../node_modules/cytoscape/dist/cytoscape.min.js'></script>
+    <script src='../node_modules/klayjs/klay.js'>
+    </script>
+    <script src='../node_modules/cytoscape-klay/cytoscape-klay.js'></script>
+
+</head>
+
+<body>
+    <div id="uploader"></div>
+    <span id="chosen-files" hidden="true"></span>
+    <span id="current_node" hidden="true"></span>
+    <div class="main-grid-container">
+        <div class="icon-container content">
+            <div class="icon-box a"></div>
+            <div class="icon-box b">
+                <img name='asset' class="loadlater" src="static/img/stix2_asset_icon_v1.png" />
+            </div>
+            <div class="icon-box c">
+                <img name='attack-pattern' alt='Attack Pattern' class="loadlater" src="static/img/stix2_attack_pattern_icon_72dpi_v1.png" />
+            </div>
+            <div class="icon-box d">
+                <img name='campaign' class="loadlater" src="static/img/stix2_campaign_icon_72dpi_v1.png" />
+            </div>
+            <div class="icon-box e">
+                <img name='course-of-action' class="loadlater" src="static/img/stix2_course_of_action_icon_72dpi_v1.png" />
+            </div>
+            <div class="icon-box f">
+                <img name='identity' class="loadlater" src="static/img/stix2_identity_icon_72dpi_v1.png" />
+            </div>
+            <div class="icon-box g">
+                <img name='indicator' class="loadlater" src="static/img/stix2_indicator_icon_72dpi_v1.png" />
+            </div>
+            <div class="icon-box h">
+                <img name='infrastructure' class="loadlater" src="static/img/stix2_infrastructure_icon_72dpi_v1.png" />
+            </div>
+            <div class="icon-box i">
+                <img name='intrusion-set' class="loadlater" src="static/img/stix2_intrusion_set_icon_72dpi_v1.png" />
+            </div>
+            <div class="icon-box j">
+                <img name='malware' class="loadlater" src="static/img/stix2_malware_icon_72dpi_v1.png" />
+            </div>
+            <div class="icon-box k">
+                <img name='marking-definition' class="loadlater" src="static/img/stix2_object_marking_icon_v1.png">
+            </div>
+            <div class="icon-box l">
+                <img name='observed-data' class="loadlater" src="static/img/stix2_observed_data_icon_72dpi_v1.png">
+            </div>
+            <div class="icon-box m">
+                <img name='report' class="loadlater" src="static/img/stix2_report_icon_72dpi_v1.png" />
+            </div>
+            <div class="icon-box n">
+                <img name='threat-actor' class="loadlater" src="static/img/stix2_threat_actor_icon_72dpi_v1.png" />
+            </div>
+            <div class="icon-box o">
+                <img name='tool' class="loadlater" src="static/img/stix2_tool_icon_72dpi_v1.png" />
+            </div>
+            <div class="icon-box p">
+                <img name='vulnerability' class="loadlater" src="static/img/stix2_vulnerability_icon_72dpi_v1.png" />
+            </div>
+            <div class="icon-box q"></div>
+        </div>
+
+        <div id="split_content" class="split-content ">
+            <div id="cy" class="split split-horizontal content graph-viewer-container">
+                <input type="file" id="files" name="files" hidden="true" />
+            </div>
+            <div id='editpane' class="split split-horizontal content edit-pane .ui-widget">
+                <div id='metawidget' class="jsedit"></div>
+                <div id="commit-button" class="button-commit">
+                    <button type="button" title="Commit" class="ui-button ui-widget ui-state-default ui-corner-all btn-commit" disabled=true>
+                            <i class="fa fa-download"></i> Commit to DB</button>
+                    <button type="button" title="Export" class="ui-button ui-widget ui-state-default ui-corner-all" id="btn-export-single">
+                            <i class="fa fa-download"></i> Save as JSON...</button>
+                </div>
+            </div>
+        </div>
+        <div id="messages" class="content messages-pane">
+            <div class="search-graph-input mbox">
+                Search Graph:
+                <textarea id="toSearch" class="textarea"></textarea>
+                <button type="button" id="btn-graph-search" class="ui-button ui-widget ui-state-default ui-corner-all"><span class="ui-button-text">Search Graph</span></button>
+                <span id="search-status" class="search-status panel">No results</span>                
+            </div>
+            <div class="mbox database-search-input mbox">
+                Query Database:
+                <textarea id="dbSearch" class="textarea"></textarea>
+                <button type="button" id="btn-db-search" class="ui-button ui-state-default ui-corner-all"><span class="ui-button-text">Query Database</span></button>
+                <button type="button" id="btn-db-history" class="ui-button ui-state-default ui-corner-all"><span class="ui-button-text">Query History</span></button>
+                <br>
+                <div class="query-status panel">
+                    <span id="query-status">No results</span>
+                </div>
+            </div>
+            <div class="button-clear-graph">
+                <button id="button-clear-graph" type="button" class="ui-button ui-state-default ui-corner-all"> Clear Graph</button>
+            </div>
+            <div class="export-bundle-button">
+                <button type="button" title="Diff" class="ui-button ui-state-default ui-corner-all" id="btn-diff">
+                        <i class="ui ui-icon-transfer-e-w"></i>Diff</button>
+                <button type="button" title="Export" class="ui-button ui-widget ui-state-default ui-corner-all" id="btn-export-bundle">
+                        <i class="fa fa-download"></i> JSON Bundle</button>
+            </div>
+            <div class="message-status panel">
+            <span id="message-status" ></span>
+        </div>
+        </div>
+    </div>
+    <div id="query-anchor" title="Query History" class="query-dialog"></div>
+    <div id="db-dialog-anchor" title="Select Database" class="db-dialog"></div>
+    <div id="new-db-anchor" title="Edit Database Configuration"></div>
+    <div id="diff-anchor" title="Diff" class="diff-dialog"></div>
+    <div id="error-anchor" title="Error" class="error-dialog"></div>
+    <div id="history-list"></div>
+    <div id="diff-list"></div>
+    <div id="error-list"></div>
+</body>
+<script>
+    var main = require("./main.ts");
+    main.main.prototype.run();
+</script>
+</html>

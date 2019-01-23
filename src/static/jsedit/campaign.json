@@ -1,0 +1,51 @@
+{
+    "title": "Campaign",
+    "$ref": "static/jsedit/core.json",
+    "properties": {
+        "id": {
+            "type": "string",
+            "pattern": "^campaign--",
+            "default": "campaign--"
+        },
+        "type": {
+            "type": "string",
+            "description": "The type of this object, which MUST be the literal `campaign`.",
+            "default": "campaign"
+        },
+        "name": {
+            "type": "string",
+            "description": "The name used to identify the Campaign."
+        },
+        "description": {
+            "type": "string",
+            "description": "A description that provides more details and context about the Campaign, potentially including its purpose and its key characteristics."
+        },
+        "aliases": {
+            "type": "array",
+            "description": "Alternative names used to identify this campaign.",
+            "items": {
+                "type": "string"
+            },
+            "minItems": 1
+        },
+        "first_seen": {
+            "type": "string",
+            "format": "datetime",
+            "description": "The time that this Campaign was first seen."
+        },
+        "last_seen": {
+            "type": "string",
+            "format": "datetime",
+            "description": "The time that this Campaign was last seen."
+        },
+        "objective": {
+            "type": "string",
+            "description": "This field defines the Campaign’s primary goal, objective, desired outcome, or intended effect."
+        }
+    },
+    "required": [
+        "name",
+        "type",
+        "id"
+    ]
+}

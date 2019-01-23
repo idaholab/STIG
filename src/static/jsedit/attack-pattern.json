@@ -1,0 +1,32 @@
+{
+    "title": "Attack Pattern",
+    "$ref": "static/jsedit/core.json",
+    "properties": {
+        "id": {
+            "type": "string",
+            "default": "attack-pattern--",
+            "pattern": "^[a-z][a-z-]+[a-z]--[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+        },
+        "type": {
+            "type": "string",
+            "default": "attack-pattern"
+        },
+        "name": {
+            "type": "string",
+            "description": "The name used to identify the Attack Pattern."
+        },
+        "description": {
+            "type": "string",
+            "format": "textarea",
+            "description": "A description that provides more details and context about the Attack Pattern, potentially including its purpose and its key characteristics."
+        },
+        "kill_chain_phases": {
+            "$ref": "static/jsedit/kill-chain-phase.json"
+        }
+    },
+    "required": [
+        "name",
+        "id",
+        "type"
+    ]
+}

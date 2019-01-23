@@ -1,0 +1,52 @@
+{
+    "type": "object",
+    "title": "infrastructure",
+    "$ref": "static/jsedit/core.json",
+    "properties": {
+        "id": {
+            "type": "string",
+            "default": "infrastructure--UUID"
+        },
+        "type": {
+            "type": "string",
+            "default": "infrastructure"
+        },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "title": {
+            "type": "string",
+            "description": "A human readable title"
+        },
+        "category": {
+            "type": "string",
+            "enum": ["asset", "category", "common", "vocabulary "]
+        },
+        "kind_of_asset": {
+            "type": "string",
+            "enum": ["asset", "kind", "common", "vocabulary"]
+        },
+
+        "category_ext": {
+            "type": "array",
+            "description": "alternate value for category",
+            "items": [
+                "string"
+            ]
+        },
+        "compromised": { "type": "boolean" },
+        "owner_aware": { "type": "boolean" },
+        "technical_characteristics": {
+            "type": "object",
+            "properties": {
+                "field": { "type": "string" },
+                "data": { "type": "string" }
+            },
+            "description": "cybox characterization of technical characterisitics goes here fields like: serial number property number host name domain name operating system (including revision level and what else??) network services, and related details, which do not merit their own asset tag"
+        }
+    },
+    "required": [
+        "name",
+        "id",
+        "type"
+    ]
+}
