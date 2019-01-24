@@ -1,4 +1,4 @@
-# STIG – Structure Threat Intelligence Graph
+# STIG – Structured Threat Intelligence Graph
 
 Version 1.00
 
