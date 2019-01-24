@@ -83,14 +83,6 @@ export class StixEditor {
         // $(document).off('click', '#btn-export-single').on('click', '#btn-export-single', function (e) {
 
         this.editor.on("ready", () => {
-            // if ($(".pika-single")[0]) {
-            //     $(".pika-single").remove();
-            // }
-
-            // $('button.btn-commit').prop( 'disabled', !cy.getElementById($('#current_node').attr('node_id')).data('saved') );
-            // Object.keys(this.editor.editors).forEach((ed) => {
-            //     this.editor.watch(ed, this.form_changed)
-            // })
             this.form_changed = () => {
                 // @ts-ignore: Property 'root' does not exist on type 'JSONEditor<any>'.
                 const new_data = this.editor.root.getValue();
@@ -106,11 +98,12 @@ export class StixEditor {
                 ele.data("raw_data", new_data);
                 // ele.data('saved', false);
                 this.db.needs_save(ele.id(), window.cycore).then((save) => {
-                    save ? $('button.btn-commit').prop('disabled', false) : $('button.btn-commit').prop('disabled', true);
+                    save ?  $('button.btn-commit').button('enable') : $('button.btn-commit').button('disable');
                 });
             };
 
-            this.editor.watch('root', this.form_changed);
+            this.editor.on('change', this.form_changed);
+            // this.editor.watch('root', this.form_changed);
         });
     }
 }
