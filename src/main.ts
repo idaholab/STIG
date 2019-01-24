@@ -121,7 +121,7 @@ export class main {
             setHandlers();
 
             // the editor form that is filled when a node is clicked
-            const editor = new StixEditor(cy);
+            const editor = new StixEditor(cy, db);
             //#endregion
 
             // function to search elements inside the displayed graph

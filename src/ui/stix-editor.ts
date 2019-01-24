@@ -8,10 +8,9 @@ import cytoscape from 'cytoscape';
 import * as moment from 'moment';
 import { StigDB } from "../db";
 import { StixNodeData } from '../stix';
-import { DatabaseConfigurationStorage } from '../storage';
 import { schema_map } from '../stix/stix_schemas';
 
-type JSONEditorOptionsExtended<TValue> = JSONEditorOptions<TValue> & {remove_empty_properties: boolean};
+type JSONEditorOptionsExtended<TValue> = JSONEditorOptions<TValue> & { remove_empty_properties: boolean };
 class JSONEditorExtended<TValue> extends JSONEditor<TValue> {
     constructor(element: HTMLElement, options: JSONEditorOptionsExtended<TValue>) {
         super(element, options);
@@ -24,11 +23,11 @@ export class StixEditor {
     public form_changed: () => void;
     public cy: cytoscape.Core;
 
-    constructor(cy: cytoscape.Core) {
+    constructor(cy: cytoscape.Core, db: StigDB) {
         try {
-            this.db = new StigDB(DatabaseConfigurationStorage.Instance.current);
+            this.db = db;
         } catch (e) {
-            const err =  new Error();
+            const err = new Error();
             err.message += e.message;
             err.name = "StixEditorDatabaseFailure: ";
             err.stack += e.stack;
@@ -58,7 +57,7 @@ export class StixEditor {
         }
         if (raw_data.type !== 'marking-definition') {
             if (raw_data.modified === undefined || !moment(raw_data.modified).isValid()) {
-            raw_data.modified = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+                raw_data.modified = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
             }
         }
         this.editor = new JSONEditorExtended(document.getElementById('metawidget')!, {
@@ -68,7 +67,7 @@ export class StixEditor {
             theme: "jqueryui",
             iconlib: "fontawesome4",
             refs: schema_map,
-            schema:  schema_map[`${file_name}.json`],
+            schema: schema_map[`${file_name}.json`],
             remove_empty_properties: true,
         });
         if (node.data('saved') === true) {
@@ -89,8 +88,8 @@ export class StixEditor {
                 const ele = this.cy.getElementById($('#current_node').attr('node_id')) as cytoscape.SingularElementReturnValue;
                 if (ele === undefined) { return; }
                 if (ele.isNode() && new_data.name != null) {
-                        ele.data("content", new_data.name);
-                        ele.data("name", new_data.name);
+                    ele.data("content", new_data.name);
+                    ele.data("name", new_data.name);
                 } else if (ele.isEdge()) {
                     ele.data("content", new_data.relationship_type);
                     ele.style('label', new_data.relationship_type);
@@ -98,7 +97,7 @@ export class StixEditor {
                 ele.data("raw_data", new_data);
                 // ele.data('saved', false);
                 this.db.needs_save(ele.id(), window.cycore).then((save) => {
-                    save ?  $('button.btn-commit').button('enable') : $('button.btn-commit').button('disable');
+                    save ? $('button.btn-commit').button('enable') : $('button.btn-commit').button('disable');
                 });
             };
 
