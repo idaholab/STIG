@@ -871,9 +871,8 @@ export class StigDB {
                     }
                     if (n.endsWith('_')) {
                         db_tmp[n.replace(/_$/, '')] = db_copy[n];
-                        // } else if (db_type === "DATETIME" && moment(db_copy[n]).isValid()) {
                     } else if (+db_type === 6) {
-                        db_tmp[n] = moment(db_copy[n]).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+                        db_tmp[n] = db_copy[n].toISOString();
                     } else if (db_copy[n] !== undefined) {
                         if (!n.startsWith('@', 0)) {
                             db_tmp[n] = db_copy[n];

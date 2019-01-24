@@ -205,7 +205,6 @@ export class main {
             // Query history dialog holds a history of DB queries
             const hist_dialog = new QueryHistoryDialog($('#query-anchor'));
             $("#btn-db-history").on('click', () => {
-                // hist_dialog.populateHistoryDialog();
                 hist_dialog.open();
             });
 
@@ -465,10 +464,7 @@ export class main {
             });
 
             $(document).on('click', '#btn-diff', () => {
-                // const id = editor.editor.getEditor('root.id').getValue();
-                // if (id){
                 db.diff_dialog.open();
-                // }
             });
 
             /***************************************** *

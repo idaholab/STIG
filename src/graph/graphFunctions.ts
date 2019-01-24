@@ -50,8 +50,8 @@ export class GraphUtils {
                 const create = await confirm("Object with id:" + id + "not found.  Create?");
                 if (create) {
                     const sdo = {
-                        created: moment().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
-                        modified: moment().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+                        created: moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+                        modified: moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
                         type: the_type,
                         id,
                         revoked: false,
