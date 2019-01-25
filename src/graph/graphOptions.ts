@@ -353,7 +353,7 @@ export let random_options: RandomLayoutOptions = {
     boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
     animate: true, // whether to transition the node positions
     animationDuration: 1500, // duration of animation in ms if enabled
-    animationEasing: false, // easing of animation if enabled
+    // animationEasing: 'linear', // easing of animation if enabled
     // animateFilter: (node, i) => { return true; }, // a function that determines whether the node should be animated.  All nodes animated by default on animate enabled.  Non-animated nodes are positioned immediately when the layout starts
     ready: undefined, // callback on layoutready
     stop: undefined, // callback on layoutstop
