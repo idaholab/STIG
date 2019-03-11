@@ -124,39 +124,19 @@ export class main {
             const editor = new StixEditor(cy, db);
             //#endregion
 
-            function search(prop: string, searchterm: string | number): cytoscape.CollectionElements {
-              let prop2 = null;
-              let prop3 = null;
-              if (prop.indexOf('.') !== -1) {
-                  const s = prop.split('.');
-                  prop2 = s[0];
-                  prop3 = s[1];
-              }
-              return cy.elements().filter((ele) => {
+            // function to search elements inside the displayed graph
+            function search(prop: string, searchterm: string | number): cytoscape.CollectionReturnValue {
+                return cy.elements().filter((ele) => {
                     let ret: boolean = false;
                     if (ele.data('raw_data')) {
-                      if (prop3 !== null) {
-                        try {
-                          if (ele.data('raw_data')[prop2].length) {
-                            ele.data('raw_data')[prop2].forEach((eleArr) => {
-                              ret = eleArr[prop3].trim() === searchterm.trim();
-                            });
-                          } else {
-                            ret = ele.data('raw_data')[prop2][0][prop3].trim() === searchterm.trim();
-                          }
-                        } catch (error) {
-                          // console.log('error here, value: ', prop, searchterm, error);
-                        }
-                      } else {
                         ret = ele.data('raw_data')[prop] === searchterm.toString();
-                      }
                     }
                     if (ele.data(prop) !== undefined) {
                         ret = ele.data(prop).toString() === searchterm.toString();
                     }
                     return ret;
                 });
-              }
+            }
 
             //  handler for the input which searches the displayed graph
             $("#btn-graph-search").on("click", (e: JQuery.Event) => {

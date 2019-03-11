@@ -1,6 +1,6 @@
 # STIG – Structured Threat Intelligence Graph
 
-Version 1.0.0
+Version 1.00
 
 Structured Threat Intelligence Graph (STIG)  is a tool for creating, editing, querying, analyzing and visualizing threat intelligence.  It uses STIX version 2 as its data format.  STIG uses a graph database (OrientDB) to store the data.
 
@@ -49,7 +49,7 @@ The following commands are the easiest way to install OrientDB:
 
 `sudo tar zxvf orientdb.tar.gz -C /opt`
 
-NOTE: that the version number can change, revisions 2.2.23 or greater are known to work.
+NOTE: that the version number can change, revisions 2.2.23 or greater are known to work.  Versions 3.0 or greater have not been tested.  
 
 We recommend starting the server to see if everything is working correctly and set our root password.  Run the following command:
 
