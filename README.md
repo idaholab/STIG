@@ -1,16 +1,16 @@
 # STIG – Structured Threat Intelligence Graph
 
-Version 1.00
+Version 1.0.0
 
 Structured Threat Intelligence Graph (STIG)  is a tool for creating, editing, querying, analyzing and visualizing threat intelligence.  It uses STIX version 2 as its data format.  STIG uses a graph database (OrientDB) to store the data.
 
-The STIX version 2 specification can be found at **<http://docs.oasis-open.org/cti/stix/v2.0/stix-v2.0-part1-stix-core.html>**.  
+The STIX version 2 specification can be found at **<http://docs.oasis-open.org/cti/stix/v2.0/stix-v2.0-part1-stix-core.html>**.
 An introduction and walk through of STIX can be found at **<https://oasis-open.github.io/cti-documentation/stix/intro.html>**, and **<https://oasis-open.github.io/cti-documentation/stix/walkthrough.html>**.
 
 ## Disclaimer
 
 - Structured Threat Intelligence Graph (STIG) is open sourced for the purpose of providing a repeatable and sharable platform for structured threat information.  The California Energy Systems for the 21st Century (CES-21) program funded by the California Public Utility Commission (CPUC) created many capabilities to meet the connected nature of the electric grid for the State of California.  The CPUC has granted permission to release STIG to the open source community to promote potential uses beyond CES-21.
-- STIG does not assess the quality of threat information.  The quality of the threat information gathered and modified is based on the source of that threat information.  
+- STIG does not assess the quality of threat information.  The quality of the threat information gathered and modified is based on the source of that threat information.
 - STIG does not provide executable detection and response.  STIG output may be used in other detection and response technologies if those technologies digest Structured Threat Information eXpression (STIX) 2.0.  Integration with other detection and response technologies is not part of STIG.
 - STIG can support extensions to the STIX data structures with the creation of a new database instance to include those structures.  These STIX extensions may not be supported in other STIX compliant technologies.
 - Advanced programming scripts can be created or may exist inside a STIX data object that is represented in the STIG views and database.  These scripts are not tested through STIG or STIX validation.  These scripts, if used, are to be integrated at the implementer’s risk.
@@ -30,14 +30,14 @@ The following dependencies need to be installed before STIG can be compiled:
 
 #### Java Development Kit
 
-Download Java 8:  
+Download Java 8:
 **<http://www.oracle.com/technetwork/java/javase/overview/index.html>**
 
 `sudo apt-get install software-properties-common`
 
-`sudo add-apt-repository ppa:webupd8team/java`  
+`sudo add-apt-repository ppa:webupd8team/java`
 
-`sudo apt-get update`  
+`sudo apt-get update`
 
 `sudo apt-get install oracle-java8-installer`
 
@@ -45,20 +45,20 @@ Download Java 8:
 
 The following commands are the easiest way to install OrientDB:
 
-`wget https://orientdb.com/download.php?file=orientdb-community-2.2.23.tar.gz -O orientdb.tar.gz`  
+`wget https://orientdb.com/download.php?file=orientdb-community-2.2.23.tar.gz -O orientdb.tar.gz`
 
 `sudo tar zxvf orientdb.tar.gz -C /opt`
 
-NOTE: that the version number can change, revisions 2.2.23 or greater are known to work.  Versions 3.0 or greater have not been tested.  
+NOTE: that the version number can change, revisions 2.2.23 or greater are known to work.  Versions 3.0 or greater have not been tested.
 
 We recommend starting the server to see if everything is working correctly and set our root password.  Run the following command:
 
-`sudo /opt/orientdb/orientdb/bin/server.sh`  
+`sudo /opt/orientdb/orientdb/bin/server.sh`
 
-This will prompt you for the root password for your OrientDB setup.  
+This will prompt you for the root password for your OrientDB setup.
 To stop the server:
 
-`sudo /opt/orientdb/orientdb/bin/shutdown.sh`  
+`sudo /opt/orientdb/orientdb/bin/shutdown.sh`
 
 ##### Optional:
 
@@ -168,7 +168,7 @@ These instructions are using Java SE 8u172
 
 #### OrientDB
 
-Download the community edition of OrientDB from **<http://www.orientdb.com>**. Install according to the instructions. Version 2.2.36 is known to work, versions 3.0 and greater have not been tested.  
+Download the community edition of OrientDB from **<http://www.orientdb.com>**. Install according to the instructions. Version 2.2.36 is known to work.
 
 Alternative methods are to use the community provided docker image: **<https://github.com/docker-library/docs/tree/master/orientdb>**
 
@@ -231,9 +231,9 @@ Download the community edition of OrientDB from **<https://orientdb.com/>**.  In
 Some instructions after you download OrientDB:
 
 1) Move the un-tarred OrientDB directory to somewhere like C:/
-2) Start the server by executing {ORIENTDB_HOME}/bin/server.bat.  
-3) Select the password you want to assign the "root" user. This is only needed the first time running OrientDB from the terminal.  
-4) To Open Studio Web Tool, navigate a browser to the URL: **<http://localhost:2480>**.  
+2) Start the server by executing {ORIENTDB_HOME}/bin/server.bat.
+3) Select the password you want to assign the "root" user. This is only needed the first time running OrientDB from the terminal.
+4) To Open Studio Web Tool, navigate a browser to the URL: **<http://localhost:2480>**.
 5) You could also use the console by executing {ORIENTDB_HOME}/bin/console.bat.
 6) Create a database to use (default for the following installer scripts is currently stig2).
 7) Optional: Populating the Database... see Important Notes about Database Setup section below.
@@ -263,7 +263,7 @@ Download the latest Git client from **<https://git-scm.com/download/win>**
 
 The default configuration looks for a database called "stig2" being served off of localhost.  If you have never used the application before, this database is not correctly configured.
 
-For ease of use, there are some options depending on your Operating System:  
+For ease of use, there are some options depending on your Operating System:
  (Note: These instructions all assume an OrientDB name: root and password: admin - you can manually edit these depending on which option you choose to use).
 
 1. Linux: Do not create a database at all, and run the following script that will do it all for you:
@@ -346,7 +346,7 @@ Install dependencies, this is only needed the first time, or if you update a dep
 
 Python2.7 must be installed and set to be globally accessible.
 
-Next, make sure the database is running:  
+Next, make sure the database is running:
 If you are using the docker image, make sure the container is started.  If you downloaded the OrientDB distribution, then change to the directory created when the OrientDB tarball (or zip) was expanded. From there run:
 
 `bin/server.sh` or `bin/server.bat`
