@@ -127,14 +127,14 @@ export class main {
             // function to search elements inside the displayed graph
             function search(prop: string, searchterm: string | number): cytoscape.CollectionReturnValue {
                 let prop2 = null;
-				let prop3 = null;
-				if (prop.indexOf('.') !== -1) {
-		    		const s = prop.split('.');
-		    		prop2 = s[0];
-		    		prop3 = s[1];
-				}
+		let prop3 = null;
+		if (prop.indexOf('.') !== -1) {
+	  		const s = prop.split('.');
+		 	prop2 = s[0];
+		    	prop3 = s[1];
+		}
 
-				return cy.elements().filter((ele) => {
+		return cy.elements().filter((ele) => {
                     let ret: boolean = false;
                     if (ele.data('raw_data')) {
                       if (prop3 !== null) {
