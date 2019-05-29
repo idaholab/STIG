@@ -261,7 +261,7 @@ Download the latest Git client from **<https://git-scm.com/download/win>**
 
 ## Important Notes about Database Setup
 
-The default configuration looks for a database called "stig2" being served off of localhost.  If you have never used the application before, this database is not correctly configured.
+The default configuration looks for a database called "stig" being served off of localhost.  If you have never used the application before, this database is not correctly configured.
 
 For ease of use, there are some options depending on your Operating System:
  (Note: These instructions all assume an OrientDB name: root and password: admin - you can manually edit these depending on which option you choose to use).
@@ -269,13 +269,13 @@ For ease of use, there are some options depending on your Operating System:
 1. Linux: Do not create a database at all, and run the following script that will do it all for you:
     `cd {STIG_HOME}/stig_build/db_setup`
 
-    `export ORIENTDB_HOME=/opt/orientdb-community-2.2.23`
+    `export ORIENTDB_HOME=/opt/orientdb`
 
     `export PATH=$PATH:$ORIENTDB_HOME/bin`
 
     `./setup.sh`
 
-    - This will automatically populate the database named: stig2
+    - This will automatically populate the database named: stig
     - Run the application and follow the instructions following these next line items
     - This script auto populates the database with provided STIX data referenced below
 2. Create a database manually through the console or the OrientDB Studio:
@@ -293,10 +293,11 @@ On the next dialog you will be able to select the radio button for the database 
 
 ### Populating Database
 
-If desired, you can populate the database (with the MITRE ATT&CK STIX repository) with the following commands:
+If desired, you can populate the database (with the MITRE ATT&CK STIX 2.0repository) with the following commands:
 
-- First, edit the PATH portion of the IMPORT DATABASE command held in {STIG_HOME}/stig_build/db_setup/import_db.txt.
-- You will also need to edit the database, username and password (currently set as 'stig2 ' 'root' 'admin') within the same text document.
+- First, edit the PATH portion of the IMPORT DATABASE command held in {STIG_HOME}/db_setup/import_db.txt.
+- This will require an absolute path to the import_db.txt file.
+- You will also need to edit the database name, username and password (currently set as 'stig ' 'root' 'admin') within the same text document.
 
 The data provided with the following command is from the following source: **<https://github.com/mitre/cti>**
 
@@ -310,7 +311,7 @@ Windows:
 
  In PowerShell run the following command from the provided stig_build/db_setup directory:
 
-`/{STIG_HOME}/orientdb-community-importers-2.2.35/bin/console.bat` `./import_db.txt `
+`/{STIG_HOME}/orientdb/bin/console.bat` `./import_db.txt `
 
 OrientDB CLI Reference: **<https://orientdb.com/docs/last/admin/Export-to-and-Import-from-JSON.html>**
 
