@@ -1,1 +1,1 @@
-SET ignoreErrors true;DROP DATABASE remote:localhost/stig root admin plocal;SET ignoreErrors false;CREATE DATABASE remote:localhost/stig root admin plocal; IMPORT DATABASE <absolute_path_to_directory>/stig.gz -preserveClusterIDs=true
+SET ignoreErrors true;DROP DATABASE remote:localhost/stig root admin plocal;SET ignoreErrors false;CREATE DATABASE remote:localhost/stig root admin plocal; IMPORT DATABASE mobile-attack/attack-pattern/attack-pattern--0bcc4ec1-a897-49a9-a9ff-c00df1d1209d.json/stig.gz -preserveClusterIDs=true
