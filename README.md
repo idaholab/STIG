@@ -4,6 +4,8 @@ Version 1.0.0
 
 Structured Threat Intelligence Graph (STIG)  is a tool for creating, editing, querying, analyzing and visualizing threat intelligence.  It uses STIX version 2 as its data format.  STIG uses a graph database (OrientDB) to store the data.
 
+See the [STIG Innovation Sheet](18-179_STIG_Innovation_Sheet.pdf) for an overview.
+
 The STIX version 2 specification can be found at **<http://docs.oasis-open.org/cti/stix/v2.0/stix-v2.0-part1-stix-core.html>**.
 An introduction and walk through of STIX can be found at **<https://oasis-open.github.io/cti-documentation/stix/intro.html>**, and **<https://oasis-open.github.io/cti-documentation/stix/walkthrough.html>**.
 
