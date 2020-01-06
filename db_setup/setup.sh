@@ -68,8 +68,10 @@ read -p "Are you sure? " -n 1 -r
 echo    # (optional) move to a new line
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
+	echo -n 'Password for orientdb root account:'
+	read -s PASSWORD
 #	(cd ${ORIENTDB_HOME}/bin && source console.sh $STIG_DIR/empty_build_db.txt)
-	(cd ${ORIENTDB_HOME}/bin && source console.sh "SET ignoreErrors true;DROP DATABASE remote:localhost/stig root admin plocal;SET ignoreErrors false;CREATE DATABASE remote:localhost/stig root admin plocal;IMPORT DATABASE $STIG_DIR/stig.gz -preserveClusterIDs=true")
+	(cd ${ORIENTDB_HOME}/bin && source console.sh "SET ignoreErrors true;DROP DATABASE remote:localhost/stig root $PASSWORD plocal;SET ignoreErrors false;CREATE DATABASE remote:localhost/stig root $PASSWORD plocal;IMPORT DATABASE $STIG_DIR/stig.gz -preserveClusterIDs=true")
 
 fi
 
