@@ -219,16 +219,19 @@ If Git is not already installed, it will prompt you to install it.
 ### For Windows
 
 These instructions have been tested on Windows 7.  Further confirmation is needed for Windows 10.
+   **(Testing on Windows 10: no problems so far)**
 
 #### Java Development Kit
 
 Download version 8 of the Java SE Platform (OrientDB has issues with the newest version 10.0.1):
+   **(Need to sign-in/create account at Oracle in order to download)**
 
 **<http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html>**.
 
 #### OrientDB
 
 Download the community edition of OrientDB from **<https://orientdb.com/>**.  Install according to the instructions.  You will see a warning about information being sent over an insecure connection.  Use version 2.2, revisions 2.2.23 or greater are known to work. Versions 3.0 or greater have not been tested.  Another alternative is to use the community provided Docker image.  Documentation for this can be found at: **<https://github.com/docker-library/docs/tree/master/orientdb>**.
+   **(Testing on latest version 3.0.30: no problems so far)**
 
 Some instructions after you download OrientDB:
 
@@ -238,6 +241,7 @@ Some instructions after you download OrientDB:
 4) To Open Studio Web Tool, navigate a browser to the URL: **<http://localhost:2480>**.
 5) You could also use the console by executing {ORIENTDB_HOME}/bin/console.bat.
 6) Create a database to use (default for the following installer scripts is currently stig2).
+      **(The name of the database should be stig or stig2?)**
 7) Optional: Populating the Database... see Important Notes about Database Setup section below.
 
 To configure OrientDB to run as a service. See:
@@ -324,6 +328,8 @@ Download and extract the stig.tar archive. Navigate to the extracted files. From
 `yarn install`
 
 `yarn make`
+
+   **(Got errors when using both commands, downloaded python and got rid of one error)**
 
 The package(s) for your platform will be found in "out/make/".  The contents of the package(s) can be examined in "out/STIG-{platform}/".
 
