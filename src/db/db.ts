@@ -180,7 +180,8 @@ export class StigDB {
 
         const fields: orientjs.Property[] = [];
         try {
-            const cls = await this.ojs.class.get(clazz);
+            const regex = /-/g;
+            const cls = await this.ojs.class.get(clazz.replace(regex, ''));
             const props = await cls.property.list();
             for (const f in props) {
                 if (props[f]) {
@@ -448,7 +449,8 @@ export class StigDB {
     public async getClass(cls_name: string): Promise<orientjs.Class> {
         let ret: orientjs.Class;
         try {
-            ret = await this.ojs.class.get(cls_name);
+            const regex = /-/g;
+            ret = await this.ojs.class.get(cls_name.replace(regex, ''));
             return ret;
         } catch (e) {
             console.error('Exception in getClass:');
@@ -466,7 +468,8 @@ export class StigDB {
     public async getClassProperties(cls_name: string): Promise<orientjs.Property[] | undefined> {
         let cls;
         try {
-            cls = await this.ojs.class.get(cls_name);
+            const regex = /-/g;
+            cls = await this.ojs.class.get(cls_name.replace(regex, ''));
             if (cls === undefined) { return undefined; }
             return cls.property.list();
         } catch (e) {
@@ -509,7 +512,8 @@ export class StigDB {
         let cls;
         let property;
         try {
-            cls = await this.ojs.class.get(className);
+            const regex = /-/g;
+            cls = await this.ojs.class.get(className.replace(regex, ''));
             property = await cls.property.create({ name: propertyName, type: propertyType } as PropertyCreateConfig);
             return property;
         } catch (e) {
@@ -871,7 +875,7 @@ export class StigDB {
                     }
                     if (n.endsWith('_')) {
                         db_tmp[n.replace(/_$/, '')] = db_copy[n];
-                    } else if (+db_type === 6) {
+                    } else if (+db_type === 6 && db_copy[n] !== undefined) {
                         db_tmp[n] = db_copy[n].toISOString();
                     } else if (db_copy[n] !== undefined) {
                         if (!n.startsWith('@', 0)) {
