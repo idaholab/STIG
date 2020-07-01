@@ -113,6 +113,28 @@ In a terminal, type:
 
 `sudo apt-get install git`
 
+#### rpmbuild
+
+(Option 1) If you are building an **rpm file** from **ubuntu**, install rpm:    
+
+`sudo apt-get install rpm`
+
+(Option 2) If you **only** need a deb, change the following lines in package.json:    
+
+*Before...*
+```
+        "linux": [
+          "deb",
+          "rpm"
+        ]
+```    
+*Updated..*
+```
+        "linux": [
+          "deb"
+        ]
+```
+
 ### For CentOS 7 (RHEL Flavors)
 
 #### Java Development Kit
