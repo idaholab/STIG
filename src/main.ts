@@ -126,39 +126,40 @@ export class main {
 
             // function to search elements inside the displayed graph
             function search(prop: string, searchterm: string | number): cytoscape.CollectionReturnValue {
-                let prop2 = null;
-		let prop3 = null;
-		if (prop.indexOf('.') !== -1) {
-	  		const s = prop.split('.');
-		 	prop2 = s[0];
-		    	prop3 = s[1];
-		}
+                let prop2: string = null;
+                let prop3: string = null;
+                searchterm = searchterm.toString().trim();
+                if (prop.indexOf('.') !== -1) {
+                    const s = prop.split('.');
+                    prop2 = s[0];
+                    prop3 = s[1];
+                }
 
-		return cy.elements().filter((ele) => {
+                return cy.elements().filter((ele) => {
                     let ret: boolean = false;
                     if (ele.data('raw_data')) {
-                      if (prop3 !== null) {
-                        try {
-                          if (ele.data('raw_data')[prop2].length) {
-                            ele.data('raw_data')[prop2].forEach((eleArr) => {
-                              ret = eleArr[prop3].trim() === searchterm.trim();
-                            });
-                          } else {
-                            ret = ele.data('raw_data')[prop2][0][prop3].trim() === searchterm.trim();
-                          }
-                        } catch (error) {
-                          // console.log('error here, value: ', prop, searchterm, error);
+                        if (prop3 !== null) {
+                            try {
+                                if (ele.data('raw_data')[prop2].length) {
+                                    ele.data('raw_data')[prop2].forEach((eleArr: { [x: string]: string; }) => {
+                                        ret = eleArr[prop3].trim() === searchterm;
+                                    });
+                                } else {
+                                    ret = ele.data('raw_data')[prop2][0][prop3].trim() === searchterm;
+                                }
+                            } catch (error) {
+                                // console.log('error here, value: ', prop, searchterm, error);
+                            }
+                        } else {
+                            ret = ele.data('raw_data')[prop] === searchterm;
                         }
-                      } else {
-                        ret = ele.data('raw_data')[prop] === searchterm.toString();
-                      }
                     }
                     if (ele.data(prop) !== undefined) {
-                        ret = ele.data(prop).toString() === searchterm.toString();
+                        ret = ele.data(prop).toString() === searchterm;
                     }
                     return ret;
                 });
-             }
+            }
 
             $("#btn-graph-search").on("click", (e: JQuery.Event) => {
                 e.preventDefault();
