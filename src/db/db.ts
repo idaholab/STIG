@@ -790,12 +790,12 @@ export class StigDB {
             if (from_RID === undefined) {
                 console.debug(`createEdge saving ${from_node} to database`);
                 const node_data = window.cycore.getElementById(from_node);
-                from_RID = await this.createVertex(node_data.data('raw_data'))[0].RID;
+                from_RID = await this.createVertex(node_data.data('raw_data'))[0].Rid;
             }
             if (to_RID === undefined) {
                 console.debug(`createEdge saving ${to_node} to database`);
                 const node_data = window.cycore.getElementById(to_node);
-                to_RID = await this.createVertex(node_data.data('raw_data'))[0].RID;
+                to_RID = await this.createVertex(node_data.data('raw_data'))[0].Rid;
             }
             result = this.createEdgeRID(from_RID, to_RID, data);
             return result;

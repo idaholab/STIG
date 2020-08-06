@@ -18,6 +18,8 @@ function change_layout(item: MenuItem, focusedWindow: BrowserWindow) {
 }
 
 function copy_selected(item: MenuItem, focusedWindow: BrowserWindow) {
+    console.log(item.label);
+    console.log('attempting to copy')
     if (focusedWindow) { focusedWindow.webContents.send("copy_selected", item.label); }
 }
 
@@ -78,23 +80,23 @@ function select_all(item: MenuItem, focusedWindow: BrowserWindow) {
 }
 
 const template: MenuItemConstructorOptions[] = [
-    {
-        label: 'File',
-        submenu: [
-            {
-                label: 'Save...',
-                role: 'save',
-            },
-            {
-                label: 'Open...',
-                role: 'open',
-            },
-            {
-                label: 'Quit',
-                role: 'quit',
-            },
-        ],
-    },
+    // {
+    //     label: 'File',
+    //     submenu: [
+    //         {
+    //             label: 'Save...',
+    //             role: 'save',
+    //         },
+    //         {
+    //             label: 'Open...',
+    //             role: 'open',
+    //         },
+    //         {
+    //             label: 'Quit',
+    //             role: 'quit',
+    //         },
+    //     ],
+    // },
     {
         label: 'Edit',
         submenu: [
@@ -109,31 +111,31 @@ const template: MenuItemConstructorOptions[] = [
             // }, {
             //     type: 'separator'
             // },
+            // {
+            //     label: 'Cut',
+            //     accelerator: 'CmdOrCtrl+X',
+            //     role: 'cut',
+            // },
+            // {
+            //     label: 'Copy',
+            //     accelerator: 'CmdOrCtrl+C',
+            //     role: 'copy',
+            // },
+            // {
+            //     label: 'Paste',
+            //     accelerator: 'CmdOrCtrl+V',
+            //     role: 'paste',
+            // },
+            // {
+            //     label: 'Select All',
+            //     accelerator: 'CmdOrCtrl+A',
+            //     role: 'selectall',
+            // },
+            // {
+            //     type: 'separator',
+            // },
             {
-                label: 'Cut',
-                accelerator: 'CmdOrCtrl+X',
-                role: 'cut',
-            },
-            {
-                label: 'Copy',
-                accelerator: 'CmdOrCtrl+C',
-                role: 'copy',
-            },
-            {
-                label: 'Paste',
-                accelerator: 'CmdOrCtrl+V',
-                role: 'paste',
-            },
-            {
-                label: 'Select All',
-                accelerator: 'CmdOrCtrl+A',
-                role: 'selectall',
-            },
-            {
-                type: 'separator',
-            },
-            {
-                label: 'Configure...',
+                label: 'Configure Database',
                 submenu: [
                     {
                         label: 'Database connection...',
