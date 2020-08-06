@@ -471,7 +471,10 @@ export class main {
                     if (ele.length === 0) {
                         return;
                     }
-                    bundle.objects.push(ele.data('raw_data'));
+                    //logic to remove null on json export
+                    if(ele.data('raw_data')!==undefined){
+                        bundle.objects.push(ele.data('raw_data'));
+                    }
                 });
                 // cy.edges().each((ele) => {
                 //     // TODO FIXME: Do not save created_by edges, and other implicit edges
