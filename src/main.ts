@@ -502,14 +502,17 @@ export class main {
                 let result: StixObject[];
                 try {
                     const formdata: StixObject = editor.editor.getValue();
-                    db.updateDB(formdata).then((r) => { result = r; });
+                    db.updateDB(formdata).then((r) => {
+                        result = r; 
+                        $('.message-status').html(`Committed: ${JSON.stringify(result[0]['id'])} to the database.`);
+                        $('button.btn-commit').button('option', 'disabled', true);
+                    });
+
                 } catch (e) {
                     console.error('Error saving to database:');
                     console.error(e);
                     throw e;
                 }
-                $('button.btn-commit').button('option', 'disabled', true);
-                $('.message-status').html(`Committed: ${JSON.stringify(result)}`);
             });
 
             /***********************************************************************************

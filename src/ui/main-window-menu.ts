@@ -18,8 +18,6 @@ function change_layout(item: MenuItem, focusedWindow: BrowserWindow) {
 }
 
 function copy_selected(item: MenuItem, focusedWindow: BrowserWindow) {
-    console.log(item.label);
-    console.log('attempting to copy')
     if (focusedWindow) { focusedWindow.webContents.send("copy_selected", item.label); }
 }
 
@@ -143,7 +141,7 @@ const template: MenuItemConstructorOptions[] = [
                 type: 'separator',
             },
             {
-                label: 'Select All',
+                label: 'Select All Text',
                 accelerator: 'CmdOrCtrl+A',
                 role: 'selectall',
             },

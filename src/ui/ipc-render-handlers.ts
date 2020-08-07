@@ -52,7 +52,6 @@ export async function setHandlers() {
 
         to_save.forEach(async (ele: NodeSingular, _i: number, _eles: CollectionReturnValue) => {
             const stix_obj = ele.data('raw_data');
-            console.log('our stix obj: ', stix_obj);
             if (stix_obj === undefined) { 
                 numObjects--;
                 return; 
@@ -69,12 +68,11 @@ export async function setHandlers() {
             itemsProcessed++;
             //wait for all vertex to step through before saving edges
             if (itemsProcessed === numObjects){
-                console.log('saving edge');
-                saveEdges(edges);
+                 saveEdges(edges);
             }
         });
 
-        $('.message-status').html(`Committed ${numObjects} objects`);
+        $('.message-status').html(`Committed ${numObjects} objects to the database.`);
 
     });
 
