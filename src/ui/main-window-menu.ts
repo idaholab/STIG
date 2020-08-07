@@ -37,11 +37,11 @@ function commit_all(item: MenuItem, focusedWindow: BrowserWindow) {
     }
 }
 
-function export_selected(item: MenuItem, focusedWindow: BrowserWindow) {
-    if (focusedWindow) {
-        focusedWindow.webContents.send("export_selected", item.label);
-    }
-}
+// function commit_selected(item: MenuItem, focusedWindow: BrowserWindow) {
+//     if (focusedWindow) {
+//         focusedWindow.webContents.send("commit_selected", item.label);
+//     }
+// }
 
 function invert_selection(item: MenuItem, focusedWindow: BrowserWindow) {
     if (focusedWindow) {
@@ -55,11 +55,20 @@ function export_all(item: MenuItem, focusedWindow: BrowserWindow) {
     }
 }
 
-function export_graph(item: MenuItem, focusedWindow: BrowserWindow) {
+function export_selected(item: MenuItem, focusedWindow: BrowserWindow) {
     if (focusedWindow) {
-        focusedWindow.webContents.send("export_graph", item.label);
+        focusedWindow.webContents.send("export_selected", item.label);
     }
 }
+
+function select_all(item: MenuItem, focusedWindow: BrowserWindow) {
+    if (focusedWindow) { focusedWindow.webContents.send("select_all", item.label); }
+}
+// function export_graph(item: MenuItem, focusedWindow: BrowserWindow) {
+//     if (focusedWindow) {
+//         focusedWindow.webContents.send("export_graph", item.label);
+//     }
+// }
 
 // const db = new StigDB(ConfigurationStorageService.Instance.get().host, ConfigurationStorageService.Instance.get().name, window.cycore);
 // const to_save: CollectionElements = window.cycore.$('[!saved]');
@@ -75,9 +84,6 @@ function export_graph(item: MenuItem, focusedWindow: BrowserWindow) {
 //     );
 // });
 
-function select_all(item: MenuItem, focusedWindow: BrowserWindow) {
-    if (focusedWindow) { focusedWindow.webContents.send("select_all", item.label); }
-}
 
 const template: MenuItemConstructorOptions[] = [
     // {
@@ -111,34 +117,11 @@ const template: MenuItemConstructorOptions[] = [
             // }, {
             //     type: 'separator'
             // },
-            // {
-            //     label: 'Cut',
-            //     accelerator: 'CmdOrCtrl+X',
-            //     role: 'cut',
-            // },
-            // {
-            //     label: 'Copy',
-            //     accelerator: 'CmdOrCtrl+C',
-            //     role: 'copy',
-            // },
-            // {
-            //     label: 'Paste',
-            //     accelerator: 'CmdOrCtrl+V',
-            //     role: 'paste',
-            // },
-            // {
-            //     label: 'Select All',
-            //     accelerator: 'CmdOrCtrl+A',
-            //     role: 'selectall',
-            // },
-            // {
-            //     type: 'separator',
-            // },
             {
                 label: 'Configure Database',
                 submenu: [
                     {
-                        label: 'Database connection...',
+                        label: 'Database Connection...',
                         accelerator: 'CmdOrCtrl+,',
                         click: (_, focusedWindow) => {
                             if (focusedWindow) {
@@ -156,6 +139,29 @@ const template: MenuItemConstructorOptions[] = [
                     // },
                 ],
             },
+            {
+                type: 'separator',
+            },
+            {
+                label: 'Select All',
+                accelerator: 'CmdOrCtrl+A',
+                role: 'selectall',
+            },
+            {
+                label: 'Copy Text',
+                accelerator: 'CmdOrCtrl+C',
+                role: 'copy',
+            },
+            {
+                label: 'Cut Text',
+                accelerator: 'CmdOrCtrl+X',
+                role: 'cut',
+            },
+            {
+                label: 'Paste Text',
+                accelerator: 'CmdOrCtrl+V',
+                role: 'paste',
+            },
         ],
     },
     {
@@ -172,7 +178,7 @@ const template: MenuItemConstructorOptions[] = [
                 accelerator: 'Shift+CmdOrCtrl+X',
             },
             {
-                label: 'Paste elements',
+                label: 'Paste Elements',
                 click: paste_elements,
                 accelerator: 'Shift+CmdOrCtrl+V',
             },
@@ -201,12 +207,25 @@ const template: MenuItemConstructorOptions[] = [
                         label: 'All Elements...',
                         click: export_all,
                     },
-                    {
-                        label: 'Export graph...',
-                        click: export_graph,
-                    },
+                    // {
+                    //     label: 'Export graph...',
+                    //     click: export_graph,
+                    // },
                 ],
             },
+            // {
+            //     label: 'Commit...',
+            //     submenu: [
+            //         {
+            //             label: 'Selected Elements...',
+            //             click: commit_selected,
+            //         },
+            //         {
+            //             label: 'All Elements...',
+            //             click: commit_all,
+            //         },
+            //     ],
+            // },
         ],
     },
     {
