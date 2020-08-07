@@ -52,7 +52,11 @@ export async function setHandlers() {
 
         to_save.forEach(async (ele: NodeSingular, _i: number, _eles: CollectionReturnValue) => {
             const stix_obj = ele.data('raw_data');
-            if (stix_obj === undefined) { return; }
+            console.log('our stix obj: ', stix_obj);
+            if (stix_obj === undefined) { 
+                numObjects--;
+                return; 
+            }
             if (stix_obj['type'] === 'relationship') {
                 // save edges for after all the nodes are done
                 edges.push(stix_obj);
@@ -65,6 +69,7 @@ export async function setHandlers() {
             itemsProcessed++;
             //wait for all vertex to step through before saving edges
             if (itemsProcessed === numObjects){
+                console.log('saving edge');
                 saveEdges(edges);
             }
         });
