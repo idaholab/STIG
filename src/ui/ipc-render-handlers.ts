@@ -69,10 +69,9 @@ export async function setHandlers() {
             //wait for all vertex to step through before saving edges
             if (itemsProcessed === numObjects){
                  saveEdges(edges);
+                 $('.message-status').html(`Committed ${numObjects} objects to the database.`);
             }
         });
-
-        $('.message-status').html(`Committed ${numObjects} objects to the database.`);
 
     });
 
