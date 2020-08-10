@@ -1,1 +1,1 @@
-SET ignoreErrors true;DROP DATABASE remote:localhost/stig root admin plocal;SET ignoreErrors false;CREATE DATABASE remote:localhost/stig root admin plocal; IMPORT DATABASE <absolute_path_to_directory>/stig.gz -preserveClusterIDs=true
+SET ignoreErrors true;DROP DATABASE remote:localhost/stig root OrientPW plocal;SET ignoreErrors false;CREATE DATABASE remote:localhost/stig root OrientPW plocal; IMPORT DATABASE /Users/priezm/repos/stig/db_setup/stig.gz -preserveClusterIDs=true

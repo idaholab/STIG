@@ -310,13 +310,16 @@ export class StigDB {
     public async getRID(identifier: Identifier): Promise<Rid | undefined> {
         let rid: Rid;
         let query;
+        let result: StixObject[];
         try {
             if (identifier.startsWith('relationship') || identifier.startsWith('sighting')) {
                 query = "select from E where id_=:id order by modified desc limit 1";
             } else {
                 query = "select from V where id_=:id order by modified desc limit 1";
             }
-            const result = await this.ojs.query(query, { params: { id: identifier } });
+
+            result = await this.ojs.query(query, { params: { id: identifier } }).all();
+            
             if (result && result.length > 0) {
                 rid = result[0]['@rid'];
                 return rid;
@@ -787,17 +790,18 @@ export class StigDB {
                 from_RID = from_node;
                 to_RID = to_node;
             }
+            if (to_RID === undefined) {
+                const node_data = window.cycore.getElementById(to_node);
+                to_RID = await this.createVertex(node_data.data('raw_data'))[0];
+            }
             if (from_RID === undefined) {
                 console.debug(`createEdge saving ${from_node} to database`);
                 const node_data = window.cycore.getElementById(from_node);
-                from_RID = await this.createVertex(node_data.data('raw_data'))[0].RID;
+                // from_RID = await this.createVertex(node_data.data('raw_data'))[0]; // isnt created
+                from_RID = await this.createVertex(node_data.data('raw_data'))[0];
             }
-            if (to_RID === undefined) {
-                console.debug(`createEdge saving ${to_node} to database`);
-                const node_data = window.cycore.getElementById(to_node);
-                to_RID = await this.createVertex(node_data.data('raw_data'))[0].RID;
-            }
-            result = this.createEdgeRID(from_RID, to_RID, data);
+
+            result = await this.createEdgeRID(from_RID, to_RID, data);
             return result;
         } catch (e) {
             e.stack += (new Error()).stack;
