@@ -1,8 +1,13 @@
 # STIG – Structured Threat Intelligence Graph
+Version 1.0.0
 
 [![STIG Video](/images/stig_youtube.png)](https://youtube.com/watch?v=vMgb-yx7PVA)
 
-Version 1.0.0
+
+STIG was presented at BSides Idaho (https://www.bsidesidaho.org/) on October 23, 2020. A video recording of the presentation is found below.
+
+[![STIG Video](/images/bsides.png)](https://www.youtube.com/watch?v=_qEseoPgdec)
+
 
 <img align="right" width="260" src="/images/STIG_rev1.png"> Structured Threat Intelligence Graph (STIG) is a tool for creating, editing, querying, analyzing and visualizing threat intelligence. It uses STIX version 2 as its data format. STIG uses a graph database (OrientDB) to store the data.
 
@@ -218,7 +223,7 @@ Download version 8 of the Java SE Platform (OrientDB has issues with the newest 
 
 #### OrientDB
 
-Download the community edition of OrientDB from **<https://orientdb.com/>**. Install according to the instructions. You may see a warning about information being sent over an insecure connection. Use version 2.2, revisions 2.2.23 or greater are known to work. Versions 3.0 or greater have not been tested. 
+Download the community edition of OrientDB from **<https://orientdb.com/>**. Install according to the instructions. You may see a warning about information being sent over an insecure connection. Use version 2.2, revisions 2.2.23 or greater are known to work. Versions 3.0 or greater have not been tested.
 
 Some instructions after you download OrientDB:
 
