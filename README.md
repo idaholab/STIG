@@ -3,12 +3,6 @@ Version 1.0.0
 
 [![STIG Video](/images/stig_youtube.png)](https://youtube.com/watch?v=vMgb-yx7PVA)
 
-
-STIG was presented at BSides Idaho (https://www.bsidesidaho.org/) on October 23, 2020. A video recording of the presentation is found below.
-
-[![STIG Video](/images/bsides.png)](https://www.youtube.com/watch?v=_qEseoPgdec)
-
-
 <img align="right" width="260" src="/images/STIG_rev1.png"> Structured Threat Intelligence Graph (STIG) is a tool for creating, editing, querying, analyzing and visualizing threat intelligence. It uses STIX version 2 as its data format. STIG uses a graph database (OrientDB) to store the data.
 
 See the [STIG Innovation Sheet](18-179_STIG_Innovation_Sheet.pdf) for an overview.
