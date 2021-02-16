@@ -40,6 +40,9 @@ def db_setup(HOST: str, USER: str, dbname: str, PASSW: str, PORT: str, keep: boo
     """
     print('(connecting to db)')
     if(not keep):
+        clear_database = input('Are you sure you want to delete the database? (Y/N)')
+        
+    if clear_database in ['Y', 'y', 'Yes', 'yes', 'YES']:
         print('(dropping database)')
         g = Graph(Config.from_url(dbname, USER, PASSW,initial_drop=True))
         g.create_all(Node.registry)
