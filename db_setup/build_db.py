@@ -217,22 +217,23 @@ def insert_bundle(g: Graph, stix_objs: List[Dict]):
                 print(f"Object with id: {o_id} found, moving to next object")
                 continue
             else:
-                r_type = o['relationship_type'].replace('-', '_')
-                src_id_type = o['source_ref'].strip().split('--')[0]
-                s_id = o['source_ref'].strip().split('--')[1]
-                tar_id_type = o['target_ref'].strip().split('--')[0]
-                t_id = o['target_ref'].strip().split('--')[1]
+                if o_type =='relationship':
+                    r_type = o['relationship_type'].replace('-', '_')
+                    src_id_type = o['source_ref'].strip().split('--')[0]
+                    s_id = o['source_ref'].strip().split('--')[1]
+                    tar_id_type = o['target_ref'].strip().split('--')[0]
+                    t_id = o['target_ref'].strip().split('--')[1]
 
-                if r_type in g.registry:
-                    temp = g.registry[r_type]
+                    if r_type in g.registry:
+                        temp = g.registry[r_type]
 
-                #Checks all props of a relationship (src/target_refs and id_ to determine of we already have this relationship in the database)
-                #TODO: what if we want to update??  Flag???  If keep and update flag is true, we replace anything currently in the database with the new file?
-                if (len(g.query(temp).filter(klass.id_.endswith(_uuid) & (klass.id_.startswith(id_type))))):
-                    if (len(g.query(temp).filter(klass.source_ref.startswith(src_id_type) & (klass.source_ref.endswith(s_id))))):
-                        if (len(g.query(temp).filter(klass.target_ref.startswith(tar_id_type) & (klass.target_ref.endswith(t_id))))):
-                            print(f"Relationship with id: {o_id} found, moving on to next object")
-                            continue
+                    #Checks all props of a relationship (src/target_refs and id_ to determine of we already have this relationship in the database)
+                    #TODO: what if we want to update??  Flag???  If keep and update flag is true, we replace anything currently in the database with the new file?
+                    if (len(g.query(temp).filter(klass.id_.endswith(_uuid) & (klass.id_.startswith(id_type))))):
+                        if (len(g.query(temp).filter(klass.source_ref.startswith(src_id_type) & (klass.source_ref.endswith(s_id))))):
+                            if (len(g.query(temp).filter(klass.target_ref.startswith(tar_id_type) & (klass.target_ref.endswith(t_id))))):
+                                print(f"Relationship with id: {o_id} found, moving on to next object")
+                                continue
 
         except Exception as e:
             print('**** gremlin error:')
