@@ -16,10 +16,10 @@ git clone https://github.com/idaholab/STIG.git
 cd STIG/db_setup
 poetry shell
 poetry install
-EXPORT ORIENT_HOST=<ip of database>
-EXPORT ORIENT_PORT=2424
-EXPORT ORIENT_USER=<user>
-EXPORT ORIENT_PASS=<password>
+export ORIENT_HOST=<ip of database>
+export ORIENT_PORT=2424
+export ORIENT_USER=<user>
+export ORIENT_PASS=<password>
 python build_db.py --dbname=ExampleDB --path=/path/to/STIX/file(s) --keep
 ```
 

@@ -39,6 +39,7 @@ def db_setup(HOST: str, USER: str, dbname: str, PASSW: str, PORT: str, keep: boo
     :param keep: boolean value to keep or destroy database
     """
     print('(connecting to db)')
+    clear_database=''
     if(not keep):
         clear_database = input('Are you sure you want to delete the database? (Y/N)')
         

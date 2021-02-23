@@ -39,15 +39,11 @@ if __name__ == '__main__':
     workbench.add_data_source(fs)
 
     sink = FileSystemSink('/Users/priezm/repos/GTO/stix_worknench/', allow_custom=True)
-    # infiles = '/home/jed/Downloads/2020-06-15T15_37_46.217Z_(ExportFileStix)_report-LiquorBot_ Mirai Spinoff Incorporates Cryptomining_full.json'
-    # path = pathlib.Path(infiles)  # MAR-10135536-12_WHITE_stix.json')
-    # if path.is_file() and path.suffix == '.json':
     if path.is_dir():
         for p in tqdm(list(path.glob('**/*.json')), 'Files'):
             with open(p, 'r') as f:
                 print('\n\n***********************************************************')
                 print('adding file: {}'.format(p))
-                # irl = f.readlines()
                 try:
                     irl = json.load(f)
                     print('our irl: ', irl)
@@ -63,7 +59,6 @@ if __name__ == '__main__':
         with open(path, 'r') as f:
             print('\n\n***********************************************************')
             print('adding file: {}'.format(path))
-            # irl = f.readlines()
             try:
                 irl = json.load(f)
                 for o in tqdm(irl['objects'], 'Objects'):
