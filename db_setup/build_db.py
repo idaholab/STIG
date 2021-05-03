@@ -19,7 +19,7 @@ from tqdm import tqdm
 MANDATORY_ENV_VARS = ["ORIENT_HOST", "ORIENT_USER", "ORIENT_PASS", "ORIENT_PORT"]
 
 def usage():
-    print('Usage: python build_db.py <database_name> <filepath | dirpath> | <keep>')
+    print('Usage: python build_db.py --dbname <database_name> --path <filepath | dirpath> | <--keep>')
 
 def get_datetime() -> str:
     """Get date time
@@ -42,7 +42,7 @@ def db_setup(HOST: str, USER: str, dbname: str, PASSW: str, PORT: str, keep: boo
     clear_database=''
     if(not keep):
         clear_database = input('Are you sure you want to delete the database? (Y/N)')
-        
+
     if clear_database in ['Y', 'y', 'Yes', 'yes', 'YES']:
         print('(dropping database)')
         g = Graph(Config.from_url(dbname, USER, PASSW,initial_drop=True))
