@@ -162,7 +162,7 @@
       "jquery-ui-dist": "^1.12.1",
       "jquery-ui-themes": "^1.12.0",
       "jsondiffpatch": "^0.3.7",
-      "lodash": "^4.17.13",
+      "lodash": "^4.17.21",
       "moment": "^2.21.0",
       "normalize.css": "^8.0.1",
       "orientjs": "^3.0.3",
