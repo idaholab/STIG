@@ -8,9 +8,7 @@
         "type": {
             "type": "string",
             "description": "The type of this object, which MUST be the literal `threat-actor`.",
-            "enum": [
-                "threat-actor"
-            ]
+            "default": "threat-actor"
         },
         "id": {
             "title": "id",
@@ -18,22 +16,22 @@
             "type": "string",
             "default": "threat-actor--"
         },
-        "labels": {
-            "type": "array",
-            "description": "This field specifies the type of threat actor. Open Vocab - threat-actor-label-ov",
-            "items": {
-                "type": "string",
-                "$ref": "#/definitions/threat-actor-label-ov"
-            },
-            "minItems": 1
-        },
         "name": {
             "type": "string",
             "description": "A name used to identify this Threat Actor or Threat Actor group."
         },
         "description": {
             "type": "string",
+            "format": "textarea",
             "description": "A description that provides more details and context about the Threat Actor."
+        },
+        "threat_actor_types": {
+            "type": "array",
+            "description": "The type(s) of this threat actor. Open Vocab - threat-actor-type-ov.",
+            "items": {
+                "type": "string",
+                "$ref": "#/definitions/threat-actor-type-ov"
+            }
         },
         "aliases": {
             "type": "array",
@@ -42,6 +40,16 @@
                 "type": "string"
             },
             "minItems": 1
+        },
+        "first_seen": {
+            "type": "string",
+            "format": "datetime",
+            "description": "The time that this Threat Actor was first seen."
+        },
+        "last_seen": {
+            "type": "string",
+            "format": "datetime",
+            "description": "The time that this Threat Actor was last seen."
         },
         "roles": {
             "type": "array",
@@ -73,7 +81,7 @@
         "primary_motivation": {
             "type": "string",
             "description": "The primary reason, motivation, or purpose behind this Threat Actor. Open Vocab - attack-motivation-ov",
-            "$ref": "#/definitions/attack-motiovation-ov"
+            "$ref": "#/definitions/attack-motivation-ov"
         },
         "secondary_motivations": {
             "type": "array",
@@ -96,27 +104,10 @@
     },
     "required": [
         "name",
-        "labels",
         "type",
         "id"
     ],
     "definitions": {
-        "threat-actor-label-ov": {
-            "type": "string",
-            "enum": [
-                "activist",
-                "competitor",
-                "crime-syndicate",
-                "criminal",
-                "hacker",
-                "insider-accidental",
-                "insider-disgruntled",
-                "nation-state",
-                "sensationalist",
-                "spy",
-                "terrorist"
-            ]
-        },
         "threat-actor-role-ov": {
             "type": "string",
             "enum": [
@@ -139,6 +130,23 @@
                 "strategic",
                 "expert",
                 "innovator"
+            ]
+        },
+        "threat-actor-type-ov": {
+            "type": "string",
+            "enum": [
+                "activist",
+                "competitor",
+                "crime-syndicate",
+                "criminal",
+                "hacker",
+                "insider-accidental",
+                "insider-disgruntled",
+                "nation-state",
+                "sensationalist",
+                "spy",
+                "terrorist",
+                "unknown"
             ]
         },
         "attack-resource-level-ov": {

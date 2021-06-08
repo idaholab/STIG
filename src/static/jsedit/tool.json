@@ -8,9 +8,7 @@
         "type": {
             "type": "string",
             "description": "The type of this object, which MUST be the literal `tool`.",
-            "enum": [
-                "tool"
-            ]
+            "default": "tool"
         },
         "id": {
             "title": "id",
@@ -18,43 +16,63 @@
             "type": "string",
             "default": "tool--"
         },
-        "labels": {
-            "type": "array",
-            "description": "The kind(s) of tool(s) being described. Open Vocab - tool-label-ov",
-            "items": {
-                "type": "string",
-                "$ref": "#/definitions/tool-label-ov"
-            },
-            "minItems": 1
-        },
         "name": {
             "type": "string",
             "description": "The name used to identify the Tool."
         },
         "description": {
             "type": "string",
+            "format": "textarea",
             "description": "Provides more context and details about the Tool object."
+        },
+        "tool_types": {
+            "type": "array",
+            "description": "The values for this property SHOULD come from the tool-type-ov open vocabulary.",
+            "items": {
+                "type": "string",
+                "$ref": "#/definitions/tool-type-ov"
+            },
+            "minItems": 1
         },
         "tool_version": {
             "type": "string",
             "description": "The version identifier associated with the tool."
         },
+        "aliases": {
+            "type": "array",
+            "description": "Alternative names used to identify this tool.",
+            "items": {
+                "type": "string"
+            },
+            "minItems": 1
+        },
         "kill_chain_phases": {
             "type": "array",
             "description": "The list of kill chain phases for which this Tool instance can be used.",
-            "items": {
-                "$ref": "static/jsedit/common/kill-chain-phase.json"
-            },
+            "$ref": "static/jsedit/common/kill-chain-phase.json",
             "minItems": 1
         }
+
     },
     "required": [
         "name",
-        "labels",
         "type",
         "id"
     ],
     "definitions": {
+        "tool-type-ov": {
+            "type": "string",
+            "enum": [
+                "denial-of-service",
+                "exploitation",
+                "information-gathering",
+                "network-capture",
+                "credential-exploitation",
+                "remote-access",
+                "vulnerability-scanning",
+                "unknown"
+            ]
+        },
         "tool-label-ov": {
             "type": "string",
             "enum": [

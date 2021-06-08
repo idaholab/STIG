@@ -1,5 +1,5 @@
 {
-    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$schema": "http://json-schema.org/draft-07/schema#",
     "title": "marking-definition",
     "description": "The marking-definition object represents a specific marking.",
     "type": "object",
@@ -10,24 +10,65 @@
             "default": "marking-definition"
         },
         "id": {
-            "type": "string",
-            "pattern": "^marking-definition--"
-        },
-        "created_by_ref": {
+            "title": "id",
+            "pattern": "^marking-definition--",
+            "default": "marking-definition--",
             "type": "string"
         },
+        "name" : {
+            "type" : "string",
+            "description": "A name used to identify the Marking Definition."
+        },
+        "spec_version": {
+            "type": "string",
+            "enum": [
+                "2.1",
+                "2.0"
+            ],
+            "description": "The version of the STIX specification used to represent this object."
+        },
         "created": {
-            "title": "created",
-            "$ref": "static/jsedit/common/timestamp.json",
-            "description": "The created property represents the time at which the first version of this Marking Definition object was created."
+            "type": "string",
+            "format": "datetime-local",
+            "options": {
+                "flatpickr": {
+                    "inlineHideInput": true,
+                    "wrap": true,
+                    "allowInput": true,
+                    "dateFormat": "Z"
+                }
+            }
+        },
+        "created_by_ref": {
+            "type": "string",
+            "default": ""
         },
         "external_references": {
             "type": "array",
-            "description": "A list of external references which refers to non-STIX information.",
+            "format": "tabs",
             "items": {
-                "$ref": "static/jsedit/common/external-reference.json"
-            },
-            "minItems": 1
+                "type": "object",
+                "properties": {
+                    "source_name": {
+                        "type": "string",
+                        "description": "The source within which the external-reference is defined (system, registry, organization, etc.)"
+                    },
+                    "external_id": {
+                        "type": "string",
+                        "description": "An identifier for the external reference content."
+                    },
+                    "url": {
+                        "type": "string",
+                        "title": "url",
+                        "pattern": "^(?:(?:https?|ftp)://)(?:\\S+(?::\\S*)?@)?(?:(?!(?:10|127)(?:\\.\\d{1,3}){3})(?!(?:169\\.254|192\\.168)(?:\\.\\d{1,3}){2})(?!172\\.(?:1[6-9]|2\\d|3[0-1])(?:\\.\\d{1,3}){2})(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}(?:\\.(?:[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\\.(?:[a-z\u00a1-\uffff]{2,}))\\.?)(?::\\d{2,5})?(?:[/?#]\\S*)?$",
+                        "description": "Matches the elements of a URL using a regular expression. Uses Diego Perini's regex from https://gist.github.com/dperini/729294."
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "A human readable description"
+                    }
+                }
+            }
         },
         "object_marking_refs": {
             "type": "array",
@@ -68,39 +109,47 @@
             }
         },
         "definition_type": {
-            "title": "Defintion Type",
             "type": "string",
             "description": "The definition_type property identifies the type of Marking Definition.",
-            "pattern": "^statement$",
-            "value": "statement",
-            "default": "statement"
+            "$ref": "#/definitions/marking-definition-type"
         },
         "definition": {
-            "title": "Definition Statement",
-            "$ref": "#/definitions/statement",
-            "description": "The definition property contains the marking object itself."
-        }
-    },
-    "required": [
-        "id",
-        "type",
-        "definition",
-        "definition_type",
-        "created"
-    ],
-    "definitions": {
-        "statement": {
             "type": "object",
-            "title": "statement",
-            "description": "The Statement marking type defines the representation of a textual marking statement (e.g., copyright, terms of use, etc.) in a definition",
+            "description": "The definition property contains the marking object itself.",
             "properties": {
                 "statement": {
                     "type": "string",
-                    "description": "A statement (e.g., copyright, terms of use) applied to the content marked by this marking definition."
+                    "defintion": "A Statement (e.g., copyright, terms of use) applied to the content marked by this marking definition."
+                },
+                "tlp": {
+                    "type": "string",
+                    "defintion": "The TLP level of the content marked by this marking definition, as defined in this section.",
+                    "$ref": "#/definitions/tlp-level"
                 }
-            },
-            "required": [
-                "statement"
+            }
+        }
+    },
+    "required": [
+        "spec_version",
+        "created",
+        "id",
+        "type"
+    ],
+    "definitions": {
+        "marking-definition-type": {
+            "type": "string",
+            "enum": [
+                "statement",
+                "tlp"
+            ]
+        },
+        "tlp-level": {
+            "type": "string",
+            "enum": [
+                "white",
+                "green",
+                "amber",
+                "red"
             ]
         }
     }

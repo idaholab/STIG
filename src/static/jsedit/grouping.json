@@ -1,0 +1,56 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "grouping",
+    "description": "A Grouping object explicitly asserts that the referenced STIX Objects have a shared content.",
+    "type": "object",
+    "$ref": "static/jsedit/core.json",
+    "properties": {
+        "type": {
+            "type": "string",
+            "description": "The type of this object, which MUST be the literal `grouping`.",
+            "default": "grouping"
+        },
+        "id": {
+            "title": "id",
+            "pattern": "^grouping--",
+            "default": "grouping--",
+            "type": "string"
+        },
+        "name": {
+          "type": "string",
+          "description": "A name used to identify the Grouping."
+        },
+        "description": {
+          "type": "string",
+          "format": "textarea",
+          "description": "A description which provides more details and context about the Grouping, potentially including the purpose and key characteristics."
+        },
+        "context": {
+          "type": "string",
+          "description": "A short description of the particular context shared by the content referenced by the Grouping.",
+          "$ref": "#/definitions/grouping-context-ov"
+        },
+        "object_refs": {
+          "type": "array",
+          "description": "The STIX Objects (SDOs and SROs) that  are referred to by this Grouping.",
+          "items": {
+            "$ref": "static/jsedit/common/identifier.json"
+          },
+          "minItems": 1
+        }
+    },
+    "required": [
+        "context",
+        "type"
+    ],
+    "definitions": {
+        "grouping-context-ov": {
+          "type": "string",
+          "enum": [
+            "suspicious-activity",
+            "malware-analysis",
+            "unspecified"
+          ]
+        }
+    }
+}

@@ -8,9 +8,7 @@
         "type": {
             "type": "string",
             "description": "The type of this object, which MUST be the literal `sighting`.",
-            "enum": [
-                "sighting"
-            ]
+            "default": "sighting"
         },
         "id": {
             "pattern": "^sighting--"

@@ -1,52 +1,87 @@
 {
-    "type": "object",
+    "$schema": "http://json-schema.org/draft-07/schema#",
     "title": "infrastructure",
+    "description": "Infrastructure objects describe systems, software services, and associated physical or virtual resources.",
+    "type": "object",
     "$ref": "static/jsedit/core.json",
     "properties": {
         "id": {
+            "title": "id",
             "type": "string",
-            "default": "infrastructure--UUID"
+            "default": "infrastructure--",
+            "pattern": "^infrastructure--"
         },
         "type": {
-            "type": "string",
-            "default": "infrastructure"
+          "type": "string",
+          "description": "The type of this object, which MUST be the literal `infrastructure`.",
+          "default": "infrastructure"
         },
-        "name": { "type": "string" },
-        "description": { "type": "string" },
-        "title": {
+        "name": {
             "type": "string",
-            "description": "A human readable title"
+            "description": "The name used to identify the Infrastructure."
         },
-        "category": {
+        "description": {
             "type": "string",
-            "enum": ["asset", "category", "common", "vocabulary "]
+            "format": "textarea",
+            "description": "A description that provides more details and context about this Infrastructure potentially including its purpose and its key characteristics."
         },
-        "kind_of_asset": {
-            "type": "string",
-            "enum": ["asset", "kind", "common", "vocabulary"]
-        },
-
-        "category_ext": {
+        "infrastructure_types": {
             "type": "array",
-            "description": "alternate value for category",
-            "items": [
-                "string"
-            ]
-        },
-        "compromised": { "type": "boolean" },
-        "owner_aware": { "type": "boolean" },
-        "technical_characteristics": {
-            "type": "object",
-            "properties": {
-                "field": { "type": "string" },
-                "data": { "type": "string" }
+            "description": "This field is an Open Vocabulary that specifies the type of infrastructure. Open vocab - infrastructure-type-ov",
+            "items": {
+                "type": "string",
+                "$ref": "#/definitions/infrastructure-type-ov"
             },
-            "description": "cybox characterization of technical characterisitics goes here fields like: serial number property number host name domain name operating system (including revision level and what else??) network services, and related details, which do not merit their own asset tag"
+            "minItems": 1
+        },
+        "aliases": {
+            "type": "array",
+            "description": "Alternative names used to identify this Infrastructure.",
+            "items": {
+                "type": "string"
+            },
+            "minItems": 1
+        },
+        "kill_chain_phases": {
+            "type": "array",
+            "description": "The list of kill chain phases for which this infrastructure is used.",
+            "$ref": "static/jsedit/kill-chain-phase.json",
+            "minItems": 1
+        },
+        "first_seen": {
+            "$ref": "static/jsedit/common/timestamp.json",
+            "description": "The time that this infrastructure was first seen performing malicious activities."
+        },
+            "last_seen": {
+                "$ref": "static/jsedit/common/timestamp.json",
+                "description": "The time that this infrastructure was last seen performing malicious activities."
         }
     },
     "required": [
         "name",
         "id",
         "type"
-    ]
+    ],
+    "definitions": {
+        "infrastructure-type-ov": {
+            "type": "string",
+            "enum": [
+                "amplification",
+                "anonymization",
+                "botnet",
+                "command-and-control",
+                "control-system",
+                "exfiltration",
+                "firewall",
+                "hosting-malware",
+                "hosting-target-lists",
+                "infrastructure",
+                "phishing",
+                "reconnaissance",
+                "staging",
+                "unknown",
+                "workstation"
+            ]
+        }
+    }
 }

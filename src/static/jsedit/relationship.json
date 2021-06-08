@@ -7,9 +7,7 @@
         "type": {
             "type": "string",
             "description": "The type of this object, which MUST be the literal `relationship`.",
-            "enum": [
-                "relationship"
-            ]
+            "default": "relationship"
         },
         "id": {
             "type": "string",
@@ -22,22 +20,49 @@
             "description": "The name used to identify the type of relationship.",
             "pattern": "^[a-z0-9\\-]+$",
             "enum": [
-                "related-to",
+                
                 "uses",
                 "mitigates",
                 "indicates",
                 "targets",
-                "attributed-to",
+                "exploits",
+                "compromises",
+                "delivers",
+                "downloads",
+                "drops",
+                "has",
+                "consists-of",
                 "part-of",
                 "member-of",
-                "created-by",
+                "variant-of",
+                "attributed-to",
                 "applies-to",
-                "compromised-by",
+                "investigates",
+                "characterizes",
+                "impersonates",
+                "controls",
+                "remediates",
+                "hosts",
+                "owns",
                 "managed-by",
                 "owned-by",
                 "evidenced-by",
                 "affected-by",
-                "custom"
+                "compromised-by",
+                "based-on",
+                "authored_by",
+                "communicates-with",
+                "exfiltrates-to",
+                "beacons-to",
+                "located-at",
+                "originates-from",
+                "analysis-of",
+                "dynamic-analysis-of",
+                "static-analysis-of",
+                "related-to",
+                "created-by",
+                "derived-from",
+                "duplicate-of"
             ]
         },
         "description": {
@@ -53,7 +78,7 @@
                 },
                 {
                     "not": {
-                        "pattern": "^(relationship|sighting|bundle|marking-definition)--.+$"
+                        "pattern": "^(relationship|sighting|bundle|marking-definition|language-content)--.+$"
                     }
                 }
             ]
@@ -66,7 +91,7 @@
                 },
                 {
                     "not": {
-                        "pattern": "^(relationship|sighting|bundle|marking-definition)--.+$"
+                        "pattern": "^(relationship|sighting|bundle|marking-definition|language-content)--.+$"
                     }
                 }
             ]

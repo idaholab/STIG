@@ -26,7 +26,8 @@
     "spec_version": {
       "type": "string",
       "enum": [
-        "2.0"
+        "2.0",
+        "2.1"
       ],
       "description": "The version of the STIX specification used to represent the content in this bundle."
     },

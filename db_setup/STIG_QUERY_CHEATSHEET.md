@@ -21,7 +21,7 @@
 `traverse out() from (traverse both() from (select from malware where name.toLowerCase() like '%blackcoffee%') while $depth < 2)`
 
 ### Intrusion Sets and Malware objects related to a certain Attack Pattern - Process Discovery
-`traverse in() from (select from V where name like '%Process%' ORDER BY modified DESC limit 1) while $depth < 2`  
+`traverse in() from (select from V where name like '%Process%' ORDER BY modified DESC limit 1) while $depth < 2`
 
 ### Intrusion Sets and Attack Patterns Using Certain Tools
 `traverse * from (select from Tool where name like '%netsh%' ORDER BY modified DESC limit 1) while $depth < 2`

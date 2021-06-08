@@ -18,6 +18,7 @@
         },
         "description": {
             "type": "string",
+            "format": "textarea",
             "description": "A description that provides more details and context about the Campaign, potentially including its purpose and its key characteristics."
         },
         "aliases": {

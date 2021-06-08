@@ -15,13 +15,14 @@ export let node_style: cytoscape.Stylesheet = {
         "shape": "roundrectangle",
         "width": 77,
         "height": 77,
+        "background-color": "black",
         'min-zoomed-font-size': 10,
         "text-wrap": "wrap",
         // "text-margin-x": 7,
         'overlay-opacity': 0,
-        "text-max-width": 120,
+        'text-max-width': 120,
         // "border-width":5
-    } as cytoscape.Css.Node,
+    } //as cytoscape.Css.Node,
 };
 
 export let edge_style: cytoscape.Stylesheet = {
@@ -44,7 +45,7 @@ export let edge_style: cytoscape.Stylesheet = {
         'min-zoomed-font-size': 10,
         'overlay-opacity': 0,
         'width': 2,
-    } as cytoscape.Css.Edge,
+    } //as cytoscape.Css.Edge,
 };
 
 export let select_node_style: cytoscape.Stylesheet = {
@@ -55,13 +56,14 @@ export let select_node_style: cytoscape.Stylesheet = {
         'border-color': 'red',
         'target-arrow-color': 'red',
         'line-color': 'red',
+        'background-color': 'red',
     },
 };
 
 export let modified_unselect_style: cytoscape.Stylesheet = {
     selector: '[!saved]',
     style: {
-        "border-width": 2,
+        "border-width": 2, 
         "text-background-color": 'yellow',
         "text-background-opacity": 1,
     },

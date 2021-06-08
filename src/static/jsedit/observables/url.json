@@ -1,29 +1,27 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "url",
   "description": "The URL Object represents the properties of a uniform resource locator (URL).",
   "type": "object",
-  "allOf": [
-    {
-      "$ref": "static/jsedit/common/cyber-observable-core.json"
+  "$ref": "static/jsedit/common/cyber-observable-core.json",
+  "properties": {
+    "type": {
+      "type": "string",
+      "description": "The value of this property MUST be `url`.",
+      "default": "url"
     },
-    {
-      "properties": {
-        "type": {
-          "type": "string",
-          "description": "The value of this property MUST be `url`.",
-          "enum": [
-            "url"
-          ]
-        },
-        "value": {
-          "type": "string",
-          "description": "Specifies the value of the URL."
-        }
-      }
+    "id": {
+      "title": "id",
+      "pattern": "^url--"
+    },
+    "value": {
+      "title": "value",
+      "$ref": "static/jsedit/common/url-regex.json",
+      "description": "Specifies the value of the URL."
     }
-  ],
+  },
   "required": [
+    "type",
+    "id",
     "value"
   ]
 }

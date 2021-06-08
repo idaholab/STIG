@@ -8,9 +8,7 @@
         "type": {
             "type": "string",
             "description": "The type of this object, which MUST be the literal `observed-data`.",
-            "enum": [
-                "observed-data"
-            ]
+            "default": "observed-data"
         },
         "id": {
             "title": "id",
@@ -31,7 +29,16 @@
             "type": "integer",
             "description": "The number of times the data represented in the objects property was observed. This MUST be an integer between 1 and 999,999,999 inclusive.",
             "minimum": 1,
-            "maximum": 999999999
+            "maximum": 999999999,
+            "default": 1
+        },
+        "object_refs": {
+            "type": "array",
+            "description": "A list of id's referencing SCOs and SROs representing the observation. The object_refs MUST contain at least one SCO reference if defined.",
+            "items": {
+              "$ref": "static/jsedit/common/identifier.json"
+            },
+            "minItems": 1
         },
         "objects": {
             "type": "object",
@@ -117,9 +124,10 @@
         }
     },
     "required": [
+        "type",
+        "id",
         "first_observed",
         "last_observed",
-        "number_observed",
-        "objects"
+        "number_observed"
     ]
 }

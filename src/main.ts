@@ -314,10 +314,40 @@ export class main {
                 if (input_data === undefined) { return true; }
                 if (ele.isNode()) {
                     // load the form for this node
-                    editor.buildWidget(ele, ele.data('type'), input_data);
+                    try {
+                        editor.buildWidget(ele, ele.data('type'), input_data);
+                    }
+                    catch(err) {
+                        if(err.message === "Cannot read property '$ref' of undefined"){
+                            // added to handle sub directory 'observables'
+                            editor.buildWidget(ele, 'observables/' + ele.data('type'), input_data);
+                        }
+                        else{
+                            console.error(err);
+                        }
+                    }
                 } else {
                     // edge
-                    editor.buildWidget(ele, input_data.type, input_data);
+                    // input_data.type 
+                    let relationship_file = "";
+
+                    // objects that shouldn't be related to other objects or only require the fundamental relationship types
+                    let common = ["artifact", "autonomous-system", "directory", "domain-name", "email-addr", 
+                                  "email-message", "file", "grouping", "ipv4-addr", "ipv6-addr", "language-content",
+                                  "location", "mac-addr", "mutex", "network-traffic", "note", "observed-data",
+                                  "opinion", "process", "report", "software", "url", "user-account", "vulnerability", 
+                                  "windows-registry-key", "x509-certificate"];
+
+                    let target_obj_type = (input_data.source_ref).slice(0,-38);
+
+                    // get the file name for the corresponding source object
+                    if (common.includes(target_obj_type)) {
+                        relationship_file = "common-relationship";
+                    } else {
+                        relationship_file = target_obj_type + "-relationship";
+                    }
+                    
+                    editor.buildWidget(ele, relationship_file , input_data);
                 }
                 $('button#btn-export-single').button('option', 'disabled', false);
                 if (ele.data('saved') === false) {
@@ -333,7 +363,7 @@ export class main {
                 e.preventDefault();
                 e.stopPropagation();
                 const form_data = editor.editor.getEditor('root').getValue();
-                const jsonToSave = JSON.stringify(form_data);
+                const jsonToSave = JSON.stringify(form_data, null, 2);
                 const jsonSingleSave = new Blob([jsonToSave], { type: "application/json" });
                 fileSaver.saveAs(jsonSingleSave, `${form_data.id}.json`);
                 $('.message-status').html(`Exported ${form_data.id} objects`);
@@ -350,15 +380,37 @@ export class main {
 
             // Handler for when an edge is created via the graph editor
             cy.on('add', 'edge', (evt: cytoscape.EventObject) => {
+                let my_map = new Map();
+                my_map.set('attack-pattern', 'uses');
+                my_map.set('campaign', 'uses');
+                my_map.set('course-of-action', 'mitigates');
+                my_map.set('identity', 'located-at');
+                my_map.set('indicator', 'indicates');
+                my_map.set('infrastructure', 'consists-of');
+                my_map.set('intrusion-set', 'uses');
+                my_map.set('malware', 'targets');
+                my_map.set('malware-analysis', 'analysis-of');
+                my_map.set('threat-actor', 'uses');
+                my_map.set('tool', 'targets');
+
                 const ele = evt.target;
                 // first check to see if the edge has been completed
                 // if either end of the edge doesn't have raw_data it hasn't been completed
                 if (ele.source().data('raw_data') === undefined || ele.target().data('raw_data') === undefined) {
                     return;
                 }
-                // console.log('Edge Created: ' + evt)
+                
                 const input_data = ele.data('raw_data');
                 if (input_data === undefined) {
+
+                    let src_obj_type = ele.source().data('raw_data').type;
+                    let default_relationship = "";
+                    if (my_map.has(src_obj_type)) {
+                        default_relationship = my_map.get(src_obj_type);
+                    } else {
+                        default_relationship = "related-to";
+                    }
+
                     const raw_data: Relationship = {
                         // get source node
                         source_ref: ele.source().data('raw_data').id,
@@ -368,11 +420,11 @@ export class main {
                         created: moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
                         modified: moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
                         id: 'relationship--' + ele.id(),
-                        relationship_type: 'related-to',
+                        relationship_type: (default_relationship),
                     };
                     ele.data('raw_data', raw_data);
                     ele.data('saved', false);
-                    ele.style('label', 'related-to');
+                    ele.style('label', default_relationship);
                 }
             });
 
@@ -475,6 +527,7 @@ export class main {
                     if(ele.data('raw_data')!==undefined){
                         bundle.objects.push(ele.data('raw_data'));
                     }
+
                 });
                 // cy.edges().each((ele) => {
                 //     // TODO FIXME: Do not save created_by edges, and other implicit edges
@@ -482,7 +535,7 @@ export class main {
                 // });
 
                 // Convert to JSON and save
-                const jsonToSave = JSON.stringify(bundle);
+                const jsonToSave = JSON.stringify(bundle, null, 2);
                 const jsonBundleSave = new Blob([jsonToSave], { type: "application/json" });
                 fileSaver.saveAs(jsonBundleSave, "bundle.json");
                 $('.message-status').html(`Exported ${bundle.objects.length} objects`);
@@ -502,17 +555,14 @@ export class main {
                 let result: StixObject[];
                 try {
                     const formdata: StixObject = editor.editor.getValue();
-                    db.updateDB(formdata).then((r) => {
-                        result = r; 
-                        $('.message-status').html(`Committed: ${JSON.stringify(result[0]['id'])} to the database.`);
-                        $('button.btn-commit').button('option', 'disabled', true);
-                    });
-
+                    db.updateDB(formdata).then((r) => { result = r; });
                 } catch (e) {
                     console.error('Error saving to database:');
                     console.error(e);
                     throw e;
                 }
+                $('button.btn-commit').button('option', 'disabled', true);
+                $('.message-status').html(`Committed: ${JSON.stringify(result)}`);
             });
 
             /***********************************************************************************
@@ -613,5 +663,47 @@ export class main {
             });
         },
         );
+        //
+        /*document.addEventListener("DOMContentLoaded", function() {
+            var cy = (window.cy = cytoscape({
+              container: document.getElementsByClassName("icon-box"),
+              style: [{
+                  selector: "node",
+                  style: {
+                    content: "data(id)"
+                  }
+                }
+              ],
+            }));
+          
+            function makePopper(ele) {
+              let ref = ele.popperRef(); // used only for positioning
+          
+              ele.tippy = tippy(ref, { // tippy options:
+                content: () => {
+                  let content = document.createElement('div');
+          
+                  content.innerHTML = ele.id();
+          
+                  return content;
+                },
+                trigger: 'manual' // probably want manual mode
+              });
+            }
+          
+            cy.ready(function() {
+              cy.elements().forEach(function(ele) {
+                makePopper(ele);
+              });
+            });
+          
+            cy.elements().unbind('mouseover');
+            cy.elements().bind('mouseover', (event) => event.target.tippy.show());
+          
+            cy.elements().unbind('mouseout');
+            cy.elements().bind('mouseout', (event) => event.target.tippy.hide());
+          
+        });
+        //*/
     }
 }

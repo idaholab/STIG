@@ -1,200 +1,45 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "network-traffic",
-  "$ref": "static/jsedit/common/cyber-observable-core.json",
   "description": "The Network Traffic Object represents arbitrary network traffic that originates from a source and is addressed to a destination.",
   "type": "object",
+  "$ref": "static/jsedit/common/cyber-observable-core.json",
   "properties": {
     "type": {
       "type": "string",
       "description": "The value of this property MUST be `network-traffic`.",
-      "enum": [
-        "network-traffic"
-      ]
+      "default": "network-traffic"
+    },
+    "id": {
+      "title": "id",
+      "pattern": "^network-traffic--"
     },
     "extensions": {
-      "type": "object",
-      "patternProperties": {
-        "^http-request-ext$": {
-          "type": "object",
-          "description": "The HTTP request extension specifies a default extension for capturing network traffic properties specific to HTTP requests.",
-          "properties": {
-            "request_method": {
-              "type": "string",
-              "description": "Specifies the HTTP method portion of the HTTP request line, as a lowercase string."
-            },
-            "request_value": {
-              "type": "string",
-              "description": "Specifies the value (typically a resource path) portion of the HTTP request line."
-            },
-            "request_version": {
-              "type": "string",
-              "description": "Specifies the HTTP version portion of the HTTP request line, as a lowercase string."
-            },
-            "request_header": {
-              "type": "object",
-              "description": "Specifies all of the HTTP header fields that may be found in the HTTP client request, as a dictionary.",
-              "patternProperties": {
-                "^.+$": {
-                  "type": "string"
-                }
-              }
-            },
-            "message_body_length": {
-              "type": "integer",
-              "description": "Specifies the length of the HTTP message body, if included, in bytes."
-            },
-            "message_body_data_ref": {
-              "type": "string",
-              "description": "Specifies the data contained in the HTTP message body, if included."
-            }
-          }
-        },
-        "^icmp-ext$": {
-          "type": "object",
-          "description": "The ICMP extension specifies a default extension for capturing network traffic properties specific to ICMP.",
-          "properties": {
-            "icmp_type_hex": {
-              "title": "icmp_type_hex",
-              "$ref": "static/jsedit/common/hex.json",
-              "description": "Specifies the ICMP type byte."
-            },
-            "icmp_code_hex": {
-              "title": "icmp_code_hex",
-              "$ref": "static/jsedit/common/hex.json",
-              "description": "Specifies the ICMP code byte."
-            }
-          }
-        },
-        "^socket-ext$": {
-          "type": "object",
-          "description": "The Network Socket extension specifies a default extension for capturing network traffic properties associated with network sockets.",
-          "properties": {
-            "address_family": {
-              "type": "string",
-              "description": "Specifies the address family (AF_*) that the socket is configured for.",
-              "enum": [
-                "AF_UNSPEC",
-                "AF_INET",
-                "AF_IPX",
-                "AF_APPLETALK",
-                "AF_NETBIOS",
-                "AF_INET6",
-                "AF_IRDA",
-                "AF_BTH"
-              ]
-            },
-            "is_blocking": {
-              "type": "boolean",
-              "description": "Specifies whether the socket is in blocking mode."
-            },
-            "is_listening": {
-              "type": "boolean",
-              "description": "Specifies whether the socket is in listening mode."
-            },
-            "protocol_family": {
-              "type": "string",
-              "description": "Specifies the protocol family (PF_*) that the socket is configured for.",
-              "enum": [
-                "PF_INET",
-                "PF_AX25",
-                "PF_IPX",
-                "PF_INET6",
-                "PF_APPLETALK",
-                "PF_NETROM",
-                "PF_BRIDGE",
-                "PF_ATMPVC",
-                "PF_X25",
-                "PF_ROSE",
-                "PF_DECNET",
-                "PF_NETBEUI",
-                "PF_SECURITY",
-                "PF_KEY",
-                "PF_NETLINK",
-                "PF_ROUTE",
-                "PF_PACKET",
-                "PF_ASH",
-                "PF_ECONET",
-                "PF_ATMSVC",
-                "PF_SNA",
-                "PF_IRDA",
-                "PF_PPPOX",
-                "PF_WANPIPE",
-                "PF_BLUETOOTH"
-              ]
-            },
-            "options": {
-              "title": "options",
-              "$ref": "static/jsedit/common/dictionary.json",
-              "description": "Specifies any options (SO_*) that may be used by the socket, as a dictionary."
-            },
-            "socket_type": {
-              "type": "string",
-              "description": "Specifies the type of the socket.",
-              "enum": [
-                "SOCK_STREAM",
-                "SOCK_DGRAM",
-                "SOCK_RAW",
-                "SOCK_RDM",
-                "SOCK_SEQPACKET"
-              ]
-            },
-            "socket_descriptor": {
-              "type": "integer",
-              "description": "Specifies the socket file descriptor value associated with the socket, as a non-negative integer."
-            },
-            "socket_handle": {
-              "type": "integer",
-              "description": "Specifies the handle or inode value associated with the socket."
-            }
-          }
-        },
-        "^tcp-ext$": {
-          "type": "object",
-          "description": "The TCP extension specifies a default extension for capturing network traffic properties specific to TCP.",
-          "properties": {
-            "src_flags_hex": {
-              "title": "src_flags_hex",
-              "$ref": "static/jsedit/common/hex.json",
-              "description": "Specifies the source TCP flags, as the union of all TCP flags observed between the start of the traffic (as defined by the start property) and the end of the traffic (as defined by the end property). "
-            },
-            "dst_flags_hex": {
-              "title": "dst_flags_hex",
-              "$ref": "static/jsedit/common/hex.json",
-              "description": "Specifies the destination TCP flags, as the union of all TCP flags observed between the start of the traffic (as defined by the start property) and the end of the traffic (as defined by the end property)."
-            }
-          }
-        }
-      },
-      "additionalProperties": {
-        "$ref": "static/jsedit/common/dictionary.json",
-        "description": "Custom file extension"
-      },
-      "description": "The Network Traffic Object defines the following extensions. In addition to these, producers MAY create their own. Extensions: http-ext, tcp-ext, icmp-ext, socket-ext"
+      "$ref": "#/definitions/network-traffic-extensions-dictionary",
+      "description": "The Network Traffic Object defines the following extensions. In addition to these, producers MAY create their own. Extensions: http-request-ext, tcp-ext, icmp-ext, socket-ext"
     },
     "start": {
-      "type": "string",
+      "$ref": "static/jsedit/common/timestamp.json",
       "description": "Specifies the date/time the network traffic was initiated, if known."
     },
     "end": {
-      "type": "string",
+      "$ref": "static/jsedit/common/timestamp.json",
       "description": "Specifies the date/time the network traffic ended, if known."
     },
     "is_active": {
       "type": "boolean",
       "enum": [
-        true,
-        false
+        false,
+        true
       ],
       "description": "Indicates whether the network traffic is still ongoing."
     },
     "src_ref": {
-      "type": "string",
-      "description": "Specifies the source of the network traffic, as a reference to one or more Observable Objects."
+      "description": "Specifies the source of the network traffic, as a reference to an Observable Object.",
+      "type": "string"
     },
     "dst_ref": {
-      "type": "string",
-      "description": "Specifies the destination of the network traffic, as a reference to one or more Observable Objects."
+      "description": "Specifies the destination of the network traffic, as a reference to an Observable Object.",
+      "type": "string"
     },
     "src_port": {
       "type": "integer",
@@ -233,10 +78,11 @@
       "description": "Specifies the number of packets sent destination to the source."
     },
     "ipfix": {
-      "type": "object",
+      "description": "Specifies any IP Flow Information Export (IPFIX) data for the traffic.",
+      "allOf": [{ "$ref": "static/jsedit/common/dictionary.json" }],
       "patternProperties": {
-        "^[a-zA-Z0-9_-]{3,256}$": {
-          "oneOf": [
+        "^[a-zA-Z0-9_-]{0,250}$": {
+          "anyOf": [
             {
               "type": "string"
             },
@@ -248,26 +94,206 @@
       }
     },
     "src_payload_ref": {
-      "type": "string",
-      "description": "Specifies the bytes sent from the source to the destination."
+      "description": "Specifies the bytes sent from the source to the destination.",
+      "type": "string"
     },
     "dst_payload_ref": {
-      "type": "string",
-      "description": "Specifies the bytes sent from the source to the destination."
+      "description": "Specifies the bytes sent from the source to the destination.",
+      "type": "string"
     },
     "encapsulates_refs": {
       "type": "array",
       "description": "Links to other network-traffic objects encapsulated by a network-traffic.",
       "items": {
         "type": "string"
-      }
+      },
+      "minItems": 1
     },
     "encapsulated_by_ref": {
-      "type": "string",
-      "description": "Links to another network-traffic object which encapsulates this object."
+      "description": "Links to another network-traffic object which encapsulates this object.",
+      "type": "string"
     }
   },
   "required": [
+    "type",
+    "id",
     "protocols"
-  ]
+  ],
+  "definitions": {
+    "network-traffic-extensions-dictionary": {
+      "allOf": [{ "$ref": "static/jsedit/common/dictionary.json" }],
+      "patternProperties": {
+        "^http-request-ext$": {
+          "type": "object",
+          "description": "The HTTP request extension specifies a default extension for capturing network traffic properties specific to HTTP requests.",
+          "allOf": [
+              {
+                  "properties": {
+                    "request_method": {
+                      "type" : "string",
+                      "description": "Specifies the HTTP method portion of the HTTP request line, as a lowercase string."
+                    },
+                    "request_value": {
+                      "type": "string",
+                      "description": "Specifies the value (typically a resource path) portion of the HTTP request line."
+                    },
+                    "request_version": {
+                      "type": "string",
+                      "description": "Specifies the HTTP version portion of the HTTP request line, as a lowercase string."
+                    },
+                    "request_header": {
+                      "allOf": [{ "$ref": "static/jsedit/common/dictionary.json" }],
+                      "description": "Specifies all of the HTTP header fields that may be found in the HTTP client request, as a dictionary.",
+                      "patternProperties": {
+                        "^.+$": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "message_body_length": {
+                      "type": "integer",
+                      "description": "Specifies the length of the HTTP message body, if included, in bytes."
+                    },
+                    "message_body_data_ref": {
+                      "description": "Specifies the data contained in the HTTP message body, if included.",
+                      "type": "string"
+                    }
+                  }
+              },
+              {
+                  "anyOf":[
+                      { "required": ["request_method"] },
+                      { "required": ["request_value"] }
+                  ]
+              }
+          ]
+        },
+        "^icmp-ext$": {
+          "type": "object",
+          "description": "The ICMP extension specifies a default extension for capturing network traffic properties specific to ICMP.",
+          "allOf": [
+              {
+                  "properties": {
+                    "icmp_type_hex": {
+                      "title": "icmp_type_hex",
+                      "$ref": "static/jsedit/common/hex.json",
+                      "description": "Specifies the ICMP type byte."
+                    },
+                    "icmp_code_hex": {
+                      "title": "icmp_code_hex",
+                      "$ref": "static/jsedit/common/hex.json",
+                      "description": "Specifies the ICMP code byte."
+                    }
+                  }
+              },
+              {
+                  "anyOf": [
+                      { "required": ["icmp_type_hex"] },
+                      { "required": ["icmp_code_hex"] }
+                  ]
+              }
+          ]
+        },
+        "^socket-ext$": {
+          "type": "object",
+          "description": "The Network Socket extension specifies a default extension for capturing network traffic properties associated with network sockets.",
+          "allOf": [
+              {
+                  "properties": {
+                    "address_family": {
+                      "type": "string",
+                      "description": "Specifies the address family (AF_*) that the socket is configured for.",
+                      "enum": [
+                        "AF_UNSPEC",
+                        "AF_INET",
+                        "AF_IPX",
+                        "AF_APPLETALK",
+                        "AF_NETBIOS",
+                        "AF_INET6",
+                        "AF_IRDA",
+                        "AF_BTH"
+                      ]
+                    },
+                    "is_blocking": {
+                      "type": "boolean",
+                      "description": "Specifies whether the socket is in blocking mode."
+                    },
+                    "is_listening": {
+                      "type": "boolean",
+                      "description": "Specifies whether the socket is in listening mode."
+                    },
+                    "options": {
+                      "title": "options",
+                      "allOf": [{ "$ref": "static/jsedit/common/dictionary.json" }],
+                      "description": "Specifies any options (SO_*) that may be used by the socket, as a dictionary.",
+                      "patternProperties": {
+                        "^(SO|ICMP|ICMP6|IP|IPV6|MCAST|TCP|IRLMP)(_[A-Z]+)+$": {
+                          "type": "integer"
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "socket_type": {
+                      "type": "string",
+                      "description": "Specifies the type of the socket.",
+                      "enum": [
+                        "SOCK_STREAM",
+                        "SOCK_DGRAM",
+                        "SOCK_RAW",
+                        "SOCK_RDM",
+                        "SOCK_SEQPACKET"
+                      ]
+                    },
+                    "socket_descriptor": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "Specifies the socket file descriptor value associated with the socket, as a non-negative integer."
+                    },
+                    "socket_handle": {
+                      "type": "integer",
+                      "description": "Specifies the handle or inode value associated with the socket."
+                    }
+                  }
+              },
+              {
+                  "anyOf": [
+                      { "required": ["address_family"] }
+                  ]
+              }
+          ]
+        },
+        "^tcp-ext$": {
+          "type": "object",
+          "description": "The TCP extension specifies a default extension for capturing network traffic properties specific to TCP.",
+          "allOf": [
+            {
+              "properties": {
+                "src_flags_hex": {
+                  "title": "src_flags_hex",
+                  "$ref": "static/jsedit/common/hex.json",
+                  "description": "Specifies the source TCP flags, as the union of all TCP flags observed between the start of the traffic (as defined by the start property) and the end of the traffic (as defined by the end property). "
+                },
+                "dst_flags_hex": {
+                  "title": "dst_flags_hex",
+                  "$ref": "static/jsedit/common/hex.json",
+                  "description": "Specifies the destination TCP flags, as the union of all TCP flags observed between the start of the traffic (as defined by the start property) and the end of the traffic (as defined by the end property)."
+                }
+              }
+            },
+            {
+              "anyOf": [
+                { "required": ["src_flags_hex"] },
+                { "required": ["dst_flags_hex"] }
+              ]
+            }
+          ]
+        }
+      },
+      "additionalProperties": {
+        "$ref": "static/jsedit/common/dictionary.json",
+        "description": "Custom file extension"
+      }
+    }
+  }
 }

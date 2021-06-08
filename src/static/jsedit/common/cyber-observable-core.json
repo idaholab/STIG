@@ -5,23 +5,71 @@
   "properties": {
     "type": {
       "type": "string",
-      "pattern": "^\\-?[a-z0-9]+(-[a-z0-9]+)*\\-?$",
+      "pattern": "^([a-z][a-z0-9]*)+(-[a-z0-9]+)*-?$",
       "minLength": 3,
-      "maxLength": 250,
-      "description": "Indicates that this object is an Observable Object. The value of this property MUST be a valid Observable Object type name, but to allow for custom objects this has been removed from the schema.",
-      "not": {
-        "enum": [
-          "action"
-        ]
+      "maxLength": 250
+    },
+    "id": {
+        "type": "string"
+    },
+    "spec_version": {
+      "type": "string",
+      "enum": [
+          "2.1",
+          "2.0"
+      ],
+      "description": "The version of the STIX specification used to represent this object."
+    },
+    "object_marking_refs": {
+      "type": "array",
+      "format": "table",
+      "uniqueItems": true,
+      "items": {
+          "type": "string"
+      },
+      "description": "The list of marking-definition objects to be applied to this object."
+    },
+    "granular_markings": {
+      "type": "array",
+      "format": "tabs",
+      "items": {
+          "title": "granular-marking",
+          "description": "The granular-marking type defines how the list of marking-definition objects referenced by the marking_refs property to apply to a set of content identified by the list of selectors in the selectors property.",
+          "type": "object",
+          "properties": {
+              "marking_ref": {
+                  "type": "string",
+                  "title": "identifier",
+                  "pattern": "^[a-z][a-z-]+[a-z]--[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+                  "description": "Represents identifiers across the CTI specifications. The format consists of the name of the top-level object being identified, followed by two dashes (--), followed by a UUIDv4."
+              },
+              "selectors": {
+                  "type": "array",
+                  "items": {
+                      "type": "string",
+                      "minItems": 1
+                  },
+                  "description": "A list of selectors for content contained within the STIX object in which this property appears."
+              }
+          },
+          "required": [
+              "selectors",
+              "marking_ref"
+          ]
       }
     },
-    "description": {
-      "type": "string",
-      "description": "Specifies a textual description of the Object."
+    "defanged": {
+      "title": "defanged",
+      "type": "boolean",
+      "description": "This property defines whether or not the data contained within the object has been defanged.",
+      "default": false,
+      "enum": [
+        true,
+        false
+      ]
     },
     "extensions": {
       "title": "extensions",
-      "description": "Specifies any extensions of the object, as a dictionary.",
       "type": "object",
       "patternProperties": {
         "^[a-zA-Z0-9_-]{3,256}$": {
@@ -52,6 +100,7 @@
   },
   "additionalProperties": false,
   "required": [
-    "type"
+    "type",
+    "id"
   ]
 }

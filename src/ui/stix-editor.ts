@@ -64,7 +64,7 @@ export class StixEditor {
             ajax: true,
             startval: to_inspect,
             required_by_default: false,
-            theme: "jqueryui",
+            theme: "bootstrap4",
             iconlib: "fontawesome4",
             refs: schema_map,
             schema: schema_map[`${file_name}.json`],

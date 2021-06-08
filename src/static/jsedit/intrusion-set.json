@@ -21,6 +21,7 @@
         },
         "description": {
             "type": "string",
+            "format": "textarea",
             "description": "Provides more context and details about the Intrusion Set object."
         },
         "aliases": {

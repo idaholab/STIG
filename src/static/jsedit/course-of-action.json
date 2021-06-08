@@ -7,9 +7,7 @@
         "type": {
             "type": "string",
             "description": "The type of this object, which MUST be the literal `course-of-action`.",
-            "enum": [
-                "course-of-action"
-            ]
+            "default": "course-of-action"
         },
         "id": {
             "type": "string",
@@ -23,12 +21,68 @@
         },
         "description": {
             "type": "string",
+            "format": "textarea",
             "description": "A description that provides more details and context about this object, potentially including its purpose and its key characteristics."
+        },
+        "action_type": {
+            "type": "string",
+            "description": "The type of action that is included in either the action_bin property or the dereferenced content from the action_reference property. This is an open vocabulary and values SHOULD come from the course-of-action-type-ov.",
+            "$ref": "#/definitions/course-of-action-type-ov"
+        },
+        "os_execution_envs": {
+            "type": "array",
+            "description": "A recommendation on the operating system(s) that this course of action can be applied to.",
+            "items": {
+                "type": "string"
+            },
+            "minItems": 1
+        },
+        "action_reference": {
+            "type": "object",
+            "description": "The value of this property MUST be a valid external reference that resolves to the action content as defined by the action_type property.",
+            "properties": {
+                "source_name": {
+                    "type": "string",
+                    "description": "The source within which the external-reference is defined (system, registry, organization, etc.)"
+                },
+                "external_id": {
+                    "type": "string",
+                    "description": "An identifier for the external reference content."
+                },
+                "url": {
+                    "type": "string",
+                    "title": "url",
+                    "pattern": "^(?:(?:https?|ftp)://)(?:\\S+(?::\\S*)?@)?(?:(?!(?:10|127)(?:\\.\\d{1,3}){3})(?!(?:169\\.254|192\\.168)(?:\\.\\d{1,3}){2})(?!172\\.(?:1[6-9]|2\\d|3[0-1])(?:\\.\\d{1,3}){2})(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}(?:\\.(?:[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\\.(?:[a-z\u00a1-\uffff]{2,}))\\.?)(?::\\d{2,5})?(?:[/?#]\\S*)?$",
+                    "description": "Matches the elements of a URL using a regular expression. Uses Diego Perini's regex from https://gist.github.com/dperini/729294."
+                },
+                "description": {
+                    "type": "string",
+                    "description": "A human readable description"
+                }
+            }
+        },
+        "action_bin": {
+            "type": "string",
+            "media": {
+            "binaryEncoding": "base64"
+            },
+            "description": "This property contains the base64 encoded 'commands' that represent the action for this Course of Action."
         }
     },
     "required": [
         "name",
         "type",
         "id"
-    ]
+    ],
+    "definitions": {
+        "course-of-action-type-ov": {
+            "type": "string",
+            "enum": [
+                "textual:text/plain",
+                "textual:text/html",
+                "textual:text/md",
+                "textual:pdf"
+            ]
+        }
+    }
 }

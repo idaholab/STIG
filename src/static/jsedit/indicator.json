@@ -15,16 +15,6 @@
             "pattern": "^indicator--",
             "default": "indicator--"
         },
-        "labels": {
-            "type": "array",
-            "title": "labels",
-            "description": "This field is an Open Vocabulary that specifies the type of indicator. Open vocab - indicator-label-ov",
-            "items": {
-                "type": "string",
-                "$ref": "#/definitions/indicator-label-ov"
-            },
-            "minItems": 1
-        },
         "name": {
             "type": "string",
             "description": "The name used to identify the Indicator."
@@ -34,10 +24,28 @@
             "description": "A description that provides the recipient with context about this Indicator potentially including its purpose and its key characteristics.",
             "format": "textarea"
         },
+        "indicator_types": {
+            "type": "array",
+            "description": "The values for this property SHOULD come from the indicator-type-ov open vocabulary.",
+            "items": {
+                "type": "string",
+                "$ref": "#/definitions/indicator-type-ov"
+            },
+            "minItems": 1
+        },
         "pattern": {
             "type": "string",
-            "description": "The detection pattern for this indicator. The default language is STIX Patterning.",
+            "description": "The detection pattern for this Indicator MAY be expressed as a STIX Pattern as specified in section 9 or another appropriate language such as SNORT, YARA, etc.",
             "format": "textarea"
+        },
+        "pattern_type": {
+            "type": "string",
+            "description": "The value for this property SHOULD come from the pattern-type-ov open vocabulary.",
+            "$ref": "#/definitions/pattern-type-ov"
+        },
+        "pattern_version": {
+            "type": "string",
+            "description": "The version of the pattern language that is used for the data in the pattern property which MUST match the type of pattern data included in the pattern property."
         },
         "valid_from": {
             "type": "string",
@@ -51,37 +59,20 @@
         },
         "kill_chain_phases": {
             "type": "array",
-            "items": {
-                "title": "kill-chain-phase",
-                "description": "The kill-chain-phase represents a phase in a kill chain.",
-                "type": "object",
-                "properties": {
-                    "kill_chain_name": {
-                        "type": "string",
-                        "description": "The name of the kill chain."
-                    },
-                    "phase_name": {
-                        "type": "string",
-                        "description": "The name of the phase in the kill chain."
-                    }
-                },
-                "required": [
-                    "kill_chain_name",
-                    "phase_name"
-                ]
-            }
+            "description": "The list of kill chain phases for which this indicator is used.",
+            "$ref": "static/jsedit/kill-chain-phase.json",
+            "minItems": 1
         }
     },
     "required": [
         "pattern",
-        "labels",
+        "pattern_type",
         "valid_from",
-        "name",
         "type",
         "id"
     ],
     "definitions": {
-        "indicator-label-ov": {
+        "indicator-type-ov": {
             "type": "string",
             "enum": [
                 "anomalous-activity",
@@ -89,7 +80,19 @@
                 "benign",
                 "compromised",
                 "malicious-activity",
-                "attribution"
+                "attribution",
+                "unknown"
+            ]
+        },
+        "pattern-type-ov": {
+            "type": "string",
+            "enum": [
+                "stix",
+                "pcre",
+                "sigma",
+                "snort",
+                "suricata",
+                "yara"
             ]
         }
     }

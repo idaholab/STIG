@@ -8,9 +8,7 @@
         "type": {
             "type": "string",
             "description": "The type of this object, which MUST be the literal `report`.",
-            "enum": [
-                "report"
-            ]
+            "default": "report"
         },
         "id": {
             "title": "id",
@@ -18,22 +16,23 @@
             "type": "string",
             "default": "report--"
         },
-        "labels": {
-            "type": "array",
-            "description": "This field is an Open Vocabulary that specifies the primary subject of this report. The suggested values for this field are in report-label-ov.",
-            "items": {
-                "type": "string",
-                "$ref": "#/definitions/report-label-ov"
-            },
-            "minItems": 1
-        },
         "name": {
             "type": "string",
             "description": "The name used to identify the Report."
         },
         "description": {
             "type": "string",
+            "format": "textarea",
             "description": "A description that provides more details and context about Report."
+        },
+        "report_types": {
+            "type": "array",
+            "description": "The values for this property SHOULD come from the report-type-ov open vocabulary.",
+            "items": {
+                "type": "string",
+                "$ref": "#/definitions/report-type-ov"
+            },
+            "minItems": 1
         },
         "published": {
             "type": "string",
@@ -43,24 +42,22 @@
             "type": "array",
             "description": "Specifies the STIX Objects that are referred to by this Report.",
             "items": {
-                "type": "string"
+                "$ref": "static/jsedit/common/identifier.json"
             },
             "minItems": 1
         }
     },
     "required": [
         "name",
-        "labels",
         "object_refs",
         "published",
         "type",
         "id"
     ],
     "definitions": {
-        "report-label-ov": {
+        "report-type-ov": {
             "type": "string",
             "enum": [
-                "threat-report",
                 "attack-pattern",
                 "campaign",
                 "identity",
@@ -68,6 +65,7 @@
                 "malware",
                 "observed-data",
                 "threat-actor",
+                "threat-report",
                 "tool",
                 "vulnerability"
             ]

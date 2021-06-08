@@ -2,7 +2,7 @@
 
 ALL RIGHTS RESERVED
  -->
- 
+
  <!doctype html>
 <html>
 
@@ -18,6 +18,7 @@ ALL RIGHTS RESERVED
     <link rel="stylesheet" href="../node_modules/normalize.css/normalize.css" type="text/css">
     <link rel="stylesheet" href="../node_modules/jquery-ui-themes/jquery-ui.css" type="text/css" />
     <link rel="stylesheet" href="../node_modules/jquery-ui-themes/themes/base/jquery-ui.min.css" type="text/css" />
+    <link rel="stylesheet" href="../node_modules/bootstrap-css-only/css/bootstrap.min.css" type="text/css" />
     <link href="../node_modules/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="static/index.css" type="text/css" />
     <script>
@@ -45,54 +46,127 @@ ALL RIGHTS RESERVED
     <span id="chosen-files" hidden="true"></span>
     <span id="current_node" hidden="true"></span>
     <div class="main-grid-container">
+        <div class="label">STIX Domain Objects (SDOs)</div>
+        <div class="label">STIX Cyber-observable Objects (SCOs)</div>
         <div class="icon-container content">
-            <div class="icon-box a"></div>
-            <div class="icon-box b">
-                <img name='asset' class="loadlater" src="static/img/stix2_asset_icon_v1.png" />
+            <div class="icon-box" data-tippy-content="Attack Pattern">
+                <img name='attack-pattern' alt='Attack Pattern' class="loadlater" src="static/img/FlatIcons/SDOs/attack-pattern-square-flat-300-dpi.png" />
             </div>
-            <div class="icon-box c">
-                <img name='attack-pattern' alt='Attack Pattern' class="loadlater" src="static/img/stix2_attack_pattern_icon_72dpi_v1.png" />
+            <div class="icon-box" data-tippy-content="Campaign">
+                <img id = "myButton" name='campaign' class="loadlater" src="static/img/FlatIcons/SDOs/campaign-square-flat-300-dpi.png" />
             </div>
-            <div class="icon-box d">
-                <img name='campaign' class="loadlater" src="static/img/stix2_campaign_icon_72dpi_v1.png" />
+            <div class="icon-box" data-tippy-content="Course of Action">
+                <img name='course-of-action' class="loadlater" src="static/img/FlatIcons/SDOs/coa-square-flat-300-dpi.png" />
             </div>
-            <div class="icon-box e">
-                <img name='course-of-action' class="loadlater" src="static/img/stix2_course_of_action_icon_72dpi_v1.png" />
+            <div class="icon-box" data-tippy-content="Grouping">
+                <img name='grouping' class="loadlater" src="static/img/FlatIcons/SDOs/grouping-square-flat-300-dpi.png" />
             </div>
-            <div class="icon-box f">
-                <img name='identity' class="loadlater" src="static/img/stix2_identity_icon_72dpi_v1.png" />
+            <div class="icon-box" data-tippy-content="Identity">
+                <img name='identity' class="loadlater" src="static/img/FlatIcons/SDOs/identity-square-flat-300-dpi.png" />
             </div>
-            <div class="icon-box g">
-                <img name='indicator' class="loadlater" src="static/img/stix2_indicator_icon_72dpi_v1.png" />
+            <div class="icon-box" data-tippy-content="Indicator">
+                <img name='indicator' class="loadlater" src="static/img/FlatIcons/SDOs/indicator-square-flat-300-dpi.png" />
             </div>
-            <div class="icon-box h">
-                <img name='infrastructure' class="loadlater" src="static/img/stix2_infrastructure_icon_72dpi_v1.png" />
+            <div class="icon-box" data-tippy-content="Infrastructure">
+                <img name='infrastructure' class="loadlater" src="static/img/FlatIcons/SDOs/infrastructure-square-flat-300-dpi.png" />
             </div>
-            <div class="icon-box i">
-                <img name='intrusion-set' class="loadlater" src="static/img/stix2_intrusion_set_icon_72dpi_v1.png" />
+            <div class="icon-box" data-tippy-content="Intrusion Set">
+                <img name='intrusion-set' class="loadlater" src="static/img/FlatIcons/SDOs/intrusion-set-square-flat-300-dpi.png" />
             </div>
-            <div class="icon-box j">
-                <img name='malware' class="loadlater" src="static/img/stix2_malware_icon_72dpi_v1.png" />
+            <div class="icon-box" data-tippy-content="Language Content">
+                <img name='language-content' class="loadlater" src="static/img/FlatIcons/SDOs/language-square-flat-300-dpi.png" />
             </div>
-            <div class="icon-box k">
+            <div class="icon-box" data-tippy-content="Location">
+                <img name='location' class="loadlater" src="static/img/FlatIcons/SDOs/location-square-flat-300-dpi.png" />
+            </div>
+            <div class="icon-box" data-tippy-content="Malware">
+                <img name='malware' class="loadlater" src="static/img/FlatIcons/SDOs/malware-square-flat-300-dpi.png" />
+            </div>
+            <div class="icon-box" data-tippy-content="Malware Analysis">
+                <img name='malware-analysis' class="loadlater" src="static/img/FlatIcons/SDOs/malware-analysis-square-flat-300-dpi.png" />
+            </div>
+            <div class="icon-box" data-tippy-content="Marking Definition">
                 <img name='marking-definition' class="loadlater" src="static/img/stix2_object_marking_icon_v1.png">
             </div>
-            <div class="icon-box l">
-                <img name='observed-data' class="loadlater" src="static/img/stix2_observed_data_icon_72dpi_v1.png">
+            <div class="icon-box" data-tippy-content="Note">
+                <img name='note' class="loadlater" src="static/img/FlatIcons/SDOs/note-square-flat-300-dpi.png" />
             </div>
-            <div class="icon-box m">
-                <img name='report' class="loadlater" src="static/img/stix2_report_icon_72dpi_v1.png" />
+            <div class="icon-box" data-tippy-content="Observed Data">
+                <img name='observed-data' class="loadlater" src="static/img/FlatIcons/SDOs/observed-data-square-flat-300-dpi.png">
             </div>
-            <div class="icon-box n">
-                <img name='threat-actor' class="loadlater" src="static/img/stix2_threat_actor_icon_72dpi_v1.png" />
+            <div class="icon-box" data-tippy-content="Opinion">
+                <img name='opinion' class="loadlater" src="static/img/FlatIcons/SDOs/opinion-square-flat-300-dpi.png" />
             </div>
-            <div class="icon-box o">
-                <img name='tool' class="loadlater" src="static/img/stix2_tool_icon_72dpi_v1.png" />
+            <div class="icon-box" data-tippy-content="Report">
+                <img name='report' class="loadlater" src="static/img/FlatIcons/SDOs/report-square-flat-300-dpi.png" />
             </div>
-            <div class="icon-box p">
-                <img name='vulnerability' class="loadlater" src="static/img/stix2_vulnerability_icon_72dpi_v1.png" />
+            <div class="icon-box" data-tippy-content="Threat Actor">
+                <img name='threat-actor' class="loadlater" src="static/img/FlatIcons/SDOs/threat-actor-square-flat-300-dpi.png" />
             </div>
-            <div class="icon-box q"></div>
+            <div class="icon-box" data-tippy-content="Tool">
+                <img name='tool' class="loadlater" src="static/img/FlatIcons/SDOs/tool-square-flat-300-dpi.png" />
+            </div>
+            <div class="icon-box" data-tippy-content="Vulnerability">
+                <img name='vulnerability' class="loadlater" src="static/img/FlatIcons/SDOs/vulnerability-square-flat-300-dpi.png" />
+            </div>
+
+            </div>
+            <div class="sco-icon-container content">
+
+                <div class="icon-box sco" data-tippy-content="Artifact">
+                    <img name='artifact' class="loadlater" src="static/img/FlatIcons/INL/20-50360_r1_Object-Artifact-Square.png" />
+                </div>
+                <div class="icon-box sco" data-tippy-content="Autonomous System">
+                    <img name='autonomous-system' class="loadlater" src="static/img/FlatIcons/SCOs/autonomous-system-square-flat-300-dpi.png" />
+                </div>
+                <div class="icon-box sco" data-tippy-content="Directory">
+                    <img name='directory' class="loadlater" src="static/img/FlatIcons/INL/20-50360_r1_Object-Directory-Square.png" />
+                </div>
+                <div class="icon-box sco" data-tippy-content="Domain Name">
+                    <img name='domain-name' class="loadlater" src="static/img/FlatIcons/SCOs/domain-name-square-flat-300-dpi.png" />
+                </div>
+                <div class="icon-box sco" data-tippy-content="Email Address">
+                    <img name='email-addr' class="loadlater" src="static/img/FlatIcons/SCOs/email-addr-square-flat-300-dpi.png" />
+                </div>
+                <div class="icon-box sco" data-tippy-content="Email Message">
+                    <img name='email-message' class="loadlater" src="static/img/FlatIcons/SCOs/email-msg-square-flat-300-dpi.png" />
+                </div>
+                <div class="icon-box sco" data-tippy-content="File">
+                    <img name='file' class="loadlater" src="static/img/FlatIcons/INL/20-50360_r1_Object-File-Square.png" />
+                </div>
+                <div class="icon-box sco" data-tippy-content="IPv4 Address">
+                    <img name='ipv4-addr' class="loadlater" src="static/img/FlatIcons/SCOs/ipv4-addr-square-flat-300-dpi.png" />
+                </div>
+                <div class="icon-box sco" data-tippy-content="IPv6 Address">
+                    <img name='ipv6-addr' class="loadlater" src="static/img/FlatIcons/SCOs/ipv6-addr-square-flat-300-dpi.png" />
+                </div>
+                <div class="icon-box sco" data-tippy-content="MAC Address">
+                    <img name='mac-addr' class="loadlater" src="static/img/FlatIcons/SCOs/mac-addr-square-flat-300-dpi.png" />
+                </div>
+                <div class="icon-box sco" data-tippy-content="Mutex">
+                    <img name='mutex' class="loadlater" src="static/img/FlatIcons/INL/20-50360_r1_Object-Mutex-Square.png" />
+                </div>
+                <div class="icon-box sco" data-tippy-content="Network Traffic">
+                    <img name='network-traffic' class="loadlater" src="static/img/FlatIcons/SCOs/network-traffic-square-flat-300-dpi.png" />
+                </div>
+                <div class="icon-box sco" data-tippy-content="Process">
+                    <img name='process' class="loadlater" src="static/img/FlatIcons/INL/20-50360_r1_Object-Process-Square.png" />
+                </div>
+                <div class="icon-box sco" data-tippy-content="Software">
+                    <img name='software' class="loadlater" src="static/img/FlatIcons/INL/20-50360_r1_Object-Software-Square.png" />
+                </div>
+                <div class="icon-box sco" data-tippy-content="URL">
+                    <img name='url' class="loadlater" src="static/img/FlatIcons/INL/20-50360_r1_Object-URL-Square.png" />
+                </div>
+                <div class="icon-box sco" data-tippy-content="User Account">
+                    <img name='user-account' class="loadlater" src="static/img/FlatIcons/SCOs/user-account-square-flat-300-dpi.png" />
+                </div>
+                <div class="icon-box sco" data-tippy-content="Windows Registry Key">
+                    <img name='windows-registry-key' class="loadlater" src="static/img/FlatIcons/INL/20-50360_r1_Object-WindowsRegistryKey-Square.png" />
+                </div>
+                <div class="icon-box sco" data-tippy-content="X.509 Certificate">
+                    <img name='x509-certificate' class="loadlater" src="static/img/FlatIcons/INL/20-50360_r1_Object-X509Certificate-Square.png" />
+            </div>
         </div>
 
         <div id="split_content" class="split-content ">
@@ -103,9 +177,9 @@ ALL RIGHTS RESERVED
                 <div id='metawidget' class="jsedit"></div>
                 <div id="commit-button" class="button-commit">
                     <button type="button" title="Commit" class="ui-button ui-widget ui-state-default ui-corner-all btn-commit" disabled=true>
-                            <i class="fa fa-download"></i> Commit Object to DB</button>
+                            <i class="fa fa-download"></i> Commit to DB</button>
                     <button type="button" title="Export" class="ui-button ui-widget ui-state-default ui-corner-all" id="btn-export-single">
-                            <i class="fa fa-download"></i> Save Object as JSON</button>
+                            <i class="fa fa-download"></i> Save as JSON...</button>
                 </div>
             </div>
         </div>
@@ -114,7 +188,7 @@ ALL RIGHTS RESERVED
                 Search Graph:
                 <textarea id="toSearch" class="textarea"></textarea>
                 <button type="button" id="btn-graph-search" class="ui-button ui-widget ui-state-default ui-corner-all"><span class="ui-button-text">Search Graph</span></button>
-                <span id="search-status" class="search-status panel">No results</span>                
+                <span id="search-status" class="search-status panel">No results</span>
             </div>
             <div class="mbox database-search-input mbox">
                 Query Database:
@@ -133,7 +207,7 @@ ALL RIGHTS RESERVED
                 <button type="button" title="Diff" class="ui-button ui-state-default ui-corner-all" id="btn-diff">
                         <i class="ui ui-icon-transfer-e-w"></i>Diff</button>
                 <button type="button" title="Export" class="ui-button ui-widget ui-state-default ui-corner-all" id="btn-export-bundle">
-                        <i class="fa fa-download"></i> Save JSON Bundle</button>
+                        <i class="fa fa-download"></i> JSON Bundle</button>
             </div>
             <div class="message-status panel">
             <span id="message-status" ></span>
@@ -148,6 +222,13 @@ ALL RIGHTS RESERVED
     <div id="history-list"></div>
     <div id="diff-list"></div>
     <div id="error-list"></div>
+    <script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js"></script>
+    <script src="https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.js"></script>
+    <script>
+        tippy('[data-tippy-content]', {
+            theme: 'light',
+        });
+    </script>
 </body>
 <script>
     var main = require("./main.ts");

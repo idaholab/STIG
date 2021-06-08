@@ -41,38 +41,38 @@ export async function setHandlers() {
 
         async function saveVertex(stix_obj: StixObject) {
             await db.updateDB(stix_obj)
-            .then((result) => {
-                results.push(...result);
-            })
-            .catch((e) => {
-                // tslint:disable-next-line:no-console
-                console.error(e);
-            });
-        }
-
-        to_save.forEach(async (ele: NodeSingular, _i: number, _eles: CollectionReturnValue) => {
-            const stix_obj = ele.data('raw_data');
-            if (stix_obj === undefined) { 
-                numObjects--;
-                return; 
+                .then((result) => {
+                    results.push(...result);
+                })
+                .catch((e) => {
+                    // tslint:disable-next-line:no-console
+                    console.error(e);
+                });
             }
-            if (stix_obj['type'] === 'relationship') {
-                // save edges for after all the nodes are done
-                edges.push(stix_obj);
+    
+            to_save.forEach(async (ele: NodeSingular, _i: number, _eles: CollectionReturnValue) => {
+                const stix_obj = ele.data('raw_data');
+                if (stix_obj === undefined) { 
+                    numObjects--;
+                    return; 
+                }
+                if (stix_obj['type'] === 'relationship') {
+                    // save edges for after all the nodes are done
+                    edges.push(stix_obj);
+                    itemsProcessed++;
+                    return;
+                }
+    
+                await saveVertex(stix_obj);
+    
                 itemsProcessed++;
-                return;
-            }
-
-            await saveVertex(stix_obj);
-
-            itemsProcessed++;
-            //wait for all vertex to step through before saving edges
-            if (itemsProcessed === numObjects){
-                 saveEdges(edges);
-                 $('.message-status').html(`Committed ${numObjects} objects to the database.`);
-            }
-        });
-
+                //wait for all vertex to step through before saving edges
+                if (itemsProcessed === numObjects){
+                     saveEdges(edges);
+                     $('.message-status').html(`Committed ${numObjects} objects to the database.`);
+                }
+            });
+    
     });
 
     ipcRenderer.on("invert_selected", () => {
@@ -105,7 +105,7 @@ export async function setHandlers() {
     });
 
     ipcRenderer.on("export_all", async () => {
-        
+
         const bundle_id = 'bundle--' + uuid.v4();
         const bundle = { type: 'bundle', id: bundle_id, objects: [] } as BundleType;
         let nodes = window.cycore.$(':visible');
@@ -118,8 +118,8 @@ export async function setHandlers() {
             if(ele.data('raw_data')!==undefined){
                 bundle.objects.push(ele.data('raw_data'));
             }
-        });
-
+            });
+            
         // Convert to JSON and save
         const jsonToSave = JSON.stringify(bundle);
         const jsonBundleSave = new Blob([jsonToSave], { type: "application/json" });
@@ -139,24 +139,3 @@ export async function setHandlers() {
         newDatabaseConfiguration();
     });
 }
-// export function saveFile(CollectionReturnValue node){
-//     const bundle_id = 'bundle--' + uuid.v4();
-//     const bundle = { type: 'bundle', id: bundle_id, objects: [] } as BundleType;
-//     let nodesToSave = node;
-//     nodesToSave = nodesToSave.union(nodesToSave.connectedEdges());
-//     nodesToSave.each((ele) => {
-//         if (ele.length === 0) {
-//             return;
-//         }
-//         //logic to remove null on json export
-//         if(ele.data('raw_data')!==undefined){
-//             bundle.objects.push(ele.data('raw_data'));
-//         }
-//     });
-
-//     // Convert to JSON and save
-//     const jsonToSave = JSON.stringify(bundle);
-//     const jsonBundleSave = new Blob([jsonToSave], { type: "application/json" });
-//     fileSaver.saveAs(jsonBundleSave, "bundle.json");
-//     $('.message-status').html(`Exported ${bundle.objects.length} objects`);
-// }

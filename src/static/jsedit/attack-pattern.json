@@ -1,6 +1,8 @@
 {
     "title": "Attack Pattern",
     "$ref": "static/jsedit/core.json",
+    "type": "object",
+    "description": "Attack Patterns are a type of TTP that describe ways that adversaries attempt to compromise targets.",
     "properties": {
         "id": {
             "type": "string",
@@ -20,8 +22,19 @@
             "format": "textarea",
             "description": "A description that provides more details and context about the Attack Pattern, potentially including its purpose and its key characteristics."
         },
+        "aliases": {
+            "type": "array",
+            "description": "Alternative names used to identify this mattack pattern.",
+            "items": {
+                "type": "string"
+            },
+            "minItems": 1
+        },
         "kill_chain_phases": {
-            "$ref": "static/jsedit/kill-chain-phase.json"
+            "type": "array",
+            "description": "The list of kill chain phases for which this attack pattern is used.",
+            "$ref": "static/jsedit/kill-chain-phase.json",
+            "minItems": 1
         }
     },
     "required": [
