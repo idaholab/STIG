@@ -1,4 +1,4 @@
-This utility uses Oython ^3.7
+This utility uses Python ^3.7
 
 I recommend using a virtual environment. A poetry project file is available.
 

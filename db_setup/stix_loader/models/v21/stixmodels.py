@@ -1022,7 +1022,55 @@ class Impersonates(Relationships):
 if __name__ == '__main__':
     from pyorient.ogm import Graph, Config
 
-    
+    asset = {
+        "id_": "asset--8210e4a9-7e8d-4a23-8978-2308a611aaaa",
+        "type": "asset",
+        "name": "Modicon Quantum PLC",
+        "description": "A PLC made by Schneider Electric",
+        "category": "Network",
+        "kind_of_asset": "PLC",
+        "category_ext": ["Operational Technology"],
+        "compromised": False,
+        "owner_aware": False,
+        "technical_characteristics": [
+            {
+                "field": "ipv4-addr:value",
+                "data": "192.168.140.100"
+            },
+            {
+                "field": "mac-addr:value",
+                "data": "00.00.54.20.27.89"
+            },
+            {
+                "field": "network-traffic:protocols[*]",
+                "data": "Modbus"
+            },
+            {
+                "field": "Firmware Version",
+                "data": "Version here"
+            },
+            {
+                "field": "Manufacturer",
+                "data": "schneider"
+            },
+            {
+                "field": "Model",
+                "data": "modicon"
+            },
+            {
+                "field": "OS",
+                "data": "VxWorks"
+            },
+            {
+                "field": "OS Version",
+                "data": "version number"
+            }
+        ],
+        "created": "2017-03-13T14:02:10.000Z",
+        "modified": "2017-03-13T14:02:10.000Z",
+        "labels": ["infrastructure"]
+    }
+    # with monkeytype.trace():
 
     config = Config(host="127.0.0.1", user="root", db_name="test_embedded", storage="plocal", cred="OrientPW",
                     port=2424, initial_drop=True)

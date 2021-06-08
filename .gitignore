@@ -1,4 +1,5 @@
 .idea
+*.pyc
 build
 node_modules
 .bowerrc
