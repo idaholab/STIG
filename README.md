@@ -6,7 +6,7 @@
 
 See the [STIG Innovation Sheet](18-179_STIG_Innovation_Sheet.pdf) for an overview.
 
-For installation and usage instructions, see our documentation.
+For installation and usage instructions, see our [documentation](https://stig.readthedocs.io/en/latest/).
 
 The STIX version 2 specification can be found at **<http://docs.oasis-open.org/cti/stix/v2.0/stix-v2.0-part1-stix-core.html>**.
 An introduction and walk through of STIX can be found at **<https://oasis-open.github.io/cti-documentation/stix/intro.html>**, and **<https://oasis-open.github.io/cti-documentation/stix/walkthrough.html>**.
