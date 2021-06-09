@@ -1,5 +1,7 @@
 ## Queries to use with STIG
 <!-- These queries only work if there is a database with the information saved inside -->
+Depending on when your database was built, queries that include a dash '-' might work or might not.  
+ie: attack-pattern vs attackpattern.
 
 ### Selecting Malware by Name
 `select from malware where name.toLowerCase() like '%blackcoffee%'`
