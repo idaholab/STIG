@@ -581,12 +581,8 @@ export class StigDB {
         // Must distiguish this somehow for the user...
         // Remove from current graph versus delete from database
         //
-        const q = 'DELETE VERTEX FROM (SELECT fom V where id_= :id)';
-        const options: QueryOptions = {
-            params: {
-                id: sdo.id,
-            },
-        };
+        const q = `DELETE VERTEX FROM (SELECT FROM V where id_="${sdo.id}")`;
+        const options: QueryOptions = {};
         let result: StixObject[];
         try {
             result = await this.OJSQuery(q, options);
