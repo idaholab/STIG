@@ -21,11 +21,17 @@ export function setup_ctx_menu(cy: cytoscape.Core, db: StigDB, view_util: any) {
     const graph_utils = new GraphUtils(cy, db);
     cy.cxtmenu({
         selector: 'node',
-        commands: [{
+        commands: [
+        {
             content: '<span class="fa fa-trash-o fa-2x"></span>',
-            select: (ele: cytoscape.CollectionElements) => {
-                // console.log(ele.id());
+            select: async (ele: cytoscape.CollectionElements) => {
                 cy.remove(ele);
+                try {
+                    const resp = await db.sdoDestroyedUI(ele.data("raw_data"));
+
+                } catch (e) {
+                    // probably want to indicate that it wasnt deleted from db
+                }
             },
         },
         {
