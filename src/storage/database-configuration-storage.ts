@@ -36,7 +36,7 @@ export class DatabaseConfigurationStorage {
     private store: ElectronStore<IDatabaseConfigurationStorageStructure>;
     private constructor() {
         this.store = new ElectronStore<IDatabaseConfigurationStorageStructure>({ name: "stig/db_config" });
-        if (!this.store.has("configs")) {
+        if (!this.store.has("configs") || (Object.keys(this.store.get("configs")).length === 0)) {
             this.create_default();
         }
     }
