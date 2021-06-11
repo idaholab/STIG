@@ -64,12 +64,12 @@ export class StixCore implements Core {
 
 export type ExternalReference = ({
   /**
- * The source within which the external-reference is defined (system, registry, organization, etc.)
- */
+   * The source within which the external-reference is defined (system, registry, organization, etc.)
+   */
   source_name: string;
   /**
- * An identifier for the external reference content.
- */
+   * An identifier for the external reference content.
+   */
   external_id: string;
   [k: string]: any;
 } | {
