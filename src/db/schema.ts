@@ -34,27 +34,20 @@ export const schema: ISchemaFile = {
                 { name: "lang", type: "String", collate: "default"},
                 { name: "revoked", type: "Boolean", mandatory: true, notNull: true, collate: "default", default: "False" },
                 { name: "external_references", type: "EmbeddedList", collate: "default" },
-                { name: "granular_markings", type: "EmbeddedList", collate: "default" },
-                { name: "extensions", type: "EmbeddedMap", collate: "default" },
+                { name: "granular_markings", type: "EmbeddedList", collate: "default" }
             ],
         },
         {
-            name: "observable-core",
+            name: "cyber-observable-core",
             superClasses: ["V"],
             properties: [
                 { name: "id_", type: "String", mandatory: true, notNull: true, collate: "default" },
                 { name: "type", type: "String", mandatory: true, notNull: true, collate: "default" },
-                { name: "created", type: "DateTime", mandatory: true, notNull: true, collate: "default" },
-                { name: "modified", type: "DateTime", mandatory: true, notNull: true, collate: "default" },
-                { name: "created_by_ref", type: "String", collate: "default" },
-                { name: "confidence", type: "Integer", collate: "default" },
+                { name: "spec_version", type: "String", collate: "default", default: "2.1" },
                 { name: "object_marking_refs", type: "EmbeddedList", collate: "default" },
-                { name: "labels", type: "EmbeddedList", collate: "default" },
-                { name: "lang", type: "String", collate: "default"},
-                { name: "revoked", type: "Boolean", mandatory: true, notNull: true, collate: "default", default: "False" },
-                { name: "external_references", type: "EmbeddedList", collate: "default" },
                 { name: "granular_markings", type: "EmbeddedList", collate: "default" },
                 { name: "extensions", type: "EmbeddedMap", collate: "default" },
+                { name: "defanged", type: "Boolean", collate: "default", default: "False" },
             ],
         },
         {
@@ -63,14 +56,21 @@ export const schema: ISchemaFile = {
             properties: [
                 { name: "id_", type: "String", mandatory: true, notNull: true, collate: "default" },
                 { name: "type", type: "String", mandatory: true, notNull: true, collate: "default" },
+                { name: "spec_version", type: "String", mandatory: true, notNull: true, collate: "default" },
                 { name: "created", type: "DateTime", mandatory: true, notNull: true, collate: "default" },
                 { name: "modified", type: "DateTime", mandatory: true, notNull: true, collate: "default" },
                 { name: "created_by_ref", type: "String", collate: "default" },
                 { name: "external_references", type: "EmbeddedList", collate: "default" },
                 { name: "relationship_type", type: "String", mandatory: true, notNull: true, collate: "default" },
                 { name: "revoked", type: "Boolean", mandatory: true, notNull: true, collate: "default", default: "False" },
+                { name: "labels", type: "EmbeddedList", collate: "default" },
+                { name: "confidence", type: "Integer", collate: "default" },
+                { name: "lang", type: "String", collate: "default"},
+                { name: "object_marking_refs", type: "EmbeddedList", collate: "default" },
                 { name: "source_ref", type: "String", mandatory: true, notNull: true, collate: "default" },
                 { name: "target_ref", type: "String", mandatory: true, notNull: true, collate: "default" },
+                { name: "granular_markings", type: "EmbeddedList", collate: "default" }
+
             ],
         },
         {
