@@ -115,6 +115,7 @@ class DatabaseConfigDialog {
         this.useConfig = $( "#db-config-list input:checked" ).val() as string;
         this._storage.current = this.useConfig;
         ipcRenderer.send('useDatabase', this._storage.get(this.useConfig));
+        //add progress bar here tied to
         this._anchor.dialog("close");
     }
 

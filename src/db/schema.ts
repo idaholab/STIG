@@ -147,7 +147,7 @@ export const schema: ISchemaFile = {
         },
         {
             name: "artifact",
-            superClasses: ["cyber-observable-core"],
+            superClasses: ["cyberobservablecore"],
             properties: [
                 { name: "mime_type", type: "String", collate: "default" },
                 { name: "payload_bin", type: "Binary", collate: "default" },
@@ -175,7 +175,6 @@ export const schema: ISchemaFile = {
             name: "attack-pattern",
             superClasses: ["core"],
             properties: [
-                { name: "external_references", type: "EmbeddedList", collate: "default" },
                 { name: "name", type: "String", mandatory: true, notNull: true, collate: "default" },
                 { name: "description", type: "String", collate: "default" },
                 { name: "aliases", type: "EmbeddedList", collate: "default" },
@@ -190,7 +189,7 @@ export const schema: ISchemaFile = {
         },
         {
             name: "autonomous-system",
-            superClasses: ["cyber-observable-core"],
+            superClasses: ["cyberobservablecore"],
             properties: [
                 { name: "number", type: "Integer", mandatory: true, notNull: true, collate: "default"},
                 { name: "name", type: "String", collate: "default" },
@@ -272,7 +271,7 @@ export const schema: ISchemaFile = {
         },
         {
             name: "directory",
-            superClasses: ["cyber-observable-core"],
+            superClasses: ["cyberobservablecore"],
             properties: [
                 { name: "path", type: "String",  mandatory: true, notNull: true, collate: "default" },
                 { name: "path_enc", type: "String", collate: "default" },
@@ -284,7 +283,7 @@ export const schema: ISchemaFile = {
         },
         {
             name: "domain-name",
-            superClasses: ["cyber-observable-core"],
+            superClasses: ["cyberobservablecore"],
             properties: [
                 { name: "value", type: "String", mandatory: true, notNull: true, collate: "default" },
                 { name: "resolves_to_refs", type: "EmbeddedList", collate: "default" },
@@ -310,7 +309,7 @@ export const schema: ISchemaFile = {
         },
         {
             name: "email-addr",
-            superClasses: ["cyber-observable-core"],
+            superClasses: ["cyberobservablecore"],
             properties: [
                 { name: "value", type: "String", mandatory: true, notNull: true, collate: "default" },
                 { name: "display_name", type: "String", collate: "default" },
@@ -319,7 +318,7 @@ export const schema: ISchemaFile = {
         },
         {
             name: "email-message",
-            superClasses: ["cyber-observable-core"],
+            superClasses: ["cyberobservablecore"],
             properties: [
                 { name: "is_multipart", type: "Boolean", mandatory: true, notNull:true , collate: "default" },
                 { name: "date", type: "DateTime", collate: "default" },
@@ -352,7 +351,7 @@ export const schema: ISchemaFile = {
         },
         {
             name: "file",
-            superClasses: ["cyber-observable-core"],
+            superClasses: ["cyberobservablecore"],
             properties: [
                 { name: "hashes", type: "EmbeddedMap", collate: "default" },
                 { name: "size", type: "Integer", collate: "default" },
@@ -465,7 +464,7 @@ export const schema: ISchemaFile = {
         },
         {
             name: "ipv4-addr",
-            superClasses: ["cyber-observable-core"],
+            superClasses: ["cyberobservablecore"],
             properties: [
                 { name: "value", type: "String", mandatory: true, notNull: true, collate: "default" },
                 { name: "resolves_to_refs", type: "EmbeddedList", collate: "default" },
@@ -474,7 +473,7 @@ export const schema: ISchemaFile = {
         },
         {
             name: "ipv6-addr",
-            superClasses: ["cyber-observable-core"],
+            superClasses: ["cyberobservablecore"],
             properties: [
                 { name: "value", type: "String", mandatory: true, notNull: true, collate: "default" },
                 { name: "resolves_to_refs", type: "EmbeddedList", collate: "default" },
@@ -483,7 +482,7 @@ export const schema: ISchemaFile = {
         },
         {
             name: "language-content",
-            superClasses: ["language-meta-core"],
+            superClasses: ["languagemetacore"],
             properties: [
                 { name: "object_ref", type: "String", mandatory: true , notNull: true, collate: "default"},
                 { name: "object_modified", type: "DateTime", collate: "default"},
@@ -509,7 +508,7 @@ export const schema: ISchemaFile = {
         },
         {
             name: "mac-addr",
-            superClasses: ["cyber-observable-core"],
+            superClasses: ["cyberobservablecore"],
             properties: [
                 { name: "value", type: "String", mandatory: true, notNull: true, collate: "default" }
             ],
@@ -558,7 +557,7 @@ export const schema: ISchemaFile = {
         },
         {
             name: "marking-definition",
-            superClasses: ["marking-meta-core"],
+            superClasses: ["markingmetacore"],
             properties: [
                 { name: "name", type: "String", collate: "default" },
                 { name: "definition_type", type: "String", mandatory: true, notNull: true , collate: "default" },
@@ -573,14 +572,14 @@ export const schema: ISchemaFile = {
         },
         {
             name: "mutex",
-            superClasses: ["cyber-observable-core"],
+            superClasses: ["cyberobservablecore"],
             properties: [
                 { name: "name", type: "String", mandatory: true, notNull: true, collate: "default" }
             ],
         },
         {
             name: "network-traffic",
-            superClasses: ["cyber-observable-core"],
+            superClasses: ["cyberobservablecore"],
             properties: [
                 { name: "start", type: "DateTime", collate: "default" },
                 { name: "end", type: "DateTime", collate: "default" },
@@ -645,7 +644,7 @@ export const schema: ISchemaFile = {
         },
         {
             name: "process",
-            superClasses: ["cyber-observable-core"],
+            superClasses: ["cyberobservablecore"],
             properties: [
                 { name: "is_hidden", type: "Boolean", collate: "default" },
                 { name: "pid", type: "Integer", collate: "default" },
@@ -680,7 +679,7 @@ export const schema: ISchemaFile = {
         },
         {
             name: "software",
-            superClasses: ["cyber-observable-core"],
+            superClasses: ["cyberobservablecore"],
             properties: [
                 { name: "name", type: "String", mandatory: true, notNull: true, collate: "default"},
                 { name: "cpe", type: "String", collate: "default" },
@@ -734,14 +733,14 @@ export const schema: ISchemaFile = {
         },
         {
             name: "url",
-            superClasses: ["cyber-observable-core"],
+            superClasses: ["cyberobservablecore"],
             properties: [
                 { name: "value", type: "String", mandatory: true, notNull: true, collate: "default" }
             ],
         },
         {
             name: "user-account",
-            superClasses: ["cyber-observable-core"],
+            superClasses: ["cyberobservablecore"],
             properties: [
                 { name: "user_id", type: "String", collate: "default" },
                 { name: "credential", type: "String", collate: "default" },
@@ -775,14 +774,13 @@ export const schema: ISchemaFile = {
             name: "vulnerability",
             superClasses: ["core"],
             properties: [
-                { name: "external_references", type: "EmbeddedList", collate: "default" },
                 { name: "name", type: "String", mandatory: true, notNull: true, collate: "default" },
                 { name: "description", type: "String", collate: "default" },
             ],
         },
         {
             name: "windows-registry-key",
-            superClasses: ["cyber-observable-core"],
+            superClasses: ["cyberobservablecore"],
             properties: [
                 { name: "key", type: "String", collate: "default" },
                 { name: "values", type: "EmbeddedList", collate: "default" },
@@ -793,7 +791,7 @@ export const schema: ISchemaFile = {
         },
         {
             name: "x509-certificate",
-            superClasses: ["cyber-observable-core"],
+            superClasses: ["cyberobservablecore"],
             properties: [
                 { name: "is_self_signed", type: "Boolean", collate: "default" },
                 { name: "hashes", type: "EmbeddedMap", collate: "default" },
