@@ -553,18 +553,22 @@ export class main {
                 e.preventDefault();
                 e.stopPropagation();
                 let result: StixObject[];
+                let ourres = '';
                 try {
                     const formdata: StixObject = editor.editor.getValue();
-                    db.updateDB(formdata).then((r) => { result = r; });
+                    db.updateDB(formdata).then((r) => { 
+                        result = r; 
+                        // ourres = result[0]['type'];
+                    });
                 } catch (e) {
                     console.error('Error saving to database:');
                     console.error(e);
                     throw e;
                 }
                 $('button.btn-commit').button('option', 'disabled', true);
-                $('.message-status').html(`Committed: ${JSON.stringify(result)}`);
+                $('.message-status').html(`Committed 1 object to the database.`);
             });
-
+    
             /***********************************************************************************
             *
             *  Widget Bar Code
