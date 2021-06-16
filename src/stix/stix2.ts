@@ -9,6 +9,7 @@ import * as uuid from 'uuid';
 export interface BundleType {
   type: 'bundle' | 'Bundle';
   objects: Core[];
+  metadata?: Core[];
 }
 
 export type SDO = Asset | AttackPattern | Campaign | CourseOfAction | Identity | Indicator | IntrusionSet | Malware | ObservedData | Report | ThreatActor | Tool | Vulnerability;
