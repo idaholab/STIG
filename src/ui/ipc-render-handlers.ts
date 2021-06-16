@@ -15,6 +15,13 @@ import { newDatabaseConfiguration } from './new-database-widget';
 import * as fileSaver from 'file-saver';
 import * as uuid from 'uuid';
 
+const getNodeMetadata = (nodes) => {
+    return nodes.map(obj => ({
+        id: obj.id(),
+        position: obj.position(),
+    }))
+}
+
 export async function setHandlers() {
     ipcRenderer.on("commit_all", () => {
         const db = new StigDB(DatabaseConfigurationStorage.Instance.current);
@@ -119,7 +126,8 @@ export async function setHandlers() {
                 bundle.objects.push(ele.data('raw_data'));
             }
             });
-            
+        bundle.metadata = getNodeMetadata(nodes);
+
         // Convert to JSON and save
         const jsonToSave = JSON.stringify(bundle);
         const jsonBundleSave = new Blob([jsonToSave], { type: "application/json" });
@@ -127,6 +135,15 @@ export async function setHandlers() {
         $('.message-status').html(`Exported ${bundle.objects.length} objects`);
     });
 
+    ipcRenderer.on("export_metadata", async () => {
+
+        let nodes = window.cycore.$(':visible')
+
+        const jsonObj = JSON.stringify({metadata: getNodeMetadata(nodes)}, null, 2);
+        const blob = new Blob([jsonObj], { type: "application/json" });
+        fileSaver.saveAs(blob, "metadata.json");
+        $('.message-status').html("exported metadata")
+    })
     ipcRenderer.on("select_all", () => {
         window.cycore.elements().select();
     });

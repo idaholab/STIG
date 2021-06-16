@@ -203,6 +203,10 @@ const template: MenuItemConstructorOptions[] = [
                         label: 'Export graph...',
                         click: export_graph,
                     },
+                    {
+                        label: 'Export metadata(positions)...',
+                        click: (_, focusedWindow) => {focusedWindow.webContents.send("export_metadata")}
+                    },
                 ],
             },
         ],
