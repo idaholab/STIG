@@ -9,13 +9,15 @@
             "description": "The type of this object, which MUST be the literal `language-content`.",
             "enum": [
                 "language-content"
-            ]
+            ],
+            "readonly": "true"
         },
         "id": {
             "title": "id",
             "pattern": "^language-content--",
             "type": "string",
-            "default": "language-content--"
+            "default": "language-content--",
+            "readonly": "true"
         },
         "object_ref": {
             "description": "Identifies the object that this Language Content applies to.",

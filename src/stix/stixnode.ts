@@ -12,7 +12,7 @@ export let node_img: { [index: string]: string } = {};
 export interface StixNodeData extends cytoscape.NodeDataDefinition {
     name?: string; // the_data.name,
     id: Identifier; // the_data.id,
-    label?: string; // the_data.name,
+    label?: string; // the_data.label,
     type: StixType; // the_type,
     level?: 1;
     // version: the_data.version,
@@ -46,9 +46,9 @@ export class StixNode implements IStixNode {
      * Represents a stix node in the graph.  One of these is attached to each node on the canvas.
      * The actual data is stored here for easy access.  stixNode.raw_data should hold the actual
      * stix JSON
-     * @param {StixNodeData} the_data
-     * @param {StixType} the_type
-     * @param {DataSourceType} d_source
+     * @param {StixNodeData} the_data Object Thrown to Cytoscape Node
+     * @param {StixType} the_type - Object From Database
+     * @param {DataSourceType} d_source - Whether we are drag and drop or queried from DB.
      */
     constructor(the_data: StixNodeData, the_type: StixType, d_source: DataSourceType) {
 
@@ -64,7 +64,11 @@ export class StixNode implements IStixNode {
             data_source: d_source,
         };
         if (the_type !== 'marking-definition') {
-            this.data.name = the_data.name;
+            if(the_data.name == undefined){
+                this.data.name = the_data.type;
+            }else{
+                this.data.name = the_data.name;
+            }
             this.data.modified = the_data.modified;
         }
 

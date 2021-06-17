@@ -1,4 +1,5 @@
 {
+    "$schema": "http://json-schema.org/draft-07/schema#",
     "title": "relationship",
     "description": "The Relationship object is used to link together two SDOs in order to describe how they are related to each other.",
     "type": "object",
@@ -7,13 +8,15 @@
         "type": {
             "type": "string",
             "description": "The type of this object, which MUST be the literal `relationship`.",
-            "default": "relationship"
+            "default": "relationship",
+            "readonly": "true"
         },
         "id": {
             "type": "string",
             "title": "id",
             "pattern": "^relationship--",
-            "default": "relationship--UUID"
+            "default": "relationship--UUID",
+            "readonly": "true"
         },
         "relationship_type": {
             "type": "string",

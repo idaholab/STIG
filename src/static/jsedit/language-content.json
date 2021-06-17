@@ -4,16 +4,18 @@
     "description": "The language-content object represents text content for STIX Objects represented in languages other than that of the original object.",
     "type": "object",
     "properties": {
-        "type": {
-            "type": "string",
-            "description": "The type of this object, which MUST be the literal `language-content`.",
-            "default": "language-content"
-        },
         "id": {
             "title": "id",
             "pattern": "^language-content--",
             "type": "string",
-            "default": "language-content--"
+            "default": "language-content--",
+            "readonly": "true"
+        },
+        "type": {
+            "type": "string",
+            "description": "The type of this object, which MUST be the literal `language-content`.",
+            "default": "language-content",
+            "readonly": "true"
         },
         "object_ref": {
             "title": "object_ref",

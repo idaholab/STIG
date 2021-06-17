@@ -1,20 +1,22 @@
 {
-    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$schema": "http://json-schema.org/draft-07/schema#",
     "title": "threat-actor",
     "description": "Threat Actors are actual individuals, groups, or organizations believed to be operating with malicious intent.",
     "type": "object",
     "$ref": "static/jsedit/core.json",
     "properties": {
-        "type": {
-            "type": "string",
-            "description": "The type of this object, which MUST be the literal `threat-actor`.",
-            "default": "threat-actor"
-        },
         "id": {
             "title": "id",
             "pattern": "^threat-actor--",
             "type": "string",
-            "default": "threat-actor--"
+            "default": "threat-actor--",
+            "readonly": "true"
+        },
+        "type": {
+            "type": "string",
+            "description": "The type of this object, which MUST be the literal `threat-actor`.",
+            "default": "threat-actor",
+            "readonly": "true"
         },
         "name": {
             "type": "string",
@@ -31,7 +33,9 @@
             "items": {
                 "type": "string",
                 "$ref": "#/definitions/threat-actor-type-ov"
-            }
+            },
+            "minItems": 1,
+            "default": 0
         },
         "aliases": {
             "type": "array",
@@ -104,8 +108,7 @@
     },
     "required": [
         "name",
-        "type",
-        "id"
+        "threat_actor_types"
     ],
     "definitions": {
         "threat-actor-role-ov": {

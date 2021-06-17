@@ -1,21 +1,22 @@
 {
-    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$schema": "http://json-schema.org/draft-07/schema#",
     "title": "observed-data",
     "description": "Observed data conveys information that was observed on systems and networks, such as log data or network traffic, using the Cyber Observable specification.",
     "type": "object",
     "$ref": "static/jsedit/core.json",
     "properties": {
-        "type": {
-            "type": "string",
-            "description": "The type of this object, which MUST be the literal `observed-data`.",
-            "default": "observed-data"
-        },
         "id": {
             "title": "id",
             "pattern": "^observed-data--",
             "type": "string",
-            "default": "observed-data--"
-
+            "default": "observed-data--",
+            "readonly": "true"
+        },
+        "type": {
+            "type": "string",
+            "description": "The type of this object, which MUST be the literal `observed-data`.",
+            "default": "observed-data",
+            "readonly": "true"
         },
         "first_observed": {
             "type": "string",
@@ -124,8 +125,6 @@
         }
     },
     "required": [
-        "type",
-        "id",
         "first_observed",
         "last_observed",
         "number_observed"

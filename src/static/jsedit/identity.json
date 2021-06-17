@@ -1,4 +1,5 @@
 {
+    "$schema": "http://json-schema.org/draft-07/schema#",
     "title": "identity",
     "description": "Identities can represent actual individuals, organizations, or groups (e.g., ACME, Inc.) as well as classes of individuals, organizations, or groups.",
     "type": "object",
@@ -7,13 +8,15 @@
         "type": {
             "type": "string",
             "description": "The type of this object, which MUST be the literal `identity`.",
-            "default": "identity"
+            "default": "identity",
+            "readonly": "true"
         },
         "id": {
             "type": "string",
             "title": "id",
             "pattern": "^identity--",
-            "default": "identity--"
+            "default": "identity--",
+            "readonly": "true"
         },
         "name": {
             "type": "string",
@@ -54,8 +57,8 @@
     },
     "required": [
         "name",
-        "type",
-        "id"
+        "identity_class"
+
     ],
     "definitions": {
         "identity-class-ov": {

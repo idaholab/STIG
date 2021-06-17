@@ -55,6 +55,8 @@ async function class_query(db: OrientDB.ODatabase, options: IOrientJSONClassOpti
     if (idx > -1) {
         alias = name;
         const replaced = name.replace(/-/g, '');
+        console.log('found aliases: ', replaced);
+
         name = replaced;
     }
     try {
@@ -70,14 +72,19 @@ async function class_query(db: OrientDB.ODatabase, options: IOrientJSONClassOpti
         const query = `ALTER CLASS  ${name}  SHORTNAME ${alias}`;
         await db.exec(query);
     }
+    console.log('done with creating superclasses');
     return cls;
 }
 
 async function create_classes(db: OrientDB.ODatabase) {
+    
     for (const cls of schema.classes) {
         const c = await class_query(db, cls);
         await create_properties(c, cls.properties);
     }
+
+    console.log('done creating db');
+    //TODO give user some indication db is being created
 }
 
 async function create_properties(cls: OrientDB.Class, props: OrientDB.PropertyCreateConfig[]): Promise<OrientDB.Property[]> {

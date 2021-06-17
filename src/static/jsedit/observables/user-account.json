@@ -1,4 +1,5 @@
 {
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "user-account",
   "description": "The User Account Object represents an instance of any type of user account, including but not limited to operating system, device, messaging service, and social media platform accounts.",
   "type": "object",
@@ -7,7 +8,8 @@
     "type": {
       "type": "string",
       "description": "The value of this property MUST be `user-account`.",
-      "default": "user-account"
+      "default": "user-account",
+      "readonly": "true"
     },
     "user_id": {
       "type": "string",
