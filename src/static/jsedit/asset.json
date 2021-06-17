@@ -5,11 +5,13 @@
     "properties": {
         "id": {
             "type": "string",
-            "default": "asset--UUID"
+            "default": "asset--UUID",
+            "readonly": "true"
         },
         "type": {
             "type": "string",
-            "default": "asset"
+            "default": "asset",
+            "readonly": "true"
         },
         "name": { "type": "string" },
         "description": { "type": "string" },

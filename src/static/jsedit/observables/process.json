@@ -7,11 +7,13 @@
     "type": {
       "type": "string",
       "description": "The value of this property MUST be `process`.",
-      "default": "process"
+      "default": "process",
+      "readonly": "true"
     },
     "id": {
       "title": "id",
-      "pattern": "^process--"
+      "pattern": "^process--",
+      "readonly": "true"
     },
     "extensions": {
       "$ref": "#/definitions/process-extensions-dictionary",

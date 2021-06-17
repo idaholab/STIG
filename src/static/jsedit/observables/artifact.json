@@ -7,12 +7,14 @@
     "type": {
       "type": "string",
       "description": "The value of this property MUST be `artifact`.",
-      "default": "artifact"
+      "default": "artifact",
+      "readonly": "true"
     },
     "id": {
       "title": "id",
       "pattern": "^artifact--",
-      "default": "artifact--"
+      "default": "artifact--",
+      "readonly": "true"
     },
     "mime_type": {
       "type": "string",

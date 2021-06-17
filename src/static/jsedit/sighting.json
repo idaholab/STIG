@@ -8,10 +8,14 @@
         "type": {
             "type": "string",
             "description": "The type of this object, which MUST be the literal `sighting`.",
-            "default": "sighting"
+            "default": "sighting",
+            "readonly": "true"
         },
         "id": {
-            "pattern": "^sighting--"
+            "title": "id",
+            "pattern": "^sighting--",
+            "default": "sighting--UUID",
+            "readonly": "true"
         },
         "first_seen": {
             "type": "string",

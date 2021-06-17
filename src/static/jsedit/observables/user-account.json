@@ -7,7 +7,8 @@
     "type": {
       "type": "string",
       "description": "The value of this property MUST be `user-account`.",
-      "default": "user-account"
+      "default": "user-account",
+      "readonly": "true"
     },
     "user_id": {
       "type": "string",

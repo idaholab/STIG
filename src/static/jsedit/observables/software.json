@@ -7,11 +7,13 @@
     "type": {
       "type": "string",
       "description": "The value of this property MUST be `software`.",
-      "default": "software"
+      "default": "software",
+      "readonly": "true"
     },
     "id": {
       "title": "id",
-      "pattern": "^software--"
+      "pattern": "^software--",
+      "readonly": "true"
     },
     "name": {
       "type": "string",

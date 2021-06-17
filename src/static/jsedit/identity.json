@@ -14,7 +14,8 @@
             "type": "string",
             "title": "id",
             "pattern": "^identity--",
-            "default": "identity--"
+            "default": "identity--",
+            "readonly": "true"
         },
         "name": {
             "type": "string",

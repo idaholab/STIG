@@ -7,7 +7,8 @@
     "type": {
       "type": "string",
       "description": "The value of this property MUST be `windows-registry-key`.",
-      "default": "windows-registry-key"
+      "default": "windows-registry-key",
+      "readonly": "true"
     },
     "key": {
       "type": "string",

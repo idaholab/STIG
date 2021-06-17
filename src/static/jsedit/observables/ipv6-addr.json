@@ -7,11 +7,13 @@
     "type": {
       "type": "string",
       "description": "The value of this property MUST be `ipv6-addr`.",
-      "default": "ipv6-addr"
+      "default": "ipv6-addr",
+      "readonly": "true"
     },
     "id": {
       "title": "id",
-      "pattern": "^ipv6-addr--"
+      "pattern": "^ipv6-addr--",
+      "readonly": "true"
     },
     "value": {
       "type": "string",

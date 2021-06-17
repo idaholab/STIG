@@ -3,14 +3,15 @@
   "description": "Common properties and behavior across all Cyber Observable Objects.",
   "type": "object",
   "properties": {
+    "id": {
+      "type": "string",
+      "readonly": "true"
+  },
     "type": {
       "type": "string",
       "pattern": "^([a-z][a-z0-9]*)+(-[a-z0-9]+)*-?$",
       "minLength": 3,
       "maxLength": 250
-    },
-    "id": {
-        "type": "string"
     },
     "spec_version": {
       "type": "string",

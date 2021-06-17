@@ -5,16 +5,18 @@
     "type": "object",
     "$ref": "static/jsedit/core.json",
     "properties": {
-        "type": {
-            "type": "string",
-            "description": "The type of this object, which MUST be the literal `tool`.",
-            "default": "tool"
-        },
         "id": {
             "title": "id",
             "pattern": "^tool--",
             "type": "string",
-            "default": "tool--"
+            "default": "tool--",
+            "readonly": "true"
+        },
+        "type": {
+            "type": "string",
+            "description": "The type of this object, which MUST be the literal `tool`.",
+            "default": "tool",
+            "readonly": "true"
         },
         "name": {
             "type": "string",

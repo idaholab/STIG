@@ -7,11 +7,13 @@
     "type": {
       "type": "string",
       "description": "The value of this property MUST be `url`.",
-      "default": "url"
+      "default": "url",
+      "readonly": "true"
     },
     "id": {
       "title": "id",
-      "pattern": "^url--"
+      "pattern": "^url--",
+      "readonly": "true"
     },
     "value": {
       "title": "value",

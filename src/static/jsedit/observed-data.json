@@ -5,17 +5,18 @@
     "type": "object",
     "$ref": "static/jsedit/core.json",
     "properties": {
-        "type": {
-            "type": "string",
-            "description": "The type of this object, which MUST be the literal `observed-data`.",
-            "default": "observed-data"
-        },
         "id": {
             "title": "id",
             "pattern": "^observed-data--",
             "type": "string",
-            "default": "observed-data--"
-
+            "default": "observed-data--",
+            "readonly": "true"
+        },
+        "type": {
+            "type": "string",
+            "description": "The type of this object, which MUST be the literal `observed-data`.",
+            "default": "observed-data",
+            "readonly": "true"
         },
         "first_observed": {
             "type": "string",

@@ -5,17 +5,19 @@
     "type": "object",
     "$ref": "static/jsedit/core.json",
     "properties": {
-        "type": {
-            "type": "string",
-            "description": "The type of this object, which MUST be the literal `location`.",
-            "default": "location"
-        },
         "id": {
             "title": "id",
             "pattern": "^location--",
             "type": "string",
-            "default": "location--"
+            "default": "location--",
+            "readonly": "true"
         },
+        "type": {
+          "type": "string",
+          "description": "The type of this object, which MUST be the literal `location`.",
+          "default": "location",
+          "readonly": "true"
+      },
         "name" : {
           "type" : "string",
           "description": "A name used to identify the Location."

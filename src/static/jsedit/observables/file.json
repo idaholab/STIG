@@ -7,11 +7,13 @@
     "type": {
       "type": "string",
       "description": "The value of this property MUST be `file`.",
-      "default": "file"
+      "default": "file",
+      "readonly": "true"
     },
     "id": {
       "title": "id",
-      "pattern": "^file--"
+      "pattern": "^file--",
+      "readonly": "true"
     },
     "extensions": {
       "$ref": "#/definitions/file-extensions-dictionary",

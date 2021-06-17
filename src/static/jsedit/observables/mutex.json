@@ -7,11 +7,13 @@
     "type": {
       "type": "string",
       "description": "The value of this property MUST be `mutex`.",
-      "default": "mutex"
+      "default": "mutex",
+      "readonly": "true"
     },
     "id": {
       "title": "id",
-      "pattern": "^mutex--"
+      "pattern": "^mutex--",
+      "readonly": "true"
     },
     "name": {
       "type": "string",

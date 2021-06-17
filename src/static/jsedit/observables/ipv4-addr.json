@@ -7,11 +7,13 @@
     "type": {
       "type": "string",
       "description": "The value of this property MUST be `ipv4-addr`.",
-      "default": "ipv4-addr"
+      "default": "ipv4-addr",
+      "readonly": "true"
     },
     "id": {
       "title": "id",
-      "pattern": "^ipv4-addr--"
+      "pattern": "^ipv4-addr--",
+      "readonly": "true"
     },
     "value": {
       "type": "string",

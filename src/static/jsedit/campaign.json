@@ -5,12 +5,14 @@
         "id": {
             "type": "string",
             "pattern": "^campaign--",
-            "default": "campaign--"
+            "default": "campaign--",
+            "readonly": "true"
         },
         "type": {
             "type": "string",
             "description": "The type of this object, which MUST be the literal `campaign`.",
-            "default": "campaign"
+            "default": "campaign",
+            "readonly": "true"
         },
         "name": {
             "type": "string",

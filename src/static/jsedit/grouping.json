@@ -5,17 +5,19 @@
     "type": "object",
     "$ref": "static/jsedit/core.json",
     "properties": {
-        "type": {
-            "type": "string",
-            "description": "The type of this object, which MUST be the literal `grouping`.",
-            "default": "grouping"
-        },
         "id": {
             "title": "id",
             "pattern": "^grouping--",
             "default": "grouping--",
-            "type": "string"
+            "type": "string",
+            "readonly": "true"
         },
+        "type": {
+          "type": "string",
+          "description": "The type of this object, which MUST be the literal `grouping`.",
+          "default": "grouping",
+          "readonly": "true"
+      },
         "name": {
           "type": "string",
           "description": "A name used to identify the Grouping."

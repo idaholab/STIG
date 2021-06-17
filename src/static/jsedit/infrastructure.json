@@ -9,12 +9,14 @@
             "title": "id",
             "type": "string",
             "default": "infrastructure--",
-            "pattern": "^infrastructure--"
+            "pattern": "^infrastructure--",
+            "readonly": "true"
         },
         "type": {
           "type": "string",
           "description": "The type of this object, which MUST be the literal `infrastructure`.",
-          "default": "infrastructure"
+          "default": "infrastructure",
+          "readonly": "true"
         },
         "name": {
             "type": "string",
