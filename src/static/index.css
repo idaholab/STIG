@@ -289,9 +289,19 @@ div.btn-history {
 /*=============================================
 =    jsedit subgrid to position the editor form and buttons     =
 =============================================*/
+.btn:not(:disabled):not(.disabled) {
+    cursor: pointer;
+}
+
+.btn-group {
+    display: inline-flex;
+    align-items: flex-end;
+    background-color: purple;
+}
 
 .jsedit {
     grid-area: 1/1/span 1/span 2;
+    display: inline-block;
 }
 
 .button-commit {

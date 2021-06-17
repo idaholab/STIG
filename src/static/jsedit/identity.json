@@ -7,7 +7,8 @@
         "type": {
             "type": "string",
             "description": "The type of this object, which MUST be the literal `identity`.",
-            "default": "identity"
+            "default": "identity",
+            "readonly": "true"
         },
         "id": {
             "type": "string",
