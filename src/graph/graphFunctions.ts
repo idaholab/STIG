@@ -158,7 +158,7 @@ export class GraphUtils {
     }
 
     /**
-     * pkg should be a JSON object complying to the Stix2.0 bundle schema
+     * pkg should be a JSON object complying to the Stix2.1 bundle schema
      *
      * @param {BundleType} pkg
      * @returns {Promise<cytoscape.CollectionElements>}
@@ -182,7 +182,7 @@ export class GraphUtils {
         try {
             // Add relationships to graph
             for (const r of relationships) {
-                // console.log(`adding relationship ${r.id}`);
+                console.log(`adding relationship ${r.id}`);
                 let to_node = this.cy.getElementById(r.target_ref);
                 let from_node = this.cy.getElementById(r.source_ref);
                 if (from_node.length === 0) {

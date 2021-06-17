@@ -1,20 +1,22 @@
 {
-    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$schema": "http://json-schema.org/draft-07/schema#",
     "title": "tool",
     "description": "Tools are legitimate software that can be used by threat actors to perform attacks.",
     "type": "object",
     "$ref": "static/jsedit/core.json",
     "properties": {
-        "type": {
-            "type": "string",
-            "description": "The type of this object, which MUST be the literal `tool`.",
-            "default": "tool"
-        },
         "id": {
             "title": "id",
             "pattern": "^tool--",
             "type": "string",
-            "default": "tool--"
+            "default": "tool--",
+            "readonly": "true"
+        },
+        "type": {
+            "type": "string",
+            "description": "The type of this object, which MUST be the literal `tool`.",
+            "default": "tool",
+            "readonly": "true"
         },
         "name": {
             "type": "string",
@@ -56,8 +58,7 @@
     },
     "required": [
         "name",
-        "type",
-        "id"
+        "tool_types"
     ],
     "definitions": {
         "tool-type-ov": {

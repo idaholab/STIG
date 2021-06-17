@@ -1,19 +1,22 @@
 {
+    "$schema": "http://json-schema.org/draft-07/schema#",
     "title": "indicator",
     "description": "Indicators contain a pattern that can be used to detect suspicious or malicious cyber activity.",
     "type": "object",
     "$ref": "static/jsedit/core.json",
     "properties": {
-        "type": {
-            "type": "string",
-            "description": "The type of this object, which MUST be the literal `indicator`.",
-            "default": "indicator"
-        },
         "id": {
             "type": "string",
             "title": "id",
             "pattern": "^indicator--",
-            "default": "indicator--"
+            "default": "indicator--",
+            "readonly": "true"
+        },
+        "type": {
+            "type": "string",
+            "description": "The type of this object, which MUST be the literal `indicator`.",
+            "default": "indicator",
+            "readonly": "true"
         },
         "name": {
             "type": "string",
@@ -68,8 +71,7 @@
         "pattern",
         "pattern_type",
         "valid_from",
-        "type",
-        "id"
+        "indicator_types"
     ],
     "definitions": {
         "indicator-type-ov": {

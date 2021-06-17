@@ -362,7 +362,7 @@ export class StigDB {
     }
 
     /**
-     * @description
+     * @description Gets SDO or SCO from db.
      * @param {Identifier} identifier
      * @returns {Promise<SDO>}
      * @memberof StigDB

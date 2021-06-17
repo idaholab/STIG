@@ -1,4 +1,5 @@
 {
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "software",
   "description": "The Software Object represents high-level properties associated with software, including software products.",
   "type": "object",
@@ -7,11 +8,13 @@
     "type": {
       "type": "string",
       "description": "The value of this property MUST be `software`.",
-      "default": "software"
+      "default": "software",
+      "readonly": "true"
     },
     "id": {
       "title": "id",
-      "pattern": "^software--"
+      "pattern": "^software--",
+      "readonly": "true"
     },
     "name": {
       "type": "string",

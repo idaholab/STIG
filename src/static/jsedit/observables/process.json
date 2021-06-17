@@ -1,4 +1,5 @@
 {
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "process",
   "description": "The Process Object represents common properties of an instance of a computer program as executed on an operating system.",
   "type": "object",
@@ -7,11 +8,13 @@
     "type": {
       "type": "string",
       "description": "The value of this property MUST be `process`.",
-      "default": "process"
+      "default": "process",
+      "readonly": "true"
     },
     "id": {
       "title": "id",
-      "pattern": "^process--"
+      "pattern": "^process--",
+      "readonly": "true"
     },
     "extensions": {
       "$ref": "#/definitions/process-extensions-dictionary",

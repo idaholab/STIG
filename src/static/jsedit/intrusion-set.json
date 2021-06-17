@@ -1,19 +1,22 @@
 {
+    "$schema": "http://json-schema.org/draft-07/schema#",
     "title": "intrusion-set",
     "description": "An Intrusion Set is a grouped set of adversary behavior and resources with common properties that is believed to be orchestrated by a single organization.",
     "type": "object",
     "$ref": "static/jsedit/core.json",
     "properties": {
-        "type": {
-            "type": "string",
-            "description": "The type of this object, which MUST be the literal `intrusion-set`.",
-            "default": "intrusion-set"
-        },
         "id": {
             "type": "string",
             "title": "id",
             "pattern": "^intrusion-set--",
-            "default": "intrusion-set--"
+            "default": "intrusion-set--",
+            "readonly": "true"
+        },
+        "type": {
+            "type": "string",
+            "description": "The type of this object, which MUST be the literal `intrusion-set`.",
+            "default": "intrusion-set",
+            "readonly": "true"
         },
         "name": {
             "type": "string",
@@ -71,9 +74,7 @@
         }
     },
     "required": [
-        "name",
-        "type",
-        "id"
+        "name"
     ],
     "definitions": {
         "attack-resource-level-ov": {

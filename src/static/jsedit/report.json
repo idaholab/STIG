@@ -1,20 +1,22 @@
 {
-    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$schema": "http://json-schema.org/draft-07/schema#",
     "title": "report",
     "description": "Reports are collections of threat intelligence focused on one or more topics, such as a description of a threat actor, malware, or attack technique, including context and related details.",
     "type": "object",
     "$ref": "static/jsedit/core.json",
     "properties": {
-        "type": {
-            "type": "string",
-            "description": "The type of this object, which MUST be the literal `report`.",
-            "default": "report"
-        },
         "id": {
             "title": "id",
             "pattern": "^report--",
             "type": "string",
-            "default": "report--"
+            "default": "report--",
+            "readonly": "true"
+        },
+        "type": {
+            "type": "string",
+            "description": "The type of this object, which MUST be the literal `report`.",
+            "default": "report",
+            "readonly": "true"
         },
         "name": {
             "type": "string",
@@ -51,8 +53,7 @@
         "name",
         "object_refs",
         "published",
-        "type",
-        "id"
+        "report_types"
     ],
     "definitions": {
         "report-type-ov": {

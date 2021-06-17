@@ -1,4 +1,5 @@
 {
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "network-traffic",
   "description": "The Network Traffic Object represents arbitrary network traffic that originates from a source and is addressed to a destination.",
   "type": "object",
@@ -7,11 +8,13 @@
     "type": {
       "type": "string",
       "description": "The value of this property MUST be `network-traffic`.",
-      "default": "network-traffic"
+      "default": "network-traffic",
+      "readonly": "true"
     },
     "id": {
       "title": "id",
-      "pattern": "^network-traffic--"
+      "pattern": "^network-traffic--",
+      "readonly": "true"
     },
     "extensions": {
       "$ref": "#/definitions/network-traffic-extensions-dictionary",
