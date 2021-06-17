@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "bundle",
   "description": "A Bundle is a collection of arbitrary STIX Objects and Marking Definitions grouped together in a single container.",
   "type": "object",

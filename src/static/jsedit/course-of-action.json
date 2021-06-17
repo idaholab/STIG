@@ -1,4 +1,5 @@
 {
+    "$schema": "http://json-schema.org/draft-07/schema#",
     "title": "course-of-action",
     "description": "A Course of Action is an action taken either to prevent an attack or to respond to an attack that is in progress. ",
     "type": "object",

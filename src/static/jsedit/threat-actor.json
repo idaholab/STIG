@@ -1,5 +1,5 @@
 {
-    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$schema": "http://json-schema.org/draft-07/schema#",
     "title": "threat-actor",
     "description": "Threat Actors are actual individuals, groups, or organizations believed to be operating with malicious intent.",
     "type": "object",

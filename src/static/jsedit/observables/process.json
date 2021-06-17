@@ -1,4 +1,5 @@
 {
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "process",
   "description": "The Process Object represents common properties of an instance of a computer program as executed on an operating system.",
   "type": "object",
