@@ -31,7 +31,9 @@
             "items": {
                 "type": "string",
                 "$ref": "#/definitions/threat-actor-type-ov"
-            }
+            },
+            "minItems": 1,
+            "default": 0
         },
         "aliases": {
             "type": "array",
@@ -104,8 +106,7 @@
     },
     "required": [
         "name",
-        "type",
-        "id"
+        "threat_actor_types"
     ],
     "definitions": {
         "threat-actor-role-ov": {

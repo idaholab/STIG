@@ -160,6 +160,7 @@
         }
     },
     "required": [
+        "type",
         "id",
         "created",
         "modified",

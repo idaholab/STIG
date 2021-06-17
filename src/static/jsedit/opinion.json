@@ -49,7 +49,6 @@
         }
     },
     "required": [
-        "type",
         "object_refs",
         "opinion"
     ]

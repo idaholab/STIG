@@ -70,9 +70,7 @@
         }
     },
     "required": [
-        "name",
-        "type",
-        "id"
+        "name"
     ],
     "definitions": {
         "course-of-action-type-ov": {

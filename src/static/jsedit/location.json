@@ -67,8 +67,7 @@
        }
     },
     "required": [
-        "type",
-        "id"
+    
     ],
     "definitions": {
         "region-ov": {

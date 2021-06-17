@@ -41,7 +41,7 @@
     },
     "required": [
         "context",
-        "type"
+        "object_refs"
     ],
     "definitions": {
         "grouping-context-ov": {

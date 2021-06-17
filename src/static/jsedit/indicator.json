@@ -68,8 +68,7 @@
         "pattern",
         "pattern_type",
         "valid_from",
-        "type",
-        "id"
+        "indicator_types"
     ],
     "definitions": {
         "indicator-type-ov": {

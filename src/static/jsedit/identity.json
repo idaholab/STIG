@@ -54,8 +54,8 @@
     },
     "required": [
         "name",
-        "type",
-        "id"
+        "identity_class"
+
     ],
     "definitions": {
         "identity-class-ov": {

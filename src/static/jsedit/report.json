@@ -51,8 +51,7 @@
         "name",
         "object_refs",
         "published",
-        "type",
-        "id"
+        "report_types"
     ],
     "definitions": {
         "report-type-ov": {

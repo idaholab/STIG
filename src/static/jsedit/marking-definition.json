@@ -130,10 +130,8 @@
         }
     },
     "required": [
-        "spec_version",
-        "created",
-        "id",
-        "type"
+        "definition",
+        "definition_type"
     ],
     "definitions": {
         "marking-definition-type": {

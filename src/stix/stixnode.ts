@@ -65,7 +65,6 @@ export class StixNode implements IStixNode {
         };
         if (the_type !== 'marking-definition') {
             if(the_data.name == undefined){
-                console.log('the data does not have a name: ', the_data)
                 this.data.name = the_data.type;
             }else{
                 this.data.name = the_data.name;

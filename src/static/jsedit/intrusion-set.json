@@ -71,9 +71,7 @@
         }
     },
     "required": [
-        "name",
-        "type",
-        "id"
+        "name"
     ],
     "definitions": {
         "attack-resource-level-ov": {

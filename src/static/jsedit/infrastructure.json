@@ -58,9 +58,8 @@
         }
     },
     "required": [
-        "name",
         "id",
-        "type"
+        "infrastructure_types"
     ],
     "definitions": {
         "infrastructure-type-ov": {

@@ -124,8 +124,6 @@
         }
     },
     "required": [
-        "type",
-        "id",
         "first_observed",
         "last_observed",
         "number_observed"

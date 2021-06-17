@@ -56,8 +56,7 @@
     },
     "required": [
         "name",
-        "type",
-        "id"
+        "tool_types"
     ],
     "definitions": {
         "tool-type-ov": {
