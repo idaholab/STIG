@@ -5,11 +5,11 @@ ALL RIGHTS RESERVED
 */
 
 import { ipcRenderer, dialog } from "electron";
-import { CollectionReturnValue, NodeSingular} from 'cytoscape';
+import { CollectionReturnValue, NodeSingular, CollectionElements} from 'cytoscape';
 import { StigDB } from '../db';
 import { StixObject, BundleType } from '../stix';
 import { DatabaseConfigurationStorage } from '../storage';
-import { open } from 'fs';
+// import { open } from 'fs';
 import { openDatabaseConfiguration } from './database-config-widget';
 import { newDatabaseConfiguration } from './new-database-widget';
 import * as fileSaver from 'file-saver';
@@ -55,31 +55,121 @@ export async function setHandlers() {
                     // tslint:disable-next-line:no-console
                     console.error(e);
                 });
+        }
+    
+        to_save.forEach(async (ele: NodeSingular, _i: number, _eles: CollectionReturnValue) => {
+            const stix_obj = ele.data('raw_data');
+            if (stix_obj === undefined) { 
+                numObjects--;
+                return; 
             }
-    
-            to_save.forEach(async (ele: NodeSingular, _i: number, _eles: CollectionReturnValue) => {
-                const stix_obj = ele.data('raw_data');
-                if (stix_obj === undefined) { 
-                    numObjects--;
-                    return; 
-                }
-                if (stix_obj['type'] === 'relationship') {
-                    // save edges for after all the nodes are done
-                    edges.push(stix_obj);
-                    itemsProcessed++;
-                    return;
-                }
-    
-                await saveVertex(stix_obj);
-    
+            if (stix_obj['type'] === 'relationship') {
+                // save edges for after all the nodes are done
+                edges.push(stix_obj);
                 itemsProcessed++;
-                //wait for all vertex to step through before saving edges
-                if (itemsProcessed === numObjects){
-                     saveEdges(edges);
-                     $('.message-status').html(`Committed ${numObjects} objects to the database.`);
-                }
+                return;
+            }
+
+            await saveVertex(stix_obj);
+
+            itemsProcessed++;
+            //wait for all vertex to step through before saving edges
+            if (itemsProcessed === numObjects){
+                    saveEdges(edges);
+                    $('.message-status').html(`Committed ${numObjects} objects to the database.`);
+            }
             });
     
+    });
+
+    //user selected delete selected from dropdown
+    ipcRenderer.on("delete_selected", () => {
+        const db = new StigDB(DatabaseConfigurationStorage.Instance.current);
+        const selected: CollectionReturnValue = window.cycore.$(':selected');
+        const to_save: CollectionReturnValue = window.cycore.$('[saved]');
+        const results: StixObject[] = [];
+        let edges = window.cycore.$(':visible');
+        let selected_Delete: any[] = [];
+        
+        console.log('our db: ', db);        
+
+        edges = selected.xor(selected.connectedEdges());
+        // edges = selected.union(selected.connectedEdges());
+
+        console.log('selected: ', selected);
+        console.log('edges: ', edges);
+
+        async function delSelectedVertex(stix_obj: StixObject) {
+            await db.deleteVFromDB(stix_obj)
+                .then((result) => {
+                    results.push(...result);
+                })
+                .catch((e) => {
+                    // tslint:disable-next-line:no-console
+                    console.error(e);
+                });
+        }
+        async function delSelectedEdge(edge_obj: StixObject) {
+            await db.deleteVFromDB(edge_obj)
+                .then((result) => {
+                    results.push(...result);
+                })
+                .catch((e) => {
+                    // tslint:disable-next-line:no-console
+                    console.error(e);
+                });
+        }
+        //Delete incoming/outgoing edges first.
+        edges.forEach(async (ele) => {
+            console.log('edges;' , ele.data());
+            const edge_id = ele.data('raw_data').id;
+            console.log('selected edge to selected node: ', edge_id);
+            await delSelectedEdge(edge_id);
+        });
+        //Need to build list of connected incoming/outgoing edges first.
+        selected.forEach(async (ele) => {
+            console.log('selected: ', ele.data());
+            const stix_id = ele.data('raw_data').id;
+            console.log('selected id to delete: ', stix_id);
+
+            // nodes.each((ele) => {
+            //     if (ele.length === 0) {
+            //         return;
+            //     }
+            // await db.deleteFromDB(stix_id);
+            // await delSelectedVertex(stix_id);
+            selected_Delete.push(stix_id);
+        });
+
+        console.log(selected_Delete);
+
+
+
+    });
+
+    //user selected delete view from db
+    ipcRenderer.on("delete_all", () => {
+        const db = new StigDB(DatabaseConfigurationStorage.Instance.current);
+        const to_save: CollectionReturnValue = window.cycore.$('[saved]');
+        const results: StixObject[] = [];
+
+        console.log('our db: ', db);        
+
+        //delete all things in graph that are in our to_save list
+        console.log('saved: ', to_save);
+        let toDelete: any[] = [];
+        to_save.forEach( (ele) => {
+            //sometimes to_save has an undefined element
+            if(ele.data('raw_data')!==undefined){
+                const stix_id = ele.data('raw_data').id;
+                console.log('all id to delete', stix_id);
+                toDelete.push(stix_id);
+            }
+        });
+        console.log('deleting: ', toDelete);
+    
+        $('.message-status').html("deleted from databases")
+
     });
 
     ipcRenderer.on("invert_selected", () => {

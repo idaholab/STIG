@@ -7,7 +7,7 @@ ALL RIGHTS RESERVED
 import * as moment from 'moment';
 import * as cytoscape from 'cytoscape';
 import { HTTPCommandQuery, GraphQueryResult, OrientErrorMessage, Rid } from './db_types';
-import { BundleType, Id, Identifier, SDO, SRO, StixObject } from '../stix';
+import { BundleType, Id, Identifier, SDO, SRO, StixNodeData, StixObject } from '../stix';
 // import { } from './stixnode';
 import * as _ from 'lodash';
 import * as diffpatch from 'jsondiffpatch';
@@ -704,6 +704,7 @@ export class StigDB {
     }
 
     /**
+     * TODO: FIX DUPLICATE IDS, check GetSDO
      * @description
      * @param {StixObject} stix_obj
      * @returns {Promise<Rid>}
@@ -905,8 +906,8 @@ export class StigDB {
         }
     }
 
-    /**
-     * @description Updates the database from the editor form
+    /** 
+     * @description Updates the database from the editor form 
      * @param {StixObject} formdata
      * @returns  Promise<string>
      * @memberof StigDB
@@ -941,8 +942,53 @@ export class StigDB {
         }
     }
 
+     /**
+     * @description Deletes specific node from DB
+     * @param {StixObject} stix_id
+     * @returns  Promise<string>
+     * @memberof StigDB
+     */
+    public async  deleteVFromDB(stix_id: StixNodeData): Promise<StixObject[]> {
+        const q = `DELETE VERTEX FROM (SELECT FROM V where id_="${stix_id}")`;
+        const options: QueryOptions = {};
+        let result: StixObject[];
+        try {
+            console.log('delete from DB: ', stix_id);
+            result = await this.OJSQuery(q, options);
+
+            return result;
+        } catch (e) {
+            e.stack += (new Error()).stack;
+            throw e;
+        }
+    }
+
     /**
-     * @description
+     * @description Deletes specific edge from DB
+     * @param {StixObject} stix_id
+     * @returns  Promise<string>
+     * @memberof StigDB
+     */
+          public async  deleteEFromDB(stix_id: StixNodeData): Promise<StixObject[]> {
+            const q = `DELETE EDGE E WHERE @rid IN (SELECT FROM E WHERE id_="${stix_id}")`;
+            const options: QueryOptions = {
+                // params: {
+                //     id: sro.id,
+                // },
+            };
+            let result: StixObject[];
+            try {
+                console.log('delete edge from DB: ', stix_id);
+                result = await this.OJSQuery(q, options);
+                return result;
+            } catch (e) {
+                e.stack += (new Error()).stack;
+                throw e;
+            }
+        }
+
+    /**
+     * @description Updates modified timestamp for edge
      * @param {SRO} edge
      * @param {string} old_modified
      * @returns
@@ -967,7 +1013,7 @@ export class StigDB {
     }
 
     /**
-     * @description
+     * @description Updates modified timestamp for vertex
      * @param {SDO} vertex
      * @param {string} old_modified
      * @returns
