@@ -59,6 +59,7 @@ export async function setHandlers() {
     
         to_save.forEach(async (ele: NodeSingular, _i: number, _eles: CollectionReturnValue) => {
             const stix_obj = ele.data('raw_data');
+            console.log(stix_obj);
             if (stix_obj === undefined) { 
                 numObjects--;
                 return; 
