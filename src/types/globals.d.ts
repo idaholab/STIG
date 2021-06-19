@@ -27,7 +27,7 @@ declare module 'cytoscape' {
 
     }
 
-    export interface CollectionBuildingUnion {
+    export interface Union {
         filter(filter: (ele: CollectionElements, i: number) => boolean): CollectionElements
     }
 

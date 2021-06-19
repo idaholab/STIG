@@ -7,7 +7,7 @@ ALL RIGHTS RESERVED
 import * as moment from 'moment';
 import * as cytoscape from 'cytoscape';
 import { HTTPCommandQuery, GraphQueryResult, OrientErrorMessage, Rid } from './db_types';
-import { BundleType, Id, Identifier, SDO, SRO, StixObject } from '../stix';
+import { BundleType, Id, Identifier, SDO, SRO, StixNodeData, StixObject } from '../stix';
 // import { } from './stixnode';
 import * as _ from 'lodash';
 import * as diffpatch from 'jsondiffpatch';
@@ -544,49 +544,16 @@ export class StigDB {
     }
 
     /**
-     * @description
+     * @description User deleted an edge from the graph in the UI
      * @param {SRO} sro
      * @returns {Promise<StixObject[]>}
      * @memberof StigDB
      */
-    public async edgeDestroyedUI(sro: SRO): Promise<StixObject[]> {
-        // User destroyed an edge in the UI
-        // update DB
-        const query = 'DELETE EDGE E WHERE @rid IN (SELECT FROM E WHERE id_=?)';
-        const options: QueryOptions = {
-            params: {
-                id: sro.id,
-            },
-        };
-        let result: StixObject[];
-        try {
-            result = await this.OJSQuery(query, options);
-            return result;
-        } catch (e) {
-            e.stack += (new Error()).stack;
-            throw e;
-        }
-    }
+    public async sroDestroyedUI(sro: SRO): Promise<StixObject[]> {
+        let rid = await this.getRID(sro.id);
+        const q = `DELETE EDGE E WHERE @rid == "${rid}"`;
 
-    /**
-     * @description
-     * @param {SDO} sdo
-     * @returns {Promise<StixObject[]>}
-     * @memberof StigDB
-     */
-    public async sdoDestroyedUI(sdo: SDO): Promise<StixObject[]> {
-        // USer deleted a node from the graph in the UI
-        //
-        // XXXXXXXXXXXXXX IMPORTANT XXXXXXXXXXXXXX
-        // Must distiguish this somehow for the user...
-        // Remove from current graph versus delete from database
-        //
-        const q = 'DELETE VERTEX FROM (SELECT fom V where id_= :id)';
-        const options: QueryOptions = {
-            params: {
-                id: sdo.id,
-            },
-        };
+        const options: QueryOptions = {};
         let result: StixObject[];
         try {
             result = await this.OJSQuery(q, options);
@@ -598,14 +565,32 @@ export class StigDB {
     }
 
     /**
-     * @description
+     * @descriptionUer User deleted a node from the graph in the UI
+     * @param {SDO} sdo
+     * @returns {Promise<StixObject[]>}
+     * @memberof StigDB
+     */
+    public async sdoDestroyedUI(sdo: SDO): Promise<StixObject[]> {
+        const q = `DELETE VERTEX FROM (SELECT FROM V where id_="${sdo.id}")`;
+        const options: QueryOptions = {};
+        let result: StixObject[];
+        try {
+            result = await this.OJSQuery(q, options);
+            return result;
+        } catch (e) {
+            e.stack += (new Error()).stack;
+            throw e;
+        }
+    }
+
+    /**
+     * @description Find neighbors for a given sdo node
      * @param {string} identifier
      * @param {Array<string>} [relationship_types]
      * @returns {Promise<{ nodes: StixObject[], edges: StixObject[] }>}
      * @memberof StigDB
      */
     public async getChildren(identifier: string, relationship_type?: string): Promise<{ nodes: StixObject[], edges: StixObject[] }> {
-        // Find neighbors for a given sdo node
         let query: string;
         if (relationship_type === undefined) {
             query = "select expand(out()) from V where id_= :id";
@@ -708,6 +693,7 @@ export class StigDB {
     }
 
     /**
+     * TODO: FIX DUPLICATE IDS, check GetSDO
      * @description
      * @param {StixObject} stix_obj
      * @returns {Promise<Rid>}
@@ -909,8 +895,8 @@ export class StigDB {
         }
     }
 
-    /**
-     * @description Updates the database from the editor form
+    /** 
+     * @description Updates the database from the editor form 
      * @param {StixObject} formdata
      * @returns  Promise<string>
      * @memberof StigDB
@@ -946,7 +932,7 @@ export class StigDB {
     }
 
     /**
-     * @description
+     * @description Updates modified timestamp for edge
      * @param {SRO} edge
      * @param {string} old_modified
      * @returns
@@ -971,7 +957,7 @@ export class StigDB {
     }
 
     /**
-     * @description
+     * @description Updates modified timestamp for vertex
      * @param {SDO} vertex
      * @param {string} old_modified
      * @returns

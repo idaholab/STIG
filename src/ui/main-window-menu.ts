@@ -34,6 +34,11 @@ function commit_all(item: MenuItem, focusedWindow: BrowserWindow) {
         focusedWindow.webContents.send("commit_all", item.label);
     }
 }
+function delete_selected(item: MenuItem, focusedWindow: BrowserWindow) {
+    if (focusedWindow) {
+        focusedWindow.webContents.send("delete_selected", item.label);
+    }
+}
 
 function export_selected(item: MenuItem, focusedWindow: BrowserWindow) {
     if (focusedWindow) {
@@ -82,14 +87,6 @@ const template: MenuItemConstructorOptions[] = [
         label: 'File',
         submenu: [
             {
-                label: 'Save...',
-                role: 'save',
-            },
-            {
-                label: 'Open...',
-                role: 'open',
-            },
-            {
                 label: 'Quit',
                 role: 'quit',
             },
@@ -98,34 +95,23 @@ const template: MenuItemConstructorOptions[] = [
     {
         label: 'Edit',
         submenu: [
-            // {
-            //     label: 'Undo',
-            //     accelerator: 'CmdOrCtrl+Z',
-            //     role: 'undo'
-            // }, {
-            //     label: 'Redo',
-            //     accelerator: 'Shift+CmdOrCtrl+Z',
-            //     role: 'redo'
-            // }, {
-            //     type: 'separator'
-            // },
             {
-                label: 'Cut',
+                label: 'Cut Text',
                 accelerator: 'CmdOrCtrl+X',
                 role: 'cut',
             },
             {
-                label: 'Copy',
+                label: 'Copy Text',
                 accelerator: 'CmdOrCtrl+C',
                 role: 'copy',
             },
             {
-                label: 'Paste',
+                label: 'Paste Text',
                 accelerator: 'CmdOrCtrl+V',
                 role: 'paste',
             },
             {
-                label: 'Select All',
+                label: 'Select All Text',
                 accelerator: 'CmdOrCtrl+A',
                 role: 'selectall',
             },
@@ -179,6 +165,10 @@ const template: MenuItemConstructorOptions[] = [
                 click: commit_all,
             },
             {
+                label: 'Delete Selected From Database',
+                click: delete_selected,
+            },
+            {
                 label: 'Select All Elements',
                 accelerator: 'Shift+CmdOrCtrl+A',
                 click: select_all,
@@ -202,6 +192,10 @@ const template: MenuItemConstructorOptions[] = [
                     {
                         label: 'Export graph...',
                         click: export_graph,
+                    },
+                    {
+                        label: 'Export metadata(positions)...',
+                        click: (_, focusedWindow) => {focusedWindow.webContents.send("export_metadata")}
                     },
                 ],
             },

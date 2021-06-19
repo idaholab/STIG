@@ -15,6 +15,8 @@ import { GraphQueryResult } from '../db/db_types';
 export class GraphUtils {
     public db: StigDB;
     public cy: cytoscape.Core;
+    public positionsSaved: boolean = false;
+
     constructor(cy: cytoscape.Core, db: StigDB) {
         this.cy = cy;
         this.db = db;
@@ -73,7 +75,7 @@ export class GraphUtils {
         }
     }
 
-    private _addVertices(sdos: StixObject[], from_db: boolean = false): [cytoscape.CollectionReturnValue, Relationship[], Sighting[]] {
+    private _addVertices(sdos: StixObject[], from_db: boolean = false, metadata: object = null): [cytoscape.CollectionReturnValue, Relationship[], Sighting[]] {
         const relationshipsKeyRegex = /((r|R)elationship)|((s|S)ighting)/;
         const in_graph = new Set<Id>();
         const to_add: cytoscape.ElementDefinition[] = [];
@@ -131,11 +133,28 @@ export class GraphUtils {
                 }
             }
             const nodes_added = this.cy.add(to_add);
+            this.addMetadataToNodes(metadata, nodes_added);
+
             return [nodes_added, relationships, sightings];
         } catch (e) {
             console.error('Exception adding nodes to graph:', e);
             throw e;
         }
+    }
+
+    /**
+     *  add location data or other metadata to nodes on page
+     * @param metadata
+     * @param nodes
+     */
+    private addMetadataToNodes(metadata: object, nodes: cytoscape.CollectionReturnValue) {
+        if (metadata == null) return;
+        this.positionsSaved = true;
+
+        nodes.map(node => {
+            let obj = metadata.find(x => x.id === node.id());
+            if (obj) node.position(obj.position);
+        })
     }
 
     /**
@@ -150,12 +169,15 @@ export class GraphUtils {
         // let sightings: Sighting[] = [];
         // let in_graph = new Set<Id>()
         const sdos = pkg.objects;
+        const metadata = "metadata" in pkg  ? pkg.metadata : null
+
         // let cont = false;
         if (sdos === undefined) {
+            this.addMetadataToNodes(metadata, this.cy.elements())
             return this.cy.elements('#nothing');
         }
         const data_source = from_db ? 'DB' : 'GUI';
-        const [nodes_added, relationships, sightings] = this._addVertices(sdos as StixObject[], from_db);
+        const [nodes_added, relationships, sightings] = this._addVertices(sdos as StixObject[], from_db, metadata);
         const to_add: cytoscape.ElementDefinition[] = [];
         try {
             // Add relationships to graph
@@ -316,6 +338,7 @@ export class GraphUtils {
      * @memberof GraphUtils
      */
     public myLayout(layout_type: keyof LayoutsType): void {
+        if (this.positionsSaved) return;
         const layout = this.cy.layout(layouts[layout_type]);
         layout.run();
         // layout.promiseOn('layoutstop').then((event) => {
