@@ -33,7 +33,7 @@ export async function setHandlers() {
 
         async function saveEdges (edges: StixObject[]) { 
             //do the edges
-            edges.forEach((stix_obj: StixObject, _i: number, _eles: StixObject[]) => {
+            edges.forEach((stix_obj: StixObject) => {
                 db.updateDB(stix_obj)
                     .then((result) => {
                         results.push(...result);
@@ -86,59 +86,77 @@ export async function setHandlers() {
     ipcRenderer.on("delete_selected", () => {
         const db = new StigDB(DatabaseConfigurationStorage.Instance.current);
         const selected: CollectionReturnValue = window.cycore.$(':selected');
-        const to_save: CollectionReturnValue = window.cycore.$('[saved]');
-        
-        const vis: CollectionReturnValue = window.cycore.$(':visible');
-        const edges: EdgeCollection = selected.edgesWith(vis);
-        let results: StixObject[] = [];
-        let selected_Delete: any[] = [];
+        // const to_save: CollectionReturnValue = window.cycore.$('[saved]');
+        // const vis: CollectionReturnValue = window.cycore.$(':visible');
+        const edges: EdgeCollection = selected.edgesWith(selected);
+        let sdoresults: StixObject[] = [];
+        let sroresults: StixObject[] = [];
+        let numObjects = selected.size() + edges.size();
+        let itemsProcessed = 0;
 
-        console.log('our db: ', db);        
-
+        console.log('our db ', db);        
         console.log('selected: ', selected);
         console.log('edges: ', edges);
 
         async function delSelectedVertex(stix_obj: StixObject) {
-            await db.deleteVFromDB(stix_obj)
+            await db.sdoDestroyedUI(stix_obj)
                 .then((result) => {
-                    results.push(...result);
+                    sdoresults.push(...result);
                 })
                 .catch((e) => {
                     // tslint:disable-next-line:no-console
                     console.error(e);
                 });
+            return sdoresults;
         }
+
         async function delSelectedEdge(edge_obj: StixObject) {
-            await db.deleteEFromDB(edge_obj)
+            await db.sroDestroyedUI(edge_obj)
                 .then((result) => {
-                    results.push(...result);
+                    sroresults.push(...result);
                 })
                 .catch((e) => {
                     // tslint:disable-next-line:no-console
                     console.error(e);
                 });
+
+            return sroresults;
         }
         //Delete incoming/outgoing edges first.
         edges.forEach(async (ele) => {
+            if (ele === undefined) { 
+                numObjects--;
+            }
             console.log('edges;' , ele.data());
-            const edge_id = ele.data('raw_data').id;
-            console.log('selected edge to selected node: ', edge_id);
+            const sro = ele.data('raw_data');
+            console.log('selected sro to selected node: ', sro);
             
-            await delSelectedEdge(edge_id);
+            const eres = await delSelectedEdge(sro);
+            console.log('results srodelete: ', eres);
+            itemsProcessed++;
+
+            window.cycore.remove(ele);
         });
         //Need to build list of connected incoming/outgoing edges first.
         selected.forEach(async (ele) => {
+            if (ele === undefined) { 
+                numObjects--;
+            }
             console.log('selected: ', ele.data());
-            const stix_id = ele.data('raw_data').id;
-            console.log('selected id to delete: ', stix_id);
+            const sdo = ele.data('raw_data');
+            console.log('selected sdo to delete: ', sdo);
 
-            await delSelectedVertex(stix_id);
+            const vres = await delSelectedVertex(sdo);
+            console.log('results sdodelete: ', vres);
+            itemsProcessed++;
+
+            window.cycore.remove(ele);
         });
 
-        console.log('our delete results: ', results);
+        console.log('our delete results: ', sdoresults);
 
-        console.log('size: ', results.length)
-        $('.message-status').html(`Deleted ${results.length} objects from the database.`);
+        console.log('size: ', itemsProcessed);
+        $('.message-status').html(`Deleted ${itemsProcessed} objects from the database.`);
     });
 
     //user selected delete view from db

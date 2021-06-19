@@ -96,11 +96,12 @@ export function setup_ctx_menu(cy: cytoscape.Core, db: StigDB, view_util: any) {
         {
             content: 'DB Delete',
             select: async (ele: cytoscape.CollectionElements) => {
-                cy.remove(ele);
                 //TODO: ensure edges delete first.
                 try {
                     const resp = await db.sroDestroyedUI(ele.data("raw_data"));
-                    console.log(resp);
+                    console.log('response: ',resp);
+                    cy.remove(ele);
+
                 } catch (e) {
                     // probably want to indicate that it wasnt deleted from db
                 }
