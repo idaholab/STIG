@@ -23,9 +23,17 @@ export function setup_ctx_menu(cy: cytoscape.Core, db: StigDB, view_util: any) {
         selector: 'node',
         commands: [
         {
-            content: '<span class="fa fa-trash-o fa-2x"></span>',
+            content: 'Graph Remove',
             select: async (ele: cytoscape.CollectionElements) => {
                 cy.remove(ele);
+                // TODO make a new icon for db_delete from graph right click, Tooltips seem to be hard with cy.ctxmenu
+            },
+        },
+        {
+            content: 'DB Delete',
+            select: async (ele: cytoscape.CollectionElements) => {
+                cy.remove(ele);
+                //TODO: ensure edges delete first.
                 try {
                     const resp = await db.sdoDestroyedUI(ele.data("raw_data"));
 
@@ -45,13 +53,13 @@ export function setup_ctx_menu(cy: cytoscape.Core, db: StigDB, view_util: any) {
             },
         },
         {
-            content: 'select in',
+            content: 'Select Incoming',
             select(ele: cytoscape.CollectionElements) {
                 ele.incomers().select();
             },
         },
         {
-            content: 'select out',
+            content: 'Select Out',
             select(ele: cytoscape.CollectionElements) {
                 ele.outgoers().select();
             },
@@ -67,7 +75,7 @@ export function setup_ctx_menu(cy: cytoscape.Core, db: StigDB, view_util: any) {
             },
         },
         {
-            content: 'select neighbors',
+            content: 'Select Neighbors',
             select(ele: cytoscape.CollectionElements) {
                 ele.select();
                 ele.closedNeighborhood().select();
@@ -80,19 +88,32 @@ export function setup_ctx_menu(cy: cytoscape.Core, db: StigDB, view_util: any) {
     cy.cxtmenu({
         selector: 'edge',
         commands: [{
-            content: 'remove',
+            content: 'Remove from Graph',
             select(ele: cytoscape.CollectionElements) {
                 cy.remove(ele);
             },
         },
         {
-            content: 'select source',
+            content: 'DB Delete',
+            select: async (ele: cytoscape.CollectionElements) => {
+                cy.remove(ele);
+                //TODO: ensure edges delete first.
+                try {
+                    const resp = await db.sroDestroyedUI(ele.data("raw_data"));
+                    console.log(resp);
+                } catch (e) {
+                    // probably want to indicate that it wasnt deleted from db
+                }
+            },
+        },
+        {
+            content: 'Select Source',
             select(ele: cytoscape.CollectionElements) {
                 ele.source().select();
             },
         },
         {
-            content: 'select target',
+            content: 'Select Target',
             select(ele: cytoscape.CollectionElements) {
                 ele.target().select();
             },
@@ -103,25 +124,25 @@ export function setup_ctx_menu(cy: cytoscape.Core, db: StigDB, view_util: any) {
         selector: 'core',
         commands: [
             {
-                content: 'layout',
+                content: 'Layout',
                 select: () => {
                     graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
                 },
             },
             {
-                content: 'hide selected',
+                content: 'Hide Selected',
                 select: () => {
                     view_util.hide(cy.$(":selected"));
                 },
             },
             {
-                content: 'hide not selected',
+                content: 'Hide Not Selected',
                 select: () => {
                     view_util.hide(cy.$(":unselected"));
                 },
             },
             {
-                content: 'show all',
+                content: 'Show All',
                 select: () => {
                     view_util.show(cy.elements()); // .showEles();
                 },
@@ -133,11 +154,11 @@ export function setup_ctx_menu(cy: cytoscape.Core, db: StigDB, view_util: any) {
             //     },
             // },
             {
-                content: 'copy selected',
+                content: 'Copy Selected',
                 select: () => graph_copy(),
             },
             {
-                content: 'remove selected',
+                content: 'Remove Selected From Graph',
                 select: () => {
                     cy.remove(":selected");
                 },

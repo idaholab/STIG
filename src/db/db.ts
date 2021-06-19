@@ -544,23 +544,20 @@ export class StigDB {
     }
 
     /**
-     * @description
+     * @description User deleted an edge from the graph in the UI
      * @param {SRO} sro
      * @returns {Promise<StixObject[]>}
      * @memberof StigDB
      */
-    public async edgeDestroyedUI(sro: SRO): Promise<StixObject[]> {
-        // User destroyed an edge in the UI
-        // update DB
-        const query = 'DELETE EDGE E WHERE @rid IN (SELECT FROM E WHERE id_=?)';
-        const options: QueryOptions = {
-            params: {
-                id: sro.id,
-            },
-        };
+    public async sroDestroyedUI(sro: SRO): Promise<StixObject[]> {
+        console.log('trying to delete ', sro.id);
+        const q = `SELECT from E WHERE id_="${sro.id}")`;
+        // const q = `DELETE EDGE E WHERE @rid IN (SELECT FROM E WHERE id_="${sro.id}")`;
+        console.log('query: ', q);
+        const options: QueryOptions = {};
         let result: StixObject[];
         try {
-            result = await this.OJSQuery(query, options);
+            result = await this.ojs.query(q, options);
             return result;
         } catch (e) {
             e.stack += (new Error()).stack;
@@ -569,18 +566,12 @@ export class StigDB {
     }
 
     /**
-     * @description
+     * @descriptionUer User deleted a node from the graph in the UI
      * @param {SDO} sdo
      * @returns {Promise<StixObject[]>}
      * @memberof StigDB
      */
     public async sdoDestroyedUI(sdo: SDO): Promise<StixObject[]> {
-        // USer deleted a node from the graph in the UI
-        //
-        // XXXXXXXXXXXXXX IMPORTANT XXXXXXXXXXXXXX
-        // Must distiguish this somehow for the user...
-        // Remove from current graph versus delete from database
-        //
         const q = `DELETE VERTEX FROM (SELECT FROM V where id_="${sdo.id}")`;
         const options: QueryOptions = {};
         let result: StixObject[];
@@ -594,14 +585,13 @@ export class StigDB {
     }
 
     /**
-     * @description
+     * @description Find neighbors for a given sdo node
      * @param {string} identifier
      * @param {Array<string>} [relationship_types]
      * @returns {Promise<{ nodes: StixObject[], edges: StixObject[] }>}
      * @memberof StigDB
      */
     public async getChildren(identifier: string, relationship_type?: string): Promise<{ nodes: StixObject[], edges: StixObject[] }> {
-        // Find neighbors for a given sdo node
         let query: string;
         if (relationship_type === undefined) {
             query = "select expand(out()) from V where id_= :id";
@@ -969,23 +959,19 @@ export class StigDB {
      * @returns  Promise<string>
      * @memberof StigDB
      */
-          public async  deleteEFromDB(stix_id: StixNodeData): Promise<StixObject[]> {
-            const q = `DELETE EDGE E WHERE @rid IN (SELECT FROM E WHERE id_="${stix_id}")`;
-            const options: QueryOptions = {
-                // params: {
-                //     id: sro.id,
-                // },
-            };
-            let result: StixObject[];
-            try {
-                console.log('delete edge from DB: ', stix_id);
-                result = await this.OJSQuery(q, options);
-                return result;
-            } catch (e) {
-                e.stack += (new Error()).stack;
-                throw e;
-            }
-        }
+    public async  deleteEFromDB(stix_id: StixNodeData): Promise<StixObject[]> {
+    const q = `DELETE EDGE E WHERE @rid IN (SELECT FROM E WHERE id_="${stix_id}")`;
+    const options: QueryOptions = {};
+    let result: StixObject[];
+    try {
+        console.log('delete edge from DB: ', stix_id);
+        result = await this.OJSQuery(q, options);
+        return result;
+    } catch (e) {
+        e.stack += (new Error()).stack;
+        throw e;
+    }
+}
 
     /**
      * @description Updates modified timestamp for edge

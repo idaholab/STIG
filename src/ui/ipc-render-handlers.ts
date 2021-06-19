@@ -5,7 +5,7 @@ ALL RIGHTS RESERVED
 */
 
 import { ipcRenderer, dialog } from "electron";
-import { CollectionReturnValue, NodeSingular, CollectionElements} from 'cytoscape';
+import { CollectionReturnValue, NodeSingular, EdgeCollection, CollectionElements} from 'cytoscape';
 import { StigDB } from '../db';
 import { StixObject, BundleType } from '../stix';
 import { DatabaseConfigurationStorage } from '../storage';
@@ -87,14 +87,13 @@ export async function setHandlers() {
         const db = new StigDB(DatabaseConfigurationStorage.Instance.current);
         const selected: CollectionReturnValue = window.cycore.$(':selected');
         const to_save: CollectionReturnValue = window.cycore.$('[saved]');
-        const results: StixObject[] = [];
-        let edges = window.cycore.$(':visible');
-        let selected_Delete: any[] = [];
         
-        console.log('our db: ', db);        
+        const vis: CollectionReturnValue = window.cycore.$(':visible');
+        const edges: EdgeCollection = selected.edgesWith(vis);
+        let results: StixObject[] = [];
+        let selected_Delete: any[] = [];
 
-        edges = selected.xor(selected.connectedEdges());
-        // edges = selected.union(selected.connectedEdges());
+        console.log('our db: ', db);        
 
         console.log('selected: ', selected);
         console.log('edges: ', edges);
@@ -110,7 +109,7 @@ export async function setHandlers() {
                 });
         }
         async function delSelectedEdge(edge_obj: StixObject) {
-            await db.deleteVFromDB(edge_obj)
+            await db.deleteEFromDB(edge_obj)
                 .then((result) => {
                     results.push(...result);
                 })
@@ -124,6 +123,7 @@ export async function setHandlers() {
             console.log('edges;' , ele.data());
             const edge_id = ele.data('raw_data').id;
             console.log('selected edge to selected node: ', edge_id);
+            
             await delSelectedEdge(edge_id);
         });
         //Need to build list of connected incoming/outgoing edges first.
@@ -132,19 +132,13 @@ export async function setHandlers() {
             const stix_id = ele.data('raw_data').id;
             console.log('selected id to delete: ', stix_id);
 
-            // nodes.each((ele) => {
-            //     if (ele.length === 0) {
-            //         return;
-            //     }
-            // await db.deleteFromDB(stix_id);
-            // await delSelectedVertex(stix_id);
-            selected_Delete.push(stix_id);
+            await delSelectedVertex(stix_id);
         });
 
-        console.log(selected_Delete);
+        console.log('our delete results: ', results);
 
-
-
+        console.log('size: ', results.length)
+        $('.message-status').html(`Deleted ${results.length} objects from the database.`);
     });
 
     //user selected delete view from db
