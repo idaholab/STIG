@@ -31,7 +31,6 @@ STIX provides a context-rich standard that can be tailored for installation spec
    installation
    building-from-source
    using-stig
-   connecting-to-the-database
    searching-stig
    known-issues
    contributing
