@@ -3,6 +3,9 @@ Installation
 
 STIG requires OrientDB and Java to be installed. Please see the OrientDB/Java installation instructions for your operation system in the :ref:`Building from Source` section.
 
+.. note:: 
+    Recommend using OrientDB version 3.0.32. Version 3.1.x has not been tested fully and is known to have issues.
+
 There are two ways to install STIG. The easiest is to download an executable for your operating system. Head over to the `releases <https://github.com/idaholab/STIG/releases/tag/2.0.0.alpha>`_ page and install the package for your operating system.
 
 Linux (Deb)

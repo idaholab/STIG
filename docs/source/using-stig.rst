@@ -4,6 +4,38 @@ To run the STIG application, navigate to the installed directory (terminal) and 
 
 The ``yarn start`` command will run STIG in `developer mode` which is a live STIG build. Re-running ``yarn start`` will be required any time STIG closes.
 
+Connecting to a Database
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. image:: db-gif.gif
+
+The recommended method for creating a database is to use STIG. The default configuration looks for a database called "stig" being served off of localhost. If you have never used the application before, this database is not correctly configured.
+
+.. note: Make sure OrientDB is running before attempting to connect STIG to the database.
+
+Navigate to **Edit** / **Configure** / **Database Connection**.
+
+.. raw:: html
+
+    <style> .red {color:red} </style>
+
+.. role:: red
+
+Select **New** to create a new database (:red:`* required`)
+
+* **Host**: the IP address of the OrientDB server (localhost) :red:`*` 
+* **Port**: 2424 (API port for OrientDB) :red:`*` 
+* **Database Name**: Enter a name for the database :red:`*` 
+* **Database User**: Set a username for the database
+* **Database User Password**: Set a password for the database
+* **Database Admin**: This is the root user for OrientDB install ("root") :red:`*` 
+* **Database Admin Password**: This is the root password you setup for OrientDB :red:`*` 
+
+
+Click **Save**. Navigate in your browser to `<IP address for OrientDB server>:2480` to view the database in OrientDB Studio. (i.e. `localhost:2480`)
+
+On the next dialog you will be able to select the radio button for the database you wish to use, and click the "Use" button to enable that database configuration. This configuration will be remembered the next time you use the application. If done correctly, the application will create and load all necessary classes and allow you to use the application.
+
 Adding Content to STIG 
 ^^^^^^^^^^^^^^^^^^^^^^
 

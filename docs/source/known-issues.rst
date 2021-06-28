@@ -20,7 +20,7 @@ Unhandled Promise Rejection
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. image:: unhandled-promise-rejection.jpg
 
-An Unhandled Promise Rejection error can occur after running the STIG installation or executable if the OrientDB is not installed and running. To clear this error, make sure OrientDB is installed/running and connected to STIG (Edit -> Configure menu).
+An Unhandled Promise Rejection error can occur after running the STIG installation or executable if the OrientDB is not installed and running. To clear this error, make sure OrientDB is installed/running and connected to STIG (Edit -> Configure menu) (see :ref:`Connecting to a Database`).
 
 Database Issues 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
