@@ -5,89 +5,82 @@ ALL RIGHTS RESERVED
 */
 
 import * as OrientDB from 'orientjs';
-import { schema, IOrientJSONClassOptions } from './schema';
+import { schema, IOrientJSONClassOptions, ISchemaFile } from './schema';
 import { IDatabaseConfigOptions } from 'storage/database-configuration-storage';
 
 // export async function new_database(dbname: string, admin_user: string, admin_pass: string, db_user: string, db_pass: string, host: string, port?: number): Promise<[OrientDB.Server, OrientDB.Db]> {
 export async function new_database(options: IDatabaseConfigOptions): Promise<[OrientDB.Server, OrientDB.Db]> {
     const server_port = options.port !== undefined ? options.port : 2424;
-    const server = OrientDB({
-        host: options.host,
-        port: server_port,
-        username: options.admin_user,
-        password: options.admin_password,
-        useToken: true,
-    });
-    const db_config = {
-        name: options.name,
-        type: 'graph',
-        storage: 'plocal',
-        username: options.username,
-        password: options.password,
-        host: options.host,
-    };
-    try {
-        const dbs = await server.list();
-        const exists = dbs.findIndex((value: OrientDB.Db, _index: number, _obj: OrientDB.Db[]) => {
-            return value.name === options.name;
-        });
-        if (exists !== -1) {
-            server.close();
-            alert(`Database with name ${name} already exists. Adding to configuration options.`);
-            return [server, server.use(options.name)];
-        }
 
-        const db = await server.create(db_config);
-        const ojs = new OrientDB.ODatabase(db_config);
-        await create_classes(ojs);
-        await ojs.exec(`ALTER DATABASE DATETIMEFORMAT "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"`);
-        return [server, db];
+    let client;
+    let session;
+    let db_resp;
+    try {
+        client = await OrientDB.OrientDBClient.connect({
+            host: options.host,
+            port: parseInt(server_port),
+        });
+
+        db_resp = await client.existsDatabase({
+            name: options.name,
+            username: options.username,
+            password: options.password,
+        });
+
+        // check if it exists and do something probably
+
+        db_resp = await client.createDatabase({
+            name: options.name,
+            username: options.username,
+            password: options.password,
+            type: "graph",
+            storage: "plocal",
+        });
+
+        session = await client.session({
+            name: options.name,
+            username: options.username,
+            password: options.password,
+        });
     } catch (e) {
-        server.close();
+        // error with something before we create classes,
         throw e;
     }
-}
 
-async function class_query(db: OrientDB.ODatabase, options: IOrientJSONClassOptions): Promise<OrientDB.Class> {
-    let name = options.name;
-    const idx = name.indexOf('-');
-    let alias: string;
-    if (idx > -1) {
-        alias = name;
-        const replaced = name.replace(/-/g, '');
-        console.log('found aliases: ', replaced);
-
-        name = replaced;
-    }
-    try {
-        const exists = await db.class.get(name).suppressUnhandledRejections();
-        if (exists !== undefined) {
-            await db.class.drop(name);
-        }
-        // tslint:disable-next-line:no-empty
-    } catch (e) { }
-    const cls = await db.class.create(name, options.superClasses[0]);
-    if (alias !== undefined) {
-        alias = "`" + alias + "`";
-        const query = `ALTER CLASS  ${name}  SHORTNAME ${alias}`;
-        await db.exec(query);
-    }
-    console.log('done with creating superclasses');
-    return cls;
-}
-
-async function create_classes(db: OrientDB.ODatabase) {
-    
     for (const cls of schema.classes) {
-        const c = await class_query(db, cls);
-        await create_properties(c, cls.properties);
+        const resp = await create_class_with_properties(session, cls);
     }
 
-    console.log('done creating db');
-    //TODO give user some indication db is being created
+    await alter_datetimeformat(session);
+    await client.close();
+    await session.close();
+}
+async function alter_datetimeformat(session: OrientDB.ODatabaseSession, datetime_format: string = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") {
+    try {
+        await session.exec(`ALTER DATABASE DATETIMEFORMAT "${datetime_format}"`);
+    } catch (e) {}
 }
 
-async function create_properties(cls: OrientDB.Class, props: OrientDB.PropertyCreateConfig[]): Promise<OrientDB.Property[]> {
-    const created = await cls.property.create(props);
-    return created;
+async function create_class_with_properties(session: OrientDB.ODatabaseSession, cls: IOrientJSONClassOptions) {
+    let alias;
+    let name = cls.name;
+    if (name.indexOf('-') > -1) {
+        alias = name;
+        name = name.replace(/-/g, "");
+    }
+
+    try {
+        const obj = await session.class.create(name, cls.superClasses[0]);
+
+        if (alias !== undefined) {
+            alias = "`" + alias + "`";
+            await session.exec(`ALTER CLASS ${name} SHORTNAME ${alias}`)
+        }
+
+        const propertiesCreated = await obj.property.create(cls.properties);
+        return propertiesCreated;
+    } catch (e) {
+        // console.log("error creating class/property")
+        throw e;
+    }
 }
