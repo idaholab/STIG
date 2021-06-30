@@ -116,9 +116,7 @@ export class StigDB {
     }
 
     public static async createDatabase(config: IDatabaseConfigOptions): Promise<StigDB> {
-
-        const db = new StigDB(config.name);
-        await db.createClient();
+        const db = await new StigDB(config.name).createClient();
 
         // check if it exists and do something probably
         const exists = await db.odb.existsDatabase({
@@ -126,6 +124,10 @@ export class StigDB {
             username: db.db_config.username,
             password: db.db_config.password,
         });
+
+        if (exists) {
+            // handle if it exists
+        }
 
         await db.odb.createDatabase({
             name: db.db_config.name,
@@ -139,16 +141,13 @@ export class StigDB {
     }
 
     // it was either something like this or refactor entire class to
-    public static async new(db_name: string) {
-        const db = new StigDB(db_name);
-        await db.connect();
-        return db;
-    }
+    public static async new(db_name: string) { return await new StigDB(db_name).connect(); }
 
     public async createClient() {
         this.odb = await orientjs.OrientDBClient.connect({
             host: this.db_config.host, port: this.db_config.port,
         });
+        return this;
     }
 
     public async createSession() {
@@ -157,12 +156,10 @@ export class StigDB {
             username: this.db_config.username,
             password: this.db_config.password,
         });
+        return this;
     }
 
-    public async connect() {
-        await this.createClient();
-        await this.createSession();
-    }
+    public async connect() { return await (await this.createClient()).createSession(); }
 
     private configure() {
         openDatabaseConfiguration();
@@ -223,7 +220,7 @@ export class StigDB {
      * @returns {Promise<orientjs.Property[]>}
      * @memberof StigDB
      */
-    public async  listPropertiesForClass(clazz: string): Promise<orientjs.Property[]> {
+    public async listPropertiesForClass(clazz: string): Promise<orientjs.OClassProperty[]> {
         // let classes = this.metadata['classes'];
         // if (clazz in this._aliases) {
         //     clazz = this._aliases[clazz];
@@ -956,7 +953,7 @@ export class StigDB {
      * @returns  Promise<string>
      * @memberof StigDB
      */
-    public async  updateDB(formdata: StixObject): Promise<StixObject[]> {
+    public async updateDB(formdata: StixObject): Promise<StixObject[]> {
         const db_obj = transform_to_db(formdata);
         const old_modified = await this.getModified(formdata.id);
         if (old_modified === undefined) {
@@ -1055,7 +1052,7 @@ export class StigDB {
      * @returns {Promise<BundleType>}
      * @memberof StigDB
      */
-    public async  handleResponse(records: GraphQueryResult): Promise<BundleType> {
+    public async handleResponse(records: GraphQueryResult): Promise<BundleType> {
         // response handler
         let resp: StixObject[] = [];
         resp = resp.concat(records.graph.vertices, records.graph.edges);
