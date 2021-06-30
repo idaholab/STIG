@@ -6,6 +6,7 @@ ALL RIGHTS RESERVED
 
 import * as OrientDB from 'orientjs';
 import { schema, IOrientJSONClassOptions, ISchemaFile } from './schema';
+// import { StigDB } from '../db/db';
 import { IDatabaseConfigOptions } from 'storage/database-configuration-storage';
 
 // export async function new_database(dbname: string, admin_user: string, admin_pass: string, db_user: string, db_pass: string, host: string, port?: number): Promise<[OrientDB.Server, OrientDB.Db]> {
