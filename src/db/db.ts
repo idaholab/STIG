@@ -20,6 +20,7 @@ import { DatabaseConfigurationStorage } from '../storage';
 import { ipcRenderer } from 'electron';
 import { IDatabaseConfigOptions } from '../storage/database-configuration-storage';
 import { openDatabaseConfiguration } from '../ui/database-config-widget';
+import { IOrientJSONClassOptions } from './schema';
 
 export class DBConnectionError implements Error {
     public message: string;
@@ -94,8 +95,8 @@ export class StigDB {
 
     public db_config: IDatabaseConfigOptions;
     public headersLocal: { "Authorization": string; "Content-Type": string; };
-    public ojs: orientjs.ODatabase;
-    public odb: orientjs.Db;
+    public odb: orientjs.OrientDBClient;
+    public ojs: orientjs.ODatabaseSession;
     public diff_dialog: DiffDialog;
     public dbhost: string;
     public dbname: string;
@@ -105,7 +106,7 @@ export class StigDB {
     public _properties_cache: { [k: string]: orientjs.Property[] } = {};
 
     constructor(dbname: string) {
-        ipcRenderer.on('database_reconfigured', (_event: Event, options: IDatabaseConfigOptions) => this.changeConfig(options));
+        ipcRenderer.on('database_reconfigured', async (_event: Event, options: IDatabaseConfigOptions) => { this.changeConfig(options); });
         this.diff_dialog = new DiffDialog($('#diff-anchor'));
         if (dbname === undefined) {
             this.configure();
@@ -114,16 +115,57 @@ export class StigDB {
         }
     }
 
+    public static async createDatabase(config: IDatabaseConfigOptions): Promise<StigDB> {
+
+        const db = new StigDB(config.name);
+        await db.createClient();
+
+        // check if it exists and do something probably
+        const exists = await db.odb.existsDatabase({
+            name: db.db_config.name,
+            username: db.db_config.username,
+            password: db.db_config.password,
+        });
+
+        await db.odb.createDatabase({
+            name: db.db_config.name,
+            username: db.db_config.username,
+            password: db.db_config.password,
+            type: "graph",
+            storage: "plocal",
+        });
+
+        return db;
+    }
+
+    // it was either something like this or refactor entire class to
+    public static async new(db_name: string) {
+        const db = new StigDB(db_name);
+        await db.connect();
+        return db;
+    }
+
+    public async createClient() {
+        this.odb = await orientjs.OrientDBClient.connect({
+            host: this.db_config.host, port: this.db_config.port,
+        });
+    }
+
+    public async createSession() {
+        this.ojs = await this.odb.session({
+            name: this.db_config.name,
+            username: this.db_config.username,
+            password: this.db_config.password,
+        });
+    }
+
+    public async connect() {
+        await this.createClient();
+        await this.createSession();
+    }
+
     private configure() {
-        // const sleep = (time: number) => new Promise((resolve) => setTimeout(resolve, time));
-        // try {
         openDatabaseConfiguration();
-        //     // tslint:disable-next-line:no-empty
-        // } catch (e) {
-        //     const err = new DBConnectionError(e.message, e.stack);
-        //     await err.display();
-        // }
-        // return;
     }
 
     private changeConfig(options: IDatabaseConfigOptions): void {
@@ -138,17 +180,6 @@ export class StigDB {
         this.gremlinurl = `http://${this.db_config.host}:2480/command/${this.dbname}/gremlin/-/-1`;
         this.baseurl = 'http://' + this.db_config.host + ':2480';
         this.diff_dialog = new DiffDialog($('#diff-anchor'));
-        if (this.ojs !== undefined) {
-            this.ojs.close();
-        }
-        try {
-            this.ojs = new orientjs.ODatabase(options);
-            this.ojs.open().then((db) => this.odb = db);
-        } catch (e) {
-            alert(`Error Opening Database: \n\t${e.name}\nMessage: \n\t${e.message}\n\nOpening Configuration`);
-            openDatabaseConfiguration();
-            console.error(e.name, e.message);
-        }
 
         DatabaseConfigurationStorage.Instance.current = options.name;
     }
@@ -161,6 +192,30 @@ export class StigDB {
     //     "observed-data": "observeddata",
     //     "threat-actor": "threatactor",
     // };
+
+    public async createClassWithProperties(cls: IOrientJSONClassOptions) {
+        let alias;
+        let name = cls.name;
+        if (name.indexOf('-') > -1) {
+            alias = name;
+            name = name.replace(/-/g, "");
+        }
+
+        try {
+            const obj = await this.ojs.class.create(name, cls.superClasses[0]);
+
+            if (alias !== undefined) {
+                alias = "`" + alias + "`";
+                await this.ojs.exec(`ALTER CLASS ${name} SHORTNAME ${alias}`)
+            }
+
+            const propertiesCreated = await obj.property.create(cls.properties);
+            return propertiesCreated;
+        } catch (e) {
+            // console.log("error creating class/property")
+            throw e;
+        }
+    }
 
     /**
      * @description
@@ -181,7 +236,7 @@ export class StigDB {
         const fields: orientjs.Property[] = [];
         try {
             const regex = /-/g;
-            const cls = await this.ojs.class.get(clazz.replace(regex, ''));
+            const cls = await this.ojs.class.get(clazz.replace(regex, ""));
             const props = await cls.property.list();
             for (const f in props) {
                 if (props[f]) {
@@ -202,7 +257,7 @@ export class StigDB {
         }
     }
 
-    public async OJSQuery(query: string, options: QueryOptions): Promise<StixObject[]> {
+    public async OJSQuery(query: string, options: QueryOptions): Promise<orientjs.OResult<unknown>> {
         let ret;
         try {
             // options.mode = 'graph';
@@ -425,12 +480,12 @@ export class StigDB {
         let e_result;
         try {
             //  vertex?
-            v_result = await this.OJSQuery(query, options);
-            if (v_result && v_result.length > 0) { return true; }
+            v_result = await (await this.OJSQuery(query, options)).one();
+            if (v_result) { return true; }
             // edge?
             query = "select from E where id_= :id";
-            e_result = await this.OJSQuery(query, options);
-            if (e_result && e_result.length > 0) { return true; }
+            e_result = await (await this.OJSQuery(query, options)).one();
+            if (e_result) { return true; }
             // nuthin
             return false;
         } catch (e) {
@@ -895,8 +950,8 @@ export class StigDB {
         }
     }
 
-    /** 
-     * @description Updates the database from the editor form 
+    /**
+     * @description Updates the database from the editor form
      * @param {StixObject} formdata
      * @returns  Promise<string>
      * @memberof StigDB

@@ -16,7 +16,7 @@ ipcRenderer.on("copy_selected", (_event: Electron.Event) => {
     graph_copy();
 });
 
-ipcRenderer.on("paste_elements", (_event: Electron.Event) => {
+ipcRenderer.on("paste_elements", async (_event: Electron.Event) => {
     graph_paste();
 });
 
@@ -29,7 +29,7 @@ export function graph_copy(): void {
     clipboard.writeText(JSON.stringify(copied));
 }
 
-export function graph_paste(): void {
+export async function graph_paste() {
     try {
         const parsed: StixObject | StixObject[] | BundleType = JSON.parse(clipboard.readText());
         const bundle: BundleType = {
@@ -45,7 +45,8 @@ export function graph_paste(): void {
         } else if (parsed.hasOwnProperty('type') && parsed.type !== 'bundle' ) {
             test_stix(parsed) ? bundle.objects = [parsed] as StixObject[] : bundle.objects = [];
         }
-        const db = new StigDB(DatabaseConfigurationStorage.Instance.current);
+        const db = await StigDB.new(DatabaseConfigurationStorage.Instance.current);
+
         const graph = new GraphUtils(window.cycore, db);
         graph.buildNodes(bundle);
         graph.myLayout(StigSettings.Instance.layout.toLowerCase());

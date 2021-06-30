@@ -59,6 +59,7 @@ declare global {
 
 // tslint:disable-next-line:class-name
 export class main {
+    public db: StigDB;
     // tslint:disable-next-line:no-empty
     constructor() { }
 
@@ -92,7 +93,8 @@ export class main {
                 onDragEnd: call_forceRender,
             });
             const current_db_config = DatabaseConfigurationStorage.Instance.current;
-            const db = new StigDB(current_db_config);
+            this.db = await StigDB.new(current_db_config);
+            const db = this.db;
 
             // Graph handling functions
             const graph_utils = new GraphUtils(cy, db);
@@ -328,14 +330,14 @@ export class main {
                     }
                 } else {
                     // edge
-                    // input_data.type 
+                    // input_data.type
                     let relationship_file = "";
 
                     // objects that shouldn't be related to other objects or only require the fundamental relationship types
-                    let common = ["artifact", "autonomous-system", "directory", "domain-name", "email-addr", 
+                    let common = ["artifact", "autonomous-system", "directory", "domain-name", "email-addr",
                                   "email-message", "file", "grouping", "ipv4-addr", "ipv6-addr", "language-content",
                                   "location", "mac-addr", "mutex", "network-traffic", "note", "observed-data",
-                                  "opinion", "process", "report", "software", "url", "user-account", "vulnerability", 
+                                  "opinion", "process", "report", "software", "url", "user-account", "vulnerability",
                                   "windows-registry-key", "x509-certificate"];
 
                     let target_obj_type = (input_data.source_ref).slice(0,-38);
@@ -346,7 +348,7 @@ export class main {
                     } else {
                         relationship_file = target_obj_type + "-relationship";
                     }
-                    
+
                     editor.buildWidget(ele, relationship_file , input_data);
                 }
                 $('button#btn-export-single').button('option', 'disabled', false);
@@ -399,7 +401,7 @@ export class main {
                 if (ele.source().data('raw_data') === undefined || ele.target().data('raw_data') === undefined) {
                     return;
                 }
-                
+
                 const input_data = ele.data('raw_data');
                 if (input_data === undefined) {
 
@@ -556,8 +558,8 @@ export class main {
                 let ourres = '';
                 try {
                     const formdata: StixObject = editor.editor.getValue();
-                    db.updateDB(formdata).then((r) => { 
-                        result = r; 
+                    db.updateDB(formdata).then((r) => {
+                        result = r;
                         // ourres = result[0]['type'];
                     });
                 } catch (e) {
@@ -568,7 +570,7 @@ export class main {
                 $('button.btn-commit').button('option', 'disabled', true);
                 $('.message-status').html(`Committed 1 object to the database.`);
             });
-    
+
             /***********************************************************************************
             *
             *  Widget Bar Code
@@ -679,34 +681,34 @@ export class main {
                 }
               ],
             }));
-          
+
             function makePopper(ele) {
               let ref = ele.popperRef(); // used only for positioning
-          
+
               ele.tippy = tippy(ref, { // tippy options:
                 content: () => {
                   let content = document.createElement('div');
-          
+
                   content.innerHTML = ele.id();
-          
+
                   return content;
                 },
                 trigger: 'manual' // probably want manual mode
               });
             }
-          
+
             cy.ready(function() {
               cy.elements().forEach(function(ele) {
                 makePopper(ele);
               });
             });
-          
+
             cy.elements().unbind('mouseover');
             cy.elements().bind('mouseover', (event) => event.target.tippy.show());
-          
+
             cy.elements().unbind('mouseout');
             cy.elements().bind('mouseout', (event) => event.target.tippy.hide());
-          
+
         });
         //*/
     }

@@ -64,20 +64,6 @@ function export_graph(item: MenuItem, focusedWindow: BrowserWindow) {
     }
 }
 
-// const db = new StigDB(ConfigurationStorageService.Instance.get().host, ConfigurationStorageService.Instance.get().name, window.cycore);
-// const to_save: CollectionElements = window.cycore.$('[!saved]');
-// const results:StixObject[] = []
-// to_save.forEach( (ele: CollectionElements, _i: number, _eles: CollectionElements) => {
-//     const stix_obj = ele.data('raw_data');
-//     db.updateDB(stix_obj)
-//     .then(result=>{
-//         results.push(...result);
-//     })
-//     .catch( (e) =>{
-//         console.log(e)}
-//     );
-// });
-
 function select_all(item: MenuItem, focusedWindow: BrowserWindow) {
     if (focusedWindow) { focusedWindow.webContents.send("select_all", item.label); }
 }

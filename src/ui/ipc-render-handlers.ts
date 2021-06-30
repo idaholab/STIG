@@ -23,17 +23,17 @@ const getNodeMetadata = (nodes) => {
 }
 
 export async function setHandlers() {
-    ipcRenderer.on("commit_all", () => {
-        const db = new StigDB(DatabaseConfigurationStorage.Instance.current);
+    ipcRenderer.on("commit_all", async () => {
+        const db = await StigDB.new(DatabaseConfigurationStorage.Instance.current);
         const to_save: CollectionReturnValue = window.cycore.$('[!saved]');
         const results: StixObject[] = [];
         const edges: StixObject[] = [];
         let numObjects = to_save.size();
         let itemsProcessed = 0;
 
-        async function saveEdges (edges: StixObject[]) { 
+        async function saveEdges(e: StixObject[]) {
             //do the edges
-            edges.forEach((stix_obj: StixObject) => {
+            e.forEach((stix_obj: StixObject) => {
                 db.updateDB(stix_obj)
                     .then((result) => {
                         results.push(...result);
@@ -56,13 +56,13 @@ export async function setHandlers() {
                     console.error(e);
                 });
         }
-    
+
         to_save.forEach(async (ele: NodeSingular, _i: number, _eles: CollectionReturnValue) => {
             const stix_obj = ele.data('raw_data');
             console.log(stix_obj);
-            if (stix_obj === undefined) { 
+            if (stix_obj === undefined) {
                 numObjects--;
-                return; 
+                return;
             }
             if (stix_obj['type'] === 'relationship') {
                 // save edges for after all the nodes are done
@@ -80,13 +80,12 @@ export async function setHandlers() {
                     $('.message-status').html(`Committed ${numObjects} objects to the database.`);
             }
             });
-    
     });
 
     //user selected delete selected from dropdown
     //TODO: test single edge delete
     ipcRenderer.on("delete_selected", async () => {
-        const db = new StigDB(DatabaseConfigurationStorage.Instance.current);
+        const db = await StigDB.new(DatabaseConfigurationStorage.Instance.current);
         const selected: CollectionReturnValue = window.cycore.$(':selected');
         // const to_save: CollectionReturnValue = window.cycore.$('[saved]');
         const vis: CollectionReturnValue = window.cycore.$(':visible');
@@ -136,12 +135,12 @@ export async function setHandlers() {
     });
 
     //user selected delete view from db
-    ipcRenderer.on("delete_all", () => {
-        const db = new StigDB(DatabaseConfigurationStorage.Instance.current);
+    ipcRenderer.on("delete_all", async () => {
+        const db = await StigDB.new(DatabaseConfigurationStorage.Instance.current);
         const to_save: CollectionReturnValue = window.cycore.$('[saved]');
         const results: StixObject[] = [];
 
-        console.log('our db: ', db);        
+        console.log('our db: ', db);
 
         //delete all things in graph that are in our to_save list
         console.log('saved: ', to_save);
@@ -155,7 +154,7 @@ export async function setHandlers() {
             }
         });
         console.log('deleting: ', toDelete);
-    
+
         $('.message-status').html("deleted from databases")
 
     });
@@ -170,7 +169,7 @@ export async function setHandlers() {
     ipcRenderer.on("export_selected", () => {
         const bundle_id = 'bundle--' + uuid.v4();
         const bundle = { type: 'bundle', id: bundle_id, objects: [] } as BundleType;
-        
+
         let nodes = window.cycore.$(':selected');
         nodes.each((ele) => {
             if (ele.length === 0) {

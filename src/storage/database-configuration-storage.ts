@@ -12,7 +12,7 @@ export interface IDatabaseConfigOptions {
     name: string;
     username: string;
     password: string;
-    usetoken?: true;
+    useToken: true;
     admin_user?: string;
     admin_password?: string;
 }
@@ -48,7 +48,7 @@ export class DatabaseConfigurationStorage {
             name: 'stig',
             username: 'admin',
             password: 'admin',
-            usetoken: true,
+            useToken: true,
         };
         this.store.set('configs', {stig: initial});
         this.current = 'stig';
