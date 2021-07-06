@@ -27,6 +27,7 @@ STIX provides a context-rich standard that can be tailored for installation spec
    :maxdepth: 2
    :caption: Contents:
 
+   sponsors
    disclaimer
    installation
    building-from-source
