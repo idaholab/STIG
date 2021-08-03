@@ -15,7 +15,7 @@ import { GraphQueryResult } from '../db/db_types';
 export class GraphUtils {
     public db: StigDB;
     public cy: cytoscape.Core;
-    public positionsSaved: boolean = false;
+    public skipLayout: boolean = false;
 
     constructor(cy: cytoscape.Core, db: StigDB) {
         this.cy = cy;
@@ -149,7 +149,7 @@ export class GraphUtils {
      */
     private addMetadataToNodes(metadata: object, nodes: cytoscape.CollectionReturnValue) {
         if (metadata == null) return;
-        this.positionsSaved = true;
+        this.skipLayout = true;
 
         nodes.map(node => {
             let obj = metadata.find(x => x.id === node.id());
@@ -338,7 +338,10 @@ export class GraphUtils {
      * @memberof GraphUtils
      */
     public myLayout(layout_type: keyof LayoutsType): void {
-        if (this.positionsSaved) return;
+        if (this.skipLayout) {
+            this.skipLayout = !this.skipLayout;
+            return;
+        }
         const layout = this.cy.layout(layouts[layout_type]);
         layout.run();
         // layout.promiseOn('layoutstop').then((event) => {
