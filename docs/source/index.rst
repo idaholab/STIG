@@ -33,6 +33,7 @@ STIX provides a context-rich standard that can be tailored for installation spec
    building-from-source
    using-stig
    searching-stig
+   menu
    known-issues
    contributing
    other-software
