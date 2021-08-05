@@ -3,7 +3,7 @@
   "productName": "STIG",
   "title": "STIG",
   "description": "A tool for creating, managing, visualizing and querying structured threat intelligence.",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "main": "src/index.ts",
   "author": {
     "name": "Jed Haile",

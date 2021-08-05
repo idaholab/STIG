@@ -182,11 +182,11 @@ const template: MenuItemConstructorOptions[] = [
                 label: 'Export...',
                 submenu: [
                     {
-                        label: 'Selected Elements...',
+                        label: 'Selected elements...',
                         click: export_selected,
                     },
                     {
-                        label: 'All Elements...',
+                        label: 'All elements w/positions...',
                         click: export_all,
                     },
                     {
@@ -194,7 +194,7 @@ const template: MenuItemConstructorOptions[] = [
                         click: export_graph,
                     },
                     {
-                        label: 'Export metadata(positions)...',
+                        label: 'Export positions...',
                         click: (_, focusedWindow) => {focusedWindow.webContents.send("export_metadata")}
                     },
                 ],
