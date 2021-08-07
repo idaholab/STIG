@@ -572,7 +572,7 @@ class AnalysisOf(Relationships):
 
 
 class AuthoredBy(Relationships):
-    label = 'authored_by'
+    label = 'authored-by'
     created = DateTime(nullable=False)
     modified = DateTime(nullable=False)
     external_references = EmbeddedList()
