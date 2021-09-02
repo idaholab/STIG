@@ -53,7 +53,7 @@
                 "affected-by",
                 "compromised-by",
                 "based-on",
-                "authored_by",
+                "authored-by",
                 "communicates-with",
                 "exfiltrates-to",
                 "beacons-to",
