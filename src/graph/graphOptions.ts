@@ -64,7 +64,7 @@ export let modified_unselect_style: cytoscape.Stylesheet = {
     selector: '[!saved]',
     style: {
         "border-width": 2, 
-        "text-background-color": 'yellow',
+        "text-background-color": 'white',
         "text-background-opacity": 1,
     },
 };

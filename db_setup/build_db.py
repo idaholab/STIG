@@ -11,18 +11,21 @@ import time
 from stix_loader.models.v21.stixmodels import *
 from stix_loader.odbbuilder import class_from_json
 import pyorient.ogm.property as odbproperty
+from pyorient.ogm.broker import *
+from pyorient.ogm.batch import *
 from pyorient.ogm import Config, Graph
 from pyorient.ogm.declarative import declarative_node, declarative_relationship
 from stix2.utils import format_datetime, parse_into_datetime
 from typing import List, Dict, Optional
 from tqdm import tqdm
 import logging
+from multiprocessing import Pool
 
 MANDATORY_ENV_VARS = ["ORIENT_HOST", "ORIENT_USER", "ORIENT_PASS", "ORIENT_PORT"]
 
 # Logging Levels include: Critical, Error, Warning, Info, Debug, and Noset
 FORMAT = '%(message)s'
-logging.basicConfig(stream=sys.stderr, level=logging.WARNING, format=FORMAT)
+logging.basicConfig(stream=sys.stderr, level=logging.ERROR, format=FORMAT)
 
 def usage():
     print('Usage: python build_db.py --dbname <database_name> --path <filepath | dirpath> | <--keep>')
@@ -35,7 +38,7 @@ def get_datetime() -> str:
     return format_datetime(parse_into_datetime(now, precision='millisecond'))
 
 #TODO: Modify to use a config file possibly.
-def db_setup(HOST: str, USER: str, dbname: str, PASSW: str, PORT: str, keep: bool):
+def db_setup(HOST: str, USER: str, dbname: str, PASSW: str, PORT: str):#, keep: bool):
     """sets up database
     :param HOST: OGM Graph ref
     :param USER: OGM Graph ref
@@ -44,61 +47,17 @@ def db_setup(HOST: str, USER: str, dbname: str, PASSW: str, PORT: str, keep: boo
     :param PORT: OGM Graph ref
     :param keep: boolean value to keep or destroy database
     """
-    print('\n(connecting to db)')
     clear_database=''
-    if(not keep):
-        clear_database = input('Are you sure you want to delete the database? (Y/N):  ')
-
-    if clear_database in ['Y', 'y', 'Yes', 'yes', 'YES']:
-        print('(dropping database)\n')
-        g = Graph(Config.from_url(dbname, USER, PASSW,initial_drop=True))
-        g.create_all(Node.registry)
-        g.create_all(Relationships.registry)
-    else:
-        print('(keeping database)\n')
-        g = Graph(Config.from_url(dbname, USER, PASSW, initial_drop=False))
-        SchemaNode=declarative_node()
-        SchemaRelationship=declarative_relationship()
-        classes_from_schema=g.build_mapping(SchemaNode, SchemaRelationship, auto_plural=True)
-        g.include(classes_from_schema)
+    g = Graph(Config.from_url(dbname, USER, PASSW, initial_drop=False))
+    SchemaNode=declarative_node()
+    SchemaRelationship=declarative_relationship()
+    classes_from_schema=g.build_mapping(SchemaNode, SchemaRelationship, auto_plural=True)
+    g.include(classes_from_schema)
 
     g.client.command("ALTER DATABASE DATETIMEFORMAT \"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'\"")
 
-    logging.info('Graph object \'g\': ', g)
     return g
 
-#TODO: Rename method, as this should work for both edges and nodes
-#TODO: Error handling
-def get_node_by_id(g: Graph, id: str) -> Optional[str]:
-    """Queries Database for any type--ID
-    :param g: OGM Graph ref
-    :param id: STIX Node id_
-    """
-    ret = ''
-    try:
-        id_type = id.split('--')[0]
-        _uuid = id.split('--')[1]
-
-
-        # if id_type.has
-        class_name = id_type.replace('-', '')
-
-        if class_name in g.registry:
-            klass = g.registry[class_name]
-
-        queried_proper = g.query(klass).filter(klass.id_.endswith(_uuid) & (klass.id_.startswith(id_type))).one()
-
-        ret = queried_proper
-    except Exception as e:
-        logging.info('Query Error:')
-        logging.info(e)
-        logging.info("Error caught while checking to see if node exists... moving along.")
-        return None
-
-    if len(ret.id_):
-        return ret
-    else:
-        return None
 
 def format_stix_to_db(stix_objs: List[Dict]) -> List[Dict]:
     """
@@ -204,7 +163,7 @@ def check_mandatory_props(klass: pyorient.ogm.declarative.DeclarativeMeta, obj: 
     return obj
 
 #TODO: I think replacing '-' in SDOs like attack-pattern might break things on STIG
-def insert_bundle(g: Graph, stix_objs: List[Dict]):
+def insert_bundle(g: Graph, stix_objs: List[Dict], bundle_name:str):
     """Insert bundle into OrientDB graph. Tested on v3.0.31
     :param g: OGM Graph ref
     :param id: STIX Node id_
@@ -212,9 +171,13 @@ def insert_bundle(g: Graph, stix_objs: List[Dict]):
     objects = format_stix_to_db(stix_objs)
 
     o: Dict
-    for o in tqdm(objects, 'Objects'):
+    batch = g.batch()
+    for o in tqdm(objects, bundle_name):
+        o['bundle_ref'] = bundle_name #delete this 
         logging.debug("\nObject:")
         logging.debug(o)
+
+        # Set up type variables
         o_type = o['type']
         if '-' in o_type:
             o_type = o_type.replace('-', '')
@@ -226,95 +189,105 @@ def insert_bundle(g: Graph, stix_objs: List[Dict]):
 
         class_name = id_type.replace('-', '')
 
+        # o['type']  = object type from type field
+        # o_type     = o['type'] without any dashes
+        # id_type    = type from identifier 
+        # class_name = type from identifier without any dashes
+        # If the type indicated by the ID doesn't match the type given explicity by the object field, update the uuid and type variables appropriately
+        # (To be consistent with stix standard)
+        if o_type != class_name:
+            logging.warning(f"Node with different types: {o_type} and {class_name}, setting id to match intended type")
+            o['id_'] = o['type'] + '--' + _uuid 
+            o_id = o['id_']
+            id_type = o['type']
+            class_name = id_type.replace('-', '')
+
+        # Check to see if node already exists
         if class_name in g.registry:
             klass = g.registry[class_name]
 
-        #TODO: Perhaps hit fixed get_node_by_id to to check for object existing.
-        try:
-            if len(g.query(klass).filter(klass.id_.endswith(_uuid) & (klass.id_.startswith(id_type)))):
-            # if len(g.gremlin(f"g.V().has('id_', '{o_id}')")) or len(g.gremlin(f"g.E().has('id_', '{o_id}')")):
-                logging.info(f"Object with id: {o_id} found, moving to next object")
-                continue
-            else:
-                if o_type =='relationship':
-                    r_type = o['relationship_type'].replace('-', '_')
-                    src_id_type = o['source_ref'].strip().split('--')[0]
-                    s_id = o['source_ref'].strip().split('--')[1]
-                    tar_id_type = o['target_ref'].strip().split('--')[0]
-                    t_id = o['target_ref'].strip().split('--')[1]
+            #TODO: Ensure that edges associated with this node are also skipped
+            try:
+                if len(g.query(klass).filter(klass.id_.endswith(_uuid) & (klass.id_.startswith(id_type)))):
+                    logging.info(f"Object with id: {o_id} found, moving to next object")
+                    continue
+            except Exception as e:
+                logging.error("Error checking for node")
+                logging.error(e)
+                logging.error(traceback.format_exc())
 
-                    if r_type in g.registry:
-                        temp = g.registry[r_type]
-
-                    #Checks all props of a relationship (src/target_refs and id_ to determine of we already have this relationship in the database)
-                    #TODO: what if we want to update??  Flag???  If keep and update flag is true, we replace anything currently in the database with the new file?
-                    if (len(g.query(temp).filter(klass.id_.endswith(_uuid) & (klass.id_.startswith(id_type))))):
-                        if (len(g.query(temp).filter(klass.source_ref.startswith(src_id_type) & (klass.source_ref.endswith(s_id))))):
-                            if (len(g.query(temp).filter(klass.target_ref.startswith(tar_id_type) & (klass.target_ref.endswith(t_id))))):
-                                logging.info(f"Relationship with id: {o_id} found, moving on to next object")
-                                continue
-
-        except Exception as e:
-            logging.error('Gremlin Error:')
-            logging.error(e)
-            logging.error(traceback.format_exc())
-            logging.error('\n')
-        if o['type'] != 'relationship':
+        # Add Node
+        if o['type'] != 'relationship': 
+            # Ensure class is in graph registry and that the batch has an appropriate broker
             if o_type in g.registry:
                 klass = g.registry[o_type]
             else:
-                #logging.info('!' * 40)
-                logging.info(f'Stix Object of type {o["type"]} not in g.registry.')
+                logging.warning(f'Stix Object of type {o["type"]} not in g.registry.')
                 try:
                     klass = class_from_json(o.copy(), g)
-                    logging.info(f'Created DB class {klass}!')
+                    batch.objects[klass] = BatchBroker(get_broker(klass)) # VertexBroker(g=g, element_cls=klass)
+                    logging.warning(f'Created DB class {klass}!')
                 except Exception as e:
                     logging.error('Exception creating DB class')
                     logging.error(e)
                     logging.error(traceback.format_exc())
                     logging.error('\n')
-                #logging.info('!' * 40, '\n')
+
+            # Add node to batch
             try:
                 klass = g.registry[o_type]
                 o = check_mandatory_props(klass, o)
-                res = klass.objects.create(**o)
+                batch[o['id_'].replace('-','')] = batch.objects[klass].create(**o)
+                #res = klass.objects.create(**o)
             except Exception as e:
                 logging.error('Error Inserting:')
                 logging.error(o)
                 logging.error(e)
+                logging.error(traceback.format_exc())
                 logging.error('\n')
-        else:
-            try:
-                src = get_node_by_id(g, o['source_ref'])
-                target = get_node_by_id(g, o['target_ref'])
-            except KeyError:
-                continue
 
-            if not src or not target:
-                logging.warning('\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!! \nERROR: Missing node when creating edge')
-                logging.warning(f'\tsrc: {src}')
-                logging.warning(f'\ttarget: {target}')
-                logging.warning("Not Creating Edge")
-                logging.warning('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n')
-                #return
-                continue
-
+        # Add Edge
+        else: 
+            # Ensure class is in graph registry and that the batch has an appropriate broker
             r_type = o['relationship_type'].replace('-', '_')
-            if r_type not in g.registry:
-                logging.info('!' * 40)
-                logging.info(f'Stix Relationship of type {r_type} not in g.registry.')
+            if r_type not in g.registry: # If not in db, try to create relationship class
+                logging.warning(f'Stix Relationship of type {r_type} not in g.registry.')
                 try:
                     klass = class_from_json(o.copy(), g)
-                    logging.info(f'Created DB relationship class {klass}!')
-                    logging.info('!' * 40)
-                except Exception as e:
+                    batch.objects[klass] = BatchBroker(get_broker(klass)) # EdgeBroker(g=g, element_cls=klass)
+                    logging.warning(f'Created DB relationship class {klass}!')
+                except Exception as e: # Rare exception, most likely a db connection issue
                     logging.error(f'Exception creating DB relationship class for {o}')
                     logging.error(e)
                     logging.error(traceback.format_exc())
 
-                logging.info('!' * 40, '\n')
-            klass = g.registry[r_type]
-            res = g.create_edge(klass, src, target, **o)
+            # TODO: Double check that duplicate relationships aren't added
+            # TODO: Sort this exception out -- why is this being thrown when the objects do exist?
+            # Add relationship to batch (shouldn't recreate repeats)
+            try:
+                source_ref = batch[:o['source_ref'].replace('-','').replace('_','')]
+                target_ref = batch[:o['target_ref'].replace('-','').replace('_','')]
+            except KeyError as e:
+                logging.warning(e)
+                logging.warning(f"Source or target ref missing for edge ({bundle_name}): {o['id_']}")
+                continue
+
+            try:
+                klass = g.registry[r_type]
+                o = check_mandatory_props(klass, o)
+                # #res = g.create_edge(klass, src, target, **o)
+                batch[:] = batch.objects[klass].create(source_ref, target_ref, **o)
+            except KeyError as e:
+                logging.warning(f"Key Error for edge ({bundle_name}): {o['id_']}")
+            except Exception as e:
+                logging.error(e)
+                #logging.error(traceback.format_exc())
+    try:
+        batch.commit()
+    except Exception as e:
+        logging.error(f"\nERROR COMMITTING {bundle_name}, check file for errors\n")
+
+
 
 #TODO: Error handling on args
 #TODO: Add in logging for exceptions
@@ -328,53 +301,81 @@ if __name__ == '__main__':
             if var not in os.environ:
                 raise EnvironmentError("Failed because {} is not set.".format(var))
 
+        # Required environment variables
         HOST = os.environ['ORIENT_HOST']
         USER = os.environ['ORIENT_USER']
         PASSW = os.environ['ORIENT_PASS']
         PORT = int(os.environ['ORIENT_PORT'])
 
+        # Parse command line arguments
+        # Note: keep allows us to skip objects we've already seen, but doens't allow us to update. All or nothing. 
         parser = argparse.ArgumentParser()
         parser.add_argument('--dbname', help='Database name')
         parser.add_argument('--path', help='path to directory/json file')
-        parser.add_argument('--keep', help='Flag for keeping/destroying database', action='store_true', default=False)
-
+        parser.add_argument('--destroy', help='Flag for keeping/destroying database', action='store_true', default=False)
+        parser.add_argument('--remove', help='Remove JSON files once loaded; helpful on first load with messy data', action='store_true', default=False)
         args = parser.parse_args()
 
-        graph = db_setup(HOST, USER, args.dbname, PASSW, PORT, args.keep)
+        # Setup database connection
+        #graph = db_setup(HOST, USER, args.dbname, PASSW, PORT, args.keep)
+        if args.destroy:
+            clear_database = input('Are you sure you want to delete the database? (Y/N):  ')
+            if clear_database in ['Y', 'y', 'Yes', 'yes', 'YES']:
+                print('(dropping database)\n')
+                g = Graph(Config.from_url(args.dbname, USER, PASSW, initial_drop=True))
+                g.create_all(Node.registry)
+                g.create_all(Relationships.registry)
+
+        def process_file(p):
+            graph = db_setup(HOST, USER, args.dbname, PASSW, PORT)#, args.keep)
+            with open(p, 'r', encoding = "ISO-8859-1") as f: # Allow ISO-8859-1 encoding to avoid unicode errors 
+                logging.debug('\n\n***********************************************************')
+                logging.debug('adding file: {}'.format(p))
+                # irl = f.readlines()
+                try:
+                    # Load json file
+                    irl = json.load(f)
+                    # Weed out any objects that aren't formatted correctly (sometimes strings cloud the data) and add bundle name to nodes 
+                    for o in irl['objects']:
+                        if type(o) == dict:
+                            o['bundle_ref'] = p.name
+                        else:
+                            logging.error(f"Bad object in file {p.name}, removing from file")
+                            irl['objects'].remove(o)
+                            continue
+                    # Insert bundle into graph db
+                    insert_bundle(graph, irl['objects'], p.name)
+                except Exception as e: # Not expecting any errors that haven't been caught elsewhere. If one is caught, exit right away.
+                    logging.error(f"Error in file: {p.name}")
+                    logging.error(e)
+                    logging.error(traceback.format_exc())
+            # Remove files as you load them? 
+            if args.remove:
+                os.remove(p)
 
         infiles=args.path
         path = pathlib.Path(infiles)
-        if path.is_dir():
+        if path.is_dir(): # Loading a directory
             print(f"Parsing the following {len(list(path.glob('**/*.json')))} files: ")
+            # Print files that will be parsed
             for f in list(path.glob('**/*.json')):
                 print("  - ", f.name)
-            for p in tqdm(list(path.glob('**/*.json')), 'Files'):
-                with open(p, 'r', encoding = "ISO-8859-1") as f:
-                    logging.debug('\n\n***********************************************************')
-                    logging.debug('adding file: {}'.format(p))
-                    # irl = f.readlines()
-                    try:
-                        irl = json.load(f)
-                        # Add bundle name to nodes 
-                        for o in irl['objects']:
-                            o['bundle_ref'] = p.name
-                        insert_bundle(graph, irl['objects'])
-                    except Exception as e:
-                        logging.error(e)
-                        logging.error(traceback.format_exc())
-                        exit()
-                time.sleep(1)
 
-        else:
+            # Loop through jsons in pool 
+            process_pool = Pool(1) 
+            _ = list(tqdm(process_pool.map(process_file, list(path.glob('**/*.json'))), 'Files'))
+                
+        else: # Only loading one file, not a directory
             with open(path, 'r', encoding = "ISO-8859-1") as f:
                 logging.debug('\n\n***********************************************************')
                 logging.debug('adding file: {}'.format(infiles))
-                # irl = f.readlines()
+                # Load file and insert into bundle. Less error catching here since it's a single file 
                 try:
                     irl = json.load(f)
-                    insert_bundle(graph, irl['objects'])
+                    insert_bundle(graph, irl['objects'], infiles)
                 except Exception as e:
                     logging.error(e)
                     logging.error(traceback.format_exc())
 
         print('DONE!')
+        # TODO: Ensure program exists 
