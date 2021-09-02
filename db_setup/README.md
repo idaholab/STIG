@@ -5,8 +5,8 @@ I recommend using a virtual environment. A poetry project file is available.
 The main use at this time is to build and load a database with STIX data.
 
 build_db.py - Working script that can build a database and recursively run through a directory of STIX files or load an STIX individual file.
-    - Usage: python build_db.py --dbname=<database_name> --path=<filepath | dirpath> | --keep
-    - The keep flag tells the system to keep a database if it already exists and add bundles to it.  Leaving this off clears the database when the script is ran (after confirmation).
+    - Usage: python build_db.py --dbname=<database_name> --path=<filepath | dirpath> | --destroy
+    - The destroy flag tells the system to destroy the database with dbname.
 
 # INSTALL
 This has been tested on OrientDB v3.0.31 with Python 3.7.7 and poetry version 1.0.10.
