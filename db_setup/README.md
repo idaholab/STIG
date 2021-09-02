@@ -5,8 +5,11 @@ I recommend using a virtual environment. A poetry project file is available.
 The main use at this time is to build and load a database with STIX data.
 
 build_db.py - Working script that can build a database and recursively run through a directory of STIX files or load an STIX individual file.
-    - Usage: python build_db.py --dbname=<database_name> --path=<filepath | dirpath> | --destroy
-    - The destroy flag tells the system to destroy the database with dbname.
+    - Usage: 
+    
+    python build_db.py --dbname=<database_name> --path=<filepath | dirpath> | --destroy
+
+The destroy flag tells the system to destroy the database with dbname flag.
 
 # INSTALL
 This has been tested on OrientDB v3.0.31 with Python 3.7.7 and poetry version 1.0.10.
@@ -20,7 +23,7 @@ export ORIENT_HOST=<ip of database>
 export ORIENT_PORT=2424
 export ORIENT_USER=<user>
 export ORIENT_PASS=<password>
-python build_db.py --dbname=ExampleDB --path=/path/to/STIX/file(s) --keep
+python build_db.py --dbname=ExampleDB --path=/path/to/STIX/file(s) --destroy
 ```
 
 # TODO:
