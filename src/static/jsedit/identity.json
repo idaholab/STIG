@@ -48,6 +48,7 @@
                 "type": "string",
                 "$ref": "#/definitions/industry-sector-ov"
             },
+            "default": ["agriculture"],
             "minItems": 1
         },
         "contact_information": {

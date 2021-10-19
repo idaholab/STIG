@@ -34,12 +34,14 @@
                 "type": "string",
                 "$ref": "#/definitions/indicator-type-ov"
             },
+            "default": ["unknown"],
             "minItems": 1
         },
         "pattern": {
             "type": "string",
             "description": "The detection pattern for this Indicator MAY be expressed as a STIX Pattern as specified in section 9 or another appropriate language such as SNORT, YARA, etc.",
-            "format": "textarea"
+            "format": "textarea",
+            "default": "empty"
         },
         "pattern_type": {
             "type": "string",

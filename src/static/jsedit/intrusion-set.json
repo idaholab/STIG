@@ -51,6 +51,7 @@
                 "type": "string",
                 "$ref": "#/definitions/attack-motivation-ov"
             },
+            "default": ["accidental"],
             "minItems": 1
         },
         "resource_level": {
@@ -70,6 +71,7 @@
                 "type": "string",
                 "$ref": "#/definitions/attack-motivation-ov"
             },
+            "default": ["accidental"],
             "minItems": 1
         }
     },

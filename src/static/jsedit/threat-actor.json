@@ -34,8 +34,8 @@
                 "type": "string",
                 "$ref": "#/definitions/threat-actor-type-ov"
             },
-            "minItems": 1,
-            "default": 0
+            "default": ["unknown"],
+            "minItems": 1
         },
         "aliases": {
             "type": "array",
@@ -62,6 +62,7 @@
                 "type": "string",
                 "$ref": "#/definitions/threat-actor-role-ov"
             },
+            "default": ["agent"],
             "minItems": 1
         },
         "goals": {
@@ -94,6 +95,7 @@
                 "type": "string",
                 "$ref": "#/definitions/attack-motivation-ov"
             },
+            "deafult": ["accidental"],
             "minItems": 1
         },
         "personal_motivations": {
@@ -103,6 +105,7 @@
                 "type": "string",
                 "$ref": "#/definitions/attack-motivation-ov"
             },
+            "deafult": ["accidental"],
             "minItems": 1
         }
     },
@@ -150,7 +153,8 @@
                 "spy",
                 "terrorist",
                 "unknown"
-            ]
+            ],
+            "default": 1
         },
         "attack-resource-level-ov": {
             "type": "string",

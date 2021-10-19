@@ -26,7 +26,7 @@ export const schema: ISchemaFile = {
             properties: [
                 { name: "id_", type: "String", mandatory: true, notNull: true, collate: "default" },
                 { name: "type", type: "String", mandatory: true, notNull: true, collate: "default" },
-                { name: "spec_version", type: "String", mandatory: true, notNull: true, collate: "default" },
+                { name: "spec_version", type: "String", mandatory: true, notNull: true, collate: "default", default: "2.1" },
                 { name: "created_by_ref", type: "String", collate: "default" },
                 { name: "created", type: "DateTime", mandatory: true, notNull: true, collate: "default" },
                 { name: "modified", type: "DateTime", mandatory: true, notNull: true, collate: "default" },
@@ -45,7 +45,7 @@ export const schema: ISchemaFile = {
             properties: [
                 { name: "id_", type: "String", mandatory: true, notNull: true, collate: "default" },
                 { name: "type", type: "String", mandatory: true, notNull: true, collate: "default" },
-                { name: "spec_version", type: "String", collate: "default", default: "2.1" },
+                // { name: "spec_version", type: "String", collate: "default", default: "2.1" },
                 { name: "object_marking_refs", type: "EmbeddedList", collate: "default" },
                 { name: "granular_markings", type: "EmbeddedList", collate: "default" },
                 { name: "extensions", type: "EmbeddedMap", collate: "default" },
@@ -58,7 +58,7 @@ export const schema: ISchemaFile = {
             properties: [
                 { name: "id_", type: "String", mandatory: true, notNull: true, collate: "default" },
                 { name: "type", type: "String", mandatory: true, notNull: true, collate: "default" },
-                { name: "spec_version", type: "String", mandatory: true, notNull: true, collate: "default" },
+                { name: "spec_version", type: "String", mandatory: true, notNull: true, collate: "default", default: "2.0" },
                 { name: "created_by_ref", type: "String", collate: "default" },
                 { name: "created", type: "DateTime", mandatory: true, notNull: true, collate: "default" },
                 { name: "modified", type: "DateTime", mandatory: true, notNull: true, collate: "default" },
@@ -84,7 +84,7 @@ export const schema: ISchemaFile = {
             properties: [
                 { name: "id_", type: "String", mandatory: true, notNull: true, collate: "default" },
                 { name: "type", type: "String", mandatory: true, notNull: true, collate: "default" },
-                { name: "spec_version", type: "String", mandatory: true, notNull: true, collate: "default" },
+                { name: "spec_version", type: "String", mandatory: true, notNull: true, collate: "default", default: "2.1" },
                 { name: "created_by_ref", type: "String", collate: "default" },
                 { name: "created", type: "DateTime", mandatory: true, notNull: true, collate: "default" },
                 { name: "modified", type: "DateTime", mandatory: true, notNull: true, collate: "default" },
@@ -373,7 +373,7 @@ export const schema: ISchemaFile = {
             properties: [
                 { name: "name", type: "String", collate: "default" },
                 { name: "description", type: "String", collate: "default" },
-                { name: "context", type: "String", mandatory: true, notNull: true, collate: "default"},
+                { name: "context", type: "String", mandatory: true, notNull: true, collate: "default" },
                 { name: "object_refs", type: "EmbeddedList", mandatory: true, notNull: true, collate: "default"},
             ],
         },
@@ -706,7 +706,7 @@ export const schema: ISchemaFile = {
             properties: [
                 { name: "name", type: "String", mandatory: true, notNull: true, collate: "default" },
                 { name: "description", type: "String", collate: "default" },
-                { name: "threat_actor_types", type: "EmbeddedList",  mandatory: true, notNull: true, collate: "default"},
+                { name: "threat_actor_types", type: "EmbeddedList",  mandatory: true, notNull: true, collate: "default", default: 1},
                 { name: "aliases", type: "EmbeddedList", collate: "default" },
                 { name: "first_seen", type: "DateTime", collate: "default"},
                 { name: "last_seen", type: "DateTime", collate: "default"},

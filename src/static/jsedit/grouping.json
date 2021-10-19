@@ -30,6 +30,7 @@
         "context": {
           "type": "string",
           "description": "A short description of the particular context shared by the content referenced by the Grouping.",
+          "default": "unspecified",
           "$ref": "#/definitions/grouping-context-ov"
         },
         "object_refs": {
