@@ -107,7 +107,7 @@ export class StigDB {
     constructor(dbname: string) {
         ipcRenderer.on('database_reconfigured', (_event: Event, options: IDatabaseConfigOptions) => this.changeConfig(options));
         this.diff_dialog = new DiffDialog($('#diff-anchor'));
-        if (dbname === undefined) {
+        if (this.dbname === undefined) {
             this.configure();
         } else {
             this.changeConfig(DatabaseConfigurationStorage.Instance.get(dbname));
