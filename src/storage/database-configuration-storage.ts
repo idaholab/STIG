@@ -50,7 +50,10 @@ export class DatabaseConfigurationStorage {
             password: 'admin',
             usetoken: true,
         };
-        this.store.set('configs', {stig: initial});
+        const configmap: IDatabaseConfigMap = {
+            [initial.name]: initial,
+        };
+        this.store.set('configs', configmap);
         this.current = 'stig';
     }
 
