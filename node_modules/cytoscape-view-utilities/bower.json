@@ -1,0 +1,21 @@
+{
+  "name": "cytoscape-view-utilities",
+  "description": "Package of view utilities for cytoscape.js",
+  "main": "cytoscape-view-utilities.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iVis-at-Bilkent/view-utilities.git"
+  },
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "keywords": [
+    "cytoscape",
+    "cyext"
+  ],
+  "license": "MIT"
+}

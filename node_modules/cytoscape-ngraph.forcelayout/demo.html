@@ -1,0 +1,114 @@
+<!DOCTYPE>
+
+<html>
+
+	<head>
+		<title>cytoscape-ngraph.forcelayout.js demo</title>
+
+		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+
+		<script src="http://cytoscape.github.io/cytoscape.js/api/cytoscape.js-latest/cytoscape.min.js"></script>
+
+		<!-- for testing with local version of cytoscape.js -->
+		<!--<script src="../cytoscape.js/build/cytoscape.js"></script>-->
+
+		<script src="cytoscape-ngraph.forcelayout.js"></script>
+
+		<style>
+			body {
+				font-family: helvetica neue, helvetica, liberation sans, arial, sans-serif;
+				font-size: 14px;
+			}
+
+			#cy {
+				position: absolute;
+				left: 0;
+				top: 0;
+				bottom: 0;
+				right: 0;
+				z-index: 999;
+			}
+
+			h1 {
+				opacity: 0.5;
+				font-size: 1em;
+				font-weight: bold;
+			}
+		</style>
+
+		<script>
+			document.addEventListener('DOMContentLoaded', function(){
+
+				var cy = window.cy = cytoscape({
+					container: document.getElementById('cy'),
+
+					// demo your layout
+					layout: {
+						name: 'cytoscape-ngraph.forcelayout',
+
+						// some more options here...
+					},
+
+					style: [
+						{
+							selector: 'node',
+							style: {
+								'content': 'data(name)'
+							}
+						},
+
+						{
+							selector: 'edge',
+							style: {
+								'target-arrow-shape': 'triangle'
+							}
+						},
+
+						{
+							selector: ':selected',
+							style: {
+
+							}
+						}
+					],
+
+					elements: {
+						nodes: [
+							{ data: { id: 'j', name: 'Jerry' } },
+							{ data: { id: 'e', name: 'Elaine' } },
+							{ data: { id: 'k', name: 'Kramer' } },
+							{ data: { id: 'g', name: 'George' } },
+							{ data: { id: 'n', name: 'George3' } },
+							{ data: { id: 'l', name: 'George1' } },
+							{ data: { id: 'm', name: 'George2' } },
+						],
+						edges: [
+							{ data: { source: 'l', target: 'm' } },
+							{ data: { source: 'n', target: 'l' } },
+							{ data: { source: 'm', target: 'e' } },
+							{ data: { source: 'j', target: 'e' } },
+							{ data: { source: 'j', target: 'k' } },
+							{ data: { source: 'j', target: 'g' } },
+							{ data: { source: 'e', target: 'j' } },
+							{ data: { source: 'e', target: 'k' } },
+							{ data: { source: 'k', target: 'j' } },
+							{ data: { source: 'k', target: 'e' } },
+							{ data: { source: 'k', target: 'g' } },
+							{ data: { source: 'g', target: 'j' } }
+						]
+					},
+				});
+
+
+			});
+		</script>
+	</head>
+
+	<body>
+		<h1>cytoscape-cytoscape-ngraph.forcelayout demo</h1>
+
+		<div id="cy"></div>
+
+	</body>
+
+</html>

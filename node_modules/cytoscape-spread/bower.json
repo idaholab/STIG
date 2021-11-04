@@ -1,0 +1,24 @@
+{
+  "name": "cytoscape-spread",
+  "description": "The Spread physics simulation layout for Cytoscape.js",
+  "main": "cytoscape-spread.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cytoscape/cytoscape.js-spread.git"
+  },
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "keywords": [
+    "cytoscape",
+    "cytoscape-extension"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "cytoscape": "^2.5.0 || ^3.0.0"
+  }
+}

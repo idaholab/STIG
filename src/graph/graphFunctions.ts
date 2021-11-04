@@ -5,21 +5,21 @@ ALL RIGHTS RESERVED
  */
 
 // import { objects.StixRelationshipData, StixRelationship, DataSourceType } from '../stix';
-import { BundleType, Relationship, Sighting, Core, CreatedByRelationshipFactory, Identifier, ObjectMarkingRelationship, StixObject, Id, StixRelationshipData, StixRelationship, DataSourceType, IStixNode, StixNode } from "../stix";
-import { StigDB } from "../db/db";
+import { BundleType, Relationship, Sighting, Core, CreatedByRelationshipFactory, Identifier, ObjectMarkingRelationship, StixObject, Id, StixRelationshipData, StixRelationship, DataSourceType, /*IStixNode,*/ StixNode } from "../stix";
+// import { StigDB } from "../db/db";
 import * as moment from 'moment';
 import { layouts, LayoutsType } from './graphOptions';
 import * as cytoscape from 'cytoscape';
-import { GraphQueryResult } from '../db/db_types';
+// import { GraphQueryResult } from '../db/db_types';
 
 export class GraphUtils {
-    public db: StigDB;
+    // public db: StigDB;
     public cy: cytoscape.Core;
     public skipLayout: boolean = false;
 
-    constructor(cy: cytoscape.Core, db: StigDB) {
+    constructor(cy: cytoscape.Core) {//, db: StigDB) {
         this.cy = cy;
-        this.db = db;
+        // this.db = db;
     }
     /**
      *
@@ -30,49 +30,51 @@ export class GraphUtils {
      * @memberof GraphUtils
      */
     public async handle_not_in_graph(id: Identifier): Promise<cytoscape.CollectionReturnValue | undefined> {
-        let ret;
-        const the_type = id.split('--')[0].toLowerCase();
-        const data: GraphQueryResult = { graph: { edges: [], vertices: [] } };
-        let st_node: IStixNode;
-        let exists;
+        console.log(id)
+        return undefined
+    //     let ret;
+    //     const the_type = id.split('--')[0].toLowerCase();
+    //     const data: GraphQueryResult = { graph: { edges: [], vertices: [] } };
+    //     let st_node: IStixNode;
+    //     let exists;
 
-        try {
-            exists = await this.db.exists(id);
-            if (exists) {
-                if (the_type === 'relationship' || the_type === 'sighting') {
-                    data.graph.edges = [await this.db.getEdge(id)];
-                } else {
-                    data.graph.vertices = [await this.db.getSDO(id)];
-                }
-                const bundle = await this.db.handleResponse(data);
-                const sdo = bundle.objects[0];
-                st_node = new StixNode(sdo as Core, sdo.type, 'DB');
-            } else {
-                // src_node not in graph or db
-                const create = await confirm("Object with id:" + id + "not found.  Create?");
-                if (create) {
-                    const sdo = {
-                        created: moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
-                        modified: moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
-                        type: the_type,
-                        id,
-                        revoked: false,
-                    };
-                    st_node = new StixNode(sdo as Core, sdo.type, 'GUI');
-                } else {
-                    return undefined;
-                }
-            }
-            if (!this.cy.getElementById(st_node.data.id).length) {
-                ret = this.cy.add(st_node as cytoscape.ElementDefinition);
-                this.db.needs_save(id, this.cy).then(() => { return; });
-            }
-            return ret;
-        } catch (e) {
-            console.error(e);
-            e.stack += (new Error()).stack;
-            throw e;
-        }
+    //     try {
+    //         exists = await this.db.exists(id);
+    //         if (exists) {
+    //             if (the_type === 'relationship' || the_type === 'sighting') {
+    //                 data.graph.edges = [await this.db.getEdge(id)];
+    //             } else {
+    //                 data.graph.vertices = [await this.db.getSDO(id)];
+    //             }
+    //             const bundle = await this.db.handleResponse(data);
+    //             const sdo = bundle.objects[0];
+    //             st_node = new StixNode(sdo as Core, sdo.type, 'DB');
+    //         } else {
+    //             // src_node not in graph or db
+    //             const create = await confirm("Object with id:" + id + "not found.  Create?");
+    //             if (create) {
+    //                 const sdo = {
+    //                     created: moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+    //                     modified: moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+    //                     type: the_type,
+    //                     id,
+    //                     revoked: false,
+    //                 };
+    //                 st_node = new StixNode(sdo as Core, sdo.type, 'GUI');
+    //             } else {
+    //                 return undefined;
+    //             }
+    //         }
+    //         if (!this.cy.getElementById(st_node.data.id).length) {
+    //             ret = this.cy.add(st_node as cytoscape.ElementDefinition);
+    //             this.db.needs_save(id, this.cy).then(() => { return; });
+    //         }
+    //         return ret;
+    //     } catch (e) {
+    //         console.error(e);
+    //         e.stack += (new Error()).stack;
+    //         throw e;
+    //     }
     }
 
     private _addVertices(sdos: StixObject[], from_db: boolean = false, metadata: object = null): [cytoscape.CollectionReturnValue, Relationship[], Sighting[]] {
@@ -109,7 +111,7 @@ export class GraphUtils {
                             }
                         } else if ('object_marking_refs' in sdo && sdo.object_marking_refs !== undefined) {
                             // add object marking references 'applies-to'
-                            sdo.object_marking_refs.forEach((markingID) => {
+                            sdo.object_marking_refs.forEach((markingID: any) => {
                                 if (!in_graph.has(sdo.id)) {
                                     relationships.push(new ObjectMarkingRelationship(markingID, sdo.id, sdo.created, sdo.modified));
                                     in_graph.add(sdo.id);
@@ -152,8 +154,9 @@ export class GraphUtils {
         this.skipLayout = true;
 
         nodes.map(node => {
-            let obj = metadata.find(x => x.id === node.id());
-            if (obj) node.position(obj.position);
+            console.log(node)
+            // let obj = metadata.find(x => x.id === node.id());
+            // if (obj) node.position(obj.position);
         })
     }
 
@@ -311,7 +314,7 @@ export class GraphUtils {
                     if (ele.data) {
                         // console.debug(ele.id(), ele.data('data_source'));
                         if (ele.data('data_source') === 'GUI') {
-                            this.db.needs_save(ele.data('id'), this.cy).then((saved) => saved);
+                            // this.db.needs_save(ele.data('id'), this.cy).then((saved) => saved);
                         }
                     } else {
                         console.debug(`Something in all_new does not have data @index ${j} ${ele}`);

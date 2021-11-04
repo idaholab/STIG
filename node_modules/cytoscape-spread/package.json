@@ -1,0 +1,50 @@
+{
+  "name": "cytoscape-spread",
+  "version": "3.0.0",
+  "description": "The Spread physics simulation layout for Cytoscape.js",
+  "main": "cytoscape-spread.js",
+  "scripts": {
+    "postpublish": "run-s gh-pages:demo gh-pages:deploy gh-pages:clean",
+    "gh-pages:demo": "cpy demo.html . --rename=index.html",
+    "gh-pages:deploy": "gh-pages -d . -v node_modules/**",
+    "gh-pages:clean": "rimraf index.html",
+    "copyright": "update license",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "cross-env NODE_ENV=production webpack",
+    "build:release": "run-s build copyright",
+    "watch": "webpack --progress --watch",
+    "dev": "webpack-dev-server --open",
+    "lint": "eslint src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cytoscape/cytoscape.js-spread.git"
+  },
+  "keywords": [
+    "cytoscape",
+    "cytoscape-extension"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cytoscape/cytoscape.js-spread/issues"
+  },
+  "homepage": "https://github.com/cytoscape/cytoscape.js-spread",
+  "devDependencies": {
+    "cpy-cli": "^1.0.1",
+    "cross-env": "^5.1.6",
+    "eslint": "^3.19.0",
+    "gh-pages": "^1.1.0",
+    "npm-run-all": "^4.1.2",
+    "rimraf": "^2.6.2",
+    "update": "^0.7.4",
+    "updater-license": "^1.0.0",
+    "webpack": "^2.7.0",
+    "webpack-dev-server": "^2.11.2"
+  },
+  "dependencies": {
+    "weaverjs": "^1.2.0"
+  },
+  "peerDependencies": {
+    "cytoscape": "^3.0.0"
+  }
+}

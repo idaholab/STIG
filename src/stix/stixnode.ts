@@ -76,7 +76,7 @@ export class StixNode implements IStixNode {
             x: 100,
             y: 100,
         };
-        const style: CSSStyleDeclaration = { backgroundImage: node_img[the_type], backgroundFit: 'contain' } as CSSStyleDeclaration;
+        const style: CSSStyleDeclaration = { backgroundImage: node_img[the_type], backgroundFit: 'contain' } as unknown as CSSStyleDeclaration;
         this.style = style;
         if (this.data.data_source === 'DB' || this.data.data_source === 'IGNORE') {
             this.saved = true;
