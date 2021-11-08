@@ -19,13 +19,12 @@ import {
 } from './stix';
 import * as stix from './stix';
 // import * as fileSaver from 'file-saver';
-// // import { ViewUtilitiesOptions } from './cytoscape-view-utilities';
 // import { StigDB } from './db/db';
 import {
     edge_style,
     node_style,
     select_node_style,
-    // view_utils_options,
+    view_utils_options,
     modified_unselect_style,
     modified_select_style,
 } from './graph/graphOptions';
@@ -37,12 +36,12 @@ import * as ngraph from 'cytoscape-ngraph.forcelayout';
 import * as spread from 'cytoscape-spread';
 // import { QueryHistoryDialog } from './ui/queryHistoryWidget';
 import { setup_edge_handles, edgehandles_style } from './graph/edge-handles';
-// import { setup_ctx_menu } from './graph/context-menu';
+import { setup_ctx_menu } from './graph/context-menu';
 // import { GraphUtils } from './graph/graphFunctions';
 // import { StixEditor } from './ui/stix-editor';
 import Split from 'split.js';
 import * as cytoscape from 'cytoscape';
-// import { ViewUtilitiesOptions } from './graph/graphOptions';
+import { ViewUtilitiesOptions } from './graph/graphOptions';
 // import { ipcRenderer } from 'electron';
 // import { GraphQueryResult } from './db/db_types';
 import * as edgehandles from 'cytoscape-edgehandles';
@@ -105,11 +104,11 @@ export class main {
             // var jquery;
             const viewUtilities = require('cytoscape-view-utilities');
             viewUtilities(cytoscape, jquery);
-            // const view_util = cy.viewUtilities(view_utils_options as ViewUtilitiesOptions);
+            const view_util = cy.viewUtilities(view_utils_options as ViewUtilitiesOptions);
             // context menus inside the graph
-//             const cxtmenu = require('cytoscape-cxtmenu');
-//             cxtmenu(cytoscape);
-//             setup_ctx_menu(cy, db, view_util);
+            const cxtmenu = require('cytoscape-cxtmenu');
+            cxtmenu(cytoscape);
+            setup_ctx_menu(cy, /*db,*/ view_util);
             const klay = require('cytoscape-klay');
             klay(cytoscape);
             cola(cytoscape);
@@ -643,25 +642,25 @@ export class main {
                     node_img[name] = src;
                 }
                 // make icons draggable
-                $(element).draggable({
-                    opacity: 0.7,
-                    helper: 'clone',
-                    zIndex: 999,
-                    start() {
-                        //console.log('icon position:' + $(element).attr('position').x + $(element).attr('position').y)
-                        //console.log('drag start:' + ui.position.left.toString() + ' ' + ui.position.top.toString())
-                    },
-                    // handle widgets being dragged in from the widget bar
-                    // stop: async function(evt: DragEvent) {
-                    //     const my_node = await event_add_node($(element).attr('name')!);
-                    //     const view_pos = cy._private.renderer.projectIntoViewport(evt.clientX, evt.clientY);
-                    //     my_node.position = {
-                    //         x: view_pos[0],
-                    //         y: view_pos[1],
-                    //     };
-                    //     cy.add(my_node);
-                    // },
-                });
+                // $(element).draggable({
+                //     opacity: 0.7,
+                //     helper: 'clone',
+                //     zIndex: 999,
+                //     start() {
+                //         // console.log('icon position:' + $(element).attr('position').x + $(element).attr('position').y)
+                //         //console.log('drag start:' + ui.position.left.toString() + ' ' + ui.position.top.toString())
+                //     },
+                //     // handle widgets being dragged in from the widget bar
+                //     // stop: async function(evt: DragEvent) {
+                //     //     const my_node = await event_add_node($(element).attr('name')!);
+                //     //     const view_pos = cy._private.renderer.projectIntoViewport(evt.clientX, evt.clientY);
+                //     //     my_node.position = {
+                //     //         x: view_pos[0],
+                //     //         y: view_pos[1],
+                //     //     };
+                //     //     cy.add(my_node);
+                //     // },
+                // });
                 return;
             });
         },

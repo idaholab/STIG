@@ -6,6 +6,7 @@ ALL RIGHTS RESERVED
 
 import * as cytoscape from 'cytoscape';
 
+
 const defaults = {
     preview: true, // whether to show added edges preview before releasing selection
     hoverDelay: 150, // time spent hovering over a target node before it is considered selected
@@ -73,6 +74,7 @@ const defaults = {
     },
 };
 
+
 export let edgehandles_style = [{
     selector: '.eh-handle',
     style: {
@@ -117,7 +119,7 @@ export let edgehandles_style = [{
 ];
 
 export function setup_edge_handles(cy: cytoscape.Core) {
-    const eh = cy.edgehandles( defaults);
+    const eh = cy.edgehandles( defaults );
     return eh;
 }
 

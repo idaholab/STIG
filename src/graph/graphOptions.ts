@@ -20,7 +20,7 @@ export let node_style: cytoscape.Stylesheet = {
         "text-wrap": "wrap",
         // "text-margin-x": 7,
         'overlay-opacity': 0,
-        'text-max-width': "120",
+        'text-max-width': "120"
         // "border-width":5
     } //as cytoscape.Css.Node,
 };
