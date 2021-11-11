@@ -38,7 +38,7 @@ import * as spread from 'cytoscape-spread';
 import { setup_edge_handles, edgehandles_style } from './graph/edge-handles';
 import { setup_ctx_menu } from './graph/context-menu';
 // import { GraphUtils } from './graph/graphFunctions';
-// import { StixEditor } from './ui/stix-editor';
+import { StixEditor } from './ui/stix-editor';
 import Split from 'split.js';
 import * as cytoscape from 'cytoscape';
 import { ViewUtilitiesOptions } from './graph/graphOptions';
@@ -63,7 +63,7 @@ export class main {
 
     public run() {
 //         const storage: QueryStorageService = QueryStorageService.Instance;
-//         let loading: boolean = false;
+        let loading: boolean = false;
 
         document.addEventListener('DOMContentLoaded', async () => {
 //             unhandled();
@@ -120,7 +120,7 @@ export class main {
             // setHandlers();
 
 //             // the editor form that is filled when a node is clicked
-//             const editor = new StixEditor(cy, db);
+            const editor = new StixEditor(cy);//, db);
 //             //#endregion
 
             // function to search elements inside the displayed graph
@@ -302,60 +302,60 @@ export class main {
                 $("#query-status").html("No Results");
             });
 
-//             // Show stix form on click
-//             cy.on("click", 'node, edge', (evt: cytoscape.EventObject) => {
-//                 const ele: cytoscape.CollectionReturnValue = evt.target;
-//                 cy.$(':selected').unselect();
-//                 if (ele.empty() || ele.length > 1 || loading === true) {
-//                     return true;
-//                 }
-//                 const input_data = ele.data('raw_data');
-//                 if (input_data === undefined) { return true; }
-//                 if (ele.isNode()) {
-//                     // load the form for this node
-//                     try {
-//                         editor.buildWidget(ele, ele.data('type'), input_data);
-//                     }
-//                     catch(err) {
-//                         if(err.message === "Cannot read property '$ref' of undefined"){
-//                             // added to handle sub directory 'observables'
-//                             editor.buildWidget(ele, 'observables/' + ele.data('type'), input_data);
-//                         }
-//                         else{
-//                             console.error(err);
-//                         }
-//                     }
-//                 } else {
-//                     // edge
-//                     // input_data.type
-//                     let relationship_file = "";
+            // Show stix form on click
+            cy.on("click", 'node, edge', (evt: cytoscape.EventObject) => {
+                const ele: cytoscape.CollectionReturnValue = evt.target;
+                cy.$(':selected').unselect();
+                if (ele.empty() || ele.length > 1 || loading === true) {
+                    return true;
+                }
+                const input_data = ele.data('raw_data');
+                if (input_data === undefined) { return true; }
+                if (ele.isNode()) {
+                    // load the form for this node
+                    try {
+                        editor.buildWidget(ele, ele.data('type'), input_data);
+                    }
+                    catch(err) {
+                        if(err.message === "Cannot read property '$ref' of undefined"){
+                            // added to handle sub directory 'observables'
+                            editor.buildWidget(ele, 'observables/' + ele.data('type'), input_data);
+                        }
+                        else{
+                            console.error(err);
+                        }
+                    }
+                } else {
+                    // edge
+                    // input_data.type
+                    let relationship_file = "";
 
-//                     // objects that shouldn't be related to other objects or only require the fundamental relationship types
-//                     let common = ["artifact", "autonomous-system", "directory", "domain-name", "email-addr",
-//                                   "email-message", "file", "grouping", "ipv4-addr", "ipv6-addr", "language-content",
-//                                   "location", "mac-addr", "mutex", "network-traffic", "note", "observed-data",
-//                                   "opinion", "process", "report", "software", "url", "user-account", "vulnerability",
-//                                   "windows-registry-key", "x509-certificate"];
+                    // objects that shouldn't be related to other objects or only require the fundamental relationship types
+                    let common = ["artifact", "autonomous-system", "directory", "domain-name", "email-addr",
+                                  "email-message", "file", "grouping", "ipv4-addr", "ipv6-addr", "language-content",
+                                  "location", "mac-addr", "mutex", "network-traffic", "note", "observed-data",
+                                  "opinion", "process", "report", "software", "url", "user-account", "vulnerability",
+                                  "windows-registry-key", "x509-certificate"];
 
-//                     let target_obj_type = (input_data.source_ref).slice(0,-38);
+                    let target_obj_type = (input_data.source_ref).slice(0,-38);
 
-//                     // get the file name for the corresponding source object
-//                     if (common.includes(target_obj_type)) {
-//                         relationship_file = "common-relationship";
-//                     } else {
-//                         relationship_file = target_obj_type + "-relationship";
-//                     }
+                    // get the file name for the corresponding source object
+                    if (common.includes(target_obj_type)) {
+                        relationship_file = "common-relationship";
+                    } else {
+                        relationship_file = target_obj_type + "-relationship";
+                    }
 
-//                     editor.buildWidget(ele, relationship_file , input_data);
-//                 }
-//                 $('button#btn-export-single').button('option', 'disabled', false);
-//                 if (ele.data('saved') === false) {
-//                     $('button.btn-commit').button('option', 'disabled', false);
-//                 } else {
-//                     $('button.btn-commit').button('option', 'disabled', true);
-//                 }
-//                 return true;
-//             });
+                    editor.buildWidget(ele, relationship_file , input_data);
+                }
+                $('button#btn-export-single').button('option', 'disabled', false);
+                if (ele.data('saved') === false) {
+                    $('button.btn-commit').button('option', 'disabled', false);
+                } else {
+                    $('button.btn-commit').button('option', 'disabled', true);
+                }
+                return true;
+            });
 
 //             $('#btn-export-single').on('click', (e: JQuery.Event) => {
 //                 // console.log(editor.root.getValue())
