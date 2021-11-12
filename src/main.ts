@@ -315,6 +315,7 @@ export class main {
                     // load the form for this node
                     try {
                         console.log("<editor> id: ", ele.data('id'))
+                        console.log("<editor> id input_data: ", input_data.id)
                         editor.buildWidget(ele, ele.data('type'), input_data);
                     }
                     catch(err) {
@@ -349,12 +350,12 @@ export class main {
 
                     editor.buildWidget(ele, relationship_file , input_data);
                 }
-                $('button#btn-export-single').button('option', 'disabled', false);
-                if (ele.data('saved') === false) {
-                    $('button.btn-commit').button('option', 'disabled', false);
-                } else {
-                    $('button.btn-commit').button('option', 'disabled', true);
-                }
+                // $('button#btn-export-single').button('option', 'disabled', false);
+                // if (ele.data('saved') === false) {
+                //     $('button.btn-commit').button('option', 'disabled', false);
+                // } else {
+                //     $('button.btn-commit').button('option', 'disabled', true);
+                // }
                 return true;
             });
 

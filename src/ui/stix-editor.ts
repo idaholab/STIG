@@ -44,12 +44,20 @@ export class StixEditor {
      * @param {string} file_name The name of the json_schema -- use the name of the type field in the schema
      * @param {any} to_inspect JSON Data to populate the form widget
      */
-    public buildWidget(node: cytoscape.Singular, file_name: string, _to_inspect: any): void {
+    public buildWidget(node: cytoscape.Singular, file_name: string, to_inspect: any): void {
         $('#metawidget').empty();
         $('#current_node').get().forEach((i) => {
             i.setAttribute('node_id', node.id());
         });
+
+        console.log("<editor> type: ", to_inspect.type)
+        console.log("<editor> file_name: ", file_name)
+        console.log("<editor> schema: ", schema_map[`${file_name}.json`])
+
+
         const raw_data: StixNodeData = node.data('raw_data') as StixNodeData;
+
+        
         if (raw_data.id === undefined || /--$/.exec(raw_data.id)) {
             raw_data.id = node.data('type') + '--' + node.id();
         }
@@ -62,15 +70,12 @@ export class StixEditor {
             }
         }
         this.editor = new JSONEditorExtended(document.getElementById('metawidget')!, {
-            //ajax: true,
-            //startval: to_inspect,
-            //required_by_default: false,
-            theme: "bootstrap4",
-            //iconlib: "fontawesome4",
-            //refs: schema_map,
+            theme: "ambiance",
+            schemaRefs: schema_map,
             schema: schema_map[`${file_name}.json`],
             remove_empty_properties: true,
         });
+        this.editor.set(to_inspect)
         if (node.data('saved') === true) {
             $('button.btn-commit').prop('disabled', true);
         } else {
