@@ -314,6 +314,7 @@ export class main {
                 if (ele.isNode()) {
                     // load the form for this node
                     try {
+                        console.log("<editor> id: ", ele.data('id'))
                         editor.buildWidget(ele, ele.data('type'), input_data);
                     }
                     catch(err) {

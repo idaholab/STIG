@@ -44,7 +44,7 @@ export class StixEditor {
      * @param {string} file_name The name of the json_schema -- use the name of the type field in the schema
      * @param {any} to_inspect JSON Data to populate the form widget
      */
-    public buildWidget(node: cytoscape.Singular, file_name: string, to_inspect: any): void {
+    public buildWidget(node: cytoscape.Singular, file_name: string, _to_inspect: any): void {
         $('#metawidget').empty();
         $('#current_node').get().forEach((i) => {
             i.setAttribute('node_id', node.id());
@@ -82,28 +82,28 @@ export class StixEditor {
         *************************************** */
         // $(document).off('click', '#btn-export-single').on('click', '#btn-export-single', function (e) {
 
-        this.editor.on("ready", () => {
-            this.form_changed = () => {
-                // @ts-ignore: Property 'root' does not exist on type 'JSONEditor<any>'.
-                const new_data = this.editor.root.getValue();
-                const ele = this.cy.getElementById($('#current_node').attr('node_id')) as cytoscape.SingularElementReturnValue;
-                if (ele === undefined) { return; }
-                if (ele.isNode() && new_data.name != null) {
-                    ele.data("content", new_data.name);
-                    ele.data("name", new_data.name);
-                } else if (ele.isEdge()) {
-                    ele.data("content", new_data.relationship_type);
-                    ele.style('label', new_data.relationship_type);
-                }
-                ele.data("raw_data", new_data);
-                // ele.data('saved', false);
-                // this.db.needs_save(ele.id(), window.cycore).then((save) => {
-                //     save ? $('button.btn-commit').button('enable') : $('button.btn-commit').button('disable');
-                // });
-            };
+        // this.editor.on("ready", () => {
+        //     this.form_changed = () => {
+        //         // @ts-ignore: Property 'root' does not exist on type 'JSONEditor<any>'.
+        //         const new_data = this.editor.root.getValue();
+        //         const ele = this.cy.getElementById($('#current_node').attr('node_id')) as cytoscape.SingularElementReturnValue;
+        //         if (ele === undefined) { return; }
+        //         if (ele.isNode() && new_data.name != null) {
+        //             ele.data("content", new_data.name);
+        //             ele.data("name", new_data.name);
+        //         } else if (ele.isEdge()) {
+        //             ele.data("content", new_data.relationship_type);
+        //             ele.style('label', new_data.relationship_type);
+        //         }
+        //         ele.data("raw_data", new_data);
+        //         // ele.data('saved', false);
+        //         // this.db.needs_save(ele.id(), window.cycore).then((save) => {
+        //         //     save ? $('button.btn-commit').button('enable') : $('button.btn-commit').button('disable');
+        //         // });
+        //     };
 
-            this.editor.on('change', this.form_changed);
-            // this.editor.watch('root', this.form_changed);
-        });
+        //     this.editor.on('change', this.form_changed);
+        //     // this.editor.watch('root', this.form_changed);
+        // });
     }
 }
