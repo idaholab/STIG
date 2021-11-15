@@ -20,7 +20,7 @@
         },
         "created": {
             "type": "string",
-            "format": "date-time",
+            "format": "datetime-local",
             "options": {
                 "flatpickr": {
                     "inlineHideInput": true,
@@ -32,7 +32,7 @@
         },
         "modified": {
             "type": "string",
-            "format": "date-time",
+            "format": "datetime-local",
             "options": {
                 "flatpickr": {
                     "wrap": true,
@@ -49,6 +49,7 @@
         "labels": {
             "type": "array",
             "uniqueItems": true,
+            "format": "table",
             "items": {
                 "type": "string"
             },
@@ -66,6 +67,7 @@
         },
         "external_references": {
             "type": "array",
+            "format": "tabs",
             "items": {
                 "type": "object",
                 "properties": {
@@ -92,6 +94,7 @@
         },
         "object_marking_refs": {
             "type": "array",
+            "format": "table",
             "uniqueItems": true,
             "items": {
                 "type": "string"
@@ -100,6 +103,7 @@
         },
         "granular_markings": {
             "type": "array",
+            "format": "tabs",
             "items": {
                 "title": "granular-marking",
                 "description": "The granular-marking type defines how the list of marking-definition objects referenced by the marking_refs property to apply to a set of content identified by the list of selectors in the selectors property.",
