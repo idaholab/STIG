@@ -60,7 +60,7 @@
   "resolved" "https://registry.npmjs.org/@discoveryjs/json-ext/-/json-ext-0.5.5.tgz"
   "version" "0.5.5"
 
-"@json-editor/json-editor@^2.5.4":
+"@json-editor/json-editor@^2.6.0":
   "integrity" "sha512-6yWvdpBirBENLdRKSfoCbEzQycZrqegSiWYkRV2X7n9F4PwULmQB0GPuG/7A2FJzwKM8m/Vpz6ywOBNE8jY9dw=="
   "resolved" "https://registry.npmjs.org/@json-editor/json-editor/-/json-editor-2.6.0.tgz"
   "version" "2.6.0"

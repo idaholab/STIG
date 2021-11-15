@@ -5,11 +5,11 @@ ALL RIGHTS RESERVED
  */
 
 import cytoscape from 'cytoscape';
-import JSONEditor, { JSONEditorOptions } from 'jsoneditor';
 import moment from 'moment';
 // import { StigDB } from "../db";
 import { StixNodeData } from '../stix';
 import { schema_map } from '../stix/stix_schemas';
+
 
 type JSONEditorOptionsExtended = JSONEditorOptions & { remove_empty_properties: boolean };
 class JSONEditorExtended extends JSONEditor {
@@ -19,7 +19,7 @@ class JSONEditorExtended extends JSONEditor {
 }
 
 export class StixEditor {
-    public editor: JSONEditorExtended;
+    public editor: JSONEditor;
     // public db: StigDB;
     public form_changed: () => void;
     public cy: cytoscape.Core;
@@ -70,10 +70,15 @@ export class StixEditor {
             }
         }
         this.editor = new JSONEditorExtended(document.getElementById('metawidget')!, {
-            theme: "ambiance",
-            schemaRefs: schema_map,
+            ajax: true,
+            startval: to_inspect,
+            required_by_default: false,
+            theme: "bootstrap4",
+            iconlib: "fontawesome4",
+            refs: schema_map,
             schema: schema_map[`${file_name}.json`],
-            remove_empty_properties: true,
+            remove_empty_properties: true
+
         });
         this.editor.set(to_inspect)
         if (node.data('saved') === true) {
