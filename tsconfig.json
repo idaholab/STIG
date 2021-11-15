@@ -1,56 +1,8 @@
 {
     "compilerOptions": {
-        "removeComments": false,
-        "preserveConstEnums": true,
-        "sourceMap": true,
-        "noImplicitAny": true,
-        "noImplicitReturns": true,
-        "suppressImplicitAnyIndexErrors": true,
-        "strictNullChecks": false,
-        "noUnusedLocals": true,
-        "noImplicitThis": true,
-        "noUnusedParameters": true,
-        "importHelpers": true,
-        "noEmitHelpers": true,
-        "module": "commonjs",
-        "moduleResolution": "node",
-        "pretty": true,
-        "jsx": "react",
-        "target": "es2017",
-        "experimentalDecorators": true,
-        "emitDecoratorMetadata": true,
-        "allowSyntheticDefaultImports": true,
-        "allowJs": true,
-        "lib": [
-            "dom",
-            "es2017"
-        ],
-        "typeRoots": [
-            "node_modules/@types",
-            "types",
-            "src/types"
-        ],
-        "baseUrl": "src", 
-        "paths": {
-            "jquery": [
-                "node_modules/jquery/dist/jquery"
-            ],
-            "jquery-ui": [
-                "node_modules/jquery-ui/ui/widget"
-            ]
-        },
-    },
-    "include": [
-        "src/**/*.ts"
-    ],
-    "exclude": [
-        "node_modules",
-        "old",
-        "bower_components",
-        "assets"
-    ],
-    "compileOnSave": true,
-    "typeAcquisition": {
-        "enable": true
+        "sourceMap":true,
+        "module": "CommonJS",
+        "target": "ES6",
+        "esModuleInterop": true
     }
 }

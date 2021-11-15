@@ -6,7 +6,7 @@ ALL RIGHTS RESERVED
 
 import cytoscape from 'cytoscape';
 import JSONEditor, { JSONEditorOptions } from 'jsoneditor';
-import * as moment from 'moment';
+import moment from 'moment';
 // import { StigDB } from "../db";
 import { StixNodeData } from '../stix';
 import { schema_map } from '../stix/stix_schemas';

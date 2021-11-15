@@ -5,7 +5,7 @@
 //  */
 
 // import * as unhandled from 'electron-unhandled';
-import * as uuid from 'uuid';
+import uuid from 'uuid';
 import {
     // BundleType,
     Relationship,
@@ -28,24 +28,24 @@ import {
     modified_unselect_style,
     modified_select_style,
 } from './graph/graphOptions';
-import * as cola from 'cytoscape-cola';
-import * as cosebilkent from 'cytoscape-cose-bilkent';
-import * as dagre from 'cytoscape-dagre';
-import * as euler from 'cytoscape-euler';
-import * as ngraph from 'cytoscape-ngraph.forcelayout';
-import * as spread from 'cytoscape-spread';
+import cola from 'cytoscape-cola';
+import cosebilkent from 'cytoscape-cose-bilkent';
+import dagre from 'cytoscape-dagre';
+import euler from 'cytoscape-euler';
+import ngraph from 'cytoscape-ngraph.forcelayout';
+import spread from 'cytoscape-spread';
 // import { QueryHistoryDialog } from './ui/queryHistoryWidget';
 import { setup_edge_handles, edgehandles_style } from './graph/edge-handles';
 import { setup_ctx_menu } from './graph/context-menu';
 // import { GraphUtils } from './graph/graphFunctions';
 import { StixEditor } from './ui/stix-editor';
 import Split from 'split.js';
-import * as cytoscape from 'cytoscape';
+import cytoscape from 'cytoscape';
 import { ViewUtilitiesOptions } from './graph/graphOptions';
 // import { ipcRenderer } from 'electron';
 // import { GraphQueryResult } from './db/db_types';
-import * as edgehandles from 'cytoscape-edgehandles';
-import * as moment from 'moment';
+import edgehandles from 'cytoscape-edgehandles';
+import moment from 'moment';
 // import { QueryStorageService, DatabaseConfigurationStorage, StigSettings } from './storage';
 // import { setHandlers } from './ui/ipc-render-handlers';
 

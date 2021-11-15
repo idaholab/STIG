@@ -7,7 +7,7 @@ ALL RIGHTS RESERVED
 // import { objects.StixRelationshipData, StixRelationship, DataSourceType } from '../stix';
 import { BundleType, Relationship, Sighting, Core, CreatedByRelationshipFactory, Identifier, ObjectMarkingRelationship, StixObject, Id, StixRelationshipData, StixRelationship, DataSourceType, /*IStixNode,*/ StixNode } from "../stix";
 // import { StigDB } from "../db/db";
-import * as moment from 'moment';
+import moment from 'moment';
 import { layouts, LayoutsType } from './graphOptions';
 import * as cytoscape from 'cytoscape';
 // import { GraphQueryResult } from '../db/db_types';
