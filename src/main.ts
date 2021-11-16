@@ -129,36 +129,69 @@ export class main {
             })
             // LAYOUT
             $("#dd-layoutCose").on("click", () => {
+                $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-layout")}).prop("style", "background-color: white")
+                $("#dd-layoutCose").prop("style", "background-color: #0d6efd")
+
                 graph_utils.myLayout("cose");
             })
             $("#dd-layoutCola").on("click", () => {
+                $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-layout")}).prop("style", "background-color: white")
+                $("#dd-layoutCola").prop("style", "background-color: #0d6efd")
+
                 graph_utils.myLayout("cola");
             })
             $("#dd-layoutCircle").on("click", () => {
+                $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-layout")}).prop("style", "background-color: white")
+                $("#dd-layoutCircle").prop("style", "background-color: #0d6efd")
+
                 graph_utils.myLayout("circle");
             })
             $("#dd-layoutSpread").on("click", () => {
+                $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-layout")}).prop("style", "background-color: white")
+                $("#dd-layoutSpread").prop("style", "background-color: #0d6efd")
+
                 graph_utils.myLayout("spread");
             })
             $("#dd-layoutCoseBilkent").on("click", () => {
+                $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-layout")}).prop("style", "background-color: white")
+                $("#dd-layoutCoseBilkent").prop("style", "background-color: #0d6efd")
+
                 graph_utils.myLayout("cose_bilkent");
             })
             $("#dd-layoutKlay").on("click", () => {
+                $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-layout")}).prop("style", "background-color: white")
+                $("#dd-layoutKlay").prop("style", "background-color: #0d6efd")
+
                 graph_utils.myLayout("klay");
             })
             $("#dd-layoutDagre").on("click", () => {
+                $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-layout")}).prop("style", "background-color: white")
+                $("#dd-layoutDagre").prop("style", "background-color: #0d6efd")
+
                 graph_utils.myLayout("dagre");
             })
             $("#dd-layoutRandom").on("click", () => {
+                $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-layout")}).prop("style", "background-color: white")
+                $("#dd-layoutRandom").prop("style", "background-color: #0d6efd")
+
                 graph_utils.myLayout("random");
             })
             $("#dd-layoutConcentric").on("click", () => {
+                $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-layout")}).prop("style", "background-color: white")
+                $("#dd-layoutConcentric").prop("style", "background-color: #0d6efd")
+
                 graph_utils.myLayout("concentric");
             })
             $("#dd-layoutBreadthfirst").on("click", () => {
+                $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-layout")}).prop("style", "background-color: white")
+                $("#dd-layoutBreadthfirst").prop("style", "background-color: #0d6efd")
+
                 graph_utils.myLayout("breadthfirst");
             })
             $("#dd-layoutGrid").on("click", () => {
+                $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-layout")}).prop("style", "background-color: white")
+                $("#dd-layoutGrid").prop("style", "background-color: #0d6efd")
+
                 graph_utils.myLayout("grid");
             })
             // DATABASE
