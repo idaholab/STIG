@@ -312,20 +312,20 @@ export class main {
                 const input_data = ele.data('raw_data');
                 if (input_data === undefined) { return true; }
                 if (ele.isNode()) {
+                    // console.log("<editor> search schema", schema)
                     // load the form for this node
                     try {
-                        console.log("<editor> id: ", ele.data('id'))
-                        console.log("<editor> id input_data: ", input_data.id)
                         editor.buildWidget(ele, ele.data('type'), input_data);
                     }
                     catch(err) {
-                        if(err.message === "Cannot read property '$ref' of undefined"){
-                            // added to handle sub directory 'observables'
-                            editor.buildWidget(ele, 'observables/' + ele.data('type'), input_data);
-                        }
-                        else{
+                        // console.log(err.message);
+                        // if(err.message === "Cannot read property '$ref' of undefined"){
+                        //     // added to handle sub directory 'observables'
+                        //     editor.buildWidget(ele, 'observables/' + ele.data('type'), input_data);
+                        // }
+                        // else{
                             console.error(err);
-                        }
+                        // }
                     }
                 } else {
                     // edge

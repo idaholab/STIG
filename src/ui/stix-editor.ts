@@ -50,9 +50,8 @@ export class StixEditor {
             i.setAttribute('node_id', node.id());
         });
 
-        console.log("<editor> type: ", to_inspect.type)
-        console.log("<editor> file_name: ", file_name)
-        console.log("<editor> schema: ", schema_map[`${file_name}.json`])
+        // Find the schema in schema_map
+        let schema = Object.keys(schema_map).find(s => s.includes(file_name))
 
 
         const raw_data: StixNodeData = node.data('raw_data') as StixNodeData;
@@ -76,7 +75,7 @@ export class StixEditor {
             theme: "bootstrap4",
             iconlib: "fontawesome4",
             refs: schema_map,
-            schema: schema_map[`${file_name}.json`],
+            schema: schema_map[schema],
             remove_empty_properties: true
 
         });
