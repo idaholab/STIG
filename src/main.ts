@@ -26,7 +26,7 @@ import {
     select_node_style,
     view_utils_options,
     modified_unselect_style,
-    modified_select_style,
+    modified_select_style
 } from './graph/graphOptions';
 import cola from 'cytoscape-cola';
 import cosebilkent from 'cytoscape-cose-bilkent';
@@ -37,7 +37,7 @@ import spread from 'cytoscape-spread';
 // import { QueryHistoryDialog } from './ui/queryHistoryWidget';
 import { setup_edge_handles, edgehandles_style } from './graph/edge-handles';
 import { setup_ctx_menu } from './graph/context-menu';
-// import { GraphUtils } from './graph/graphFunctions';
+import { GraphUtils } from './graph/graphFunctions';
 import { StixEditor } from './ui/stix-editor';
 import Split from 'split.js';
 import cytoscape from 'cytoscape';
@@ -76,6 +76,7 @@ export class main {
             // set up cytoscape
             const cy = cytoscape(cyto_options);
             window.cycore = cy;
+            const graph_utils = new GraphUtils(cy);//, db);
 
             // Add event listeners to dropdown menu items
             // EDIT
@@ -128,37 +129,37 @@ export class main {
             })
             // LAYOUT
             $("#dd-layoutCose").on("click", () => {
-                console.log("Export position")
+                graph_utils.myLayout("cose");
             })
             $("#dd-layoutCola").on("click", () => {
-                console.log("Export position")
+                graph_utils.myLayout("cola");
             })
             $("#dd-layoutCircle").on("click", () => {
-                console.log("Export position")
+                graph_utils.myLayout("circle");
             })
             $("#dd-layoutSpread").on("click", () => {
-                console.log("Export position")
+                graph_utils.myLayout("spread");
             })
             $("#dd-layoutCoseBilkent").on("click", () => {
-                console.log("Export position")
+                graph_utils.myLayout("cose_bilkent");
             })
             $("#dd-layoutKlay").on("click", () => {
-                console.log("Export position")
+                graph_utils.myLayout("klay");
             })
             $("#dd-layoutDagre").on("click", () => {
-                console.log("Export position")
+                graph_utils.myLayout("dagre");
             })
             $("#dd-layoutRandom").on("click", () => {
-                console.log("Export position")
+                graph_utils.myLayout("random");
             })
             $("#dd-layoutConcentric").on("click", () => {
-                console.log("Export position")
+                graph_utils.myLayout("concentric");
             })
             $("#dd-layoutBreadthfirst").on("click", () => {
-                console.log("Export position")
+                graph_utils.myLayout("breadthfirst");
             })
             $("#dd-layoutGrid").on("click", () => {
-                console.log("Export position")
+                graph_utils.myLayout("grid");
             })
             // DATABASE
             $("#database").on("click", () => {
@@ -184,7 +185,7 @@ export class main {
 //             const db = new StigDB(current_db_config);
 
             // Graph handling functions
-            // const graph_utils = new GraphUtils(cy);//, db);
+            
             // configures edge behaviors
             edgehandles(cytoscape);
             setup_edge_handles(cy);
