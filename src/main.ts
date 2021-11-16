@@ -644,25 +644,25 @@ export class main {
                     node_img[name] = src;
                 }
                 // make icons draggable
-                // $(element).draggable({
-                //     opacity: 0.7,
-                //     helper: 'clone',
-                //     zIndex: 999,
-                //     start() {
-                //         // console.log('icon position:' + $(element).attr('position').x + $(element).attr('position').y)
-                //         //console.log('drag start:' + ui.position.left.toString() + ' ' + ui.position.top.toString())
-                //     },
-                //     // handle widgets being dragged in from the widget bar
-                //     // stop: async function(evt: DragEvent) {
-                //     //     const my_node = await event_add_node($(element).attr('name')!);
-                //     //     const view_pos = cy._private.renderer.projectIntoViewport(evt.clientX, evt.clientY);
-                //     //     my_node.position = {
-                //     //         x: view_pos[0],
-                //     //         y: view_pos[1],
-                //     //     };
-                //     //     cy.add(my_node);
-                //     // },
-                // });
+                $(element).draggable({
+                    opacity: 0.7,
+                    helper: 'clone',
+                    zIndex: 999,
+                    start(_, ui) {
+                        // console.log('icon position:' + $(element).attr('position').x + $(element).attr('position').y)
+                        console.log('drag start:' + ui.position.left.toString() + ' ' + ui.position.top.toString())
+                    },
+                    // handle widgets being dragged in from the widget bar
+                    stop: async function(_, ui) {
+                        const my_node = await event_add_node($(element).attr('name')!);
+                        const view_pos = cy._private.renderer.projectIntoViewport(ui.position.left, ui.position.top);
+                        my_node.position = {
+                            x: view_pos[0],
+                            y: view_pos[1],
+                        };
+                        cy.add(my_node);
+                    },
+                });
                 return;
             });
         },

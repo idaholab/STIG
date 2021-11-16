@@ -19,6 +19,21 @@ module.exports = {
                 test: /\.tsx?$/,
                 use: 'ts-loader',
                 exclude: /node_modules/
+            },
+            {
+                test: /\.css$/,
+                use: ["style-loader","css-loader"]
+            },
+            {
+                test: /\.(jpe?g|png|gif)$/i,
+                use: {
+                    loader: "file-loader",
+                    options:{
+                        name:'[name].[ext]',
+                        outputPath:'assets/images/'
+                        //the images will be emited to dist/assets/images/ folder
+                    }
+                }
             }
         ]
     },
@@ -28,7 +43,9 @@ module.exports = {
     plugins: [
         new webpack.ProvidePlugin({
             $: "jquery",
-            jQuery: "jquery"
+            jQuery: "jquery",
+            "window.jQuery": "jQuery",
+            "window.$": "jquery"
         })
     ],
     output: {

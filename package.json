@@ -31,7 +31,9 @@
         "start:dev": "concurrently -k \"webpack serve\" \"NODE_ENV=development nodemon index.ts\""
     },
     "nodemonConfig": {
-        "ignore": ["src/*"]
+        "ignore": [
+            "src/*"
+        ]
     },
     "babel": {
         "sourceMaps": "inline",
@@ -151,6 +153,7 @@
         "@types/jsoneditor": "^8.6.0",
         "bootstrap-css-only": "^4.4.1",
         "console": "^0.7.0",
+        "css-loader": "^6.5.1",
         "cytoscape": "^3.2.5",
         "cytoscape-cola": "^2.0.1",
         "cytoscape-cose-bilkent": "^4.0.0",
@@ -169,8 +172,6 @@
         "fontawesome": "^4.7.2",
         "foundation-sites": "^6.4.4-rc1",
         "http-status-codes": "^1.3.0",
-        "jquery": "^3.5.0",
-        "jquery-ui-dist": "^1.12.1",
         "jquery-ui-themes": "^1.12.0",
         "jsondiffpatch": "^0.3.7",
         "lodash": "^4.17.13",
@@ -186,6 +187,7 @@
         "typescript": "^4.4.4",
         "uuid": "^3.1.0",
         "webpack": "^5.62.1",
+        "webpack-jquery-ui": "^2.0.1",
         "webpack-node-externals": "^3.0.0",
         "webpack-shell-plugin": "^0.5.0",
         "what-input": ">=4.1.0"
