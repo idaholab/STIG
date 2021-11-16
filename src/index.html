@@ -18,9 +18,14 @@ ALL RIGHTS RESERVED
     <link rel="stylesheet" href="./node_modules/normalize.css/normalize.css" type="text/css">
     <link rel="stylesheet" href="./node_modules/jquery-ui-themes/jquery-ui.css" type="text/css" />
     <link rel="stylesheet" href="./node_modules/jquery-ui-themes/themes/base/jquery-ui.min.css" type="text/css" />
-    <link rel="stylesheet" href="./node_modules/bootstrap-css-only/css/bootstrap.min.css" type="text/css" />
+    <!-- <link rel="stylesheet" href="./node_modules/bootstrap-css-only/css/bootstrap.min.css" type="text/css" /> -->
     <link href="./node_modules/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="static/index.css" type="text/css" />
+
+    <!--Bootstrap-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
         if (typeof module === 'object') {
             window.module = module;
@@ -45,6 +50,57 @@ ALL RIGHTS RESERVED
     <div id="uploader"></div>
     <span id="chosen-files" hidden="true"></span>
     <span id="current_node" hidden="true"></span>
+    <div id="top-menu" class="btn-group dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="editDropdown" data-bs-toggle="dropdown" aria-haspopup="true">
+            Edit
+        </button>
+        <ul class="dropdown-menu">
+            <li><a id="dd-cutText" class="dropdown-item">Cut Text</a></li>
+            <li><a id="dd-copyText" class="dropdown-item">Copy Text</a></li>
+            <li><a id="dd-pasteText" class="dropdown-item">Paste Text</a></li>
+            <li><a id="dd-selectText" class="dropdown-item">Select All Text</a></li>
+        </ul>
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="graphDropdown" data-bs-toggle="dropdown" aria-haspopup="true">
+            Graph
+        </button>
+        <ul class="dropdown-menu">
+            <li><a id="dd-copyElem" class="dropdown-item">Copy Selected Elements</a></li>
+            <li><a id="dd-cutElem" class="dropdown-item">Cut Selected Elements</a></li>
+            <li><a id="dd-pasteElem" class="dropdown-item">Paste Elements</a></li>
+            <li><a id="dd-commitElem" class="dropdown-item">Commit All Elements</a></li>
+            <li><a id="dd-dbDelete" class="dropdown-item">Delete Selected from Database</a></li>
+            <li><a id="dd-selectElem" class="dropdown-item">Select All Elements</a></li>
+            <li><a id="dd-invertSelect" class="dropdown-item">Invert Selection</a></li>
+        </ul>
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="exportDropdown" data-bs-toggle="dropdown" aria-haspopup="true">
+            Export
+        </button>
+        <ul class="dropdown-menu">
+            <li><a id="dd-exportSelected" class="dropdown-item">Selected Elements</a></li>
+            <li><a id="dd-exportAll" class="dropdown-item">All elements w/ positions</a></li>
+            <li><a id="dd-exportGraph" class="dropdown-item">Export graph</a></li>
+            <li><a id="dd-exportPos" class="dropdown-item">Export positions</a></li>
+        </ul>
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="layoutDropdown" data-bs-toggle="dropdown" aria-haspopup="true">
+            Layout
+        </button>
+        <ul class="dropdown-menu">
+            <li><a id="dd-layoutCose" class="dropdown-item">Cose</a></li>            
+            <li><a id="dd-layoutCola" class="dropdown-item">Cola</a></li>
+            <li><a id="dd-layoutCircle" class="dropdown-item">Circle</a></li>
+            <li><a id="dd-layoutSpread" class="dropdown-item">Spread</a></li>
+            <li><a id="dd-layoutCoseBilkent" class="dropdown-item">Cose_Bilkent</a></li>
+            <li><a id="dd-layoutKlay" class="dropdown-item">Klay</a></li>
+            <li><a id="dd-layoutDagre" class="dropdown-item">Dagre</a></li>
+            <li><a id="dd-layoutRandom" class="dropdown-item">Random</a></li>
+            <li><a id="dd-layoutConcentric" class="dropdown-item">Concentric</a></li>
+            <li><a id="dd-layoutBreadthfirst" class="dropdown-item">Breadthfirst</a></li>
+            <li><a id="dd-layoutGrid" class="dropdown-item">Grid</a></li>            
+        </ul>
+        <button class="btn btn-secondary">
+            Database
+        </button>
+    </div>
     <div class="main-grid-container">
         <div class="label">STIX Domain Objects (SDOs)</div>
         <div class="label">STIX Cyber-observable Objects (SCOs)</div>

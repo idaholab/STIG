@@ -77,6 +77,96 @@ export class main {
             const cy = cytoscape(cyto_options);
             window.cycore = cy;
 
+            // Add event listeners to dropdown menu items
+            // EDIT
+            $("#dd-cutText").on("click", () => {
+                console.log("Cut")
+            })
+            $("#dd-copyText").on("click", () => {
+                console.log("Copy")
+            })
+            $("#dd-pasteText").on("click", () => {
+                console.log("Paste")
+            })
+            $("#dd-selectText").on("click", () => {
+                console.log("Select")
+            })
+            // GRAPH
+            $("#dd-copyElem").on("click", () => {
+                console.log("Copy element")
+            })
+            $("#dd-cutElem").on("click", () => {
+                console.log("Cut element")
+            })
+            $("#dd-pasteText").on("click", () => {
+                console.log("paste element")
+            })
+            $("#dd-commitElem").on("click", () => {
+                console.log("Commit elements")
+            })
+            $("#dd-dbDelete").on("click", () => {
+                console.log("Delete from db")
+            })
+            $("#dd-selectElem").on("click", () => {
+                console.log("Select all elements")
+            })
+            $("#dd-invertSelect").on("click", () => {
+                console.log("Invert")
+            })
+            // EXPORT
+            $("#dd-exportSelected").on("click", () => {
+                console.log("Export selected")
+            })
+            $("#dd-exportAll").on("click", () => {
+                console.log("Export all")
+            })
+            $("#dd-exportGraph").on("click", () => {
+                console.log("Export graph")
+            })
+            $("#dd-exportPos").on("click", () => {
+                console.log("Export position")
+            })
+            // LAYOUT
+            $("#dd-layoutCose").on("click", () => {
+                console.log("Export position")
+            })
+            $("#dd-layoutCola").on("click", () => {
+                console.log("Export position")
+            })
+            $("#dd-layoutCircle").on("click", () => {
+                console.log("Export position")
+            })
+            $("#dd-layoutSpread").on("click", () => {
+                console.log("Export position")
+            })
+            $("#dd-layoutCoseBilkent").on("click", () => {
+                console.log("Export position")
+            })
+            $("#dd-layoutKlay").on("click", () => {
+                console.log("Export position")
+            })
+            $("#dd-layoutDagre").on("click", () => {
+                console.log("Export position")
+            })
+            $("#dd-layoutRandom").on("click", () => {
+                console.log("Export position")
+            })
+            $("#dd-layoutConcentric").on("click", () => {
+                console.log("Export position")
+            })
+            $("#dd-layoutBreadthfirst").on("click", () => {
+                console.log("Export position")
+            })
+            $("#dd-layoutGrid").on("click", () => {
+                console.log("Export position")
+            })
+            // DATABASE
+            $("#database").on("click", () => {
+                console.log("database")
+            })
+            
+
+
 //             // used by some events to make cytoscape respond
             window.addEventListener("resize", () => cy.resize(), false);
             const call_forceRender = () => {
