@@ -48,6 +48,7 @@ import edgehandles from 'cytoscape-edgehandles';
 import moment from 'moment';
 // import { QueryStorageService, DatabaseConfigurationStorage, StigSettings } from './storage';
 // import { setHandlers } from './ui/ipc-render-handlers';
+import {graph_copy, graph_paste} from './ui/clipboard'
 
 declare global {
     interface Window {
@@ -82,12 +83,17 @@ export class main {
             // GRAPH
             $("#dd-copyElem").on("click", () => {
                 console.log("Copy element")
+                graph_copy();
             })
             $("#dd-cutElem").on("click", () => {
                 console.log("Cut element")
+                const selected = window.cycore.$(":selected")
+                graph_copy()
+                window.cycore.remove(selected)
             })
-            $("#dd-pasteText").on("click", () => {
+            $("#dd-pasteElem").on("click", () => {
                 console.log("paste element")
+                graph_paste()
             })
             $("#dd-commitElem").on("click", () => {
                 console.log("Commit elements")
