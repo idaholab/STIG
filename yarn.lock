@@ -7127,6 +7127,9 @@
   "resolved" "https://registry.npmjs.org/ignore/-/ignore-5.1.9.tgz"
   "version" "5.1.9"
 
+"image-size@~0.5.0":
+  "version" "0.5.5"
+
 "import-fresh@^3.0.0":
   "integrity" "sha512-veYYhQa+D1QBKznvhUHxb8faxlrwUnxseDAbAp457E0wLNio2bOSKnjYDhMj+YiAq61xrMGhQk9iXVk5FzgQMw=="
   "resolved" "https://registry.npmjs.org/import-fresh/-/import-fresh-3.3.0.tgz"

@@ -79,19 +79,6 @@ export class main {
             const graph_utils = new GraphUtils(cy);//, db);
 
             // Add event listeners to dropdown menu items
-            // EDIT
-            $("#dd-cutText").on("click", () => {
-                console.log("Cut")
-            })
-            $("#dd-copyText").on("click", () => {
-                console.log("Copy")
-            })
-            $("#dd-pasteText").on("click", () => {
-                console.log("Paste")
-            })
-            $("#dd-selectText").on("click", () => {
-                console.log("Select")
-            })
             // GRAPH
             $("#dd-copyElem").on("click", () => {
                 console.log("Copy element")
