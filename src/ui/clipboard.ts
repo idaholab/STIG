@@ -9,7 +9,7 @@ import { BundleType, StixObject } from '../stix';
 import { GraphUtils } from '../graph/graphFunctions';
 // import { StigDB } from '../db/db';
 // import { DatabaseConfigurationStorage } from '../storage';
-// import { StigSettings } from '../storage/stig-settings-storage';
+import { StigSettings } from '../storage/stig-settings-storage';
 import { JSONValue } from '../types/globals';
 
 // ipcRenderer.on("copy_selected", (_event: Electron.Event) => {
@@ -54,7 +54,7 @@ export function graph_paste(): void {
         // const db = new StigDB(DatabaseConfigurationStorage.Instance.current);
         const graph = new GraphUtils(window.cycore);//, db);
         graph.buildNodes(bundle);
-        // graph.myLayout(StigSettings.Instance.layout.toLowerCase());
+        graph.myLayout(StigSettings.Instance.layout);
         return;
     } catch {
         return;

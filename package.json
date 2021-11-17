@@ -153,6 +153,7 @@
         "@types/jsoneditor": "^8.6.0",
         "bootstrap-css-only": "^4.4.1",
         "console": "^0.7.0",
+        "cookie-parser": "^1.4.6",
         "css-loader": "^6.5.1",
         "cytoscape": "^3.2.5",
         "cytoscape-cola": "^2.0.1",

@@ -26,7 +26,8 @@ import {
     select_node_style,
     view_utils_options,
     modified_unselect_style,
-    modified_select_style
+    modified_select_style,
+    layouts
 } from './graph/graphOptions';
 import cola from 'cytoscape-cola';
 import cosebilkent from 'cytoscape-cose-bilkent';
@@ -46,7 +47,7 @@ import { ViewUtilitiesOptions } from './graph/graphOptions';
 // import { GraphQueryResult } from './db/db_types';
 import edgehandles from 'cytoscape-edgehandles';
 import moment from 'moment';
-// import { QueryStorageService, DatabaseConfigurationStorage, StigSettings } from './storage';
+import { QueryStorageService, DatabaseConfigurationStorage, StigSettings } from './storage';
 // import { setHandlers } from './ui/ipc-render-handlers';
 import {graph_copy, graph_paste} from './ui/clipboard'
 
@@ -62,8 +63,9 @@ export class main {
     // tslint:disable-next-line:no-empty
     constructor() { }
 
-    public run() {
-//         const storage: QueryStorageService = QueryStorageService.Instance;
+    public async run() {
+        // const storage: QueryStorageService = QueryStorageService.Instance;
+        const settings = StigSettings.Instance;
         let loading: boolean = false;
 
         document.addEventListener('DOMContentLoaded', async () => {
@@ -78,6 +80,11 @@ export class main {
             const cy = cytoscape(cyto_options);
             window.cycore = cy;
             const graph_utils = new GraphUtils(cy);//, db);
+            let layout = (await settings.getSettings()).layout
+            console.log('layout: ', layout)
+            if (layouts[layout]) {
+                graph_utils.myLayout(layout)
+            }
 
             // Add event listeners to dropdown menu items
             // GRAPH
@@ -131,66 +138,77 @@ export class main {
                 $("#dd-layoutCose").prop("style", "background-color: #0d6efd")
 
                 graph_utils.myLayout("cose");
+                settings.setLayout("cose");
             })
             $("#dd-layoutCola").on("click", () => {
                 $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-layout")}).prop("style", "background-color: white")
                 $("#dd-layoutCola").prop("style", "background-color: #0d6efd")
 
                 graph_utils.myLayout("cola");
+                settings.setLayout("cola");
             })
             $("#dd-layoutCircle").on("click", () => {
                 $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-layout")}).prop("style", "background-color: white")
                 $("#dd-layoutCircle").prop("style", "background-color: #0d6efd")
 
                 graph_utils.myLayout("circle");
+                settings.setLayout("circle");
             })
             $("#dd-layoutSpread").on("click", () => {
                 $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-layout")}).prop("style", "background-color: white")
                 $("#dd-layoutSpread").prop("style", "background-color: #0d6efd")
 
                 graph_utils.myLayout("spread");
+                settings.setLayout("spread");
             })
             $("#dd-layoutCoseBilkent").on("click", () => {
                 $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-layout")}).prop("style", "background-color: white")
                 $("#dd-layoutCoseBilkent").prop("style", "background-color: #0d6efd")
 
                 graph_utils.myLayout("cose_bilkent");
+                settings.setLayout("cose_bilkent");
             })
             $("#dd-layoutKlay").on("click", () => {
                 $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-layout")}).prop("style", "background-color: white")
                 $("#dd-layoutKlay").prop("style", "background-color: #0d6efd")
 
                 graph_utils.myLayout("klay");
+                settings.setLayout("klay");
             })
             $("#dd-layoutDagre").on("click", () => {
                 $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-layout")}).prop("style", "background-color: white")
                 $("#dd-layoutDagre").prop("style", "background-color: #0d6efd")
 
                 graph_utils.myLayout("dagre");
+                settings.setLayout("dagre");
             })
             $("#dd-layoutRandom").on("click", () => {
                 $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-layout")}).prop("style", "background-color: white")
                 $("#dd-layoutRandom").prop("style", "background-color: #0d6efd")
 
                 graph_utils.myLayout("random");
+                settings.setLayout("random");
             })
             $("#dd-layoutConcentric").on("click", () => {
                 $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-layout")}).prop("style", "background-color: white")
                 $("#dd-layoutConcentric").prop("style", "background-color: #0d6efd")
 
                 graph_utils.myLayout("concentric");
+                settings.setLayout("concentric");
             })
             $("#dd-layoutBreadthfirst").on("click", () => {
                 $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-layout")}).prop("style", "background-color: white")
                 $("#dd-layoutBreadthfirst").prop("style", "background-color: #0d6efd")
 
                 graph_utils.myLayout("breadthfirst");
+                settings.setLayout("breadthfirst");
             })
             $("#dd-layoutGrid").on("click", () => {
                 $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-layout")}).prop("style", "background-color: white")
                 $("#dd-layoutGrid").prop("style", "background-color: #0d6efd")
 
                 graph_utils.myLayout("grid");
+                settings.setLayout("grid");
             })
             // DATABASE
             $("#database").on("click", () => {
