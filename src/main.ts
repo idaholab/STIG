@@ -103,9 +103,14 @@ export class main {
             })
             $("#dd-selectElem").on("click", () => {
                 console.log("Select all elements")
+                window.cycore.elements().select()
             })
             $("#dd-invertSelect").on("click", () => {
                 console.log("Invert")
+                const unselected = window.cycore.$(':unselected');
+                const selected = window.cycore.$(':selected');
+                selected.unselect();
+                unselected.select();
             })
             // EXPORT
             $("#dd-exportSelected").on("click", () => {
