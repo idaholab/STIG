@@ -80,11 +80,64 @@ export class main {
             const cy = cytoscape(cyto_options);
             window.cycore = cy;
             const graph_utils = new GraphUtils(cy);//, db);
+            
+
+            // Save graph if the page refreshes
+            $(window).on('beforeunload', () => {
+                let graph = []
+                window.cycore.elements().each(ele => {
+                    if (ele.data('raw_data')) {
+                        graph.push(ele.data('raw_data'))
+                    }
+                })
+
+                document.cookie = `bundle=${JSON.stringify({type: 'bundle', objects: graph})}; sameSite=strict`
+                // fetch('/save', {
+                //     method: 'POST',
+                //     headers: {
+                //         'Content-Type': 'application/json'
+                //     },
+                //     body: JSON.stringify({name: 'graph', data: {type: 'bundle', objects: graph}})
+                // })
+            })
+
+            // Check if there is a saved graph in the cookies
+            if (document.cookie.includes('bundle')) {
+                //let bundle = JSON.stringify(document.cookie)
+                let cookie = document.cookie;
+                let cookiePieces = cookie.split(';')
+                let bundleCookie = cookiePieces.find(piece => {return piece.includes('bundle=')})
+                console.log(bundleCookie)
+                let bundle = bundleCookie.split('=');
+                console.log(bundle[1])
+                let parsed = JSON.parse(bundle[1])
+                const test_stix = (i: any) => {
+                    const ret = i instanceof Object && i.hasOwnProperty('type') && i.hasOwnProperty('created');
+                    return ret;
+                };
+                parsed.objects.every(test_stix) ? parsed.objects : parsed.objects = [];
+                
+                graph_utils.buildNodes(parsed)
+
+                // TODO: For some reason, nodes built this way don't have pictures. This needs to be fixed.
+            }
+
+            // Get the layout from the cookie and set the graph layout
             let layout = (await settings.getSettings()).layout
             console.log('layout: ', layout)
             if (layouts[layout]) {
                 graph_utils.myLayout(layout)
             }
+            // fetch('/data?name=graph', {
+            //     method: 'GET',
+            //     headers: {
+            //         'Content-Type': 'application/json'    
+            //     }
+            // }).then(response => response.json())
+            // .then(data => {
+            //     console.log(data)
+            //     graph_utils.buildNodes(data)
+            // })
 
             // Add event listeners to dropdown menu items
             // GRAPH
