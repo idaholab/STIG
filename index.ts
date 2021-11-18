@@ -58,7 +58,8 @@ app.get('/data', (req: Request, res: Response) => {
 
   let data = req.cookies[name]
 
-  if (data === "undefined") {
+  if (data === "undefined" || data === undefined) {
+    console.log(`Cookie ${name} not found`)
     data = "{}"
   }
 
