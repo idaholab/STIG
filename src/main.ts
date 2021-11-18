@@ -556,16 +556,17 @@ export class main {
                 return true;
             });
 
-//             $('#btn-export-single').on('click', (e: JQuery.Event) => {
-//                 // console.log(editor.root.getValue())
-//                 e.preventDefault();
-//                 e.stopPropagation();
-//                 const form_data = editor.editor.getEditor('root').getValue();
-//                 const jsonToSave = JSON.stringify(form_data, null, 2);
-//                 const jsonSingleSave = new Blob([jsonToSave], { type: "application/json" });
-//                 fileSaver.saveAs(jsonSingleSave, `${form_data.id}.json`);
-//                 $('.message-status').html(`Exported ${form_data.id} objects`);
-//             });
+            $('#btn-export-single').on('click', (e: JQuery.Event) => {
+                // console.log(editor.root.getValue())
+                e.preventDefault();
+                e.stopPropagation();
+                // const form_data = editor.editor.getEditor('root').getValue();
+                const form_data = editor.editor.getValue();
+                const jsonToSave = JSON.stringify(form_data, null, 2);
+                const jsonSingleSave = new Blob([jsonToSave], { type: "application/json" });
+                fileSaver.saveAs(jsonSingleSave, `${form_data.id}.json`);
+                $('.message-status').html(`Exported ${form_data.id} objects`);
+            });
 
 //             // Clear Stix form editor when node/edge is unselected
             cy.on("unselect", 'node, edge', (evt: cytoscape.EventObject) => {
