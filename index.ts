@@ -58,11 +58,11 @@ app.get('/data', (req: Request, res: Response) => {
 
   let data = req.cookies[name]
 
-  console.log(data)
-
-  if (!data) {
+  if (data === "undefined") {
     data = "{}"
   }
+
+  console.log(data)
 
   res.send(data);
 })
