@@ -184,7 +184,7 @@
   dependencies:
     "@types/node" "*"
 
-"@types/cytoscape@^3.1.4":
+"@types/cytoscape@^3.19.0":
   "integrity" "sha512-EbUrbDqequXtSkpPvtpX1Xf7nDFh+eB/2h/Sv1SiQ9IjCJENSwi9Wfv/vRkH9YTcgNoCot20eyIyMbxHfh0YDg=="
   "resolved" "https://registry.npmjs.org/@types/cytoscape/-/cytoscape-3.19.0.tgz"
   "version" "3.19.0"

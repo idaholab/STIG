@@ -6,9 +6,9 @@ ALL RIGHTS RESERVED
 
 import * as cytoscape from 'cytoscape';
 // import { StigDB } from "../db/db";
-// import { GraphUtils } from "./graphFunctions";
-// import { graph_copy } from '../ui/clipboard';
-// import { StigSettings } from '../storage/stig-settings-storage';
+import { GraphUtils } from "./graphFunctions";
+import { graph_copy } from '../ui/clipboard';
+import { StigSettings } from '../storage/stig-settings-storage';
 
 /**
  * @description
@@ -18,14 +18,17 @@ import * as cytoscape from 'cytoscape';
  * @param {*} view_util
  */
 export function setup_ctx_menu(cy: cytoscape.Core, /*db: StigDB,*/ view_util: any) {
-    // const graph_utils = new GraphUtils(cy);//, db);
+    const graph_utils = new GraphUtils(cy);//, db);
     cy.cxtmenu({
         selector: 'node',
         commands: [
         {
             content: 'Graph Remove',
-            select: () => {}
-            // select: async (ele: cytoscape.CollectionElements) => {
+            select: (ele: cytoscape.CollectionElements) => {
+                cy.remove(ele as unknown as cytoscape.CollectionArgument)
+            }
+            // select: () => {}
+            // select: async (ele : cytoscape.CollectionElements) => {
             //     cy.remove(ele);
             //     // TODO make a new icon for db_delete from graph right click, Tooltips seem to be hard with cy.ctxmenu
             // },
@@ -84,9 +87,11 @@ export function setup_ctx_menu(cy: cytoscape.Core, /*db: StigDB,*/ view_util: an
             content: 'Select Neighbors',
             select: () => {}
             // select(ele: cytoscape.CollectionElements) {
-            //     ele.select();
-            //     ele.closedNeighborhood().select();
+            
+            //     // ele.select();
+            //     // ele.closedNeighborhood().select();
             //     // view_util.highlightNeighbors(ele);
+                
             // },
         },
         ],
@@ -137,10 +142,9 @@ export function setup_ctx_menu(cy: cytoscape.Core, /*db: StigDB,*/ view_util: an
         commands: [
             {
                 content: 'Layout',
-                select: () => {}
-                // select: () => {
-                //     graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
-                // },
+                select: () => {
+                    graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
+                },
             },
             {
                 content: 'Hide Selected',
@@ -168,8 +172,8 @@ export function setup_ctx_menu(cy: cytoscape.Core, /*db: StigDB,*/ view_util: an
             // },
             {
                 content: 'Copy Selected',
-                select: () => {}
-                // select: () => graph_copy(),
+                // select: () => {}
+                select: () => graph_copy(),
             },
             {
                 content: 'Remove Selected From Graph',

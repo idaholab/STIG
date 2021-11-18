@@ -16,9 +16,10 @@ import {
     ObservedData,
     Report,
     StixNode,
+    BundleType,
 } from './stix';
 import * as stix from './stix';
-// import * as fileSaver from 'file-saver';
+import * as fileSaver from 'file-saver';
 // import { StigDB } from './db/db';
 import {
     edge_style,
@@ -564,13 +565,13 @@ export class main {
 //             });
 
 //             // Clear Stix form editor when node/edge is unselected
-//             cy.on("unselect", 'node, edge', (_evt: cytoscape.EventObject) => {
-//                 // editor.editor.destroy();
-//                 $('#metawidget').empty();
-//                 $('#current_node').empty();
-//                 $('button.btn-commit').button('option', 'disabled', true);
-//                 $('button#btn-export-single').button('option', 'disabled', true);
-//             });
+            cy.on("unselect", 'node, edge', (evt: cytoscape.EventObject) => {
+                // editor.editor.destroy();
+                $('#metawidget').empty();
+                $('#current_node').empty();
+                $('button.btn-commit').button('option', 'disabled', true);
+                $('button#btn-export-single').button('option', 'disabled', true);
+            });
 
             // Handler for when an edge is created via the graph editor
             cy.on('add', 'edge', (evt: cytoscape.EventObject) => {
@@ -637,106 +638,106 @@ export class main {
 //             });
 
 //             //  Handlers for drag and drop of files containing stix bundles
-//             const uploader: HTMLElement = document.getElementById('cy')!;
+            const uploader: HTMLElement = document.getElementById('cy')!;
 
-//             /**
-//              *  Event handler for when a file is dropped into the UI
-//              *
-//              * @param {DragEvent} evt
-//              */
-//             function handleFileDrop(evt: DragEvent) {
-//                 // evt.stopPropagation();
-//                 evt.preventDefault();
+            /**
+             *  Event handler for when a file is dropped into the UI
+             *
+             * @param {DragEvent} evt
+             */
+            function handleFileDrop(evt: DragEvent) {
+                // evt.stopPropagation();
+                evt.preventDefault();
 
-//                 handleFiles(evt.dataTransfer.files);
-//             }
+                handleFiles(evt.dataTransfer.files);
+            }
 
-//             /**
-//              * @description Event handler for drag in progress
-//              * @param {DragEvent} evt
-//              */
-//             function handleDragOver(evt: DragEvent) {
-//                 // evt.stopPropagation();
-//                 evt.preventDefault();
-//                 evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
-//             }
+            /**
+             * @description Event handler for drag in progress
+             * @param {DragEvent} evt
+             */
+            function handleDragOver(evt: DragEvent) {
+                // evt.stopPropagation();
+                evt.preventDefault();
+                evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
+            }
 
-//             /**
-//              * Handles files added to UI via drag and drop
-//              *
-//              * @param {FileList} files
-//              */
-//             function handleFiles(files: FileList) {
-//                 // files is a FileList of File objects (in our case, just one)
-//                 let f;
-//                 // tslint:disable-next-line:prefer-for-of
-//                 for (let i = 0; i < files.length; i++) {
-//                     if (files[i] && files[i] instanceof File) {
-//                         f = files[i];
-//                         document.getElementById('chosen-files')!.innerText += f.name + " ";
-//                         // hideMessages();
+            /**
+             * Handles files added to UI via drag and drop
+             *
+             * @param {FileList} files
+             */
+            function handleFiles(files: FileList) {
+                // files is a FileList of File objects (in our case, just one)
+                let f;
+                // tslint:disable-next-line:prefer-for-of
+                for (let i = 0; i < files.length; i++) {
+                    if (files[i] && files[i] instanceof File) {
+                        f = files[i];
+                        document.getElementById('chosen-files')!.innerText += f.name + " ";
+                        // hideMessages();
 
-//                         const r = new FileReader();
-//                         r.onload = (_e: Event) => {
-//                             // this.result
-//                             // addToGraph(JSON.parse(e.target.result))
-//                             addToGraph(JSON.parse(r.result as string));
-//                         };
-//                         r.readAsText(f);
-//                     }
-//                 }
-//             }
+                        const r = new FileReader();
+                        r.onload = (_e: Event) => {
+                            // this.result
+                            // addToGraph(JSON.parse(e.target.result))
+                            addToGraph(JSON.parse(r.result as string));
+                        };
+                        r.readAsText(f);
+                    }
+                }
+            }
 
-//             /**
-//              * Adds a stix bundle to the current graph.
-//              *
-//              * @param {BundleType} pkg
-//              */
-            // function addToGraph(pkg: BundleType) {
-            //     graph_utils.buildNodes(pkg, false).then((added) => {
-            //         $('.message-status').html(`Added ${added.length} elements to graph.`);
-            //     });
-            //      graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
-            // }
-//             uploader.addEventListener('dragover', handleDragOver, false);
-//             uploader.addEventListener('drop', handleFileDrop, false);
+            /**
+             * Adds a stix bundle to the current graph.
+             *
+             * @param {BundleType} pkg
+             */
+            function addToGraph(pkg: BundleType) {
+                graph_utils.buildNodes(pkg, false).then((added) => {
+                    $('.message-status').html(`Added ${added.length} elements to graph.`);
+                });
+                 graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
+            }
+            uploader.addEventListener('dragover', handleDragOver, false);
+            uploader.addEventListener('drop', handleFileDrop, false);
 
-//             /**
-//              * Handler for Export Bundle button
-//              *
-//              */
-//             $(document).on('click', '#btn-export-bundle', () => {
-//                 // Get raw data from all cy elements
-//                 // Create bundle object
-//                 const bundle_id = 'bundle--' + uuid.v4();
-//                 const bundle = { type: 'bundle', id: bundle_id, objects: [] } as BundleType;
-//                 let nodes = cy.$(':visible');
-//                 nodes = nodes.union(nodes.connectedEdges());
-//                 nodes.each((ele) => {
-//                     if (ele.length === 0) {
-//                         return;
-//                     }
-//                     //logic to remove null on json export
-//                     if(ele.data('raw_data')!==undefined){
-//                         bundle.objects.push(ele.data('raw_data'));
-//                     }
+            /**
+             * Handler for Export Bundle button
+             *
+             */
+            $(document).on('click', '#btn-export-bundle', () => {
+                // Get raw data from all cy elements
+                // Create bundle object
+                const bundle_id = 'bundle--' + uuid.v4();
+                const bundle = { type: 'bundle', id: bundle_id, objects: [] } as BundleType;
+                let nodes = cy.$(':visible');
+                nodes = nodes.union(nodes.connectedEdges());
+                nodes.each((ele) => {
+                    if (ele.length === 0) {
+                        return;
+                    }
+                    //logic to remove null on json export
+                    if(ele.data('raw_data')!==undefined){
+                        bundle.objects.push(ele.data('raw_data'));
+                    }
 
-//                 });
-//                 // cy.edges().each((ele) => {
-//                 //     // TODO FIXME: Do not save created_by edges, and other implicit edges
-//                 //     bundle.objects.push(ele.data('raw_data'));
-//                 // });
+                });
+                // cy.edges().each((ele) => {
+                //     // TODO FIXME: Do not save created_by edges, and other implicit edges
+                //     bundle.objects.push(ele.data('raw_data'));
+                // });
 
-//                 // Convert to JSON and save
-//                 const jsonToSave = JSON.stringify(bundle, null, 2);
-//                 const jsonBundleSave = new Blob([jsonToSave], { type: "application/json" });
-//                 fileSaver.saveAs(jsonBundleSave, "bundle.json");
-//                 $('.message-status').html(`Exported ${bundle.objects.length} objects`);
-//             });
+                // Convert to JSON and save
+                const jsonToSave = JSON.stringify(bundle, null, 2);
+                const jsonBundleSave = new Blob([jsonToSave], { type: "application/json" });
+                fileSaver.saveAs(jsonBundleSave, "bundle.json");
+                $('.message-status').html(`Exported ${bundle.objects.length} objects`);
+            });
 
-//             $(document).on('click', '#btn-diff', () => {
-//                 db.diff_dialog.open();
-//             });
+            // $(document).on('click', '#btn-diff', () => {
+            //     db.diff_dialog.open();
+            // });
 
 //             /***************************************** *
 //             *        Save stix form to DB on click
