@@ -53,7 +53,7 @@ export class DatabaseConfigurationStorage {
     //     })
     // }
 
-    public async getSettings() {
+    public async getConfigs() {
         if (!this.store) {
             let config = await fetch('/data?name=dbConfig', {
                 method: 'GET',
@@ -61,8 +61,8 @@ export class DatabaseConfigurationStorage {
                     'Content-Type': 'application/json'
                 }
             }).then(response => response.json())
-            console.log(config.layout)
-            if (!config) {
+            console.log(config.configs)
+            if (!config.configs) {
                 this.create_default()
             } else {
                 this.store = config
@@ -98,8 +98,7 @@ export class DatabaseConfigurationStorage {
         const configmap: IDatabaseConfigMap = {
             [initial.name]: initial,
         };
-        this.store.configs = configmap;
-        this.store.current = 'stig';
+        this.store = {configs: configmap, current: 'stig'}
         this.saveConfigs();
     }
 
@@ -125,6 +124,7 @@ export class DatabaseConfigurationStorage {
     }
 
     public keys(): string[] {
+        console.log("Database store: ", this.store)
         return Object.keys(this.store.configs);
     }
 

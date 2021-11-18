@@ -20,21 +20,41 @@ export class QueryStorageService {
     private static instance: QueryStorageService;
     private store: IQueryStore;
 
-    private constructor() {
+    // private constructor() {
         
-        fetch('/data', {
-            method: 'GET',
-            body: JSON.stringify({name: 'queryStorage'})
-        }).then(response => response.json())
-        .then(data => {
-            if (data) {
-                this.store = data
-            } else {
-                this.store = {queries: []}
-            }
-        })
-    }
+    //     fetch('/data', {
+    //         method: 'GET'
+    //     }).then(response => response.json())
+    //     .then(data => {
+    //         if (data) {
+    //             this.store = data
+    //         } else {
+    //             this.store = {queries: []}
+    //         }
+    //     })
+    // }
 
+    public async getQueryHistory() {
+        if (!this.store) {
+            let queries = await fetch('/data?name=queryStorage', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => response.json())
+            if (!queries.queries) {
+                this.store = {queries: []}
+            } else {
+                this.store = queries
+            }
+            
+        }
+
+        console.log("<database> store: ", JSON.stringify(this.store))
+
+        return this.store
+    }
+    
     private saveQueries() {
         fetch('/save', {
             method: 'POST',

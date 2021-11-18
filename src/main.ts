@@ -51,6 +51,7 @@ import moment from 'moment';
 import { QueryStorageService, DatabaseConfigurationStorage, StigSettings } from './storage';
 // import { setHandlers } from './ui/ipc-render-handlers';
 import {graph_copy, graph_paste} from './ui/clipboard'
+import { openDatabaseConfiguration } from './ui/database-config-widget';
 
 declare global {
     interface Window {
@@ -70,6 +71,11 @@ export class main {
         let loading: boolean = false;
 
         document.addEventListener('DOMContentLoaded', async () => {
+
+            // load saved data
+            await DatabaseConfigurationStorage.Instance.getConfigs()
+            await StigSettings.Instance.getSettings()
+            await QueryStorageService.Instance.getQueryHistory()
 //             unhandled();
             const cyto_options: cytoscape.CytoscapeOptions = {
                 container: $('#cy')[0],
@@ -267,6 +273,7 @@ export class main {
             // DATABASE
             $("#database").on("click", () => {
                 console.log("database")
+                openDatabaseConfiguration();
             })
             
 

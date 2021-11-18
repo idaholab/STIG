@@ -126,7 +126,7 @@
         "@types/cytoscape": "^3.19.0",
         "@types/file-saver": "^2.0.0",
         "@types/jquery": "^3.2.15",
-        "@types/jqueryui": "^1.11.32",
+        "@types/jqueryui": "^1.12.16",
         "@types/lodash": "^4.14.74",
         "@types/npm": "^2.0.29",
         "@types/orientjs": "^3.0.3",
