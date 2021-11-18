@@ -361,10 +361,13 @@ export class main {
                 const text: string = $("#toSearch").val() as string;
                 let prop = 'name';
                 let searchparam = '';
-                if (text.indexOf(':')) {
+                console.log(text.indexOf(':'))
+                if (text.includes(':')) {
                     const s = text.split(':');
                     prop = s[0];
                     searchparam = s[1];
+                } else {
+                    searchparam = text
                 }
                 let selected = cy.$(':selected');
                 // view_util.removeHighlights(selected);

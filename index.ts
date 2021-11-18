@@ -54,7 +54,6 @@ app.post('/save', (req: Request, res: Response) => {
  ***********************************************/
 app.get('/data', (req: Request, res: Response) => {
   let name = req.query.name as string;
-  console.log(name);
 
   let data = req.cookies[name]
 
@@ -62,8 +61,6 @@ app.get('/data', (req: Request, res: Response) => {
     console.log(`Cookie ${name} not found`)
     data = "{}"
   }
-
-  console.log(data)
 
   res.send(data);
 })
