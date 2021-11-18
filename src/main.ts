@@ -547,12 +547,12 @@ export class main {
 
                     editor.buildWidget(ele, relationship_file , input_data);
                 }
-                // $('button#btn-export-single').button('option', 'disabled', false);
-                // if (ele.data('saved') === false) {
-                //     $('button.btn-commit').button('option', 'disabled', false);
-                // } else {
-                //     $('button.btn-commit').button('option', 'disabled', true);
-                // }
+                $('button#btn-export-single').prop('disabled', false)
+                if (ele.data('saved') === false) {
+                    $('button.btn-commit').prop('disabled', false)
+                } else {
+                    $('button.btn-commit').prop('disabled', true)
+                }
                 return true;
             });
 
@@ -573,8 +573,8 @@ export class main {
                 // editor.editor.destroy();
                 $('#metawidget').empty();
                 $('#current_node').empty();
-                $('button.btn-commit').button('option', 'disabled', true);
-                $('button#btn-export-single').button('option', 'disabled', true);
+                $('button.btn-commit').prop('disabled', true)//button('option', 'disabled', true);
+                $('button#btn-export-single').prop('disabled',true);//.button('option', 'disabled', true);
             });
 
             // Handler for when an edge is created via the graph editor
