@@ -59,6 +59,14 @@ declare global {
     }
 }
 
+// Returns nodes positions
+const getNodeMetadata = (nodes) => {
+    return nodes.map(obj => ({
+        id: obj.id(),
+        position: obj.position(),
+    }))
+}
+
 // tslint:disable-next-line:class-name
 export class main {
     // tslint:disable-next-line:no-empty
@@ -162,7 +170,7 @@ export class main {
             $("#dd-dbDelete").on("click", () => {
                 console.log("Delete from db")
             })
-            $("#dd-selectElem").on("click", () => {
+            $("#dd-selectElem").on("click", () => {Blob
                 console.log("Select all elements")
                 window.cycore.elements().select()
             })
@@ -176,15 +184,77 @@ export class main {
             // EXPORT
             $("#dd-exportSelected").on("click", () => {
                 console.log("Export selected")
-            })
-            $("#dd-exportAll").on("click", () => {
-                console.log("Export all")
+                const bundle_id = 'bundle--' + uuid.v4();
+                const bundle = { type: 'bundle', id: bundle_id, objects: [] } as BundleType;
+                
+                let nodes = window.cycore.$(':selected');
+                nodes.each((ele) => {
+                    if (ele.length === 0) {
+                        return;
+                    }
+                    //logic to remove null on json export
+                    if(ele.data('raw_data')!==undefined){
+                        bundle.objects.push(ele.data('raw_data'));
+                    }
+                });
+
+                const jsonToSave = JSON.stringify(bundle);
+                const jsonBundleSave = new Blob([jsonToSave], { type: "application/json" });
+                fileSaver.saveAs(jsonBundleSave, "bundle.json");
+                $('.message-status').html(`Exported ${bundle.objects.length} objects`);
             })
             $("#dd-exportGraph").on("click", () => {
                 console.log("Export graph")
+                const bundle_id = 'bundle--' + uuid.v4();
+                const bundle = { type: 'bundle', id: bundle_id, objects: [] } as BundleType;
+                
+                let nodes = window.cycore.$(':selected');
+                nodes.each((ele) => {
+                    if (ele.length === 0) {
+                        return;
+                    }
+                    //logic to remove null on json export
+                    if(ele.data('raw_data')!==undefined){
+                        bundle.objects.push(ele.data('raw_data'));
+                    }
+                });
+
+                const jsonToSave = JSON.stringify(bundle);
+                const jsonBundleSave = new Blob([jsonToSave], { type: "application/json" });
+                 fileSaver.saveAs(jsonBundleSave, "bundle.json");
+                $('.message-status').html(`Exported ${bundle.objects.length} objects`);
+            })
+            $("#dd-exportAll").on("click", () => {  
+                console.log("Export all")
+                const bundle_id = 'bundle--' + uuid.v4();
+                const bundle = { type: 'bundle', id: bundle_id, objects: [] } as BundleType;
+                let nodes = window.cycore.$(':visible');
+                nodes = nodes.union(nodes.connectedEdges());
+                nodes.each((ele) => {
+                    if (ele.length === 0) {
+                        return;
+                    }
+                    //logic to remove null on json export
+                    if(ele.data('raw_data')!==undefined){
+                        bundle.objects.push(ele.data('raw_data'));
+                    }
+                    });
+                bundle.metadata = getNodeMetadata(nodes);
+
+                // Convert to JSON and save
+                const jsonToSave = JSON.stringify(bundle);
+                const jsonBundleSave = new Blob([jsonToSave], { type: "application/json" });
+                fileSaver.saveAs(jsonBundleSave, "bundle.json");
+                $('.message-status').html(`Exported ${bundle.objects.length} objects`);
             })
             $("#dd-exportPos").on("click", () => {
-                console.log("Export position")
+                console.log("Export positions")
+                let nodes = window.cycore.$(':visible')
+
+                const jsonObj = JSON.stringify({metadata: getNodeMetadata(nodes)}, null, 2);
+                const blob = new Blob([jsonObj], { type: "application/json" });
+                fileSaver.saveAs(blob, "metadata.json");
+                $('.message-status').html("exported metadata")
             })
             // LAYOUT
             $("#dd-layoutCose").on("click", () => {
@@ -361,13 +431,10 @@ export class main {
                 const text: string = $("#toSearch").val() as string;
                 let prop = 'name';
                 let searchparam = '';
-                console.log(text.indexOf(':'))
-                if (text.includes(':')) {
+                if (text.indexOf(':')) {
                     const s = text.split(':');
                     prop = s[0];
                     searchparam = s[1];
-                } else {
-                    searchparam = text
                 }
                 let selected = cy.$(':selected');
                 // view_util.removeHighlights(selected);
@@ -547,34 +614,33 @@ export class main {
 
                     editor.buildWidget(ele, relationship_file , input_data);
                 }
-                $('button#btn-export-single').prop('disabled', false)
-                if (ele.data('saved') === false) {
-                    $('button.btn-commit').prop('disabled', false)
-                } else {
-                    $('button.btn-commit').prop('disabled', true)
-                }
+                // $('button#btn-export-single').button('option', 'disabled', false);
+                // if (ele.data('saved') === false) {
+                //     $('button.btn-commit').button('option', 'disabled', false);
+                // } else {
+                //     $('button.btn-commit').button('option', 'disabled', true);
+                // }
                 return true;
             });
 
-            $('#btn-export-single').on('click', (e: JQuery.Event) => {
-                // console.log(editor.root.getValue())
-                e.preventDefault();
-                e.stopPropagation();
-                // const form_data = editor.editor.getEditor('root').getValue();
-                const form_data = editor.editor.getValue();
-                const jsonToSave = JSON.stringify(form_data, null, 2);
-                const jsonSingleSave = new Blob([jsonToSave], { type: "application/json" });
-                fileSaver.saveAs(jsonSingleSave, `${form_data.id}.json`);
-                $('.message-status').html(`Exported ${form_data.id} objects`);
-            });
+//             $('#btn-export-single').on('click', (e: JQuery.Event) => {
+//                 // console.log(editor.root.getValue())
+//                 e.preventDefault();
+//                 e.stopPropagation();
+//                 const form_data = editor.editor.getEditor('root').getValue();
+//                 const jsonToSave = JSON.stringify(form_data, null, 2);
+//                 const jsonSingleSave = new Blob([jsonToSave], { type: "application/json" });
+//                 fileSaver.saveAs(jsonSingleSave, `${form_data.id}.json`);
+//                 $('.message-status').html(`Exported ${form_data.id} objects`);
+//             });
 
 //             // Clear Stix form editor when node/edge is unselected
             cy.on("unselect", 'node, edge', (evt: cytoscape.EventObject) => {
                 // editor.editor.destroy();
                 $('#metawidget').empty();
                 $('#current_node').empty();
-                $('button.btn-commit').prop('disabled', true)//button('option', 'disabled', true);
-                $('button#btn-export-single').prop('disabled',true);//.button('option', 'disabled', true);
+                $('button.btn-commit').button('option', 'disabled', true);
+                $('button#btn-export-single').button('option', 'disabled', true);
             });
 
             // Handler for when an edge is created via the graph editor
