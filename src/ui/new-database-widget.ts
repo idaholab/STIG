@@ -4,9 +4,9 @@ Copyright 2018 Southern California Edison Company
 ALL RIGHTS RESERVED
 */
 
+import { use_db } from "../db/dbFunctions";
 import { DatabaseConfigurationStorage } from "../storage";
 import { IDatabaseConfigOptions } from '../storage/database-configuration-storage';
-// import { new_database } from '../db/create-db';
 
 export function newDatabaseConfiguration(key?: string) {
     const dbdialog = new NewDatabaseDialog($('#new-db-anchor'), key);
@@ -85,7 +85,7 @@ class NewDatabaseDialog {
             usetoken: true,
         };
         DatabaseConfigurationStorage.Instance.save(options);
-        // new_database(options);
+        use_db(options)
         this.close();
     }
 

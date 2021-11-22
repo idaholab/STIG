@@ -318,7 +318,7 @@
   dependencies:
     "@types/node" "*"
 
-"@types/orientjs@^3.0.3":
+"@types/orientjs@^3.0.12":
   "integrity" "sha512-0JeyLPL2TTXdGBGOBI7+8rHe0dLXFmJJx6RmwZ8wjGHJwWsYjyF7dOyrAK6BMcdly8/paDUm88TMdYcF+7n/Lg=="
   "resolved" "https://registry.npmjs.org/@types/orientjs/-/orientjs-3.0.12.tgz"
   "version" "3.0.12"
@@ -10312,7 +10312,7 @@
     "bindings" "~1.2.1"
     "nan" "^2.13.2"
 
-"orientjs@^3.0.3":
+"orientjs@^3.0.11":
   "integrity" "sha512-5mSUtpLTdTUNrMheaH5VWwAS+RhhIGl0SIvDSLoDS3QeFHTqtxz1n1cnBtHauCQbfU4ec51eifkOMRlpazLAIQ=="
   "resolved" "https://registry.npmjs.org/orientjs/-/orientjs-3.0.11.tgz"
   "version" "3.0.11"

@@ -4,10 +4,10 @@ Copyright 2018 Southern California Edison Company
 ALL RIGHTS RESERVED
 */
 
+import { use_db } from "../db/dbFunctions";
 import { DatabaseConfigurationStorage } from "../storage";
 // import { ipcRenderer } from 'electron';
 import { newDatabaseConfiguration } from './new-database-widget'
-require('webpack-jquery-ui/controlgroup');
 
 export function openDatabaseConfiguration() {
     console.log("Open database dialog")
@@ -72,8 +72,10 @@ class DatabaseConfigDialog {
         });
 
         // $(".controlgroup").controlgroup({
-        //     direction: "vertical",
+        //     direction: "vertical"
         // });
+
+        $(".controlgroup").buttonset({});
         
         $( `#db-config-list input[type='radio']`).prop('checked', false);
         $( `#db-config-list input[type='radio'][value='${this._storage.current}']` ).prop('checked', true);
@@ -118,6 +120,7 @@ class DatabaseConfigDialog {
         this.useConfig = $( "#db-config-list input:checked" ).val() as string;
         this._storage.current = this.useConfig;
         // ipcRenderer.send('useDatabase', this._storage.get(this.useConfig));
+        use_db(this._storage.get(this._storage.current))
         //add progress bar here tied to
         this._anchor.dialog("close");
     }
