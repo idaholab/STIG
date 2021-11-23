@@ -1,25 +1,31 @@
 import express, { NextFunction } from 'express';
 import { Request, Response } from 'express';
 import orientjs, { ODatabaseSession, OrientDBClient } from 'orientjs';
-import { createClassDeclaration } from 'typescript';
 import { IDatabaseConfigOptions } from './src/storage/database-configuration-storage';
 import { IOrientJSONClassOptions, schema } from './src/db/schema';
+import session from 'express-session';
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 // import path from 'path';
 const app = express();
 
 let client: OrientDBClient = null
-let session: ODatabaseSession = null
+let db: ODatabaseSession = null
 
 const {
   PORT = 3000,
   COOKIE_SECRET = "stig_cookie"
 } = process.env;
 
+app.use(session({
+  secret: COOKIE_SECRET,
+  resave: true,
+  saveUninitialized: false,
+  cookie: { maxAge: 9999999999 } // Set the session cookie to expire far in the future
+}))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))
-app.use(cookieParser({secret: COOKIE_SECRET}))
+
 
 app.use(express.static('src'))
 app.use('/node_modules', express.static('node_modules'))
@@ -46,8 +52,9 @@ app.get('/', (_req: Request, res: Response) => {
 app.post('/save', (req: Request, res: Response) => {
   let name = req.body.name;
   let data = req.body.data;
-  // Set a cookie that will expire far in the future
-  res.cookie(name, cookieParser.signedCookie(JSON.stringify(data), COOKIE_SECRET), {maxAge: 999999999999, sameSite: 'strict'})
+  
+  req.session[name] = data;
+
   res.status(200);
   res.end();
 })
@@ -62,7 +69,7 @@ app.post('/save', (req: Request, res: Response) => {
 app.get('/data', (req: Request, res: Response) => {
   let name = req.query.name as string;
 
-  let data = req.cookies[name]
+  let data = req.session[name]
 
   if (data === "undefined" || data === undefined) {
     console.log(`Cookie ${name} not found`)
@@ -92,10 +99,10 @@ app.post("/use_db", async (req, res) => {
 
       let dbOptions = {name: config.name, username: config.username, password: config.password}
       if (await client.existsDatabase(dbOptions)) {
-        session = await client.session(dbOptions)
+        db = await client.session(dbOptions)
       } else {
         client.createDatabase(dbOptions).then(async () => {
-          session = await client.session(dbOptions)
+          db = await client.session(dbOptions)
           createClasses()
         })
         
@@ -142,17 +149,17 @@ async function class_query(options: IOrientJSONClassOptions) {
         name = replaced;
     }
     try {
-        const exists = await session.class.get(name);
+        const exists = await db.class.get(name);
         if (exists !== undefined) {
-            await session.class.drop(name);
+            await db.class.drop(name);
         }
         // tslint:disable-next-line:no-empty
     } catch (e) { }
-    const cls = await session.class.create(name, options.superClasses[0]);
+    const cls = await db.class.create(name, options.superClasses[0]);
     if (alias !== undefined) {
         alias = "`" + alias + "`";
         const query = `ALTER CLASS  ${name}  SHORTNAME ${alias}`;
-        await session.exec(query);
+        await db.exec(query);
     }
     console.log('done with creating superclasses');
     return cls;
