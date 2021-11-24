@@ -53,6 +53,7 @@ import { QueryStorageService, DatabaseConfigurationStorage, StigSettings } from 
 import {graph_copy, graph_paste} from './ui/clipboard'
 import { openDatabaseConfiguration } from './ui/database-config-widget';
 import { commit } from './db/dbFunctions';
+import { commit_all } from './ui/ipc-render-handlers';
 
 declare global {
     interface Window {
@@ -173,6 +174,7 @@ export class main {
             })
             $("#dd-commitElem").on("click", () => {
                 console.log("Commit elements")
+                commit_all()
             })
             $("#dd-dbDelete").on("click", () => {
                 console.log("Delete from db")

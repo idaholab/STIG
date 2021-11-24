@@ -1,8 +1,6 @@
 import express, { NextFunction } from 'express';
-import { Request, Response } from 'express';
-import orientjs, { ODatabaseSession, OrientDBClient } from 'orientjs';
+import { Request, Response } from 'express'; 
 import { IDatabaseConfigOptions } from './src/storage/database-configuration-storage';
-import { IOrientJSONClassOptions, schema } from './src/db/schema';
 import session from 'express-session';
 import { StigDB } from './db';
 const bodyParser = require('body-parser')

@@ -761,7 +761,8 @@ export class StigDB {
                     content: data,
                 },
             };
-            result = await this.OJSQuery(query, parameters);
+            // result = await this.OJSQuery(query, parameters);
+            result = await this.odb.command(query, parameters).all() as StixObject[];
             return result;
         } catch (e) {
             e.stack += (new Error()).stack;
@@ -799,7 +800,7 @@ export class StigDB {
             //     const node_data = window.cycore.getElementById(to_node);
             //     to_RID = await this.createVertex(node_data.data('raw_data'))[0].RID;
             // }
-            result = this.createEdgeRID(from_RID, to_RID, data);
+            result = this.createEdgeRID(from_RID, to_RID, transform_to_db(data));
             return result;
         } catch (e) {
             e.stack += (new Error()).stack;
@@ -1146,6 +1147,7 @@ export function transform_to_db(stix_record: StixObject): StixObject {
                 break;
             case "modified":
                 ret["modified"] = toDBTime(stix_record.modified)
+                break;
             default:
                 ret[prop] = stix_record[prop];
         }
