@@ -4,13 +4,16 @@ import orientjs, { ODatabaseSession, OrientDBClient } from 'orientjs';
 import { IDatabaseConfigOptions } from './src/storage/database-configuration-storage';
 import { IOrientJSONClassOptions, schema } from './src/db/schema';
 import session from 'express-session';
+import { StigDB } from './db';
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 // import path from 'path';
 const app = express();
 
-let client: OrientDBClient = null
-let db: ODatabaseSession = null
+// let client: OrientDBClient = null
+// let db: ODatabaseSession = null
+
+let db: StigDB = null;
 
 const {
   PORT = 3000,
@@ -21,7 +24,7 @@ app.use(session({
   secret: COOKIE_SECRET,
   resave: true,
   saveUninitialized: false,
-  cookie: { maxAge: 9999999999 } // Set the session cookie to expire far in the future
+  cookie: { maxAge: 9999999999, sameSite: 'strict' } // Set the session cookie to expire far in the future
 }))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))
@@ -52,7 +55,7 @@ app.get('/', (_req: Request, res: Response) => {
 app.post('/save', (req: Request, res: Response) => {
   let name = req.body.name;
   let data = req.body.data;
-  
+
   req.session[name] = data;
 
   res.status(200);
@@ -95,18 +98,7 @@ app.post("/use_db", async (req, res) => {
   let config: IDatabaseConfigOptions = req.body.config;
   if (config) {
     try {
-      if (!client) client = await OrientDBClient.connect({host: config.host, port: config.port})
-
-      let dbOptions = {name: config.name, username: config.username, password: config.password}
-      if (await client.existsDatabase(dbOptions)) {
-        db = await client.session(dbOptions)
-      } else {
-        client.createDatabase(dbOptions).then(async () => {
-          db = await client.session(dbOptions)
-          createClasses()
-        })
-        
-      }
+      db = new StigDB(config)
     } catch (err) {
       console.error(err)
       res.status(500)
@@ -118,54 +110,24 @@ app.post("/use_db", async (req, res) => {
   res.end()
 })
 
+app.post("/commit", (req, res) => {
+  let data = req.body.data;
+  console.log(data)
+  if (data) {
+    try {
+      db.updateDB(JSON.parse(data))
+    } catch (err) {
+      console.error(err)
+      res.status(500)
+    }
+  } else {
+    res.status(400)
+  }
 
+  res.end()
+  
+})
 
 app.listen(PORT, () => {
   console.log('server started at http://localhost:'+PORT);
 });
-
-/*******************************************
- * Database manipulation functions
- * Copied from original STIG source code,
- * with minor modifications to use latest OrientJS features
- *******************************************/
-
-async function createClasses() {
-  for (const cls of schema.classes) {
-    const c = await class_query(cls);
-    await create_properties(c, cls.properties)
-  }
-}
-
-async function class_query(options: IOrientJSONClassOptions) {
-  let name = options.name;
-    const idx = name.indexOf('-');
-    let alias: string;
-    if (idx > -1) {
-        alias = name;
-        const replaced = name.replace(/-/g, '');
-        console.log('found aliases: ', replaced);
-
-        name = replaced;
-    }
-    try {
-        const exists = await db.class.get(name);
-        if (exists !== undefined) {
-            await db.class.drop(name);
-        }
-        // tslint:disable-next-line:no-empty
-    } catch (e) { }
-    const cls = await db.class.create(name, options.superClasses[0]);
-    if (alias !== undefined) {
-        alias = "`" + alias + "`";
-        const query = `ALTER CLASS  ${name}  SHORTNAME ${alias}`;
-        await db.exec(query);
-    }
-    console.log('done with creating superclasses');
-    return cls;
-}
-
-async function create_properties(cls: orientjs.OClass, props: orientjs.PropertyCreateConfig[]): Promise<orientjs.OClassProperty[]> {
-  const created = await cls.property.create(props);
-  return created;
-}

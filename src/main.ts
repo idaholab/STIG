@@ -11,7 +11,7 @@ import {
     Relationship,
     // SDO,
     // SRO,
-    // StixObject,
+    StixObject,
     Indicator,
     ObservedData,
     Report,
@@ -52,6 +52,7 @@ import { QueryStorageService, DatabaseConfigurationStorage, StigSettings } from 
 // import { setHandlers } from './ui/ipc-render-handlers';
 import {graph_copy, graph_paste} from './ui/clipboard'
 import { openDatabaseConfiguration } from './ui/database-config-widget';
+import { commit } from './db/dbFunctions';
 
 declare global {
     interface Window {
@@ -621,12 +622,12 @@ export class main {
 
                     editor.buildWidget(ele, relationship_file , input_data);
                 }
-                // $('button#btn-export-single').button('option', 'disabled', false);
-                // if (ele.data('saved') === false) {
-                //     $('button.btn-commit').button('option', 'disabled', false);
-                // } else {
-                //     $('button.btn-commit').button('option', 'disabled', true);
-                // }
+                $('button#btn-export-single').button('option', 'disabled', false);
+                if (ele.data('saved') === false) {
+                    $('button.btn-commit').button('option', 'disabled', false);
+                } else {
+                    $('button.btn-commit').button('option', 'disabled', true);
+                }
                 return true;
             });
 
@@ -816,29 +817,26 @@ export class main {
             //     db.diff_dialog.open();
             // });
 
-//             /***************************************** *
-//             *        Save stix form to DB on click
-//             *************************************** */
-//             $('button').button();
-//             $('button.btn-commit').on("click", (e: JQuery.Event) => {
-//                 e.preventDefault();
-//                 e.stopPropagation();
-//                 let result: StixObject[];
-//                 let ourres = '';
-//                 try {
-//                     const formdata: StixObject = editor.editor.getValue();
-//                     db.updateDB(formdata).then((r) => {
-//                         result = r;
-//                         // ourres = result[0]['type'];
-//                     });
-//                 } catch (e) {
-//                     console.error('Error saving to database:');
-//                     console.error(e);
-//                     throw e;
-//                 }
-//                 $('button.btn-commit').button('option', 'disabled', true);
-//                 $('.message-status').html(`Committed 1 object to the database.`);
-//             });
+            /***************************************** *
+            *        Save stix form to DB on click
+            *************************************** */
+            $('button').button();
+            $('button.btn-commit').on("click", (e: JQuery.Event) => {
+                e.preventDefault();
+                e.stopPropagation();
+                let result: StixObject[];
+                let ourres = '';
+                try {
+                    const formdata: StixObject = editor.editor.getValue();
+                    commit(JSON.stringify(formdata))
+                } catch (e) {
+                    console.error('Error saving to database:');
+                    console.error(e);
+                    throw e;
+                }
+                $('button.btn-commit').button('option', 'disabled', true);
+                $('.message-status').html(`Committed 1 object to the database.`);
+            });
 
             /***********************************************************************************
             *

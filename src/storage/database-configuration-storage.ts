@@ -124,7 +124,7 @@ export class DatabaseConfigurationStorage {
     }
 
     public keys(): string[] {
-        console.log("Database store: ", this.store)
+        // console.log("Database store: ", this.store)
         return Object.keys(this.store.configs);
     }
 
