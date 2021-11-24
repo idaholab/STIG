@@ -113,7 +113,7 @@ app.post("/commit", (req, res) => {
   console.log(data)
   if (data) {
     try {
-      db.updateDB(JSON.parse(data))
+      db.updateDB(data)
     } catch (err) {
       console.error(err)
       res.status(500)
@@ -124,6 +124,30 @@ app.post("/commit", (req, res) => {
 
   res.end()
   
+})
+
+app.post("/delete", (req, res) => {
+  let data = req.body.data;
+  console.log(data)
+  if (data) {
+    try {
+      // Check if the STIX object is an edge
+      if (data.type === 'relationship') {
+        // Delete edge
+        db.sroDestroyedUI(data)
+      } else {
+        // Delete node
+        db.sdoDestroyedUI(data)
+      }
+    } catch (err) {
+      console.error(err)
+      res.status(500)
+    }
+  } else {
+    res.status(400)
+  }
+
+  res.end()
 })
 
 app.listen(PORT, () => {

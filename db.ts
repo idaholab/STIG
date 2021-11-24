@@ -570,7 +570,8 @@ export class StigDB {
         const options: QueryOptions = {};
         let result: StixObject[];
         try {
-            result = await this.OJSQuery(q, options);
+            // result = await this.OJSQuery(q, options);
+            result = await this.odb.command(q, options).all() as StixObject[];
             return result;
         } catch (e) {
             e.stack += (new Error()).stack;
@@ -589,7 +590,8 @@ export class StigDB {
         const options: QueryOptions = {};
         let result: StixObject[];
         try {
-            result = await this.OJSQuery(q, options);
+            // result = await this.OJSQuery(q, options);
+            result = await this.odb.command(q, options).all() as StixObject[];
             return result;
         } catch (e) {
             e.stack += (new Error()).stack;

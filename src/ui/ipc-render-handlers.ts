@@ -14,7 +14,7 @@ import { openDatabaseConfiguration } from './database-config-widget';
 import { newDatabaseConfiguration } from './new-database-widget';
 import * as fileSaver from 'file-saver';
 import * as uuid from 'uuid';
-import { commit } from '../db/dbFunctions';
+import { commit, db_delete } from '../db/dbFunctions';
 
 const getNodeMetadata = (nodes) => {
     return nodes.map(obj => ({
@@ -48,7 +48,7 @@ export async function commit_all() {
                 stix_obj.spec_version = 2.1
             }
 
-            await commit(JSON.stringify(stix_obj));
+            await commit(stix_obj);
         }        
     }
 
@@ -67,7 +67,7 @@ export async function commit_all() {
                 stix_obj.spec_version = 2.1
             }
 
-            await commit(JSON.stringify(stix_obj));
+            await commit(stix_obj);
         }  
     }
 
@@ -75,57 +75,35 @@ export async function commit_all() {
 
 }
 
-//     //user selected delete selected from dropdown
-//     //TODO: test single edge delete
-//     ipcRenderer.on("delete_selected", async () => {
-//         const db = new StigDB(DatabaseConfigurationStorage.Instance.current);
-//         const selected: CollectionReturnValue = window.cycore.$(':selected');
-//         // const to_save: CollectionReturnValue = window.cycore.$('[saved]');
-//         const vis: CollectionReturnValue = window.cycore.$(':visible');
-//         const edges: EdgeCollection = selected.edgesWith(vis);
-//         let sdoresults: StixObject[] = [];
-//         let sroresults: StixObject[] = [];
-//         let results: StixObject[] = [];
+    //user selected delete selected from dropdown
+    //TODO: test single edge delete
+    export async function delete_selected() {
+        // const db = new StigDB(DatabaseConfigurationStorage.Instance.current);
+        const selected: CollectionReturnValue = window.cycore.$(':selected');
+        // const to_save: CollectionReturnValue = window.cycore.$('[saved]');
+        const vis: CollectionReturnValue = window.cycore.$(':visible');
+        const edges: EdgeCollection = selected.edgesWith(vis);
+        let sdoresults: StixObject[] = [];
+        let sroresults: StixObject[] = [];
+        let results: StixObject[] = [];
 
-//         async function delSelectedVertex(stix_obj: StixObject) {
-//             await db.sdoDestroyedUI(stix_obj)
-//                 .then((result) => {
-//                     results.push(...result);
-//                 })
-//                 .catch((e) => {
-//                     // tslint:disable-next-line:no-console
-//                     console.error(e);
-//                 });
-//         }
+        //Delete incoming/outgoing edges first.
+        edges.forEach((ele) => {
+            const sro = ele.data('raw_data');
+            db_delete(sro)
 
-//         async function delSelectedEdge(edge_obj: StixObject) {
-//             await db.sroDestroyedUI(edge_obj)
-//                 .then((result) => {
-//                     results.push(...result);
-//                 })
-//                 .catch((e) => {
-//                     // tslint:disable-next-line:no-console
-//                     console.error(e);
-//                 });
+            window.cycore.remove(ele);
+        });
 
-//         }
-//         //Delete incoming/outgoing edges first.
-//         await edges.forEach(async (ele) => {
-//             const sro = ele.data('raw_data');
-//             await delSelectedEdge(sro);
+        selected.forEach((ele) => {
+            const sdo = ele.data('raw_data');
+            db_delete(sdo)
 
-//             window.cycore.remove(ele);
-//         });
+            window.cycore.remove(ele);
+        });
 
-//         await selected.forEach(async (ele) => {
-//             const sdo = ele.data('raw_data');
-//             await delSelectedVertex(sdo);
-
-//             window.cycore.remove(ele);
-//         });
-
-//         $('.message-status').html(`Deleted ${results} objects from the database.`);
-//     });
+        $('.message-status').html(`Deleted ${results} objects from the database.`);
+    }
 
 //     //user selected delete view from db
 //     ipcRenderer.on("delete_all", () => {

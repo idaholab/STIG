@@ -53,7 +53,7 @@ import { QueryStorageService, DatabaseConfigurationStorage, StigSettings } from 
 import {graph_copy, graph_paste} from './ui/clipboard'
 import { openDatabaseConfiguration } from './ui/database-config-widget';
 import { commit } from './db/dbFunctions';
-import { commit_all } from './ui/ipc-render-handlers';
+import { commit_all, delete_selected } from './ui/ipc-render-handlers';
 
 declare global {
     interface Window {
@@ -178,6 +178,7 @@ export class main {
             })
             $("#dd-dbDelete").on("click", () => {
                 console.log("Delete from db")
+                delete_selected()
             })
             $("#dd-selectElem").on("click", () => {Blob
                 console.log("Select all elements")
@@ -830,7 +831,7 @@ export class main {
                 let ourres = '';
                 try {
                     const formdata: StixObject = editor.editor.getValue();
-                    commit(JSON.stringify(formdata))
+                    commit(formdata)
                 } catch (e) {
                     console.error('Error saving to database:');
                     console.error(e);
