@@ -9,7 +9,8 @@ import * as cytoscape from 'cytoscape';
 import { GraphUtils } from "./graphFunctions";
 import { graph_copy } from '../ui/clipboard';
 import { StigSettings } from '../storage/stig-settings-storage';
-import { db_delete } from '../db/dbFunctions';
+import { db_delete, query_incoming, query_outgoing } from '../db/dbFunctions';
+import { BundleType } from '../stix';
 
 /**
  * @description
@@ -55,14 +56,28 @@ export function setup_ctx_menu(cy: cytoscape.Core, /*db: StigDB,*/ view_util: an
         },
         {
             content: 'Query Incoming',
-            select: () => {}
-            // select: async (ele: cytoscape.CollectionElements) => {
-            //     // query the DB here
-            //     const children = await db.traverseNodeIn(ele.data("raw_data").id);
-            //     const bundle = await db.handleResponse(children);
-            //     await graph_utils.buildNodes(bundle, true);
-            //     graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
-            // },
+            // select: () => {}
+            select: async (ele: cytoscape.CollectionElements) => {
+                // query the DB here
+                let elements = ele as unknown as cytoscape.CollectionArgument
+                elements.toArray().forEach(async (value) => {
+                    let data = value.data('raw_data')
+                    if (typeof data === 'string') {
+                        data = JSON.stringify(data)
+                    }
+                    console.log(data)
+                    const children = await query_incoming(data)
+                    console.log(JSON.stringify(children))
+                    let bundle : BundleType = {type: "bundle", objects: []}
+                    children.forEach((value) => {
+                        bundle.objects.push(value)
+                    })
+                    console.log(bundle.objects)
+                    await graph_utils.buildNodes(bundle, true);
+                    graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
+                })
+                
+            },
         },
         {
             content: 'Select Incoming',
@@ -90,14 +105,33 @@ export function setup_ctx_menu(cy: cytoscape.Core, /*db: StigDB,*/ view_util: an
         },
         {
             content: 'Query Out',
-            select: () => {}
-            // async select(ele: cytoscape.CollectionElements) {
-            //     // query the DB here
-            //     const children = await db.traverseNodeOut(ele.data("raw_data").id);
-            //     const bundle = await db.handleResponse(children);
-            //     graph_utils.buildNodes(bundle, true);
-            //     graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
-            // },
+            // select: () => {}
+            async select(ele: cytoscape.CollectionElements) {
+                // query the DB here
+                // const children = await db.traverseNodeOut(ele.data("raw_data").id);
+                // const bundle = await db.handleResponse(children);
+                // graph_utils.buildNodes(bundle, true);
+                // graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
+
+                let elements = ele as unknown as cytoscape.CollectionArgument
+                elements.toArray().forEach(async (value) => {
+                    let data = value.data('raw_data')
+                    if (typeof data === 'string') {
+                        data = JSON.stringify(data)
+                    }
+                    console.log(data)
+                    const children = await query_outgoing(data)
+                    console.log(JSON.stringify(children))
+                    let bundle : BundleType = {type: "bundle", objects: []}
+                    children.forEach((value) => {
+                        bundle.objects.push(value)
+                    })
+                    console.log(bundle.objects)
+                    await graph_utils.buildNodes(bundle, true);
+                    graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
+                })
+                
+            },
         },
         {
             content: 'Select Neighbors',

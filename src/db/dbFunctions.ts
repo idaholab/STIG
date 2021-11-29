@@ -11,14 +11,14 @@ export function use_db(config: IDatabaseConfigOptions) {
     })
 }
 
-export function commit(stix: StixObject) {
-    fetch('/commit', {
+export async function commit(stix: StixObject) {
+    return await fetch('/commit', {
         method: 'POST',
         headers: {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({data: stix})
-    })
+    }).then(() => {return true})
 }
 
 export function db_delete(stix: StixObject) {
@@ -29,4 +29,24 @@ export function db_delete(stix: StixObject) {
         },
         body: JSON.stringify({data: stix})
     })
+}
+
+export async function query_incoming(stix: StixObject) : Promise<StixObject[]> {
+    return await fetch("/query_incoming", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        }, 
+        body: JSON.stringify({id: stix.id})
+    }).then(response => response.json()).then(response => {return response.data})
+}
+
+export async function query_outgoing(stix: StixObject) : Promise<StixObject[]> {
+    return await fetch("/query_outgoing", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        }, 
+        body: JSON.stringify({id: stix.id})
+    }).then(response => response.json()).then(response => {return response.data})
 }

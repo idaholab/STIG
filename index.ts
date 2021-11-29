@@ -150,6 +150,40 @@ app.post("/delete", (req, res) => {
   res.end()
 })
 
+app.post('/query_incoming', async (req, res) => {
+  let id = req.body.id
+  if (id) {
+    try {
+      let stix = await db.traverseNodeIn(id)
+      res.write(JSON.stringify({data: stix}))
+    } catch (err) {
+      console.error(err)
+      res.status(500)
+    }
+  } else {
+    res.status(400)
+  }
+
+  res.end()
+})
+
+app.post('/query_outgoing', async (req, res) => {
+  let id = req.body.id
+  if (id) {
+    try {
+      let stix = await db.traverseNodeOut(id)
+      res.write(JSON.stringify({data: stix}))
+    } catch (err) {
+      console.error(err)
+      res.status(500)
+    }
+  } else {
+    res.status(400)
+  }
+
+  res.end()
+})
+
 app.listen(PORT, () => {
   console.log('server started at http://localhost:'+PORT);
 });

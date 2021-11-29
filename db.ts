@@ -7,6 +7,7 @@ ALL RIGHTS RESERVED
 import _ from "lodash";
 import moment from "moment";
 import orientjs, { QueryOptions, PropertyCreateConfig, OResult, OrientDBClient } from "orientjs";
+import { GraphQueryResult } from "./src/db/db_types";
 import { IOrientJSONClassOptions, schema } from "./src/db/schema";
 import { BundleType, Id, Identifier, SDO, SRO, StixObject } from "./src/stix";
 import { DatabaseConfigurationStorage } from "./src/storage";
@@ -641,38 +642,64 @@ export class StigDB {
      * @returns {Promise<GraphQueryResult>}
      * @memberof StigDB
      */
-    // public async traverseNodeIn(id: Identifier): Promise<GraphQueryResult> {
-    //     const query = {
-    //         command: "traverse in()  from (select from V where id_=? ORDER BY modified DESC limit 1) while $depth < 2 ",
-    //         mode: "graph",
-    //         parameters: [id],
-    //     };
-    //     let results;
-    //     try {
-    //         results = await this.doGraphQuery(query);
-    //         return results;
-    //     } catch (e) {
-    //         e.stack += (new Error()).stack;
-    //         throw e;
-    //     }
-    // }
+    public async traverseNodeIn(id: Identifier): Promise<StixObject[]> {
+        // const query = {
+        //     command: "traverse in()  from (select from V where id_=? ORDER BY modified DESC limit 1) while $depth < 2 ",
+        //     mode: "graph",
+        //     parameters: [id],
+        // };
+        let results;
+        try {
+            let node = await this.odb.select().from('V').where({id_: id}).one() as StixObject
+            results = [node];
+            let in_edges = await this.odb.select().from('E').where({in: node['@rid']}).all() as StixObject[]
 
-    // public async traverseNodeOut(id: Identifier): Promise<GraphQueryResult> {
-    //     const query = {
-    //         command: "traverse out()  from (select from V where id_=? ORDER BY modified DESC limit 1) while $depth < 2 ",
-    //         mode: "graph",
-    //         // parameters:(relationship_type)?[relationship_type, id]: ['', id]
-    //         parameters: [id],
-    //     };
-    //     let results;
-    //     try {
-    //         results = await this.doGraphQuery(query);
-    //         return results;
-    //     } catch (e) {
-    //         e.stack += (new Error()).stack;
-    //         throw e;
-    //     }
-    // }
+            for (const edge of in_edges) {
+                console.log(edge)
+                let in_node = await this.odb.select().from(edge["out"].toString()).one() as StixObject
+                console.log(in_node)
+                results.push(in_node)
+                results.push(edge)
+            }
+
+            return await transform_records_to_stix(results)
+        } catch (e) {
+            e.stack += (new Error()).stack;
+            throw e;
+        }
+    }
+
+    public async traverseNodeOut(id: Identifier): Promise<StixObject[]> {
+        // const query = {
+        //     command: "traverse out()  from (select from V where id_=? ORDER BY modified DESC limit 1) while $depth < 2 ",
+        //     mode: "graph",
+        //     // parameters:(relationship_type)?[relationship_type, id]: ['', id]
+        //     parameters: [id],
+        // };
+        let results: StixObject[];
+        try {
+            // results = await this.odb.query(query.command, {params: query.parameters}).all() as StixObject[];;
+            // return transform_records_to_stix(results);
+
+            let node = await this.odb.select().from('V').where({id_: id}).one() as StixObject
+            results = [node];
+            let in_edges = await this.odb.select().from('E').where({out: node['@rid']}).all() as StixObject[]
+            
+            for (const edge of in_edges) {
+                console.log(edge)
+                let in_node = await this.odb.select().from(edge["in"].toString()).one() as StixObject
+                console.log(in_node)
+                results.push(in_node)
+                results.push(edge)
+            }
+
+            return await transform_records_to_stix(results)
+
+        } catch (e) {
+            e.stack += (new Error()).stack;
+            throw e;
+        }
+    }
 
     // public async getParents(id: string): Promise<GraphQueryResult> {
     //     // get the parents for a given node{
@@ -760,7 +787,7 @@ export class StigDB {
                 params: {
                     from_rid: from_RID,
                     to_rid: to_RID,
-                    content: data,
+                    content: transform_to_db(data),
                 },
             };
             // result = await this.OJSQuery(query, parameters);
@@ -1157,6 +1184,29 @@ export function transform_to_db(stix_record: StixObject): StixObject {
     return ret;
 }
 
+export function transform_to_stix(stix_record: StixObject): StixObject {
+    const ret = {} as StixObject;
+    Object.keys(stix_record).forEach((prop) => {
+        switch (prop) {
+            case "id_":
+                // tslint:disable-next-line:no-string-literal
+                ret['id'] = stix_record["id_"];
+                break;
+            case "created":
+                ret['created'] = toStixTime(stix_record.created)
+                break;
+            case "modified":
+                ret["modified"] = toStixTime(stix_record.modified)
+                break;
+            case "valid_from":
+                ret["valid_from"] = toStixTime(stix_record["valid_from"])
+            default:
+                ret[prop] = stix_record[prop];
+        }
+    });
+    return ret;
+}
+
 /**
  *
  *
@@ -1167,6 +1217,21 @@ export function transform_records_to_db(stix_records: StixObject[]): StixObject[
     const ret = [] as StixObject[];
     stix_records.forEach((r) => {
         const revised = transform_to_db(r);
+        ret.push(revised);
+    });
+    return ret;
+}
+
+/**
+ *
+ *
+ * @param {StixObject[]} stix_records
+ * @returns {StixObject[]}
+ */
+ export function transform_records_to_stix(stix_records: StixObject[]): StixObject[] {
+    const ret = [] as StixObject[];
+    stix_records.forEach((r) => {
+        const revised = transform_to_stix(r);
         ret.push(revised);
     });
     return ret;
