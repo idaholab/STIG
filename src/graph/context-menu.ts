@@ -9,6 +9,7 @@ import * as cytoscape from 'cytoscape';
 import { GraphUtils } from "./graphFunctions";
 import { graph_copy } from '../ui/clipboard';
 import { StigSettings } from '../storage/stig-settings-storage';
+import { db_delete } from '../db/dbFunctions';
 
 /**
  * @description
@@ -27,7 +28,6 @@ export function setup_ctx_menu(cy: cytoscape.Core, /*db: StigDB,*/ view_util: an
             select: (ele: cytoscape.CollectionElements) => {
                 cy.remove(ele as unknown as cytoscape.CollectionArgument)
             }
-            // select: () => {}
             // select: async (ele : cytoscape.CollectionElements) => {
             //     cy.remove(ele);
             //     // TODO make a new icon for db_delete from graph right click, Tooltips seem to be hard with cy.ctxmenu
@@ -35,17 +35,23 @@ export function setup_ctx_menu(cy: cytoscape.Core, /*db: StigDB,*/ view_util: an
         },
         {
             content: 'DB Delete',
-            select: () => {}
-            // select: async (ele: cytoscape.CollectionElements) => {
-            //     cy.remove(ele);
-            //     //TODO: ensure edges delete first.
-            //     try {
-            //         const resp = await db.sdoDestroyedUI(ele.data("raw_data"));
+            // select: () => {}
+            select: async (ele: cytoscape.CollectionElements) => {
+                let element = ele as unknown as cytoscape.CollectionArgument
 
-            //     } catch (e) {
-            //         // probably want to indicate that it wasnt deleted from db
-            //     }
-            // },
+                //TODO: ensure edges delete first.
+                try {
+                    // const resp = await db.sdoDestroyedUI(ele.data("raw_data"));
+                    let eleList = element.toArray()
+                    eleList.forEach((value) => {
+                        cy.remove(value)
+                        db_delete(value.data('raw_data'))
+                    })
+
+                } catch (e) {
+                    // probably want to indicate that it wasnt deleted from db
+                }
+            },
         },
         {
             content: 'Query Incoming',
@@ -60,17 +66,27 @@ export function setup_ctx_menu(cy: cytoscape.Core, /*db: StigDB,*/ view_util: an
         },
         {
             content: 'Select Incoming',
-            select: () => {}
-            // select(ele: cytoscape.CollectionElements) {
-            //     ele.incomers().select();
-            // },
+            // select: () => {}
+            select(ele: cytoscape.CollectionElements) {
+                let elements = ele as unknown as cytoscape.CollectionArgument
+                elements.toArray().forEach((value) => {
+                    if (value.isNode()) {
+                        value.incomers().select()
+                    }
+                })
+            },
         },
         {
             content: 'Select Out',
-            select: () => {}
-            // select(ele: cytoscape.CollectionElements) {
-            //     ele.outgoers().select();
-            // },
+            // select: () => {}
+            select(ele: cytoscape.CollectionElements) {
+                let elements = ele as unknown as cytoscape.CollectionArgument
+                elements.toArray().forEach((value) => {
+                    if (value.isNode()) {
+                        value.outgoers().select()
+                    }
+                })
+            },
         },
         {
             content: 'Query Out',
@@ -85,14 +101,22 @@ export function setup_ctx_menu(cy: cytoscape.Core, /*db: StigDB,*/ view_util: an
         },
         {
             content: 'Select Neighbors',
-            select: () => {}
-            // select(ele: cytoscape.CollectionElements) {
+            // select: () => {}
+            select(ele: cytoscape.CollectionElements) {
             
-            //     // ele.select();
-            //     // ele.closedNeighborhood().select();
-            //     // view_util.highlightNeighbors(ele);
+                // ele.select();
+                // ele.closedNeighborhood().select();
+                // // view_util.highlightNeighbors(ele);
+
+                let elements = ele as unknown as cytoscape.CollectionArgument
+                elements.toArray().forEach((value) => {
+                    if (value.isNode()) {
+                        value.select()
+                        value.closedNeighborhood().select()
+                    }
+                })
                 
-            // },
+            },
         },
         ],
     });
@@ -101,39 +125,58 @@ export function setup_ctx_menu(cy: cytoscape.Core, /*db: StigDB,*/ view_util: an
         selector: 'edge',
         commands: [{
             content: 'Remove from Graph',
-            select: () => {}
-            // select(ele: cytoscape.CollectionElements) {
-            //     cy.remove(ele);
-            // },
+            // select: () => {}
+            select(ele: cytoscape.CollectionElements) {
+                cy.remove(ele as unknown as cytoscape.CollectionArgument);
+            },
         },
         {
             content: 'DB Delete',
-            select: () => {}
-            // select: async (ele: cytoscape.CollectionElements) => {
-            //     //TODO: ensure edges delete first.
-            //     try {
-            //         const resp = await db.sroDestroyedUI(ele.data("raw_data"));
-            //         console.log('response: ',resp);
-            //         cy.remove(ele);
+            // select: () => {}
+            select: async (ele: cytoscape.CollectionElements) => {
+                let element = ele as unknown as cytoscape.CollectionArgument
 
-            //     } catch (e) {
-            //         // probably want to indicate that it wasnt deleted from db
-            //     }
-            // },
+                //TODO: ensure edges delete first.
+                try {
+                    // const resp = await db.sdoDestroyedUI(ele.data("raw_data"));
+                    let eleList = element.toArray()
+                    eleList.forEach((value) => {
+                        cy.remove(value)
+                        db_delete(value.data('raw_data'))
+                    })
+
+                } catch (e) {
+                    // probably want to indicate that it wasnt deleted from db
+                }
+            }
         },
         {
             content: 'Select Source',
-            select: () => {}
-            // select(ele: cytoscape.CollectionElements) {
-            //     ele.source().select();
-            // },
+            // select: () => {}
+            select(ele: cytoscape.CollectionElements) {
+                // ele.source().select();
+                let elements = ele as unknown as cytoscape.CollectionArgument
+
+                elements.toArray().forEach((value) => {
+                    if (value.isEdge()) {
+                        value.source().select()
+                    }
+                })
+            },
         },
         {
             content: 'Select Target',
-            select: () => {}
-            // select(ele: cytoscape.CollectionElements) {
-            //     ele.target().select();
-            // },
+            // select: () => {}
+            select(ele: cytoscape.CollectionElements) {
+                // ele.source().select();
+                let elements = ele as unknown as cytoscape.CollectionArgument
+
+                elements.toArray().forEach((value) => {
+                    if (value.isEdge()) {
+                        value.target().select()
+                    }
+                })
+            },
         }],
     });
 
