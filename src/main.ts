@@ -57,6 +57,7 @@ import { openDatabaseConfiguration } from './ui/database-config-widget';
 import { commit, query } from './db/dbFunctions';
 import { commit_all, delete_selected } from './ui/ipc-render-handlers';
 import { GraphQueryResult } from './db/db_types';
+import { QueryHistoryDialog } from './ui/queryHistoryWidget';
 
 declare global {
     interface Window {
@@ -79,7 +80,7 @@ export class main {
     constructor() { }
 
     public async run() {
-        // const storage: QueryStorageService = QueryStorageService.Instance;
+        const storage: QueryStorageService = QueryStorageService.Instance;
         const settings = StigSettings.Instance;
         let loading: boolean = false;
 
@@ -502,10 +503,10 @@ export class main {
             });
 
 //             // Query history dialog holds a history of DB queries
-//             const hist_dialog = new QueryHistoryDialog($('#query-anchor'));
-//             $("#btn-db-history").on('click', () => {
-//                 hist_dialog.open();
-//             });
+            const hist_dialog = new QueryHistoryDialog($('#query-anchor'));
+            $("#btn-db-history").on('click', () => {
+                hist_dialog.open();
+            });
 
             // handler for DB search button click
             $("#btn-db-search").on("click", async (e: JQuery.Event) => {
@@ -515,7 +516,7 @@ export class main {
                 if (text.length === 0) {
                     return;
                 }
-                // storage.add(text);
+                storage.add(text);
                 // hist_dialog.addToHistoryDialog();
                 // const result = await db.doGraphQuery({
                 //     command: text,
