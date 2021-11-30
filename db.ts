@@ -759,7 +759,7 @@ export class StigDB {
             q_class = "`" + stix_obj.type + "`";
             q_action = 'Create VERTEX ';
             query = q_action + q_class + ' CONTENT ' + JSON.stringify(transform_to_db(stix_obj));
-            console.log(query);
+            // console.log(query);
             // result = await this.OJSQuery(query, {});
             result = await this.odb.command(query).all() as StixObject[];
             // console.log('Query result:');
@@ -949,8 +949,9 @@ export class StigDB {
      */
     public async  updateDB(formdata: StixObject): Promise<StixObject[]> {
         const db_obj = transform_to_db(formdata);
-        console.log(formdata)
-        console.log("Formdata id: ", formdata.id)
+        // console.log(formdata)
+        // console.log("Formdata id: ", formdata.id)
+        // created, modified, first_seen, last_seen, 
         const old_modified = await this.getModified(formdata.id);
         if (old_modified === undefined) {
             // New node, make sure dates are good
@@ -962,7 +963,7 @@ export class StigDB {
             }
 
         } else if (old_modified !== undefined && moment(old_modified).isSame(db_obj.modified)) {
-            // Existing node, must create a new modified date and create a new object in the datyabase
+            // Existing node, must create a new modified date and create a new object in the database
             db_obj.modified = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
         }
         let result;
@@ -1165,20 +1166,31 @@ export function toStixTime(timestamp: string): string {
  */
 export function transform_to_db(stix_record: StixObject): StixObject {
     const ret = {} as StixObject;
+    console.log("Checking object " + JSON.stringify(stix_record))
     Object.keys(stix_record).forEach((prop) => {
+        console.log("Checking " + prop)
+        
+
         switch (prop) {
             case "id":
                 // tslint:disable-next-line:no-string-literal
                 ret['id_'] = stix_record.id;
                 break;
-            case "created":
-                ret['created'] = toDBTime(stix_record.created)
-                break;
-            case "modified":
-                ret["modified"] = toDBTime(stix_record.modified)
-                break;
+            // case "created":
+            //     ret['created'] = toDBTime(stix_record.created)
+            //     break;
+            // case "modified":
+            //     ret["modified"] = toDBTime(stix_record.modified)
+            //     break;
             default:
                 ret[prop] = stix_record[prop];
+        }
+
+        // Check if value contains date in STIX format
+        if (/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/.test(stix_record[prop])) {
+            console.log("Fixing time for " + prop)
+            // Change the data from STIX format to DB format
+            ret[prop] = toDBTime(stix_record[prop])
         }
     });
     return ret;
@@ -1187,6 +1199,7 @@ export function transform_to_db(stix_record: StixObject): StixObject {
 export function transform_to_stix(stix_record: StixObject): StixObject {
     const ret = {} as StixObject;
     Object.keys(stix_record).forEach((prop) => {
+        
         switch (prop) {
             case "id_":
                 // tslint:disable-next-line:no-string-literal

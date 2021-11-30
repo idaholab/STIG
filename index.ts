@@ -32,11 +32,11 @@ app.use(express.static('src'))
 app.use('/node_modules', express.static('node_modules'))
 app.use(express.static('dist'))
 
-app.use((req: Request, _res: Response, next: NextFunction) => {
-  console.log(`[${req.method}] - ${req.url}`);
+// app.use((req: Request, _res: Response, next: NextFunction) => {
+//   console.log(`[${req.method}] - ${req.url}`);
 
-  next();
-})
+//   next();
+// })
 
 app.get('/', (_req: Request, res: Response) => {
   res.redirect('/index.html');
@@ -110,7 +110,7 @@ app.post("/use_db", async (req, res) => {
 
 app.post("/commit", (req, res) => {
   let data = req.body.data;
-  console.log(data)
+  // console.log(data)
   if (data) {
     try {
       db.updateDB(data)
