@@ -17,6 +17,8 @@ import {
     Report,
     StixNode,
     BundleType,
+    SRO,
+    SDO,
 } from './stix';
 import * as stix from './stix';
 import * as fileSaver from 'file-saver';
@@ -52,8 +54,9 @@ import { QueryStorageService, DatabaseConfigurationStorage, StigSettings } from 
 // import { setHandlers } from './ui/ipc-render-handlers';
 import {graph_copy, graph_paste} from './ui/clipboard'
 import { openDatabaseConfiguration } from './ui/database-config-widget';
-import { commit } from './db/dbFunctions';
+import { commit, query } from './db/dbFunctions';
 import { commit_all, delete_selected } from './ui/ipc-render-handlers';
+import { GraphQueryResult } from './db/db_types';
 
 declare global {
     interface Window {
@@ -504,69 +507,74 @@ export class main {
 //                 hist_dialog.open();
 //             });
 
-//             // handler for DB search button click
-//             $("#btn-db-search").on("click", async (e: JQuery.Event) => {
-//                 e.preventDefault();
-//                 e.stopPropagation();
-//                 const text = $("#dbSearch").val() as string;
-//                 if (text.length === 0) {
-//                     return;
-//                 }
-//                 storage.add(text);
-//                 hist_dialog.addToHistoryDialog();
-//                 const result = await db.doGraphQuery({
-//                     command: text,
-//                     mode: 'graph',
-//                     parameters: [],
-//                 });
-//                 if (result.graph === undefined || result.graph.vertices === undefined) {
-//                     $('#query-status').html('No results');
-//                     return;
-//                 }
-//                 // console.log(result);
-//                 $('#query-status').html(`Returned ${result.graph.vertices.length} nodes and ${result.graph.edges.length} edges.`);
-//                 const add_graph: GraphQueryResult = {
-//                     graph: {
-//                         vertices: [],
-//                         edges: [],
-//                     },
-//                 };
-//                 let results: StixObject[] = [];
-//                 results = results.concat(result.graph.edges, result.graph.vertices);
-//                 // results.concat(result.graph.vertices);
-//                 loading = true;
-//                 results.forEach((item: StixObject) => {
-//                     if (cy.getElementById(item.id_).length === 0) {
-//                         /((r|R)elationship)|((s|S)ighting)/.exec(item.type) ? add_graph.graph.edges.push(item as SRO) : add_graph.graph.vertices.push(item as SDO);
-//                     }
-//                 });
-//                 try {
-//                     const bundle = await db.handleResponse(add_graph);
-//                     const new_nodes = await graph_utils.buildNodes(bundle, true);
-//                     // const selected = cy.$(':selected');
-//                     // view_util.removeHighlights(selected);
-//                     cy.elements().unselect();
-//                     graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
-//                     new_nodes.select();
-//                     $('.message-status').html(`Added ${new_nodes.length} elements to graph`);
-//                     loading = false;
-//                 } catch (err) {
-//                     loading = false;
-//                     throw err;
-//                 }
-//             });
+            // handler for DB search button click
+            $("#btn-db-search").on("click", async (e: JQuery.Event) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const text = $("#dbSearch").val() as string;
+                if (text.length === 0) {
+                    return;
+                }
+                // storage.add(text);
+                // hist_dialog.addToHistoryDialog();
+                // const result = await db.doGraphQuery({
+                //     command: text,
+                //     mode: 'graph',
+                //     parameters: [],
+                // });
+                const result = await query(text)
+                // if (result.graph === undefined || result.graph.vertices === undefined) {
+                //     $('#query-status').html('No results');
+                //     return;
+                // }
 
-//             // Handler to make DB search happen upon ctrl-enter
-//             $("#dbSearch").on("keyup", async (e: JQuery.Event) => {
-//                 $('#query-status').html('');
-//                 const key = e.which;
-//                 if (key === 17) {
-//                     e.preventDefault();
-//                     e.stopPropagation();
-//                     $("#btn-db-search").trigger("click");
-//                 }
-//             });
-//             // clears all items from displayed graph
+                console.log(result);
+                
+                const add_graph: GraphQueryResult = {
+                    graph: {
+                        vertices: [],
+                        edges: [],
+                    },
+                };
+                // let results: StixObject[] = [];
+                // results = results.concat(result.graph.edges, result.graph.vertices);
+                // results.concat(result.graph.vertices);
+                loading = true;
+                result.forEach((item: StixObject) => {
+                    if (cy.getElementById(item.id_).length === 0) {
+                        /((r|R)elationship)|((s|S)ighting)/.exec(item.type) ? add_graph.graph.edges.push(item as SRO) : add_graph.graph.vertices.push(item as SDO);
+                    }
+                });
+                $('#query-status').html(`Returned ${add_graph.graph.vertices.length} nodes and ${add_graph.graph.edges.length} edges.`);
+                try {
+                    // const bundle = await db.handleResponse(add_graph);
+                    let bundle : BundleType = {type: "bundle", objects: result}
+                    await graph_utils.buildNodes(bundle, true);
+                    // const selected = cy.$(':selected');
+                    // view_util.removeHighlights(selected);
+                    // cy.elements().unselect();
+                    graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
+                    // new_nodes.select();
+                    $('.message-status').html(`Added ${result.length} elements to graph`);
+                    loading = false;
+                } catch (err) {
+                    loading = false;
+                    throw err;
+                }
+            });
+
+            // Handler to make DB search happen upon ctrl-enter
+            $("#dbSearch").on("keyup", async (e: JQuery.Event) => {
+                $('#query-status').html('');
+                const key = e.which;
+                if (key === 17) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    $("#btn-db-search").trigger("click");
+                }
+            });
+
+            // clears all items from displayed graph
             $("#button-clear-graph").on("click", (e: JQuery.Event) => {
                 e.preventDefault();
                 e.stopPropagation();

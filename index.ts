@@ -1,8 +1,9 @@
-import express, { NextFunction } from 'express';
+import express, { NextFunction, response } from 'express';
 import { Request, Response } from 'express'; 
 import { IDatabaseConfigOptions } from './src/storage/database-configuration-storage';
 import session from 'express-session';
 import { StigDB } from './db';
+import { StixObject } from './src/stix';
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 // import path from 'path';
@@ -32,11 +33,11 @@ app.use(express.static('src'))
 app.use('/node_modules', express.static('node_modules'))
 app.use(express.static('dist'))
 
-// app.use((req: Request, _res: Response, next: NextFunction) => {
-//   console.log(`[${req.method}] - ${req.url}`);
+app.use((req: Request, _res: Response, next: NextFunction) => {
+  console.log(`[${req.method}] - ${req.url}`);
 
-//   next();
-// })
+  next();
+})
 
 app.get('/', (_req: Request, res: Response) => {
   res.redirect('/index.html');
@@ -172,6 +173,23 @@ app.post('/query_outgoing', async (req, res) => {
   if (id) {
     try {
       let stix = await db.traverseNodeOut(id)
+      res.write(JSON.stringify({data: stix}))
+    } catch (err) {
+      console.error(err)
+      res.status(500)
+    }
+  } else {
+    res.status(400)
+  }
+
+  res.end()
+})
+
+app.post("/query", async (req, res) => {
+  let query = req.body.query
+  if (query) {
+    try {
+      let stix = await db.executeQuery(query)
       res.write(JSON.stringify({data: stix}))
     } catch (err) {
       console.error(err)

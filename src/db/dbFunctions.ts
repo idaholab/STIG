@@ -1,5 +1,6 @@
 import { StixObject } from "../stix";
 import { IDatabaseConfigOptions } from "../storage/database-configuration-storage";
+import { GraphQueryResult } from "./db_types";
 
 export function use_db(config: IDatabaseConfigOptions) {
     fetch("/use_db", {
@@ -48,5 +49,15 @@ export async function query_outgoing(stix: StixObject) : Promise<StixObject[]> {
             'Content-Type': 'application/json'
         }, 
         body: JSON.stringify({id: stix.id})
+    }).then(response => response.json()).then(response => {return response.data})
+}
+
+export async function query(query: string) : Promise<StixObject[]> {
+    return await fetch("/query", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        }, 
+        body: JSON.stringify({query: query})
     }).then(response => response.json()).then(response => {return response.data})
 }

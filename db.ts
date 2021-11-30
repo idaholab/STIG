@@ -655,9 +655,9 @@ export class StigDB {
             let in_edges = await this.odb.select().from('E').where({in: node['@rid']}).all() as StixObject[]
 
             for (const edge of in_edges) {
-                console.log(edge)
+                // console.log(edge)
                 let in_node = await this.odb.select().from(edge["out"].toString()).one() as StixObject
-                console.log(in_node)
+                // console.log(in_node)
                 results.push(in_node)
                 results.push(edge)
             }
@@ -686,9 +686,9 @@ export class StigDB {
             let in_edges = await this.odb.select().from('E').where({out: node['@rid']}).all() as StixObject[]
             
             for (const edge of in_edges) {
-                console.log(edge)
+                // console.log(edge)
                 let in_node = await this.odb.select().from(edge["in"].toString()).one() as StixObject
-                console.log(in_node)
+                // console.log(in_node)
                 results.push(in_node)
                 results.push(edge)
             }
@@ -1133,6 +1133,57 @@ export class StigDB {
     return created;
   }
 
+  public async executeQuery(query: string) : Promise<StixObject[]> {
+      try {
+        // Get result
+        const result = await this.odb.query(query).all() as StixObject[]
+        // Sort into nodes and edges
+        const resNodes = []
+        const resEdges = []
+        result.forEach((item: StixObject) => {
+            /((r|R)elationship)|((s|S)ighting)/.exec(item.type) ? resEdges.push(item as SRO) : resNodes.push(item as SDO);
+        });
+        // Make a list of node rids
+        const nodeRids = []
+        for (const n of resNodes) {
+            nodeRids.push(n['@rid'].toString())
+        }
+
+        // Make a list of in and out rids 
+        const edgeRids:Set<string> = new Set
+        for (const e of resEdges) {
+            edgeRids.add(e.in.toString())
+            edgeRids.add(e.out.toString())
+        }
+        console.log(resEdges.length)
+        console.log(edgeRids)
+
+        // Get edges
+        const edgeQuery = "select * from E where in in :nodes and out in :nodes"
+        
+        const edges = await this.odb.query(edgeQuery, {params: {nodes: nodeRids}}).all() as StixObject[]
+        
+        // Get nodes to complete the edges
+        const nodeQuery = "select * from V where @rid in :rids"
+        const nodes = await this.odb.query(nodeQuery, {params: {rids: Array.from(edgeRids)}}).all() as StixObject[]
+
+        for (const n of nodes) {
+            result.push(n)
+        }
+        for (const e of edges) {
+            result.push(e)
+        }
+        
+
+        // console.log(result)
+
+        return transform_records_to_stix(result)
+      } catch (e) {
+        console.error(e)
+        throw e;
+      }
+  }
+
 }
 
 /**
@@ -1166,10 +1217,7 @@ export function toStixTime(timestamp: string): string {
  */
 export function transform_to_db(stix_record: StixObject): StixObject {
     const ret = {} as StixObject;
-    console.log("Checking object " + JSON.stringify(stix_record))
     Object.keys(stix_record).forEach((prop) => {
-        console.log("Checking " + prop)
-        
 
         switch (prop) {
             case "id":
