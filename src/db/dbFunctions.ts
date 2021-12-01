@@ -1,3 +1,4 @@
+import * as diffpatch from "jsondiffpatch";
 import { StixObject } from "../stix";
 import { IDatabaseConfigOptions } from "../storage/database-configuration-storage";
 import { GraphQueryResult } from "./db_types";
@@ -59,5 +60,15 @@ export async function query(query: string) : Promise<StixObject[]> {
             'Content-Type': 'application/json'
         }, 
         body: JSON.stringify({query: query})
+    }).then(response => response.json()).then(response => {return response.data})
+}
+
+export async function get_diff(stix: StixObject) : Promise<diffpatch.Delta> {
+    return await fetch("/diff", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        }, 
+        body: JSON.stringify({data: stix})
     }).then(response => response.json()).then(response => {return response.data})
 }

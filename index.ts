@@ -202,6 +202,22 @@ app.post("/query", async (req, res) => {
   res.end()
 })
 
+app.post('/diff', async (req, res) => {
+  let node = req.body.data;
+  if (node) {
+    try {
+      const diff = await db.getDiff(node)
+      res.write(JSON.stringify({data: diff}))
+    } catch (e) {
+      res.status(500)
+    }
+  } else {
+    res.status(400)
+  }
+
+  res.end()
+})
+
 app.listen(PORT, () => {
   console.log('server started at http://localhost:'+PORT);
 });

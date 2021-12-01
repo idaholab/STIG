@@ -4,6 +4,7 @@ Copyright 2018 Southern California Edison Company
 ALL RIGHTS RESERVED
 */
 
+import { DiffPatcher } from "jsondiffpatch";
 import _ from "lodash";
 import moment from "moment";
 import orientjs, { QueryOptions, PropertyCreateConfig, OResult, OrientDBClient } from "orientjs";
@@ -20,7 +21,7 @@ import { openDatabaseConfiguration } from "./src/ui/database-config-widget";
 // import { BundleType, Id, Identifier, SDO, SRO, StixNodeData, StixObject } from '../stix';
 // // import { } from './stixnode';
 // import * as _ from 'lodash';
-// import * as diffpatch from 'jsondiffpatch';
+import * as diffpatch from 'jsondiffpatch';
 // import { DiffDialog } from '../ui/diff-dialog';
 // import * as http_codes from 'http-status-codes';
 // import { ErrorWidget } from '../ui/errorWidget';
@@ -940,6 +941,27 @@ export class StigDB {
     //         throw e;
     //     }
     // }
+
+    /***
+     * @description Determines the difference between a node from the graph and what is in the database
+     * @param {StixObject} node
+     * @returns {Promise<diffpatch.Delta>}
+     * @memberof StigDB
+     */
+    public async getDiff(node: StixObject): Promise<diffpatch.Delta> {
+        // Get the node from the database
+        const dbNode = await this.odb.select().from(node.type).where({id_: node.id}).one() as StixObject;
+        if (!dbNode) {
+            return undefined
+        }
+        
+        const compNode = transform_to_stix(dbNode)
+        
+        const diff = diffpatch.diff(node, compNode)
+
+        return diff;
+    }
+
 
     /**
      * @description Updates the database from the editor form

@@ -54,10 +54,11 @@ import { QueryStorageService, DatabaseConfigurationStorage, StigSettings } from 
 // import { setHandlers } from './ui/ipc-render-handlers';
 import {graph_copy, graph_paste} from './ui/clipboard'
 import { openDatabaseConfiguration } from './ui/database-config-widget';
-import { commit, query } from './db/dbFunctions';
+import { commit, get_diff, query } from './db/dbFunctions';
 import { commit_all, delete_selected } from './ui/ipc-render-handlers';
 import { GraphQueryResult } from './db/db_types';
 import { QueryHistoryDialog } from './ui/queryHistoryWidget';
+import { DiffDialog } from './ui/diff-dialog';
 
 declare global {
     interface Window {
@@ -825,9 +826,13 @@ export class main {
                 $('.message-status').html(`Exported ${bundle.objects.length} objects`);
             });
 
-            // $(document).on('click', '#btn-diff', () => {
-            //     db.diff_dialog.open();
-            // });
+            $(document).on('click', '#btn-diff', async () => {
+                const node = editor.editor.getValue()
+                const diff = await get_diff(node)
+                let diff_dialog = new DiffDialog($('#diff-anchor'))
+                diff_dialog.addDiff(node.id, diff, node, node.name)
+                diff_dialog.open();
+            });
 
             /***************************************** *
             *        Save stix form to DB on click
