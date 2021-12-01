@@ -4,13 +4,9 @@
 // ALL RIGHTS RESERVED
 //  */
 
-// import * as unhandled from 'electron-unhandled';
 import uuid from 'uuid';
 import {
-    // BundleType,
     Relationship,
-    // SDO,
-    // SRO,
     StixObject,
     Indicator,
     ObservedData,
@@ -22,7 +18,6 @@ import {
 } from './stix';
 import * as stix from './stix';
 import * as fileSaver from 'file-saver';
-// import { StigDB } from './db/db';
 import {
     edge_style,
     node_style,
@@ -38,7 +33,6 @@ import dagre from 'cytoscape-dagre';
 import euler from 'cytoscape-euler';
 import ngraph from 'cytoscape-ngraph.forcelayout';
 import spread from 'cytoscape-spread';
-// import { QueryHistoryDialog } from './ui/queryHistoryWidget';
 import { setup_edge_handles, edgehandles_style } from './graph/edge-handles';
 import { setup_ctx_menu } from './graph/context-menu';
 import { GraphUtils } from './graph/graphFunctions';
@@ -46,12 +40,9 @@ import { StixEditor } from './ui/stix-editor';
 import Split from 'split.js';
 import cytoscape from 'cytoscape';
 import { ViewUtilitiesOptions } from './graph/graphOptions';
-// import { ipcRenderer } from 'electron';
-// import { GraphQueryResult } from './db/db_types';
 import edgehandles from 'cytoscape-edgehandles';
 import moment from 'moment';
 import { QueryStorageService, DatabaseConfigurationStorage, StigSettings } from './storage';
-// import { setHandlers } from './ui/ipc-render-handlers';
 import {graph_copy, graph_paste} from './ui/clipboard'
 import { openDatabaseConfiguration } from './ui/database-config-widget';
 import { commit, get_diff, query } from './db/dbFunctions';
@@ -81,8 +72,12 @@ export class main {
     constructor() { }
 
     public async run() {
+        // Initialize the query storage object
         const storage: QueryStorageService = QueryStorageService.Instance;
+
+        // Initialize the settings object
         const settings = StigSettings.Instance;
+
         let loading: boolean = false;
 
         document.addEventListener('DOMContentLoaded', async () => {
@@ -91,7 +86,7 @@ export class main {
             await DatabaseConfigurationStorage.Instance.getConfigs()
             await StigSettings.Instance.getSettings()
             await QueryStorageService.Instance.getQueryHistory()
-//             unhandled();
+            
             const cyto_options: cytoscape.CytoscapeOptions = {
                 container: $('#cy')[0],
                 style: [node_style, edge_style, select_node_style, modified_select_style, modified_unselect_style, ...edgehandles_style],
@@ -104,45 +99,7 @@ export class main {
             const graph_utils = new GraphUtils(cy);//, db);
             
 
-            // Save graph if the page refreshes
-            // $(window).on('beforeunload', () => {
-            //     let graph = []
-            //     window.cycore.elements().each(ele => {
-            //         if (ele.data('raw_data')) {
-            //             graph.push(ele.data('raw_data'))
-            //         }
-            //     })
-
-            //     document.cookie = `bundle=${JSON.stringify({type: 'bundle', objects: graph})}; sameSite=strict`
-            //     // fetch('/save', {
-            //     //     method: 'POST',
-            //     //     headers: {
-            //     //         'Content-Type': 'application/json'
-            //     //     },
-            //     //     body: JSON.stringify({name: 'graph', data: {type: 'bundle', objects: graph}})
-            //     // })
-            // })
-
-            // Check if there is a saved graph in the cookies
-            // if (document.cookie.includes('bundle')) {
-            //     //let bundle = JSON.stringify(document.cookie)
-            //     let cookie = document.cookie;
-            //     let cookiePieces = cookie.split(';')
-            //     let bundleCookie = cookiePieces.find(piece => {return piece.includes('bundle=')})
-            //     console.log(bundleCookie)
-            //     let bundle = bundleCookie.split('=');
-            //     console.log(bundle[1])
-            //     let parsed = JSON.parse(bundle[1])
-            //     const test_stix = (i: any) => {
-            //         const ret = i instanceof Object && i.hasOwnProperty('type') && i.hasOwnProperty('created');
-            //         return ret;
-            //     };
-            //     parsed.objects.every(test_stix) ? parsed.objects : parsed.objects = [];
-                
-            //     graph_utils.buildNodes(parsed)
-
-            //     // TODO: For some reason, nodes built this way don't have pictures. This needs to be fixed.
-            // }
+            
 
             // Get the layout from the cookie and set the graph layout
             let layout = (await settings.getSettings()).layout
@@ -150,18 +107,9 @@ export class main {
             if (layouts[layout]) {
                 graph_utils.myLayout(layout)
             }
-            // fetch('/data?name=graph', {
-            //     method: 'GET',
-            //     headers: {
-            //         'Content-Type': 'application/json'    
-            //     }
-            // }).then(response => response.json())
-            // .then(data => {
-            //     console.log(data)
-            //     graph_utils.buildNodes(data)
-            // })
 
             // Add event listeners to dropdown menu items
+
             // GRAPH
             $("#dd-copyElem").on("click", () => {
                 console.log("Copy element")
@@ -196,6 +144,7 @@ export class main {
                 selected.unselect();
                 unselected.select();
             })
+
             // EXPORT
             $("#dd-exportSelected").on("click", () => {
                 console.log("Export selected")
@@ -271,6 +220,7 @@ export class main {
                 fileSaver.saveAs(blob, "metadata.json");
                 $('.message-status').html("exported metadata")
             })
+
             // LAYOUT
             $("#dd-layoutCose").on("click", () => {
                 $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-layout")}).prop("style", "background-color: white")
@@ -349,15 +299,15 @@ export class main {
                 graph_utils.myLayout("grid");
                 settings.setLayout("grid");
             })
+
             // DATABASE
             $("#database").on("click", () => {
-                console.log("database")
                 openDatabaseConfiguration();
             })
             
 
 
-//             // used by some events to make cytoscape respond
+            // used by some events to make cytoscape respond
             window.addEventListener("resize", () => cy.resize(), false);
             const call_forceRender = () => {
                 cy.resize();
@@ -370,8 +320,6 @@ export class main {
                 cursor: 'col-resize',
                 onDragEnd: call_forceRender,
             });
-//             const current_db_config = DatabaseConfigurationStorage.Instance.current;
-//             const db = new StigDB(current_db_config);
 
             // Graph handling functions
             
@@ -381,14 +329,13 @@ export class main {
 
             // set up view utilities
             const jquery = require('jquery');
-            // var jquery;
             const viewUtilities = require('cytoscape-view-utilities');
             viewUtilities(cytoscape, jquery);
             const view_util = cy.viewUtilities(view_utils_options as ViewUtilitiesOptions);
             // context menus inside the graph
             const cxtmenu = require('cytoscape-cxtmenu');
             cxtmenu(cytoscape);
-            setup_ctx_menu(cy, /*db,*/ view_util);
+            setup_ctx_menu(cy, view_util);
             const klay = require('cytoscape-klay');
             klay(cytoscape);
             cola(cytoscape);
@@ -397,11 +344,10 @@ export class main {
             euler(cytoscape);
             ngraph(cytoscape);
             spread(cytoscape);
-            // setHandlers();
 
-//             // the editor form that is filled when a node is clicked
-            const editor = new StixEditor(cy);//, db);
-//             //#endregion
+            // the editor form that is filled when a node is clicked
+            const editor = new StixEditor(cy);
+            //#endregion
 
             // function to search elements inside the displayed graph
             function search(prop: string, searchterm: string | number): cytoscape.CollectionReturnValue {
@@ -503,7 +449,7 @@ export class main {
                 }
             });
 
-//             // Query history dialog holds a history of DB queries
+            // Query history dialog holds a history of DB queries
             const hist_dialog = new QueryHistoryDialog($('#query-anchor'));
             $("#btn-db-history").on('click', () => {
                 hist_dialog.open();
@@ -644,18 +590,18 @@ export class main {
                 return true;
             });
 
-//             $('#btn-export-single').on('click', (e: JQuery.Event) => {
-//                 // console.log(editor.root.getValue())
-//                 e.preventDefault();
-//                 e.stopPropagation();
-//                 const form_data = editor.editor.getEditor('root').getValue();
-//                 const jsonToSave = JSON.stringify(form_data, null, 2);
-//                 const jsonSingleSave = new Blob([jsonToSave], { type: "application/json" });
-//                 fileSaver.saveAs(jsonSingleSave, `${form_data.id}.json`);
-//                 $('.message-status').html(`Exported ${form_data.id} objects`);
-//             });
+            $('#btn-export-single').on('click', (e: JQuery.Event) => {
+                // console.log(editor.root.getValue())
+                e.preventDefault();
+                e.stopPropagation();
+                const form_data = editor.editor.getValue();
+                const jsonToSave = JSON.stringify(form_data, null, 2);
+                const jsonSingleSave = new Blob([jsonToSave], { type: "application/json" });
+                fileSaver.saveAs(jsonSingleSave, `${form_data.id}.json`);
+                $('.message-status').html(`Exported ${form_data.id} objects`);
+            });
 
-//             // Clear Stix form editor when node/edge is unselected
+            // Clear Stix form editor when node/edge is unselected
             cy.on("unselect", 'node, edge', (evt: cytoscape.EventObject) => {
                 // editor.editor.destroy();
                 $('#metawidget').empty();
@@ -714,21 +660,7 @@ export class main {
                 }
             });
 
-//             ipcRenderer.on("layout", (_event: Electron.Event, layout_type: string) => {
-//                 // layout = layout_type;
-//                 // window.layout = layout_type;
-//                 graph_utils.myLayout(layout_type);
-//             });
-
-//             ipcRenderer.on('database_reconfigured', () => {
-//                 cy.elements().remove();
-//                 $('#metawidget').empty();
-//                 db.diff_dialog.reset();
-//                 cy.reset();
-//                 $("#query-status").html("No Results");
-//             });
-
-//             //  Handlers for drag and drop of files containing stix bundles
+            //  Handlers for drag and drop of files containing stix bundles
             const uploader: HTMLElement = document.getElementById('cy')!;
 
             /**
@@ -829,9 +761,13 @@ export class main {
             $(document).on('click', '#btn-diff', async () => {
                 const node = editor.editor.getValue()
                 const diff = await get_diff(node)
-                let diff_dialog = new DiffDialog($('#diff-anchor'))
-                diff_dialog.addDiff(node.id, diff, node, node.name)
-                diff_dialog.open();
+                if (diff) {
+                    let diff_dialog = new DiffDialog($('#diff-anchor'))
+                    diff_dialog.addDiff(node.id, diff, node, node.name)
+                    diff_dialog.open();
+                } else {
+                    console.log("Error: no diff")
+                }
             });
 
             /***************************************** *
@@ -951,6 +887,46 @@ export class main {
                 });
                 return;
             });
+
+            // // Save graph if the page refreshes
+            // // Note: Doesn't work on large graphs. Cookies have limited size.
+            // $(window).on('beforeunload', async () => {
+            //     let graph = []
+            //     window.cycore.elements().each(ele => {
+            //         if (ele.data('raw_data')) {
+            //             graph.push(ele.data('raw_data'))
+            //         }
+            //     })
+
+            //     document.cookie = `bundle=${JSON.stringify({type: 'bundle', objects: graph})}; sameSite=strict`
+            //     // fetch('/save', {
+            //     //     method: 'POST',
+            //     //     headers: {
+            //     //         'Content-Type': 'application/json'
+            //     //     },
+            //     //     body: JSON.stringify({name: 'graph', data: {type: 'bundle', objects: graph}})
+            //     // })
+            // })
+
+            // // Check if there is a saved graph in the cookies
+            // if (document.cookie.includes('bundle')) {
+            //     //let bundle = JSON.stringify(document.cookie)
+            //     let cookie = document.cookie;
+            //     let cookiePieces = cookie.split(';')
+            //     let bundleCookie = cookiePieces.find(piece => {return piece.includes('bundle=')})
+            //     console.log(bundleCookie)
+            //     let bundle = bundleCookie.split('=');
+            //     console.log(bundle[1])
+            //     let parsed = JSON.parse(bundle[1])
+            //     const test_stix = (i: any) => {
+            //         const ret = i instanceof Object && i.hasOwnProperty('type') && i.hasOwnProperty('created');
+            //         return ret;
+            //     };
+            //     parsed.objects.every(test_stix) ? parsed.objects : parsed.objects = [];
+                
+            //     graph_utils.buildNodes(parsed).then(() => graph_utils.myLayout(settings.layout))
+                
+            // }
         },
         );
 //         //

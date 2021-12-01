@@ -109,6 +109,11 @@ app.post("/use_db", async (req, res) => {
   res.end()
 })
 
+/************
+ * Commit
+ * 
+ * Commits the object to the database
+ */
 app.post("/commit", (req, res) => {
   let data = req.body.data;
   // console.log(data)
@@ -127,6 +132,11 @@ app.post("/commit", (req, res) => {
   
 })
 
+/*************
+ * Delete
+ * 
+ * Deletes the object from the database
+ */
 app.post("/delete", (req, res) => {
   let data = req.body.data;
   console.log(data)
@@ -151,6 +161,11 @@ app.post("/delete", (req, res) => {
   res.end()
 })
 
+/**************
+ * Query Incoming
+ * 
+ * Finds the nodes with edges coming in to the passed node
+ */
 app.post('/query_incoming', async (req, res) => {
   let id = req.body.id
   if (id) {
@@ -168,6 +183,11 @@ app.post('/query_incoming', async (req, res) => {
   res.end()
 })
 
+/*************
+ * Query Outgoing
+ * 
+ * Finds the nodes with edges coming out of the passed node
+ */
 app.post('/query_outgoing', async (req, res) => {
   let id = req.body.id
   if (id) {
@@ -185,6 +205,11 @@ app.post('/query_outgoing', async (req, res) => {
   res.end()
 })
 
+/************
+ * Query
+ * 
+ * Issues a query supplied by the client
+ */
 app.post("/query", async (req, res) => {
   let query = req.body.query
   if (query) {
@@ -202,6 +227,11 @@ app.post("/query", async (req, res) => {
   res.end()
 })
 
+/**************
+ * Diff
+ * 
+ * Finds the difference between the passed node and what is in the database
+ */
 app.post('/diff', async (req, res) => {
   let node = req.body.data;
   if (node) {

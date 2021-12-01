@@ -951,12 +951,16 @@ export class StigDB {
     public async getDiff(node: StixObject): Promise<diffpatch.Delta> {
         // Get the node from the database
         const dbNode = await this.odb.select().from(node.type).where({id_: node.id}).one() as StixObject;
+        
+        // Return if node isn't in the database
         if (!dbNode) {
             return undefined
         }
         
+        // Convert node to STIX
         const compNode = transform_to_stix(dbNode)
         
+        // Get the difference between the two
         const diff = diffpatch.diff(node, compNode)
 
         return diff;
@@ -1109,12 +1113,10 @@ export class StigDB {
     //     }
     // }
 
-    /*******************************************
- * Database manipulation functions
- * Copied from original STIG source code,
- * with minor modifications to use latest OrientJS features
- *******************************************/
 
+  /**
+   * @description Creates the classes from the schema
+   */
   private async createClasses() {
     for (const cls of schema.classes) {
       const c = await this.class_query(cls);
@@ -1122,6 +1124,11 @@ export class StigDB {
     }
   }
   
+  /**
+   * 
+   * @param options 
+   * @returns 
+   */
   private async class_query(options: IOrientJSONClassOptions) {
     let name = options.name;
       const idx = name.indexOf('-');
@@ -1150,11 +1157,22 @@ export class StigDB {
       return cls;
   }
   
+  /**
+   * 
+   * @param cls 
+   * @param props 
+   * @returns 
+   */
   private async create_properties(cls: orientjs.OClass, props: orientjs.PropertyCreateConfig[]): Promise<orientjs.OClassProperty[]> {
     const created = await cls.property.create(props);
     return created;
   }
 
+  /**
+   * 
+   * @param query 
+   * @returns 
+   */
   public async executeQuery(query: string) : Promise<StixObject[]> {
       try {
         // Get result
@@ -1246,26 +1264,28 @@ export function transform_to_db(stix_record: StixObject): StixObject {
                 // tslint:disable-next-line:no-string-literal
                 ret['id_'] = stix_record.id;
                 break;
-            // case "created":
-            //     ret['created'] = toDBTime(stix_record.created)
-            //     break;
-            // case "modified":
-            //     ret["modified"] = toDBTime(stix_record.modified)
-            //     break;
             default:
-                ret[prop] = stix_record[prop];
+                // Check if value contains date in STIX format
+                if (/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/.test(stix_record[prop])) {
+                    // console.log("Fixing time for " + prop)
+                    // Change the data from STIX format to DB format
+                    ret[prop] = toDBTime(stix_record[prop])
+                } else {
+                    ret[prop] = stix_record[prop];
+                }
         }
 
-        // Check if value contains date in STIX format
-        if (/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/.test(stix_record[prop])) {
-            console.log("Fixing time for " + prop)
-            // Change the data from STIX format to DB format
-            ret[prop] = toDBTime(stix_record[prop])
-        }
+        
     });
     return ret;
 }
 
+/** 
+ * @description Converts a stix record from DB format to STIX format. (Converts dates and id_)
+ * @param {StixObject} stix_record
+ * @returns {StixObject}
+ * 
+ */
 export function transform_to_stix(stix_record: StixObject): StixObject {
     const ret = {} as StixObject;
     Object.keys(stix_record).forEach((prop) => {
@@ -1275,17 +1295,24 @@ export function transform_to_stix(stix_record: StixObject): StixObject {
                 // tslint:disable-next-line:no-string-literal
                 ret['id'] = stix_record["id_"];
                 break;
-            case "created":
-                ret['created'] = toStixTime(stix_record.created)
+            case "@rid":
+            case "@class":
+            case "@version":
+            case "in_relationship":
+            case "out_relationship":
                 break;
-            case "modified":
-                ret["modified"] = toStixTime(stix_record.modified)
-                break;
-            case "valid_from":
-                ret["valid_from"] = toStixTime(stix_record["valid_from"])
             default:
-                ret[prop] = stix_record[prop];
+                // Check if value contains date in DB format
+                if (/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}.\d{3}/.test(stix_record[prop])) {
+                    // console.log("Fixing time for " + prop)
+                    // Change the data from DB format to STIX format
+                    ret[prop] = toStixTime(stix_record[prop])
+                } else {
+                    ret[prop] = stix_record[prop];
+                }
         }
+
+        
     });
     return ret;
 }
