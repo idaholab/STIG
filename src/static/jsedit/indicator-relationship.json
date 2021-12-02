@@ -33,6 +33,7 @@
         },
         "description": {
             "type": "string",
+            "format": "textarea",
             "description": "A description that helps provide context about the relationship.",
             "format": "textbox"
         },

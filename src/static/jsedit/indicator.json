@@ -24,6 +24,7 @@
         },
         "description": {
             "type": "string",
+            "format": "textarea",
             "description": "A description that provides the recipient with context about this Indicator potentially including its purpose and its key characteristics.",
             "format": "textarea"
         },
