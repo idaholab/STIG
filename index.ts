@@ -3,9 +3,7 @@ import { Request, Response } from 'express';
 import { IDatabaseConfigOptions } from './src/storage/database-configuration-storage';
 import session from 'express-session';
 import { StigDB } from './db';
-import { StixObject } from './src/stix';
 const bodyParser = require('body-parser')
-const cookieParser = require('cookie-parser')
 // import path from 'path';
 const app = express();
 
@@ -40,7 +38,7 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
 })
 
 app.get('/', (_req: Request, res: Response) => {
-  res.redirect('/index.html');
+  res.redirect('/index.html')
 })
 
 /***********************************************

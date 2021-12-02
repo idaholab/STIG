@@ -22,13 +22,9 @@
         "url": "https://github.com/idaholab/STIG"
     },
     "scripts": {
-        "start": "electron-forge start",
-        "package": "electron-forge package",
-        "make": "electron-forge make",
-        "publish": "electron-forge publish",
         "lint": "eslint src/ --color",
         "build": "webpack",
-        "start:dev": "concurrently -k \"webpack serve\" \"NODE_ENV=development nodemon index.ts\""
+        "start": "concurrently -k \"webpack serve\" \"NODE_ENV=development nodemon index.ts\""
     },
     "nodemonConfig": {
         "ignore": [
