@@ -1266,7 +1266,7 @@ export function transform_to_db(stix_record: StixObject): StixObject {
                 break;
             default:
                 // Check if value contains date in STIX format
-                if (/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/.test(stix_record[prop])) {
+                if (/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(.\d*Z|Z)/.test(stix_record[prop])) {
                     // console.log("Fixing time for " + prop)
                     // Change the data from STIX format to DB format
                     ret[prop] = toDBTime(stix_record[prop])

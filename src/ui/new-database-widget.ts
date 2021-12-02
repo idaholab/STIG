@@ -13,6 +13,25 @@ export function newDatabaseConfiguration(key?: string) {
     dbdialog.open();
 }
 
+// const body = `    <p id="label">Host:</p>
+// <p>
+//     <input type="text" id="host" value="localhost">
+//     <p id="label">Port:</p>
+//     <input type="text" id="port" value="2424">
+//     <p id="label">Database Name:</p>
+//     <input type="text" id="db_name" value="">
+//     <p id="label">Database User:</p>
+//     <input type="text" id="username" value="">
+//     <p id="label">Database User Password:</p>
+//     <input type="password" id="user_password" value="">
+//     <p id="label">DB Admin:</p>
+//     <input type="text" id="admin_user" value="">
+//     <p id="label">DB Admin Password:</p>
+//     <input type="password" id="admin_password" value="">
+// </p>
+// </p>
+// `;
+
 const body = `    <p id="label">Host:</p>
 <p>
     <input type="text" id="host" value="localhost">
@@ -20,15 +39,10 @@ const body = `    <p id="label">Host:</p>
     <input type="text" id="port" value="2424">
     <p id="label">Database Name:</p>
     <input type="text" id="db_name" value="">
-    <p id="label">Database User:</p>
+    <p id="label">OrientDB Root User:</p>
     <input type="text" id="username" value="">
-    <p id="label">Database User Password:</p>
+    <p id="label">OrientDB Root Password:</p>
     <input type="password" id="user_password" value="">
-    <p id="label">DB Admin:</p>
-    <input type="text" id="admin_user" value="">
-    <p id="label">DB Admin Password:</p>
-    <input type="password" id="admin_password" value="">
-</p>
 </p>
 `;
 
@@ -69,8 +83,8 @@ class NewDatabaseDialog {
         $('#db_name').val(params.name);
         $('#username').val(params.username);
         $('#user_password').val(params.password);
-        $('#admin_user').val(params.admin_user);
-        $('#admin_password').val(params.admin_password);
+        // $('#admin_user').val(params.admin_user);
+        // $('#admin_password').val(params.admin_password);
     }
 
     private saveData() {
@@ -80,8 +94,8 @@ class NewDatabaseDialog {
             name: $("#db_name").val() as string,
             username: $("#username").val() as string,
             password: $("#user_password").val() as string,
-            admin_user: $("#admin_user").val() as string,
-            admin_password: $("#admin_password").val() as string,
+            // admin_user: $("#admin_user").val() as string,
+            // admin_password: $("#admin_password").val() as string,
             usetoken: true,
         };
         DatabaseConfigurationStorage.Instance.save(options);
