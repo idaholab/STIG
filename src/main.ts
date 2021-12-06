@@ -31,7 +31,7 @@ import cola from 'cytoscape-cola';
 import cosebilkent from 'cytoscape-cose-bilkent';
 import dagre from 'cytoscape-dagre';
 import euler from 'cytoscape-euler';
-import ngraph from 'cytoscape-ngraph.forcelayout';
+// import ngraph from 'cytoscape-ngraph.forcelayout';
 import spread from 'cytoscape-spread';
 import { setup_edge_handles, edgehandles_style } from './graph/edge-handles';
 import { setup_ctx_menu } from './graph/context-menu';
@@ -342,7 +342,7 @@ export class main {
             cosebilkent(cytoscape);
             dagre(cytoscape);
             euler(cytoscape);
-            ngraph(cytoscape);
+            // ngraph(cytoscape);
             spread(cytoscape);
 
             // the editor form that is filled when a node is clicked

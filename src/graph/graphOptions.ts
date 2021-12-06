@@ -575,66 +575,66 @@ export let euler_options: any = {
     randomize: false,
 };
 
-export let ngraph_options = {
-    name: 'cytoscape-ngraph.forcelayout',
-    async: {
-        // tell layout that we want to compute all at once:
-        maxIterations: 10000,
-        stepsPerCycle: 30,
+// export let ngraph_options = {
+//     name: 'cytoscape-ngraph.forcelayout',
+//     async: {
+//         // tell layout that we want to compute all at once:
+//         maxIterations: 10000,
+//         stepsPerCycle: 30,
 
-        // Run it till the end:
-        waitForStep: false,
-    },
-    physics: {
-        /**
-         * Ideal length for links (springs in physical model).
-         */
-        springLength: 200,
+//         // Run it till the end:
+//         waitForStep: false,
+//     },
+//     physics: {
+//         /**
+//          * Ideal length for links (springs in physical model).
+//          */
+//         springLength: 200,
 
-        /**
-         * Hook's law coefficient. 1 - solid spring.
-         */
-        springCoeff: 0.0008,
+//         /**
+//          * Hook's law coefficient. 1 - solid spring.
+//          */
+//         springCoeff: 0.0008,
 
-        /**
-         * Coulomb's law coefficient. It's used to repel nodes thus should be negative
-         * if you make it positive nodes start attract each other :).
-         */
-        gravity: -1.2,
+//         /**
+//          * Coulomb's law coefficient. It's used to repel nodes thus should be negative
+//          * if you make it positive nodes start attract each other :).
+//          */
+//         gravity: -1.2,
 
-        /**
-         * Theta coefficient from Barnes Hut simulation. Ranged between (0, 1).
-         * The closer it's to 1 the more nodes algorithm will have to go through.
-         * Setting it to one makes Barnes Hut simulation no different from
-         * brute-force forces calculation (each node is considered).
-         */
-        theta: 0.8,
+//         /**
+//          * Theta coefficient from Barnes Hut simulation. Ranged between (0, 1).
+//          * The closer it's to 1 the more nodes algorithm will have to go through.
+//          * Setting it to one makes Barnes Hut simulation no different from
+//          * brute-force forces calculation (each node is considered).
+//          */
+//         theta: 0.8,
 
-        /**
-         * Drag force coefficient. Used to slow down system, thus should be less than 1.
-         * The closer it is to 0 the less tight system will be.
-         */
-        dragCoeff: 0.02,
+//         /**
+//          * Drag force coefficient. Used to slow down system, thus should be less than 1.
+//          * The closer it is to 0 the less tight system will be.
+//          */
+//         dragCoeff: 0.02,
 
-        /**
-         * Default time step (dt) for forces integration
-         */
-        timeStep: 20,
-        iterations: 10000,
-        fit: true,
+//         /**
+//          * Default time step (dt) for forces integration
+//          */
+//         timeStep: 20,
+//         iterations: 10000,
+//         fit: true,
 
-        /**
-         * Maximum movement of the system which can be considered as stabilized
-         */
-        stableThreshold: 0.000009,
-    },
-    iterations: 10000,
-    refreshInterval: 16, // in ms
-    refreshIterations: 10, // iterations until thread sends an update
-    stableThreshold: 2,
-    animate: true,
-    fit: true,
-};
+//         /**
+//          * Maximum movement of the system which can be considered as stabilized
+//          */
+//         stableThreshold: 0.000009,
+//     },
+//     iterations: 10000,
+//     refreshInterval: 16, // in ms
+//     refreshIterations: 10, // iterations until thread sends an update
+//     stableThreshold: 2,
+//     animate: true,
+//     fit: true,
+// };
 
 // tslint:disable-next-line:interface-name
 export interface LayoutsType {
@@ -649,7 +649,7 @@ export let layouts: LayoutsType = {
     klay: klay_options,
     dagre: dagre_options,
     euler: euler_options,
-    ngraph: ngraph_options,
+    // ngraph: ngraph_options,
     random: random_options,
     grid: grid_options,
     circle: circle_options,
