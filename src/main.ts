@@ -719,8 +719,20 @@ export class main {
             function addToGraph(pkg: BundleType) {
                 graph_utils.buildNodes(pkg, false).then((added) => {
                     $('.message-status').html(`Added ${added.length} elements to graph.`);
+                    if (pkg.metadata) {
+                        // Position the nodes
+                        for (const node of pkg.metadata) {
+                            // Find the element on the graph
+                            cy.nodes().filter((ele, _i, _eles) => {
+                                console.log(ele.data("raw_data")["id"])
+                                return ele.data("raw_data")["id"] === node.id
+                            })[0].position(node.position)
+                            
+                        }
+                    } else {
+                        graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
+                    }
                 });
-                 graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
             }
             uploader.addEventListener('dragover', handleDragOver, false);
             uploader.addEventListener('drop', handleFileDrop, false);
