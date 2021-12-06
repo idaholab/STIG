@@ -727,7 +727,6 @@ export class main {
                                 console.log(ele.data("raw_data")["id"])
                                 return ele.data("raw_data")["id"] === node.id
                             })[0].position(node.position)
-                            
                         }
                     } else {
                         graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
@@ -789,8 +788,8 @@ export class main {
             $('button.btn-commit').on("click", (e: JQuery.Event) => {
                 e.preventDefault();
                 e.stopPropagation();
-                let result: StixObject[];
-                let ourres = '';
+                // let result: StixObject[];
+                // let ourres = '';
                 try {
                     const formdata: StixObject = editor.editor.getValue();
                     commit(formdata)
@@ -941,47 +940,47 @@ export class main {
             // }
         },
         );
-//         //
-//         /*document.addEventListener("DOMContentLoaded", function() {
-//             var cy = (window.cy = cytoscape({
-//               container: document.getElementsByClassName("icon-box"),
-//               style: [{
-//                   selector: "node",
-//                   style: {
-//                     content: "data(id)"
-//                   }
-//                 }
-//               ],
-//             }));
+        
+        /*document.addEventListener("DOMContentLoaded", function() {
+            var cy = (window.cy = cytoscape({
+              container: document.getElementsByClassName("icon-box"),
+              style: [{
+                  selector: "node",
+                  style: {
+                    content: "data(id)"
+                  }
+                }
+              ],
+            }));
 
-//             function makePopper(ele) {
-//               let ref = ele.popperRef(); // used only for positioning
+            function makePopper(ele) {
+              let ref = ele.popperRef(); // used only for positioning
 
-//               ele.tippy = tippy(ref, { // tippy options:
-//                 content: () => {
-//                   let content = document.createElement('div');
+              ele.tippy = tippy(ref, { // tippy options:
+                content: () => {
+                  let content = document.createElement('div');
 
-//                   content.innerHTML = ele.id();
+                  content.innerHTML = ele.id();
 
-//                   return content;
-//                 },
-//                 trigger: 'manual' // probably want manual mode
-//               });
-//             }
+                  return content;
+                },
+                trigger: 'manual' // probably want manual mode
+              });
+            }
 
-//             cy.ready(function() {
-//               cy.elements().forEach(function(ele) {
-//                 makePopper(ele);
-//               });
-//             });
+            cy.ready(function() {
+              cy.elements().forEach(function(ele) {
+                makePopper(ele);
+              });
+            });
 
-//             cy.elements().unbind('mouseover');
-//             cy.elements().bind('mouseover', (event) => event.target.tippy.show());
+            cy.elements().unbind('mouseover');
+            cy.elements().bind('mouseover', (event) => event.target.tippy.show());
 
-//             cy.elements().unbind('mouseout');
-//             cy.elements().bind('mouseout', (event) => event.target.tippy.hide());
+            cy.elements().unbind('mouseout');
+            cy.elements().bind('mouseout', (event) => event.target.tippy.hide());
 
-//         });
-//         //*/
+        });
+        //*/
     }
 }
