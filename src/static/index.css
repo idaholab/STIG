@@ -406,3 +406,15 @@ div.btn-history {
 /*=====  End of Messages Row  ======*/
 
 /*=====  End of Main Grid  ======*/
+
+.db-status-red {
+    background-color: #ff7a70;
+    border-radius: 5px;
+    border: 1px solid #ff7a70;
+}
+
+.db-status-green {
+    background-color: #50a03c;
+    border-radius: 5px;
+    border: 1px solid #50a03c;
+}

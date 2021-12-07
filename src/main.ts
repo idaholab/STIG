@@ -45,7 +45,7 @@ import moment from 'moment';
 import { QueryStorageService, DatabaseConfigurationStorage, StigSettings } from './storage';
 import {graph_copy, graph_paste} from './ui/clipboard'
 import { openDatabaseConfiguration } from './ui/database-config-widget';
-import { commit, get_diff, query } from './db/dbFunctions';
+import { check_db, commit, get_diff, query } from './db/dbFunctions';
 import { commit_all, delete_selected } from './ui/ipc-render-handlers';
 import { GraphQueryResult } from './db/db_types';
 import { QueryHistoryDialog } from './ui/queryHistoryWidget';
@@ -982,5 +982,7 @@ export class main {
 
         });
         //*/
+
+        setInterval(check_db, 10000)
     }
 }

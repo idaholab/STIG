@@ -246,6 +246,21 @@ app.post('/diff', async (req, res) => {
   res.end()
 })
 
+/*********************
+ * Check db
+ * 
+ * Determines the status of the database connection.
+ * If connected, returns the name of the database.
+ * If not connected, returns undefined
+ */
+app.get("/check_db", (req, res) => {
+  if (db?.odb) {
+    res.send({data: db.odb.name})
+  } else {
+    res.send({data: undefined})
+  }
+})
+
 app.listen(PORT, () => {
   console.log('server started at http://localhost:'+PORT);
 });

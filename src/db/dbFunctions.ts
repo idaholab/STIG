@@ -10,7 +10,7 @@ export function use_db(config: IDatabaseConfigOptions) {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({config: config})
-    })
+    }).then(_ => check_db())
 }
 
 export async function commit(stix: StixObject) {
@@ -71,4 +71,24 @@ export async function get_diff(stix: StixObject) : Promise<diffpatch.Delta> {
         }, 
         body: JSON.stringify({data: stix})
     }).then(response => response.json()).then(response => {return response.data})
+}
+
+export async function check_db() {
+    let db = await fetch("/check_db", {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    }).then(response => response.json()).then(response => {return response.data})
+
+    console.log("Connected to database:", db)
+    if (db) {
+        // $("#db-status").data("value", `${db}: Connected`)
+        document.getElementById("db-status").innerHTML = db
+        document.getElementById("db-status").className = "db-status-green"
+    } else {
+        // $("#db-status").data("value", "DB not connected")
+        document.getElementById("db-status").innerHTML = "not connected"
+        document.getElementById("db-status").className = "db-status-red"
+    }
 }
