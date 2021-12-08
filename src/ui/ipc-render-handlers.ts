@@ -33,6 +33,11 @@ export async function commit_all() {
     const nodes: CollectionReturnValue = window.cycore.$('nodes');
     const edges: CollectionReturnValue = window.cycore.$('edges');
 
+    $('.message-status').html(`Committing ${nodes.length + edges.length} to the database...`);
+
+    let count = 0;
+    let invalid = [];
+
     for (let i = 0; i < nodes.length; i++) {
         let ele = nodes[i]
 
@@ -48,8 +53,13 @@ export async function commit_all() {
                 stix_obj.spec_version = 2.1
             }
 
-            await commit(stix_obj);
-        }        
+            if (await commit(stix_obj)) {
+                count++
+            } else {
+                invalid.push(stix_obj.id)
+            }
+        }
+        $('.message-status').html(`Committing object ${count + invalid.length} / ${nodes.length + edges.length} to the database...`);
     }
 
     for (let i = 0; i < edges.length; i++) {
@@ -67,11 +77,22 @@ export async function commit_all() {
                 stix_obj.spec_version = 2.1
             }
 
-            await commit(stix_obj);
+            // Don't commit edges connected to invalid nodes
+            if (!invalid.includes(stix_obj.source_ref) && !invalid.includes(stix_obj.target_ref)) {
+                if (await commit(stix_obj)) {
+                    count++
+                } else {
+                    invalid.push(stix_obj.id)
+                }
+            } else {
+                invalid.push(stix_obj)
+            }
+            
         }  
+        $('.message-status').html(`Committing object ${count + invalid.length} / ${nodes.length + edges.length} to the database...`);
     }
 
-    $('.message-status').html(`Committed ${nodes.length + edges.length} objects to the database.`);
+    $('.message-status').html(`Committed ${count} objects to the database. ${invalid.length} objects were not commited.`);
 
 }
 

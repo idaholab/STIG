@@ -31,6 +31,21 @@ app.use(express.static('src'))
 app.use('/node_modules', express.static('node_modules'))
 app.use(express.static('dist'))
 
+/*********************
+ * Check db
+ * 
+ * Determines the status of the database connection.
+ * If connected, returns the name of the database.
+ * If not connected, returns undefined
+ */
+ app.get("/check_db", (req, res) => {
+  if (db?.odb) {
+    res.send({data: db.odb.name})
+  } else {
+    res.send({data: undefined})
+  }
+})
+
 app.use((req: Request, _res: Response, next: NextFunction) => {
   console.log(`[${req.method}] - ${req.url}`);
 
@@ -246,20 +261,7 @@ app.post('/diff', async (req, res) => {
   res.end()
 })
 
-/*********************
- * Check db
- * 
- * Determines the status of the database connection.
- * If connected, returns the name of the database.
- * If not connected, returns undefined
- */
-app.get("/check_db", (req, res) => {
-  if (db?.odb) {
-    res.send({data: db.odb.name})
-  } else {
-    res.send({data: undefined})
-  }
-})
+
 
 app.listen(PORT, () => {
   console.log('server started at http://localhost:'+PORT);

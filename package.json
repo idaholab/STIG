@@ -22,9 +22,9 @@
         "url": "https://github.com/idaholab/STIG"
     },
     "scripts": {
-        "lint": "eslint src/ --color",
         "build": "webpack",
-        "start": "concurrently -k \"webpack serve\" \"NODE_ENV=development nodemon index.ts\""
+        "start": "concurrently --restart-tries -1 \"webpack serve\" \"ts-node index.ts\"",
+        "start:dev": "concurrently -k \"webpack serve\" \"NODE_ENV=development nodemon index.ts\""
     },
     "nodemonConfig": {
         "ignore": [

@@ -1,7 +1,7 @@
 import * as diffpatch from "jsondiffpatch";
 import { StixObject } from "../stix";
 import { IDatabaseConfigOptions } from "../storage/database-configuration-storage";
-import { GraphQueryResult } from "./db_types";
+import { schema } from "./schema"
 
 export function use_db(config: IDatabaseConfigOptions) {
     fetch("/use_db", {
@@ -14,13 +14,18 @@ export function use_db(config: IDatabaseConfigOptions) {
 }
 
 export async function commit(stix: StixObject) {
-    return await fetch('/commit', {
-        method: 'POST',
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({data: stix})
-    }).then(() => {return true})
+    if (stix && checkProps(stix)) {
+        // Only commit if the object is valid
+        return await fetch('/commit', {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({data: stix})
+        }).then(() => {return true})
+    } else {
+        return false;
+    }
 }
 
 export function db_delete(stix: StixObject) {
@@ -81,7 +86,7 @@ export async function check_db() {
         }
     }).then(response => response.json()).then(response => {return response.data})
 
-    console.log("Connected to database:", db)
+    // console.log("Connected to database:", db)
     if (db) {
         // $("#db-status").data("value", `${db}: Connected`)
         document.getElementById("db-status").innerHTML = db
@@ -91,4 +96,39 @@ export async function check_db() {
         document.getElementById("db-status").innerHTML = "not connected"
         document.getElementById("db-status").className = "db-status-red"
     }
+}
+
+export function checkProps(object : StixObject): Boolean {
+    let schemaObject = schema.classes.find(c => {return c.name === object.type})
+    // Get the requireed props from the schema
+    let reqProps = schemaObject.properties.filter(prop => {return prop.mandatory})
+    // Get the required props from the super classes
+    for (const superClass of schemaObject.superClasses) {
+
+        let superClassObject = schema.classes.find(c => {
+            let name = c.name.replace(/-/g, '')
+            return name === superClass
+        })
+        if (superClassObject) {
+            let superReqProps = superClassObject.properties.filter(prop => {return prop.mandatory})
+            reqProps.concat(superReqProps)
+        }
+    }
+
+    for (const prop of reqProps) {
+        console.log(prop.name, prop.mandatory)
+
+        // id_ only exists on the database side. Skip this.
+        if (prop.name === "id_") continue;
+        
+        if (!object[prop.name] || object[prop.name] === null) {
+            console.log("Prop not found on object")
+
+            // Return false to indicate that this object is invalid
+            return false
+
+        }
+    }
+
+    return true
 }
