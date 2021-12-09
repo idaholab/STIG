@@ -23,7 +23,7 @@
     },
     "scripts": {
         "build": "webpack",
-        "start": "concurrently --restart-tries -1 \"webpack serve\" \"ts-node index.ts\"",
+        "start": "concurrently --restart-tries -1 \"ts-node index.ts\"",
         "start:dev": "concurrently -k \"webpack serve\" \"NODE_ENV=development nodemon index.ts\""
     },
     "nodemonConfig": {
