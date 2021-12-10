@@ -6,7 +6,6 @@ ALL RIGHTS RESERVED
 
 import { use_db } from "../db/dbFunctions";
 import { DatabaseConfigurationStorage } from "../storage";
-// import { ipcRenderer } from 'electron';
 import { newDatabaseConfiguration } from './new-database-widget'
 
 export function openDatabaseConfiguration() {
@@ -78,8 +77,8 @@ class DatabaseConfigDialog {
         $(".controlgroup").buttonset();
         
         $( `#db-config-list input[type='radio']`).prop('checked', false);
-        $( `#db-config-list input[type='radio'][value='${this._storage.current}']` ).prop('checked', true);
-        $( "#db-config-list input[type='radio']" ).buttonset('refresh');
+        // $( `#db-config-list input[type='radio'][value='${this._storage.current}']` ).prop('checked', true);
+        // $( "#db-config-list input[type='radio']" ).buttonset('refresh');
     }
 
     public addToDialog() {

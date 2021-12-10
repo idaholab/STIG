@@ -104,7 +104,8 @@ export class StixEditor {
                     ele.style('label', new_data.relationship_type);
                 }
                 ele.data("raw_data", new_data);
-                // ele.data('saved', false);
+                ele.data('saved', false);
+                $('button.btn-commit').button('enable');
                 // this.db.needs_save(ele.id(), window.cycore).then((save) => {
                 //     save ? $('button.btn-commit').button('enable') : $('button.btn-commit').button('disable');
                 // });

@@ -785,14 +785,26 @@ export class main {
             *        Save stix form to DB on click
             *************************************** */
             $('button').button();
-            $('button.btn-commit').on("click", (e: JQuery.Event) => {
+            $('button.btn-commit').on("click", async (e: JQuery.Event) => {
                 e.preventDefault();
                 e.stopPropagation();
                 // let result: StixObject[];
                 // let ourres = '';
                 try {
                     const formdata: StixObject = editor.editor.getValue();
-                    commit(formdata)
+                    if (await commit(formdata)) {
+                        // Find the node in the graph
+                        let node = cy.elements().filter((ele) => {
+                            console.log(JSON.stringify(ele.data('saved')))
+                            return ele?.data('id') === formdata.id;
+                        })
+
+                        // Set it as saved
+                        if (node[0]) {
+                            node[0].data('saved', true)
+                        }
+
+                    }
                 } catch (e) {
                     console.error('Error saving to database:');
                     console.error(e);
