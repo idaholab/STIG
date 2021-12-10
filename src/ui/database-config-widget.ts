@@ -75,11 +75,11 @@ class DatabaseConfigDialog {
         //     direction: "vertical"
         // });
 
-        $(".controlgroup").buttonset({});
+        $(".controlgroup").buttonset();
         
         $( `#db-config-list input[type='radio']`).prop('checked', false);
         $( `#db-config-list input[type='radio'][value='${this._storage.current}']` ).prop('checked', true);
-        // $( "#db-config-list input[type='radio']" ).checkboxradio('refresh');
+        $( "#db-config-list input[type='radio']" ).buttonset('refresh');
     }
 
     public addToDialog() {
@@ -95,12 +95,12 @@ class DatabaseConfigDialog {
         this._list += `</div>`;
         this._anchor.empty();
         this._anchor.html(this._header + this._list + this._footer);
-        this.setupEventHandlers();
+        // this.setupEventHandlers();
     }
 
-    public setupEventHandlers() {
-        //     this.useConfig = $('#db-config-list .ui-selected')[0].innerText;
-    }
+    // public setupEventHandlers() {
+    //         this.useConfig = $('#db-config-list .ui-selected')[0].innerText;
+    // }
 
     private deleteSelected() {
         this._storage.removeConfig($( "#db-config-list input:checked" ).val() as string);
