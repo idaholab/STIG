@@ -55,6 +55,7 @@ export async function commit_all() {
 
             if (await commit(stix_obj)) {
                 count++
+                ele.data("saved", true);
             } else {
                 invalid.push(stix_obj.id)
             }
@@ -81,6 +82,7 @@ export async function commit_all() {
             if (!invalid.includes(stix_obj.source_ref) && !invalid.includes(stix_obj.target_ref)) {
                 if (await commit(stix_obj)) {
                     count++
+                    ele.data("saved", true);
                 } else {
                     invalid.push(stix_obj.id)
                 }
