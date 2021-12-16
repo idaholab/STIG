@@ -171,6 +171,12 @@ div.btn-history {
     z-index: 1000;
 }
 
+#top-menu {
+    cursor: default;
+    background-color: #6c757d;
+    width: 100%;
+}
+
 /*============================================
 =            Main Layout Grid starts here                                          =
 =============================================*/
