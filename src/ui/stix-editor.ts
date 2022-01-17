@@ -51,7 +51,7 @@ export class StixEditor {
         });
 
         // Find the schema in schema_map
-        let schema = Object.keys(schema_map).find(s => s.includes(file_name))
+        let schema = Object.keys(schema_map).find(s => s.includes(file_name + ".json"))
 
 
         const raw_data: StixNodeData = node.data('raw_data') as StixNodeData;
