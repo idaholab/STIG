@@ -50,6 +50,7 @@ import { commit_all, delete_selected } from './ui/ipc-render-handlers';
 import { GraphQueryResult } from './db/db_types';
 import { QueryHistoryDialog } from './ui/queryHistoryWidget';
 import { DiffDialog } from './ui/diff-dialog';
+import tippy from 'tippy.js'
 
 declare global {
     interface Window {
@@ -72,6 +73,10 @@ export class main {
     constructor() { }
 
     public async run() {
+        // Initialize tippy tooltips
+        tippy('[data-tippy-content]', {
+            theme: 'light',
+        });
         // Initialize the query storage object
         const storage: QueryStorageService = QueryStorageService.Instance;
 
