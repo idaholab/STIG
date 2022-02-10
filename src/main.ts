@@ -19,6 +19,7 @@ import {
 import * as stix from './stix';
 import * as fileSaver from 'file-saver';
 import {
+    compound_style,
     edge_style,
     node_style,
     select_node_style,
@@ -98,7 +99,7 @@ export class main {
             
             const cyto_options: CytoscapeOptions = {
                 container: $('#cy')[0],
-                style: [node_style, edge_style, select_node_style, modified_select_style, modified_unselect_style, ...edgehandles_style],
+                style: [node_style, compound_style, edge_style, select_node_style, modified_select_style, modified_unselect_style, ...edgehandles_style],
                 // wheelSensitivity: 0.25,
             } as cytoscape.CytoscapeOptions;
 

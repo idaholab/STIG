@@ -15,10 +15,15 @@ export function initDefenseGraph() {
         const graph_utils = new GraphUtils(window.defense)
         setup_ctx_menu(window.defense, graph_utils)
 
+        var defId = defense.name.replaceAll(" ", "_")
+        
         var elements : Array<cytoscape.ElementDefinition> = [
             { 
                 group: 'nodes', 
-                data: { id: defense.name },
+                data: { 
+                    id: defId,
+                    name: defense.name
+                },
                 selectable: false,
                 classes: "defense",
                 style: {
@@ -31,15 +36,15 @@ export function initDefenseGraph() {
 
         var y = 100
         for (const layer of defense.layers) {
-            var layerId = layer.name.replace(' ', '_')
-            console.log("layerId: ", layerId)
+            var layerId = layer.name.replaceAll(' ', '_')
+            // console.log("layerId: ", layerId)
             var ele : cytoscape.ElementDefinition = {
                 group: 'nodes',
                 data: {
                     id: layerId,
                     name: layer.name,
                     number: layer.num,
-                    parent: defense.name
+                    parent: defId
                 },
                 position: {
                     x: 100,

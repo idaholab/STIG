@@ -26,6 +26,14 @@ export let node_style: cytoscape.Stylesheet = {
     } //as cytoscape.Css.Node,
 };
 
+export let compound_style: cytoscape.Stylesheet = {
+    selector: ':parent',
+    style: {
+        "shape": "roundrectangle",
+        "background-color": "#FFFFFF"
+    }
+}
+
 export let edge_style: cytoscape.Stylesheet = {
     selector: 'edge',
     style: {
@@ -62,7 +70,7 @@ export let select_node_style: cytoscape.Stylesheet = {
 };
 
 export let modified_unselect_style: cytoscape.Stylesheet = {
-    selector: '[!saved]',
+    selector: '.stix_node[!saved]',
     style: {
         "border-width": 2, 
         "text-background-color": 'yellow',

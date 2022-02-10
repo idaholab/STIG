@@ -430,3 +430,7 @@ div.btn-history {
     content: 'data(id)';
     text-align: 'center';
 }
+
+.layer {
+    background-color: #2196F3
+}
