@@ -42,7 +42,7 @@ export async function commit_all() {
         let ele = nodes[i]
 
         const stix_obj = ele.data('raw_data');
-        console.log(stix_obj);
+        // console.log(stix_obj);
 
         if (stix_obj !== undefined) {
 
