@@ -51,7 +51,7 @@ import { GraphQueryResult } from './db/db_types';
 import { QueryHistoryDialog } from './ui/queryHistoryWidget';
 import { DiffDialog } from './ui/diff-dialog';
 import { initDefenseGraph, initKillChainGraph } from './contextLayouts/contextLayouts';
-import compoundDragAndDrop from "cytoscape-compound-drag-and-drop"
+import tippy from 'tippy.js'
 
 declare global {
     interface Window { 
@@ -76,6 +76,11 @@ export class main {
     constructor() { }
 
     public async run() {
+
+        // Initialize tippy tooltips
+        tippy('[data-tippy-content]', {
+            theme: 'light',
+        });
         // Initialize the query storage object
         const storage: QueryStorageService = QueryStorageService.Instance;
 
@@ -454,7 +459,6 @@ export class main {
             euler(cytoscape);
             // ngraph(cytoscape);
             spread(cytoscape);
-            cytoscape.use(compoundDragAndDrop)
 
             // the editor form that is filled when a node is clicked
             const editor = new StixEditor(cy);
