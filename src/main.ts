@@ -73,6 +73,7 @@ export class main {
     constructor() { }
 
     public async run() {
+
         // Initialize tippy tooltips
         tippy('[data-tippy-content]', {
             theme: 'light',
@@ -102,9 +103,6 @@ export class main {
             const cy = cytoscape(cyto_options);
             window.cycore = cy;
             const graph_utils = new GraphUtils(cy);//, db);
-            
-
-            
 
             // Get the layout from the cookie and set the graph layout
             let layout = (await settings.getSettings()).layout
