@@ -28,7 +28,7 @@ export class StigSettings {
                     'Content-Type': 'application/json'
                 }
             }).then(response => response.json())
-            console.log(settings.layout)
+         //console.log(settings.layout)
             if (!settings.layout) {
                 settings = {layout: "grid"}
                 this.saveSettings()
@@ -38,13 +38,13 @@ export class StigSettings {
             
         }
 
-        console.log("<settings> store: ", JSON.stringify(this.store))
+     //console.log("<settings> store: ", JSON.stringify(this.store))
 
         return this.store
     }
 
     private saveSettings() {
-        console.log("Saving settings: ", JSON.stringify(this.store))
+     //console.log("Saving settings: ", JSON.stringify(this.store))
         fetch('/save', {
             method: 'POST',
             headers: {

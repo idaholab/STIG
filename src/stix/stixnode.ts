@@ -52,7 +52,7 @@ export class StixNode implements IStixNode {
      */
     constructor(the_data: StixNodeData, the_type: StixType, d_source: DataSourceType) {
 
-        console.log("<stixnode> type: ", the_data.name, the_type)
+     //console.log("<stixnode> type: ", the_data.name, the_type)
 
         this.data = {
             id: the_data.id,

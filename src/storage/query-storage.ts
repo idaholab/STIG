@@ -50,7 +50,7 @@ export class QueryStorageService {
             
         }
 
-        console.log("<database> store: ", JSON.stringify(this.store))
+     //console.log("<database> store: ", JSON.stringify(this.store))
 
         return this.store
     }

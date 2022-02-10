@@ -65,14 +65,14 @@ export function setup_ctx_menu(cy: cytoscape.Core, /*db: StigDB,*/ view_util: an
                     if (typeof data === 'string') {
                         data = JSON.stringify(data)
                     }
-                    console.log(data)
+                 //console.log(data)
                     const children = await query_incoming(data)
-                    console.log(JSON.stringify(children))
+                 //console.log(JSON.stringify(children))
                     let bundle : BundleType = {type: "bundle", objects: []}
                     children.forEach((value) => {
                         bundle.objects.push(value)
                     })
-                    console.log(bundle.objects)
+                 //console.log(bundle.objects)
                     await graph_utils.buildNodes(bundle, true);
                     graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
                 })
@@ -119,14 +119,14 @@ export function setup_ctx_menu(cy: cytoscape.Core, /*db: StigDB,*/ view_util: an
                     if (typeof data === 'string') {
                         data = JSON.stringify(data)
                     }
-                    console.log(data)
+                 //console.log(data)
                     const children = await query_outgoing(data)
-                    console.log(JSON.stringify(children))
+                 //console.log(JSON.stringify(children))
                     let bundle : BundleType = {type: "bundle", objects: []}
                     children.forEach((value) => {
                         bundle.objects.push(value)
                     })
-                    console.log(bundle.objects)
+                 //console.log(bundle.objects)
                     await graph_utils.buildNodes(bundle, true);
                     graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
                 })
