@@ -386,18 +386,18 @@ export class main {
                 $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-ctxLayout")}).prop("style", "background-color: white")
                 $("#dd-ctxLayoutDefInDepth").prop("style", "background-color: #0d6efd")
 
-                $("#killChain").addClass("d-none")
+                // $("#killChain").addClass("d-none")
 
-                split.destroy()
-                split = Split(['#cy', '#defInDepth', '#editpane'], {
-                    direction: 'horizontal',
-                    sizes: [15, 60, 25],
-                    gutterSize: 8,
-                    cursor: 'col-resize',
-                    onDragEnd: call_forceRender,
-                });
+                // split.destroy()
+                // split = Split(['#cy', '#defInDepth', '#editpane'], {
+                //     direction: 'horizontal',
+                //     sizes: [15, 60, 25],
+                //     gutterSize: 8,
+                //     cursor: 'col-resize',
+                //     onDragEnd: call_forceRender,
+                // });
 
-                $("#defInDepth").removeClass("d-none")
+                // $("#defInDepth").removeClass("d-none")
 
                 initDefenseGraph()
             })
@@ -432,7 +432,10 @@ export class main {
             
             // configures edge behaviors
             edgehandles(cytoscape);
-            setup_edge_handles(cy);
+            var eh = setup_edge_handles(cy);
+
+            // Disable edgehandles for compound nodes
+            cy.on("mouseover", ":parent", _ => {eh.hide()})
 
             // set up view utilities
             const jquery = require('jquery');

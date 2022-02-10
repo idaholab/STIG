@@ -4,12 +4,14 @@ import { GraphUtils } from "../graph/graphFunctions"
 import { node_img } from "../stix"
 
 const defense = require("./defenseInDepthSchema.json")
+const defenseExtension = require("./defenseInDepthExtension.json")
 const killChain = require("./killChainSchema.json")
 
 const DRAG_DIST = 150
 
 export function initDefenseGraph() {
-    if (window.defense.nodes().length == 0) { 
+    var cy = window.cycore
+    if (cy.$(".defense").length == 0) { 
         const graph_utils = new GraphUtils(window.defense)
         setup_ctx_menu(window.defense, graph_utils)
 
@@ -18,6 +20,7 @@ export function initDefenseGraph() {
                 group: 'nodes', 
                 data: { id: defense.name },
                 selectable: false,
+                classes: "defense",
                 style: {
                     'content': defense.name,
                     'text-valign': 'top',
@@ -35,6 +38,7 @@ export function initDefenseGraph() {
                 data: {
                     id: layerId,
                     name: layer.name,
+                    number: layer.num,
                     parent: defense.name
                 },
                 position: {
@@ -69,16 +73,12 @@ export function initDefenseGraph() {
             elements.push(ghost)
         }
 
-        // window.cycore.add(elements)
-        window.defense.add(elements)
-
-        // var coreElements = window.cycore.nodes()
-        // window.defense.add(coreElements as unknown as CollectionArgument)
+        cy.add(elements)
 
         // Event listeners
-        window.defense.on('dragfree', handleDropNode)
-        window.defense.on('drag', handleDrag)
-        window.defense.on('dblclick', handleDblClickNode)
+        cy.on('dragfree', handleDropNode)
+        cy.on('drag', handleDrag)
+        cy.on('dblclick', handleDblClickNode)
     }
 }
 
@@ -145,13 +145,28 @@ function handleDropNode(e : cytoscape.EventObject) {
             if (Math.abs(ele.position().x - layer.position().x) < layer.width() 
                 && Math.abs(ele.position().y - layer.position().y) < layer.height()) {
                 ele.move({parent: layer.id()})
+                var data = ele.data("raw_data")
+                var property = defenseExtension.property
+                var extId = Object.getOwnPropertyNames(property)[0]
+                console.log("extId: ", extId)
+                property[extId].layer_name = layer.id()
+                property[extId].layer_number = layer.data("number")
+                if (data["extensions"]) {
+                    data["extensions"][extId] = property[extId]
+                } else {
+                    data["extensions"] = {}
+                    data["extensions"][extId] = property[extId]
+                }
+                
+                
+                ele.data("raw_data", data)
             }
         })
-    } else if (hasClass && isChild) {
-        console.log("Reset prevPosition")
-        ele.data("prevPosition", null)
-        ele.parent().data("prevBounds", null)
     }
+
+    console.log("Reset prevPosition")
+    ele.data("prevPosition", null)
+    ele.parent().data("prevBounds", null)
 
     
 }
@@ -169,7 +184,7 @@ function handleDrag(e: cytoscape.EventObject) {
             
             prevPosition.x = ele.position().x
             prevPosition.y = ele.position().y
-            console.log(prevPosition)
+            // console.log(prevPosition)
             ele.data("prevPosition", prevPosition)
         } else {
             prevPosition = ele.data("prevPosition")
@@ -182,9 +197,11 @@ function handleDrag(e: cytoscape.EventObject) {
             layer.data("prevBounds", prevBounds)
         }
         
+
+        // console.log(JSON.stringify(prevPosition))
+        // console.log(JSON.stringify(ele.position()))
+
         // Check if the node can be removed from a layer
-        console.log(JSON.stringify(ele.position()))
-        console.log(JSON.stringify(prevPosition))
         var dX = ele.position().x - prevPosition.x
         var dY = ele.position().y - prevPosition.y
 
@@ -200,6 +217,18 @@ function handleDrag(e: cytoscape.EventObject) {
                 lPos.y -= dY
                 layer.position(lPos)
                 ele.move({parent: null})
+                var data = ele.data("raw_data")
+                if (Object.getOwnPropertyNames(data["extensions"]).length == 0) {
+                    // There is only one extension. Delete the extensions property.
+                    delete data["extensions"]
+                    console.log("check: ", data["extensions"])
+                } else {
+                    // There are multiple extensions defined. Find the right one and delete it.
+                    var extId = Object.getOwnPropertyNames(defenseExtension.property)[0]
+                    console.log("removing:", extId)
+                    delete data["extensions"][extId]
+                    console.log("check: ", data["extensions"][extId])
+                }
             }
         } else if (numChildren > 2) {
             var curBounds = layer.boundingBox({})
@@ -209,6 +238,19 @@ function handleDrag(e: cytoscape.EventObject) {
                 (dY < 0 && Math.abs(curBounds.y1 - prevBounds.y1) > DRAG_DIST) ||
                 (dY > 0 && Math.abs(curBounds.y2 - prevBounds.y2) > DRAG_DIST)) {
                     ele.move({parent: null})
+                    var data = ele.data("raw_data")
+                    if (Object.getOwnPropertyNames(data["extensions"]).length == 0) {
+                        // There is only one extension. Delete the extensions property.
+                        delete data["extensions"]
+                        console.log("check: ", data["extensions"])
+                    } else {
+                        // There are multiple extensions defined. Find the right one and delete it.
+                        var extId = Object.getOwnPropertyNames(defenseExtension.property)[0]
+                        console.log("removing:", extId)
+                        delete data["extensions"][extId]
+                        console.log("check: ", data["extensions"][extId])
+                    }
+                    ele.data("raw_data", data)
             }
         }
             
