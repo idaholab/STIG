@@ -1,0 +1,34 @@
+{
+    "name": "Lockheed Martin",
+    "source": "https://www.lockheedmartin.com/en-us/capabilities/cyber/cyber-kill-chain.html",
+    "phases": [
+        {
+            "name": "Reconnaissance",
+            "description": ""
+        },
+        {
+            "name": "Weaponization",
+            "description": ""
+        },
+        {
+            "name": "Delivery",
+            "description": ""
+        },
+        {
+            "name": "Exploitation",
+            "description": ""
+        },
+        {
+            "name": "Installation",
+            "description": ""
+        },
+        {
+            "name": "Command & Control (C2)",
+            "description": ""
+        },
+        {
+            "name": "Exfiltration",
+            "description": ""
+        }
+    ]
+}

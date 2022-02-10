@@ -9,7 +9,8 @@ import { GraphUtils } from "./graphFunctions";
 import { graph_copy } from '../ui/clipboard';
 import { StigSettings } from '../storage/stig-settings-storage';
 import { db_delete, query_incoming, query_outgoing } from '../db/dbFunctions';
-import { BundleType } from '../stix';
+import { BundleType, node_img } from '../stix';
+import { json } from 'express';
 
 /**
  * @description
@@ -151,6 +152,35 @@ export function setup_ctx_menu(cy: cytoscape.Core, /*db: StigDB,*/ view_util: an
                 
             },
         },
+        {
+            content: 'Add to Defense in Depth',
+            select(ele: cytoscape.CollectionElements) {
+                let elements = ele as unknown as cytoscape.CollectionArgument
+                elements.forEach(e => {
+                    
+                    const data = e.data("raw_data")
+                    
+                    const node: cytoscape.ElementDefinition = {
+                        group: "nodes",
+                        data: {
+                            name: data["name"],
+                            raw_data: data
+                        },
+                        position: {
+                            x: 200,
+                            y: 200
+                        },
+                        style: {
+                            "background-image": node_img[data["type"]]
+                        },
+                        classes: "stix_node"
+                    }
+
+                    window.defense.add(node)
+
+                })
+            }
+        }
         ],
     });
 

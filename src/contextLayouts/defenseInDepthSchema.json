@@ -1,0 +1,21 @@
+{
+    "name":"Defense in Depth",
+    "layers": [
+        {
+            "name": "Layer 1",
+            "num": 1
+        },
+        {
+            "name": "Layer 2",
+            "num": 2
+        },
+        {
+            "name": "Layer 3",
+            "num": 3
+        },
+        {
+            "name": "Layer 4",
+            "num": 4
+        }
+    ]
+}

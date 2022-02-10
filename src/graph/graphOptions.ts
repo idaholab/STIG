@@ -11,13 +11,14 @@ import { IColaLayoutOptions } from './colaLayoutOptions';
 export let node_style: cytoscape.Stylesheet = {
     selector: '.stix_node',
     style: {
-        "label": "data(name)",
+        "content": "data(name)",
         "shape": "roundrectangle",
         "width": 77,
         "height": 77,
         "background-color": "black",
         'min-zoomed-font-size': 10,
         "text-wrap": "wrap",
+        "background-fit": "cover",
         // "text-margin-x": 7,
         'overlay-opacity': 0,
         'text-max-width': "120"

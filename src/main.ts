@@ -38,7 +38,7 @@ import { setup_ctx_menu } from './graph/context-menu';
 import { GraphUtils } from './graph/graphFunctions';
 import { StixEditor } from './ui/stix-editor';
 import Split from 'split.js';
-import cytoscape from 'cytoscape';
+import cytoscape, { CytoscapeOptions } from 'cytoscape';
 import { ViewUtilitiesOptions } from './graph/graphOptions';
 import edgehandles from 'cytoscape-edgehandles';
 import moment from 'moment';
@@ -50,10 +50,14 @@ import { commit_all, delete_selected } from './ui/ipc-render-handlers';
 import { GraphQueryResult } from './db/db_types';
 import { QueryHistoryDialog } from './ui/queryHistoryWidget';
 import { DiffDialog } from './ui/diff-dialog';
+import { initDefenseGraph, initKillChainGraph } from './contextLayouts/contextLayouts';
+import compoundDragAndDrop from "cytoscape-compound-drag-and-drop"
 
 declare global {
-    interface Window {
+    interface Window { 
         cycore: cytoscape.Core;
+        defense: cytoscape.Core;
+        killChain: cytoscape.Core;
         layout: string;
     }
 }
@@ -87,17 +91,78 @@ export class main {
             await StigSettings.Instance.getSettings()
             await QueryStorageService.Instance.getQueryHistory()
             
-            const cyto_options: cytoscape.CytoscapeOptions = {
+            const cyto_options: CytoscapeOptions = {
                 container: $('#cy')[0],
                 style: [node_style, edge_style, select_node_style, modified_select_style, modified_unselect_style, ...edgehandles_style],
                 // wheelSensitivity: 0.25,
             } as cytoscape.CytoscapeOptions;
 
+            const cylayout_options: CytoscapeOptions = {
+                container: $('#defInDepth')[0],
+                boxSelectionEnabled: false,
+
+                style: [
+                    {
+                        selector: ':parent',
+                        css: {
+                            'text-valign': 'top',
+                            'text-halign': 'center',
+                        }
+                    },
+                    node_style,
+                    select_node_style
+                ]
+                // wheelSensitivity: 0.25,
+            } as cytoscape.CytoscapeOptions;
+
+            const killChainOptions : CytoscapeOptions = {
+                container: $('#killChain')[0],
+                boxSelectionEnabled: false,
+
+                style: [
+                    {
+                        selector: 'node',
+                        css: {
+                            'content': 'data(id)',
+                            'text-valign': 'center',
+                            'text-halign': 'center',
+                            'background-fit': 'cover'
+                        }
+                    },
+                    {
+                        selector: ':parent',
+                        css: {
+                            'text-valign': 'top',
+                            'text-halign': 'center',
+                        }
+                    }
+                ]
+                // wheelSensitivity: 0.25,
+            } as cytoscape.CytoscapeOptions;
+
             // set up cytoscape
             const cy = cytoscape(cyto_options);
+            const defenseGraph = cytoscape(cylayout_options);
+            const killChainGraph = cytoscape(killChainOptions);
             window.cycore = cy;
-            const graph_utils = new GraphUtils(cy);//, db);
+            window.defense = defenseGraph
+            window.killChain = killChainGraph
+            const graph_utils = new GraphUtils(cy);
+
             
+            // used by some events to make cytoscape respond
+            window.addEventListener("resize", () => {cy.resize();defenseGraph.resize();killChainGraph.resize();}, false);
+            const call_forceRender = () => {
+                cy.resize();
+            };
+
+            var split = Split(['#cy', '#editpane'], {
+                direction: 'horizontal',
+                sizes: [75, 25],
+                gutterSize: 8,
+                cursor: 'col-resize',
+                onDragEnd: call_forceRender,
+            });
 
             
 
@@ -300,26 +365,68 @@ export class main {
                 settings.setLayout("grid");
             })
 
+            // CONTEXT LAYOUTS
+            $("#dd-ctxLayoutNone").prop("style", "background-color: #0d6efd")
+            $("#dd-ctxLayoutNone").on("click", () => {
+                $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-ctxLayout")}).prop("style", "background-color: white")
+                $("#dd-ctxLayoutNone").prop("style", "background-color: #0d6efd")
+                split.destroy()
+                split = Split(['#cy', '#editpane'], {
+                    direction: 'horizontal',
+                    sizes: [75, 25],
+                    gutterSize: 8,
+                    cursor: 'col-resize',
+                    onDragEnd: call_forceRender,
+                });
+
+                $("#defInDepth").addClass("d-none")
+                $("#killChain").addClass("d-none")
+            })
+            $("#dd-ctxLayoutDefInDepth").on("click", () => {
+                $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-ctxLayout")}).prop("style", "background-color: white")
+                $("#dd-ctxLayoutDefInDepth").prop("style", "background-color: #0d6efd")
+
+                $("#killChain").addClass("d-none")
+
+                split.destroy()
+                split = Split(['#cy', '#defInDepth', '#editpane'], {
+                    direction: 'horizontal',
+                    sizes: [15, 60, 25],
+                    gutterSize: 8,
+                    cursor: 'col-resize',
+                    onDragEnd: call_forceRender,
+                });
+
+                $("#defInDepth").removeClass("d-none")
+
+                initDefenseGraph()
+            })
+            $("#dd-ctxLayoutKillChain").on("click", () => {
+                $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-ctxLayout")}).prop("style", "background-color: white")
+                $("#dd-ctxLayoutKillChain").prop("style", "background-color: #0d6efd")
+
+                $("#defInDepth").addClass("d-none")
+
+                // split.destroy()
+                // split = Split(['#cy', '#killChain', '#editpane'], {
+                //     direction: 'horizontal',
+                //     sizes: [50, 25, 25],
+                //     gutterSize: 8,
+                //     cursor: 'col-resize',
+                //     onDragEnd: call_forceRender,
+                // });
+
+                // $("#killChain").removeClass("d-none")
+
+                initKillChainGraph()
+            })
+
+
             // DATABASE
             $("#database").on("click", () => {
                 openDatabaseConfiguration();
             })
             
-
-
-            // used by some events to make cytoscape respond
-            window.addEventListener("resize", () => cy.resize(), false);
-            const call_forceRender = () => {
-                cy.resize();
-            };
-
-            Split(['#cy', '#editpane'], {
-                direction: 'horizontal',
-                sizes: [75, 25],
-                gutterSize: 8,
-                cursor: 'col-resize',
-                onDragEnd: call_forceRender,
-            });
 
             // Graph handling functions
             
@@ -344,6 +451,7 @@ export class main {
             euler(cytoscape);
             // ngraph(cytoscape);
             spread(cytoscape);
+            cytoscape.use(compoundDragAndDrop)
 
             // the editor form that is filled when a node is clicked
             const editor = new StixEditor(cy);
