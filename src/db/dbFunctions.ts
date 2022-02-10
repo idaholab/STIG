@@ -116,12 +116,12 @@ export function checkProps(object : StixObject): Boolean {
     }
 
     for (const prop of reqProps) {
-        console.log(prop.name, prop.mandatory)
+        // console.log(prop.name, prop.mandatory)
 
         // id_ only exists on the database side. Skip this.
         if (prop.name === "id_") continue;
         
-        if (!object[prop.name] || object[prop.name] === null) {
+        if (object[prop.name] === undefined) {
             console.log("Prop not found on object")
 
             // Return false to indicate that this object is invalid
