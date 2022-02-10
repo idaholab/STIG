@@ -30,7 +30,7 @@ export class GraphUtils {
      * @memberof GraphUtils
      */
     public async handle_not_in_graph(id: Identifier): Promise<cytoscape.CollectionReturnValue | undefined> {
-        console.log(id)
+     //console.log(id)
         return undefined
     //     let ret;
     //     const the_type = id.split('--')[0].toLowerCase();
@@ -185,7 +185,7 @@ export class GraphUtils {
         try {
             // Add relationships to graph
             for (const r of relationships) {
-                console.log(`adding relationship ${r.id}`);
+             //console.log(`adding relationship ${r.id}`);
                 let to_node = this.cy.getElementById(r.target_ref);
                 let from_node = this.cy.getElementById(r.source_ref);
                 if (from_node.length === 0) {

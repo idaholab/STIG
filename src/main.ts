@@ -106,7 +106,7 @@ export class main {
 
             // Get the layout from the cookie and set the graph layout
             let layout = (await settings.getSettings()).layout
-            console.log('layout: ', layout)
+         //console.log('layout: ', layout)
             if (layouts[layout]) {
                 graph_utils.myLayout(layout)
             }
@@ -115,33 +115,33 @@ export class main {
 
             // GRAPH
             $("#dd-copyElem").on("click", () => {
-                console.log("Copy element")
+             //console.log("Copy element")
                 graph_copy();
             })
             $("#dd-cutElem").on("click", () => {
-                console.log("Cut element")
+             //console.log("Cut element")
                 const selected = window.cycore.$(":selected")
                 graph_copy()
                 window.cycore.remove(selected)
             })
             $("#dd-pasteElem").on("click", () => {
-                console.log("paste element")
+             //console.log("paste element")
                 graph_paste()
             })
             $("#dd-commitElem").on("click", () => {
-                console.log("Commit elements")
+             //console.log("Commit elements")
                 commit_all()
             })
             $("#dd-dbDelete").on("click", () => {
-                console.log("Delete from db")
+             //console.log("Delete from db")
                 delete_selected()
             })
             $("#dd-selectElem").on("click", () => {Blob
-                console.log("Select all elements")
+             //console.log("Select all elements")
                 window.cycore.elements().select()
             })
             $("#dd-invertSelect").on("click", () => {
-                console.log("Invert")
+             //console.log("Invert")
                 const unselected = window.cycore.$(':unselected');
                 const selected = window.cycore.$(':selected');
                 selected.unselect();
@@ -150,7 +150,7 @@ export class main {
 
             // EXPORT
             $("#dd-exportSelected").on("click", () => {
-                console.log("Export selected")
+             //console.log("Export selected")
                 const bundle_id = 'bundle--' + uuid.v4();
                 const bundle = { type: 'bundle', id: bundle_id, objects: [] } as BundleType;
                 
@@ -171,7 +171,7 @@ export class main {
                 $('.message-status').html(`Exported ${bundle.objects.length} objects`);
             })
             $("#dd-exportGraph").on("click", () => {
-                console.log("Export graph")
+             //console.log("Export graph")
                 const bundle_id = 'bundle--' + uuid.v4();
                 const bundle = { type: 'bundle', id: bundle_id, objects: [] } as BundleType;
                 
@@ -192,7 +192,7 @@ export class main {
                 $('.message-status').html(`Exported ${bundle.objects.length} objects`);
             })
             $("#dd-exportAll").on("click", () => {  
-                console.log("Export all")
+             //console.log("Export all")
                 const bundle_id = 'bundle--' + uuid.v4();
                 const bundle = { type: 'bundle', id: bundle_id, objects: [] } as BundleType;
                 let nodes = window.cycore.$(':visible');
@@ -215,7 +215,7 @@ export class main {
                 $('.message-status').html(`Exported ${bundle.objects.length} objects`);
             })
             $("#dd-exportPos").on("click", () => {
-                console.log("Export positions")
+             //console.log("Export positions")
                 let nodes = window.cycore.$(':visible')
 
                 const jsonObj = JSON.stringify({metadata: getNodeMetadata(nodes)}, null, 2);
@@ -479,7 +479,7 @@ export class main {
                 //     return;
                 // }
 
-                console.log(result);
+             //console.log(result);
                 
                 const add_graph: GraphQueryResult = {
                     graph: {
@@ -727,7 +727,7 @@ export class main {
                         for (const node of pkg.metadata) {
                             // Find the element on the graph
                             cy.nodes().filter((ele, _i, _eles) => {
-                                console.log(ele.data("raw_data")["id"])
+                             //console.log(ele.data("raw_data")["id"])
                                 return ele.data("raw_data")["id"] === node.id
                             })[0].position(node.position)
                         }
@@ -798,7 +798,7 @@ export class main {
                     if (await commit(formdata)) {
                         // Find the node in the graph
                         let node = cy.elements().filter((ele) => {
-                            console.log(JSON.stringify(ele.data('saved')))
+                         //console.log(JSON.stringify(ele.data('saved')))
                             return ele?.data('id') === formdata.id;
                         })
 
@@ -896,10 +896,10 @@ export class main {
                     opacity: 0.7,
                     helper: 'clone',
                     zIndex: 999,
-                    start(_, ui) {
-                        // console.log('icon position:' + $(element).attr('position').x + $(element).attr('position').y)
-                        console.log('drag start:' + ui.position.left.toString() + ' ' + ui.position.top.toString())
-                    },
+                    // start(_, ui) {
+                    //     // console.log('icon position:' + $(element).attr('position').x + $(element).attr('position').y)
+                    //     console.log('drag start:' + ui.position.left.toString() + ' ' + ui.position.top.toString())
+                    // },
                     // handle widgets being dragged in from the widget bar
                     stop: async function(_, ui) {
                         const my_node = await event_add_node($(element).attr('name')!);

@@ -61,7 +61,7 @@ export class DatabaseConfigurationStorage {
                     'Content-Type': 'application/json'
                 }
             }).then(response => response.json())
-            console.log(config.configs)
+            // console.log(config.configs)
             if (!config.configs) {
                 this.create_default()
             } else {
@@ -71,7 +71,7 @@ export class DatabaseConfigurationStorage {
             
         }
 
-        console.log("<database> store: ", JSON.stringify(this.store))
+     //console.log("<database> store: ", JSON.stringify(this.store))
 
         return this.store
     }

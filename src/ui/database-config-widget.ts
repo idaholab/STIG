@@ -9,7 +9,7 @@ import { DatabaseConfigurationStorage } from "../storage";
 import { newDatabaseConfiguration } from './new-database-widget'
 
 export function openDatabaseConfiguration() {
-    console.log("Open database dialog")
+ //console.log("Open database dialog")
     const dbdialog = new DatabaseConfigDialog($('#db-dialog-anchor'));
     dbdialog.open();
 }
