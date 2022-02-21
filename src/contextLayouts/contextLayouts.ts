@@ -84,6 +84,33 @@ export function initDefenseGraph() {
         cy.on('dragfree', handleDropNode)
         cy.on('drag', handleDrag)
         cy.on('dblclick', handleDblClickNode)
+
+        // Add existing nodes with the defense in depth extension defined
+        const nodes = cy.nodes(".stix_node")
+        for (var i = 0; i < nodes.length; i++) {
+            const ele = nodes[i]
+            const data = ele.data("raw_data")
+            if (data["extensions"]) {
+                if (data["extensions"][defenseExtension.node.id]) {
+                    var ext = data["extensions"][defenseExtension.node.id]
+                    // The layer id is just the name with whitespace replaced with _
+                    var id = ext.layer_name.replaceAll(" ", "_")
+                    var layer = cy.$id(id)
+                    if (layer) {
+                        // // Move the node to its parent
+                        // // get the position of the center of the layer
+                        // const bounds = layer.boundingBox({})
+                        // const x = bounds.x2 - (bounds.w / 2)
+                        // const y = bounds.y2 + (bounds.h / 2) + 15
+
+                        // ele.position({x: x, y: y})
+                        // ele.emit("dragfree")
+                        ele.move({parent: id})
+                    }                    
+                }
+            }
+        }
+
     }
 }
 
@@ -150,11 +177,20 @@ function handleDropNode(e : cytoscape.EventObject) {
             if (Math.abs(ele.position().x - layer.position().x) < layer.width() 
                 && Math.abs(ele.position().y - layer.position().y) < layer.height()) {
                 ele.move({parent: layer.id()})
+                // if (layer.children().length > 0) {
+                //     const dX = ele.width() * layer.children().length + 20
+                //     ele.shift({x: dX}) 
+                // }
                 var data = ele.data("raw_data")
-                var property = defenseExtension.property
-                var extId = Object.getOwnPropertyNames(property)[0]
+                var property = {}
+                var extId = Object.getOwnPropertyNames(defenseExtension.property)[0]
+                property[extId] = {
+                    extension_type: defenseExtension.property.extension_type,
+                    layer_name: "",
+                    layer_number: ""
+                }
                 console.log("extId: ", extId)
-                property[extId].layer_name = layer.id()
+                property[extId].layer_name = layer.data("name")
                 property[extId].layer_number = layer.data("number")
                 if (data["extensions"]) {
                     data["extensions"][extId] = property[extId]
@@ -223,16 +259,18 @@ function handleDrag(e: cytoscape.EventObject) {
                 layer.position(lPos)
                 ele.move({parent: null})
                 var data = ele.data("raw_data")
-                if (Object.getOwnPropertyNames(data["extensions"]).length == 0) {
+                // console.log(JSON.stringify(data["extensions"]))
+                // console.log("Length: ", Object.getOwnPropertyNames(data["extensions"]).length)
+                if (Object.getOwnPropertyNames(data["extensions"]).length == 1) {
                     // There is only one extension. Delete the extensions property.
                     delete data["extensions"]
-                    console.log("check: ", data["extensions"])
+                    // console.log("check delete extension prop: ", data["extensions"])
                 } else {
                     // There are multiple extensions defined. Find the right one and delete it.
                     var extId = Object.getOwnPropertyNames(defenseExtension.property)[0]
                     console.log("removing:", extId)
                     delete data["extensions"][extId]
-                    console.log("check: ", data["extensions"][extId])
+                    // console.log("check delete one extension: ", data["extensions"][extId])
                 }
             }
         } else if (numChildren > 2) {
@@ -244,7 +282,7 @@ function handleDrag(e: cytoscape.EventObject) {
                 (dY > 0 && Math.abs(curBounds.y2 - prevBounds.y2) > DRAG_DIST)) {
                     ele.move({parent: null})
                     var data = ele.data("raw_data")
-                    if (Object.getOwnPropertyNames(data["extensions"]).length == 0) {
+                    if (Object.getOwnPropertyNames(data["extensions"]).length == 1) {
                         // There is only one extension. Delete the extensions property.
                         delete data["extensions"]
                         console.log("check: ", data["extensions"])
