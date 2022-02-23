@@ -51,14 +51,12 @@ import { commit_all, delete_selected } from './ui/ipc-render-handlers';
 import { GraphQueryResult } from './db/db_types';
 import { QueryHistoryDialog } from './ui/queryHistoryWidget';
 import { DiffDialog } from './ui/diff-dialog';
-import { initDefenseGraph, initKillChainGraph } from './contextLayouts/contextLayouts';
+import { removeCompoundNodes, initDefenseGraph, initKillChainGraph } from './contextLayouts/contextLayouts';
 import tippy from 'tippy.js'
 
 declare global {
     interface Window { 
         cycore: cytoscape.Core;
-        defense: cytoscape.Core;
-        killChain: cytoscape.Core;
         layout: string;
     }
 }
@@ -103,61 +101,14 @@ export class main {
                 // wheelSensitivity: 0.25,
             } as cytoscape.CytoscapeOptions;
 
-            const cylayout_options: CytoscapeOptions = {
-                container: $('#defInDepth')[0],
-                boxSelectionEnabled: false,
-
-                style: [
-                    {
-                        selector: ':parent',
-                        css: {
-                            'text-valign': 'top',
-                            'text-halign': 'center',
-                        }
-                    },
-                    node_style,
-                    select_node_style
-                ]
-                // wheelSensitivity: 0.25,
-            } as cytoscape.CytoscapeOptions;
-
-            const killChainOptions : CytoscapeOptions = {
-                container: $('#killChain')[0],
-                boxSelectionEnabled: false,
-
-                style: [
-                    {
-                        selector: 'node',
-                        css: {
-                            'content': 'data(id)',
-                            'text-valign': 'center',
-                            'text-halign': 'center',
-                            'background-fit': 'cover'
-                        }
-                    },
-                    {
-                        selector: ':parent',
-                        css: {
-                            'text-valign': 'top',
-                            'text-halign': 'center',
-                        }
-                    }
-                ]
-                // wheelSensitivity: 0.25,
-            } as cytoscape.CytoscapeOptions;
-
             // set up cytoscape
             const cy = cytoscape(cyto_options);
-            const defenseGraph = cytoscape(cylayout_options);
-            const killChainGraph = cytoscape(killChainOptions);
             window.cycore = cy;
-            window.defense = defenseGraph
-            window.killChain = killChainGraph
             const graph_utils = new GraphUtils(cy);
 
             
             // used by some events to make cytoscape respond
-            window.addEventListener("resize", () => {cy.resize();defenseGraph.resize();killChainGraph.resize();}, false);
+            window.addEventListener("resize", () => {cy.resize()}, false);
             const call_forceRender = () => {
                 cy.resize();
             };
@@ -376,53 +327,18 @@ export class main {
             $("#dd-ctxLayoutNone").on("click", () => {
                 $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-ctxLayout")}).prop("style", "background-color: white")
                 $("#dd-ctxLayoutNone").prop("style", "background-color: #0d6efd")
-                split.destroy()
-                split = Split(['#cy', '#editpane'], {
-                    direction: 'horizontal',
-                    sizes: [75, 25],
-                    gutterSize: 8,
-                    cursor: 'col-resize',
-                    onDragEnd: call_forceRender,
-                });
-
-                $("#defInDepth").addClass("d-none")
-                $("#killChain").addClass("d-none")
+                
+                removeCompoundNodes()
             })
             $("#dd-ctxLayoutDefInDepth").on("click", () => {
                 $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-ctxLayout")}).prop("style", "background-color: white")
                 $("#dd-ctxLayoutDefInDepth").prop("style", "background-color: #0d6efd")
-
-                // $("#killChain").addClass("d-none")
-
-                // split.destroy()
-                // split = Split(['#cy', '#defInDepth', '#editpane'], {
-                //     direction: 'horizontal',
-                //     sizes: [15, 60, 25],
-                //     gutterSize: 8,
-                //     cursor: 'col-resize',
-                //     onDragEnd: call_forceRender,
-                // });
-
-                // $("#defInDepth").removeClass("d-none")
 
                 initDefenseGraph()
             })
             $("#dd-ctxLayoutKillChain").on("click", () => {
                 $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-ctxLayout")}).prop("style", "background-color: white")
                 $("#dd-ctxLayoutKillChain").prop("style", "background-color: #0d6efd")
-
-                $("#defInDepth").addClass("d-none")
-
-                // split.destroy()
-                // split = Split(['#cy', '#killChain', '#editpane'], {
-                //     direction: 'horizontal',
-                //     sizes: [50, 25, 25],
-                //     gutterSize: 8,
-                //     cursor: 'col-resize',
-                //     onDragEnd: call_forceRender,
-                // });
-
-                // $("#killChain").removeClass("d-none")
 
                 initKillChainGraph()
             })

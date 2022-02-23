@@ -2,6 +2,7 @@ import cytoscape, { CollectionArgument } from "cytoscape"
 import { setup_ctx_menu } from "../graph/context-menu"
 import { GraphUtils } from "../graph/graphFunctions"
 import { node_img } from "../stix"
+import { alignlayers, stackLayers } from "./graphLayoutFunctions"
 
 const defense = require("./defenseInDepthSchema.json")
 const defenseExtension = require("./defenseInDepthExtension.json")
@@ -9,18 +10,36 @@ const killChain = require("./killChainSchema.json")
 
 const DRAG_DIST = 150
 
+export function removeCompoundNodes() {
+    const cy = window.cycore
+    const comps = cy.$(":parent")
+
+    // Remove child nodes from their parents
+    for (var i = 0; i < comps.length; i++) {
+        const children = comps[i].children()
+        for (var j = 0; j < children.length; j++) {
+            const child = children[j]
+            child.move({parent: null})
+        }
+    }
+
+    // Remove parent nodes from the graph
+    cy.remove(comps)
+
+    // Remove any ghost nodes from the graph
+    cy.remove(".ghost")
+}
+
 export function initDefenseGraph() {
     var cy = window.cycore
-    if (cy.$(".defense").length == 0) { 
-        const graph_utils = new GraphUtils(window.defense)
-        setup_ctx_menu(window.defense, graph_utils)
+    if (cy.$(".defense").length == 0) {
 
         var defId = defense.name.replaceAll(" ", "_")
         
         var elements : Array<cytoscape.ElementDefinition> = [
             { 
                 group: 'nodes', 
-                data: { 
+                data: {
                     id: defId,
                     name: defense.name
                 },
@@ -34,7 +53,7 @@ export function initDefenseGraph() {
             }
         ]
 
-        var y = 100
+        var y = 150
         for (const layer of defense.layers) {
             var layerId = layer.name.replaceAll(' ', '_')
             // console.log("layerId: ", layerId)
@@ -68,6 +87,7 @@ export function initDefenseGraph() {
                     x: 100,
                     y: y * layer.num
                 },
+                classes: "ghost",
                 style: {
                     'display':'none',
                     'width': 200
@@ -97,15 +117,15 @@ export function initDefenseGraph() {
                     var id = ext.layer_name.replaceAll(" ", "_")
                     var layer = cy.$id(id)
                     if (layer) {
-                        // // Move the node to its parent
+                        // // // Move the node to its parent
                         // // get the position of the center of the layer
                         // const bounds = layer.boundingBox({})
-                        // const x = bounds.x2 - (bounds.w / 2)
-                        // const y = bounds.y2 + (bounds.h / 2) + 15
+                        // const x = bounds.x2 - (bounds.w / 2) + ((layer.children.length - 1) * ele.width())
+                        // const y = bounds.y1 + (bounds.h / 2)
 
                         // ele.position({x: x, y: y})
-                        // ele.emit("dragfree")
                         ele.move({parent: id})
+                        alignlayers()
                     }                    
                 }
             }
@@ -116,51 +136,90 @@ export function initDefenseGraph() {
 
 export function initKillChainGraph() {
 
-    var elements : Array<cytoscape.ElementDefinition> = [
-        { group: 'nodes', data: { id: killChain.name } }
-    ]
+    var cy = window.cycore
+    if (cy.$(".killchain").length == 0) {
 
-    var iPhase = 1
-    var y = 100
-    for (const phase of killChain.phases) {
-        var phaseId = phase.name.replace(' ', '_')
-        console.log("phaseId: ", phaseId)
-        var ele : cytoscape.ElementDefinition = {
-            group: 'nodes',
-            data: {
-                id: phaseId,
-                name: phase.name,
-                parent: killChain.name
-            },
-            position: {
-                x: 100,
-                y: y * iPhase
+        var defId = defense.name.replaceAll(" ", "_")
+        
+        var elements : Array<cytoscape.ElementDefinition> = [
+            { 
+                group: 'nodes', 
+                data: {
+                    id: defId,
+                    name: killChain.name
+                },
+                selectable: false,
+                classes: "killchain",
+                style: {
+                    'content': killChain.name,
+                    'text-valign': 'top',
+                    'text-halign': 'center'
+                }
             }
-        }
-        var ghostId = "ghost_" + phaseId
-        var ghost : cytoscape.ElementDefinition = {
-            group: 'nodes',
-            data: {
-                id: ghostId,
-                parent: phaseId
-            },
-            position: {
-                x: 100,
-                y: y * iPhase
-            },
-            style: {
-                'display':'none'
+        ]
+
+        var y = 150
+        var iPhase = 0
+        for (const phase of killChain.phases) {
+            var phaseId = phase.name.replaceAll(' ', '_')
+            // console.log("layerId: ", layerId)
+            var ele : cytoscape.ElementDefinition = {
+                group: 'nodes',
+                data: {
+                    id: phaseId,
+                    name: phase.name,
+                    number: iPhase,
+                    parent: defId
+                },
+                position: {
+                    x: 100,
+                    y: y * iPhase
+                },
+                selectable: false,
+                classes: 'phase',
+                style: {
+                    'content': phase.name,
+                    'text-valign': 'top',
+                    'text-halign': 'center'
+                }
             }
+            var ghost : cytoscape.ElementDefinition = {
+                group: 'nodes',
+                data: {
+                    id: "ghost_" + phaseId,
+                    parent: phaseId
+                },
+                position: {
+                    x: 100,
+                    y: y * iPhase
+                },
+                classes: "ghost",
+                style: {
+                    'display':'none',
+                    'width': 200
+                }
+            }
+
+            elements.push(ele)
+            elements.push(ghost)
+
+            iPhase++
         }
 
-        elements.push(ele)
-        elements.push(ghost)
+        cy.add(elements)
 
-        iPhase += 1
+        // Event listeners
+        cy.on('dragfree', handleDropNode)
+        cy.on('drag', handleDrag)
+        cy.on('dblclick', handleDblClickNode)
+
+        // Add existing nodes with a kill chain phase
+        // const nodes = cy.nodes(".stix_node")
+        // for (var i = 0; i < nodes.length; i++) {
+            
+        // }
+
     }
-
-    // window.cycore.add(elements)
-    window.cycore.add(elements)
 
 }
 
@@ -199,13 +258,47 @@ function handleDropNode(e : cytoscape.EventObject) {
                     data["extensions"][extId] = property[extId]
                 }
                 
+                ele.data("raw_data", data)
+            }
+        })
+
+        const phases = e.cy.$('.phase')
+        phases.forEach(phase => {
+            if (Math.abs(ele.position().x - phase.position().x) < phase.width() 
+                && Math.abs(ele.position().y - phase.position().y) < phase.height()) {
+                ele.move({parent: phase.id()})
+                // if (layer.children().length > 0) {
+                //     const dX = ele.width() * layer.children().length + 20
+                //     ele.shift({x: dX}) 
+                // }
+                var data = ele.data("raw_data")
+                var killChain = {
+                    kill_chain_name: "",
+                    phase_name: ""
+                }
+                var property = {}
+                var extId = Object.getOwnPropertyNames(defenseExtension.property)[0]
+                property[extId] = {
+                    extension_type: defenseExtension.property.extension_type,
+                    layer_name: "",
+                    layer_number: ""
+                }
+                console.log("extId: ", extId)
+                property[extId].layer_name = phase.data("name")
+                property[extId].layer_number = phase.data("number")
+                if (data["extensions"]) {
+                    data["extensions"][extId] = property[extId]
+                } else {
+                    data["extensions"] = {}
+                    data["extensions"][extId] = property[extId]
+                }
                 
                 ele.data("raw_data", data)
             }
         })
     }
 
-    console.log("Reset prevPosition")
+    // console.log("Reset prevPosition")
     ele.data("prevPosition", null)
     ele.parent().data("prevBounds", null)
 
