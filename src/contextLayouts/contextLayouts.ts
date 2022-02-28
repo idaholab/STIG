@@ -2,6 +2,7 @@ import cytoscape, { CollectionArgument } from "cytoscape"
 import { setup_ctx_menu } from "../graph/context-menu"
 import { GraphUtils } from "../graph/graphFunctions"
 import { node_img } from "../stix"
+import { schema_map } from "../stix/stix_schemas"
 import { alignlayers, stackLayers } from "./graphLayoutFunctions"
 
 const defense = require("./defenseInDepthSchema.json")
@@ -162,7 +163,6 @@ export function initKillChainGraph() {
         var iPhase = 0
         for (const phase of killChain.phases) {
             var phaseId = phase.name.replaceAll(' ', '_')
-            // console.log("layerId: ", layerId)
             var ele : cytoscape.ElementDefinition = {
                 group: 'nodes',
                 data: {
@@ -266,34 +266,51 @@ function handleDropNode(e : cytoscape.EventObject) {
         phases.forEach(phase => {
             if (Math.abs(ele.position().x - phase.position().x) < phase.width() 
                 && Math.abs(ele.position().y - phase.position().y) < phase.height()) {
-                ele.move({parent: phase.id()})
+                
                 // if (layer.children().length > 0) {
                 //     const dX = ele.width() * layer.children().length + 20
                 //     ele.shift({x: dX}) 
                 // }
-                var data = ele.data("raw_data")
-                var killChain = {
-                    kill_chain_name: "",
-                    phase_name: ""
-                }
-                var property = {}
-                var extId = Object.getOwnPropertyNames(defenseExtension.property)[0]
-                property[extId] = {
-                    extension_type: defenseExtension.property.extension_type,
-                    layer_name: "",
-                    layer_number: ""
-                }
-                console.log("extId: ", extId)
-                property[extId].layer_name = phase.data("name")
-                property[extId].layer_number = phase.data("number")
-                if (data["extensions"]) {
-                    data["extensions"][extId] = property[extId]
-                } else {
-                    data["extensions"] = {}
-                    data["extensions"][extId] = property[extId]
-                }
+
+                const type = ele.data("raw_data")["type"]
+                console.log(type)
+                // Find the schema in schema_map
+                let schema = schema_map[Object.keys(schema_map).find(s => s.includes(type + ".json"))]
+
+                if (Object.keys(schema.properties).includes("kill_chain_phases")) {
+                    ele.move({parent: phase.id()})
+                    var data = ele.data("raw_data")
+                    var killChain = {
+                        kill_chain_name: phase.parent()[0].data("name"),
+                        phase_name: phase.data("name")
+                    }
+                    
+                    if (data["kill_chain_phases"]) {
+                        data["kill_chain_phases"].push(killChain)
+                    } else {
+                        data["kill_chain_phases"] = []
+                        data["kill_chain_phases"].push(killChain)
+                    }
+                    
+                    ele.data("raw_data", data)
+                } 
+                // Show a toast when the user attempts to place an invalid node in the kill chain
+                // else {
+                //     $("body").append(`<div class="toast" style="position: absolute; top: 0; right: 0;">
+                //     <div class="toast-header">
+                //       <strong class="mr-auto">STIG</strong>
+                //       <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                //         <span aria-hidden="true">&times;</span>
+                //       </button>
+                //     </div>
+                //     <div class="toast-body">
+                //         Node of type "${type}" cannot be added to a kill chain.
+                //     </div>
+                //   </div>`)
+                  
+                // }
+
                 
-                ele.data("raw_data", data)
             }
         })
     }
@@ -310,7 +327,8 @@ function handleDrag(e: cytoscape.EventObject) {
     
 
     if (ele.hasClass("stix_node") && ele.isChild()) {
-        var layer = e.cy.$(`#${ele.data("parent")}`)
+        var parent = e.cy.$(`#${ele.data("parent")}`)
+        
 
         var prevPosition = {x:0, y:0}
     
@@ -324,11 +342,11 @@ function handleDrag(e: cytoscape.EventObject) {
             prevPosition = ele.data("prevPosition")
         }
 
-        var prevBounds = layer.data("prevBounds")
+        var prevBounds = parent.data("prevBounds")
 
         if (prevBounds == null || prevBounds == undefined) {
-            prevBounds = layer.boundingBox({})
-            layer.data("prevBounds", prevBounds)
+            prevBounds = parent.boundingBox({})
+            parent.data("prevBounds", prevBounds)
         }
         
 
@@ -343,31 +361,46 @@ function handleDrag(e: cytoscape.EventObject) {
         // console.log(layer.width())
         // console.log(layer.height())
 
-        var numChildren = layer.children().length
+        var numChildren = parent.children().length
         if (numChildren == 2) {
             if (Math.abs(dX) > DRAG_DIST || Math.abs(dY) > DRAG_DIST) {
-                var lPos = layer.position()
+                var lPos = parent.position()
                 lPos.x -= dX
                 lPos.y -= dY
-                layer.position(lPos)
+                parent.position(lPos)
                 ele.move({parent: null})
                 var data = ele.data("raw_data")
-                // console.log(JSON.stringify(data["extensions"]))
-                // console.log("Length: ", Object.getOwnPropertyNames(data["extensions"]).length)
-                if (Object.getOwnPropertyNames(data["extensions"]).length == 1) {
-                    // There is only one extension. Delete the extensions property.
-                    delete data["extensions"]
-                    // console.log("check delete extension prop: ", data["extensions"])
-                } else {
-                    // There are multiple extensions defined. Find the right one and delete it.
-                    var extId = Object.getOwnPropertyNames(defenseExtension.property)[0]
-                    console.log("removing:", extId)
-                    delete data["extensions"][extId]
-                    // console.log("check delete one extension: ", data["extensions"][extId])
+                if (parent.hasClass("layer")) {
+                    if (Object.getOwnPropertyNames(data["extensions"]).length == 1) {
+                        // There is only one extension. Delete the extensions property.
+                        delete data["extensions"]
+                    } else {
+                        // There are multiple extensions defined. Find the right one and delete it.
+                        var extId = Object.getOwnPropertyNames(defenseExtension.property)[0]
+                        console.log("removing:", extId)
+                        delete data["extensions"][extId]
+                    }
+                } else if (parent.hasClass("phase")) {
+                    if (data["kill_chain_phases"].length == 1) {
+                        // There is only one kill chain phase. Delete the kill_chain_phases property.
+                        delete data["kill_chain_phases"]
+                        console.log("check: ", data["kill_chain_phases"])
+                    } else {
+                        // There are multiple kill chain phases defined. Find the right one and delete it.
+                        
+                        var kill_chain_name = parent.parent()[0].data("name")
+                        var phase_name = parent.data("name")
+                        
+                        var phaseList = data["kill_chain_phases"] as Array<any>
+                        var index = phaseList.findIndex(v => {return v["kill_chain_name"] == kill_chain_name && v["phase_name"] == phase_name})
+                        data["kill_chain_phases"] = phaseList.splice(index, 1)
+                    }
                 }
+                ele.data("raw_data", data)
+                
             }
         } else if (numChildren > 2) {
-            var curBounds = layer.boundingBox({})
+            var curBounds = parent.boundingBox({})
             // console.log(`dx:${dX}|dy:${dY}|prevBounds:${JSON.stringify(prevBounds)}|curBounds:${JSON.stringify(curBounds)}`)
             if ((dX < 0 && Math.abs(curBounds.x1 - prevBounds.x1) > DRAG_DIST) ||
                 (dX > 0 && Math.abs(curBounds.x2 - prevBounds.x2) > DRAG_DIST) ||
@@ -375,16 +408,30 @@ function handleDrag(e: cytoscape.EventObject) {
                 (dY > 0 && Math.abs(curBounds.y2 - prevBounds.y2) > DRAG_DIST)) {
                     ele.move({parent: null})
                     var data = ele.data("raw_data")
-                    if (Object.getOwnPropertyNames(data["extensions"]).length == 1) {
-                        // There is only one extension. Delete the extensions property.
-                        delete data["extensions"]
-                        console.log("check: ", data["extensions"])
-                    } else {
-                        // There are multiple extensions defined. Find the right one and delete it.
-                        var extId = Object.getOwnPropertyNames(defenseExtension.property)[0]
-                        console.log("removing:", extId)
-                        delete data["extensions"][extId]
-                        console.log("check: ", data["extensions"][extId])
+                    if (parent.hasClass("layer")) {
+                        if (Object.getOwnPropertyNames(data["extensions"]).length == 1) {
+                            // There is only one extension. Delete the extensions property.
+                            delete data["extensions"]
+                        } else {
+                            // There are multiple extensions defined. Find the right one and delete it.
+                            var extId = Object.getOwnPropertyNames(defenseExtension.property)[0]
+                            console.log("removing:", extId)
+                            delete data["extensions"][extId]
+                        }
+                    } else if (parent.hasClass("phase")) {
+                        if (data["kill_chain_phases"].length == 1) {
+                            // There is only one kill chain phase. Delete the kill_chain_phase property.
+                            delete data["kill_chain_phases"]
+                        } else {
+                            // There are multiple kill chain phases defined. Find the right one and delete it.
+                            
+                            var kill_chain_name = parent.parent()[0].data("name")
+                            var phase_name = parent.data("name")
+                            
+                            var phaseList = data["kill_chain_phases"] as Array<any>
+                            var index = phaseList.findIndex(v => {return v["kill_chain_name"] == kill_chain_name && v["phase_name"] == phase_name})
+                            data["kill_chain_phases"] = phaseList.splice(index, 1)
+                        }
                     }
                     ele.data("raw_data", data)
             }
