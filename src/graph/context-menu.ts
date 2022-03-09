@@ -19,8 +19,8 @@ import { json } from 'express';
  * @param {StigDB} db
  * @param {*} view_util
  */
-export function setup_ctx_menu(cy: cytoscape.Core, /*db: StigDB,*/ view_util: any) {
-    const graph_utils = new GraphUtils(cy);//, db);
+export function setup_ctx_menu(cy: cytoscape.Core, view_util: any) {
+    const graph_utils = new GraphUtils(cy);
     cy.cxtmenu({
         selector: 'node',
         commands: [
@@ -151,35 +151,6 @@ export function setup_ctx_menu(cy: cytoscape.Core, /*db: StigDB,*/ view_util: an
                 })
                 
             },
-        },
-        {
-            content: 'Add to Defense in Depth',
-            select(ele: cytoscape.CollectionElements) {
-                let elements = ele as unknown as cytoscape.CollectionArgument
-                elements.forEach(e => {
-                    
-                    const data = e.data("raw_data")
-                    
-                    const node: cytoscape.ElementDefinition = {
-                        group: "nodes",
-                        data: {
-                            name: data["name"],
-                            raw_data: data
-                        },
-                        position: {
-                            x: 200,
-                            y: 200
-                        },
-                        style: {
-                            "background-image": node_img[data["type"]]
-                        },
-                        classes: "stix_node"
-                    }
-
-                    window.defense.add(node)
-
-                })
-            }
         }
         ],
     });
@@ -261,13 +232,13 @@ export function setup_ctx_menu(cy: cytoscape.Core, /*db: StigDB,*/ view_util: an
             {
                 content: 'Hide Not Selected',
                 select: () => {
-                    view_util.hide(cy.$(":unselected"));
+                    view_util.hide(cy.$(".stix_node:unselected"));
                 },
             },
             {
                 content: 'Show All',
                 select: () => {
-                    view_util.show(cy.elements()); // .showEles();
+                    view_util.show(cy.$(".stix_node")); // .showEles();
                 },
             },
             // {

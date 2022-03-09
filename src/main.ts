@@ -54,6 +54,8 @@ import { DiffDialog } from './ui/diff-dialog';
 import { removeCompoundNodes, initDefenseGraph, initKillChainGraph } from './contextLayouts/contextLayouts';
 import tippy from 'tippy.js'
 
+const killChain = require("./contextLayouts/killChainSchema.json")
+
 declare global {
     interface Window { 
         cycore: cytoscape.Core;
@@ -334,13 +336,18 @@ export class main {
                 $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-ctxLayout")}).prop("style", "background-color: white")
                 $("#dd-ctxLayoutDefInDepth").prop("style", "background-color: #0d6efd")
 
+                removeCompoundNodes()
                 initDefenseGraph()
             })
-            $("#dd-ctxLayoutKillChain").on("click", () => {
-                $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-ctxLayout")}).prop("style", "background-color: white")
-                $("#dd-ctxLayoutKillChain").prop("style", "background-color: #0d6efd")
+            killChain["kill-chain"].forEach(kc => {
+                $("#contextLayoutOptions").append(`<li><a id=ctxLayout${kc.type} class="dropdown-item latout-option">${kc.type}</a></li>`)
+                $(`#ctxLayout${kc.type}`).on("click", () => {
+                    $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-ctxLayout")}).prop("style", "background-color: white")
+                    $(`#dd-ctxLayout${kc.type}`).prop("style", "background-color: #0d6efd")
 
-                initKillChainGraph()
+                    removeCompoundNodes()
+                    initKillChainGraph(kc.type)
+                })
             })
 
 

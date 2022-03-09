@@ -51,7 +51,7 @@
         "kill_chain_phases": {
             "type": "array",
             "description": "The list of kill chain phases for which this Tool instance can be used.",
-            "$ref": "static/jsedit/common/kill-chain-phase.json",
+            "$ref": "static/jsedit/kill-chain-phase.json",
             "minItems": 1
         }
 

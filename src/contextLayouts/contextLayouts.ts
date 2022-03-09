@@ -3,11 +3,11 @@ import { setup_ctx_menu } from "../graph/context-menu"
 import { GraphUtils } from "../graph/graphFunctions"
 import { node_img } from "../stix"
 import { schema_map } from "../stix/stix_schemas"
-import { alignlayers, stackLayers } from "./graphLayoutFunctions"
+import { alignCompoundNodes, stackCompoundNodes } from "./graphLayoutFunctions"
 
 const defense = require("./defenseInDepthSchema.json")
 const defenseExtension = require("./defenseInDepthExtension.json")
-const killChain = require("./killChainSchema.json")
+const killChainList = require("./killChainSchema.json")["kill-chain"]
 
 const DRAG_DIST = 150
 
@@ -118,49 +118,44 @@ export function initDefenseGraph() {
                     var id = ext.layer_name.replaceAll(" ", "_")
                     var layer = cy.$id(id)
                     if (layer) {
-                        // // // Move the node to its parent
-                        // // get the position of the center of the layer
-                        // const bounds = layer.boundingBox({})
-                        // const x = bounds.x2 - (bounds.w / 2) + ((layer.children.length - 1) * ele.width())
-                        // const y = bounds.y1 + (bounds.h / 2)
-
-                        // ele.position({x: x, y: y})
+                        // Move the node to its parent
                         ele.move({parent: id})
-                        alignlayers()
                     }                    
                 }
             }
         }
 
+        alignCompoundNodes(".layer")
+
     }
 }
 
-export function initKillChainGraph() {
+export function initKillChainGraph(type : string) {
 
     var cy = window.cycore
     if (cy.$(".killchain").length == 0) {
+        const killChain = killChainList.find(kc => {return kc.type == type})
 
-        var defId = defense.name.replaceAll(" ", "_")
+        var killChainId = killChain.type.replaceAll(" ", "_")
         
         var elements : Array<cytoscape.ElementDefinition> = [
             { 
                 group: 'nodes', 
                 data: {
-                    id: defId,
-                    name: killChain.name
+                    id: killChainId,
+                    name: killChain.type
                 },
                 selectable: false,
                 classes: "killchain",
                 style: {
-                    'content': killChain.name,
+                    'content': killChain.type,
                     'text-valign': 'top',
                     'text-halign': 'center'
                 }
             }
         ]
 
-        var y = 150
-        var iPhase = 0
+        var iPhase = 1
         for (const phase of killChain.phases) {
             var phaseId = phase.name.replaceAll(' ', '_')
             var ele : cytoscape.ElementDefinition = {
@@ -169,11 +164,11 @@ export function initKillChainGraph() {
                     id: phaseId,
                     name: phase.name,
                     number: iPhase,
-                    parent: defId
+                    parent: killChainId
                 },
                 position: {
-                    x: 100,
-                    y: y * iPhase
+                    x: 100 * iPhase,
+                    y: 150 + ((iPhase % 2) * 25)
                 },
                 selectable: false,
                 classes: 'phase',
@@ -190,8 +185,8 @@ export function initKillChainGraph() {
                     parent: phaseId
                 },
                 position: {
-                    x: 100,
-                    y: y * iPhase
+                    x: 100 * iPhase,
+                    y: 150 + ((iPhase % 2) * 25)
                 },
                 classes: "ghost",
                 style: {
@@ -214,10 +209,24 @@ export function initKillChainGraph() {
         cy.on('dblclick', handleDblClickNode)
 
         // Add existing nodes with a kill chain phase
-        // const nodes = cy.nodes(".stix_node")
-        // for (var i = 0; i < nodes.length; i++) {
-            
-        // }
+        const nodes = cy.nodes(".stix_node")
+        nodes.forEach(node => {
+            var data = node.data("raw_data")
+            if (data["kill_chain_phases"]) {
+                const killChainName = data["kill_chain_phases"][0]["kill_chain_name"]
+                
+                if (killChainName === killChain.type) {
+                    const killChainNode = cy.$(`#${killChainId}`)
+                    killChainNode.children().forEach(phase => {
+                        if (data["kill_chain_phases"][0]["phase_name"] === phase.data("name")) {
+                            node.move({parent: phase.id()})
+                        }
+                    })
+                }
+            }
+        })
+
+        alignCompoundNodes(".phase")
 
     }
 
@@ -280,11 +289,12 @@ function handleDropNode(e : cytoscape.EventObject) {
                 if (Object.keys(schema.properties).includes("kill_chain_phases")) {
                     ele.move({parent: phase.id()})
                     var data = ele.data("raw_data")
+                    console.log(data)
                     var killChain = {
                         kill_chain_name: phase.parent()[0].data("name"),
                         phase_name: phase.data("name")
                     }
-                    
+                    console.log(killChain)
                     if (data["kill_chain_phases"]) {
                         data["kill_chain_phases"].push(killChain)
                     } else {
@@ -293,12 +303,15 @@ function handleDropNode(e : cytoscape.EventObject) {
                     }
                     
                     ele.data("raw_data", data)
+                    console.log(ele.data("raw_data"))
                 } 
-                // Show a toast when the user attempts to place an invalid node in the kill chain
-                // else {
-                //     $("body").append(`<div class="toast" style="position: absolute; top: 0; right: 0;">
+                
+                else {
+
+                //     // Show a toast when the user attempts to place an invalid node in the kill chain
+                //     $("body").append(`<div class="toast">
                 //     <div class="toast-header">
-                //       <strong class="mr-auto">STIG</strong>
+                //       <strong class="me-auto">STIG</strong>
                 //       <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
                 //         <span aria-hidden="true">&times;</span>
                 //       </button>
@@ -306,9 +319,9 @@ function handleDropNode(e : cytoscape.EventObject) {
                 //     <div class="toast-body">
                 //         Node of type "${type}" cannot be added to a kill chain.
                 //     </div>
-                //   </div>`)
-                  
-                // }
+                //   </div>`) 
+                    $('.message-status').html(`Node of type "${type}" cannot be added to a kill chain.`)
+                }
 
                 
             }
@@ -387,13 +400,24 @@ function handleDrag(e: cytoscape.EventObject) {
                         console.log("check: ", data["kill_chain_phases"])
                     } else {
                         // There are multiple kill chain phases defined. Find the right one and delete it.
+
+                        console.log("Multiple kill chains")
                         
                         var kill_chain_name = parent.parent()[0].data("name")
                         var phase_name = parent.data("name")
                         
+                        console.log(kill_chain_name, phase_name)
+
                         var phaseList = data["kill_chain_phases"] as Array<any>
-                        var index = phaseList.findIndex(v => {return v["kill_chain_name"] == kill_chain_name && v["phase_name"] == phase_name})
-                        data["kill_chain_phases"] = phaseList.splice(index, 1)
+                        var newPhaseList = []
+
+                        for (const phase of phaseList) {
+                            if (phase["kill_chain_name"] != kill_chain_name || phase["phase_name"] != phase_name) {
+                                newPhaseList.push(phase)
+                            }
+                        }
+
+                        data["kill_chain_phases"] = newPhaseList
                     }
                 }
                 ele.data("raw_data", data)
@@ -422,8 +446,10 @@ function handleDrag(e: cytoscape.EventObject) {
                         if (data["kill_chain_phases"].length == 1) {
                             // There is only one kill chain phase. Delete the kill_chain_phase property.
                             delete data["kill_chain_phases"]
-                        } else {
+                        } else if (data["kill_chain_phases"].length > 1) {
                             // There are multiple kill chain phases defined. Find the right one and delete it.
+
+                            console.log("Multiple kill chains")
                             
                             var kill_chain_name = parent.parent()[0].data("name")
                             var phase_name = parent.data("name")

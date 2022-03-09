@@ -1,34 +1,96 @@
 {
-    "name": "Lockheed Martin",
-    "source": "https://www.lockheedmartin.com/en-us/capabilities/cyber/cyber-kill-chain.html",
-    "phases": [
+    "kill-chain": [
         {
-            "name": "Reconnaissance",
-            "description": ""
-        },
+            "type": "lockheed-martin",
+            "id": 1,
+            "phases": [
+                {
+                    "name": "Reconnaissance",
+                    "aliases": [
+                        "Recon"
+                    ]
+                },
+                {
+                    "name": "Weaponization",
+                    "aliases": [
+                        "Weaponize"
+                    ]
+                },
+                {
+                    "name": "Delivery",
+                    "aliases": [
+                        "Deliver"
+                    ]
+                },
+                {
+                    "name": "Exploitation",
+                    "aliases": [
+                        "Exploit"
+                    ]
+                },
+                {
+                    "name": "Installation",
+                    "aliases": [
+                        "Install"
+                    ]
+                },
+                {
+                    "name": "Command and Control",
+                    "aliases": [
+                        "Command & Control",
+                        "C2",
+                        "Callback"
+                    ]
+                },
+                {
+                    "name": "Actions on Objectives",
+                    "aliases": [
+                        "Exfiltration",
+                        "Actions",
+                        "Act on Objectives",
+                        "Persistence",
+                        "Persist"
+                    ]
+                }
+            ]
+        }, 
         {
-            "name": "Weaponization",
-            "description": ""
-        },
-        {
-            "name": "Delivery",
-            "description": ""
-        },
-        {
-            "name": "Exploitation",
-            "description": ""
-        },
-        {
-            "name": "Installation",
-            "description": ""
-        },
-        {
-            "name": "Command & Control (C2)",
-            "description": ""
-        },
-        {
-            "name": "Exfiltration",
-            "description": ""
-        }
+            "type": "other",
+            "id": 2,
+            "phases": [
+                {
+                    "name": "Reconnaissance",
+                    "aliases": "Recon"
+                },
+                {
+                    "name": "Intrusion"
+                },
+                {
+                    "name": "Exploitation",
+                    "aliases": "Exploit"
+                },
+                {
+                    "name": "Privilege Escalation"
+                },
+                {
+                    "name": "Lateral Movement"
+                },
+                {
+                    "name": "Obfuscation/Anti-forensics",
+                    "aliases": [
+                        "Obfuscation",
+                        "Anti-forensics",
+                        "Obfuscation(anti-forensics)"
+                    ]
+                },
+                {
+                    "name": "Denial of Service",
+                    "aliases": "DoS"
+                },
+                {
+                    "name": "Exfiltration"
+                }
+            ]
+        } 
     ]
 }
