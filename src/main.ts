@@ -169,6 +169,15 @@ export class main {
                 selected.unselect();
                 unselected.select();
             })
+            var relationshipsOn = true
+            $("#dd-toggleRelationships").on("click", () => {
+                if (relationshipsOn) {
+                    view_util.hide(cy.edges())
+                } else {
+                    view_util.show(cy.edges())
+                }
+                relationshipsOn = !relationshipsOn
+            })
 
             // EXPORT
             $("#dd-exportSelected").on("click", () => {
