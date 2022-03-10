@@ -22,7 +22,7 @@ import { json } from 'express';
 export function setup_ctx_menu(cy: cytoscape.Core, view_util: any) {
     const graph_utils = new GraphUtils(cy);
     cy.cxtmenu({
-        selector: 'node',
+        selector: '.stix_node',
         commands: [
         {
             content: 'Graph Remove',
