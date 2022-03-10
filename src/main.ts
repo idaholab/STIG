@@ -55,6 +55,7 @@ import { removeCompoundNodes, initDefenseGraph, initKillChainGraph } from './con
 import tippy from 'tippy.js'
 
 const killChain = require("./contextLayouts/killChainSchema.json")
+const defense = require("./contextLayouts/defenseInDepthSchema.json")
 
 declare global {
     interface Window { 
@@ -768,8 +769,31 @@ export class main {
                             })[0].position(node.position)
                         }
                     } else {
-                        graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
+
+                        var canLayout = true
+
+                        // Check if defense in depth is on
+                        if (cy.nodes(`#${defense.name.replaceAll(" ", "_")}`).length > 0) {
+                            canLayout = false
+                            $("#dd-ctxLayoutDefInDepth").trigger("click")
+                        }
+
+                        // Check if a kill chain is on
+                        killChain["kill-chain"].forEach(kc => {
+                            // `#ctxLayout${kc.type}`
+                            if (cy.nodes(`#${kc.type}`).length > 0) {
+                                canLayout = false
+                                $(`#ctxLayout${kc.type}`).trigger("click")
+                            }
+                        })
+
+                        // Only do this if there aren't any defense in depth or kill chain layouts open
+                        if (canLayout) {
+                            graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
+                        }
                     }
+
+                    
                 });
             }
             uploader.addEventListener('dragover', handleDragOver, false);

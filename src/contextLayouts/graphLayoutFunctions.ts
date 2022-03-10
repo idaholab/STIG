@@ -1,15 +1,37 @@
 export function stackCompoundNodes(clss : string) {
     var layers = window.cycore.$(clss)
     
+    var prevPosition = {x: 0, y: 0}
+
     for (var i = 0; i < layers.length; i++) {
         var layer = layers[i]
-        const layerNum = layer.data("number")
+        var layerNum = layer.data("number")
         const children = layer.children()
-        for (var j = 0; j < children.length; j++) {
-            const child = children[j]
-            child.position({x: 150 * j, y: 150 * layerNum})
+        console.log(`${layer.data("name")} (${layerNum}): ${children.length}`)
+        console.log(layer.position())
+        
+        if (children.length == 1) {
+            if (i > 0) {
+                var x = 150
+                var y = prevPosition.y + 100
+                console.log(x, y)
+                layer.animate({position: {x: x, y: y}, duration: 1000})
+                prevPosition = {x: x, y: y}
+            } else {
+                prevPosition = layer.position()
+            }
+        } else {
+            for (var j = 0; j < children.length; j++) {
+                const child = children[j]
+                var y = 150 * layerNum
+                var x = 150 * j
+                child.animate({position: {x: x, y: y}, duration: 1000})
+                prevPosition = {x: x, y: y}
+            }
         }
-    }   
+
+        console.log(layer.position())
+    }
 }
 
 export function alignCompoundNodes(clss : string) {

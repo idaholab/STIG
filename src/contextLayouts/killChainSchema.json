@@ -55,8 +55,47 @@
             ]
         }, 
         {
-            "type": "other",
+            "type": "MITRE-ICS",
             "id": 2,
+            "phases": [
+                {
+                    "name": "Initial Access"
+                },
+                {
+                    "name": "Execution"
+                },
+                {
+                    "name": "Persistence"
+                },
+                {
+                    "name": "Privilege Escalation"
+                },
+                {
+                    "name": "Evasion"
+                },
+                {
+                    "name": "Discovery"
+                },
+                {
+                    "name": "Lateral Movement"
+                },
+                {
+                    "name": "Collection"
+                },
+                {
+                    "name": "Inhibit Response Function"
+                },
+                {
+                    "name": "Impair Process Control"
+                },
+                {
+                    "name": "Impact"
+                }
+            ]
+        },
+        {
+            "type": "other",
+            "id": 3,
             "phases": [
                 {
                     "name": "Reconnaissance",

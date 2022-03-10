@@ -54,7 +54,7 @@ export function initDefenseGraph() {
             }
         ]
 
-        var y = 150
+        var y = 100
         for (const layer of defense.layers) {
             var layerId = layer.name.replaceAll(' ', '_')
             // console.log("layerId: ", layerId)
@@ -67,7 +67,7 @@ export function initDefenseGraph() {
                     parent: defId
                 },
                 position: {
-                    x: 100,
+                    x: 150,
                     y: y * layer.num
                 },
                 selectable: false,
@@ -125,7 +125,7 @@ export function initDefenseGraph() {
             }
         }
 
-        alignCompoundNodes(".layer")
+        stackCompoundNodes(".layer")
 
     }
 }
