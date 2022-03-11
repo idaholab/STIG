@@ -53,6 +53,7 @@ import { QueryHistoryDialog } from './ui/queryHistoryWidget';
 import { DiffDialog } from './ui/diff-dialog';
 import { removeCompoundNodes, initDefenseGraph, initKillChainGraph } from './contextLayouts/contextLayouts';
 import tippy from 'tippy.js'
+import { organizeOrphans } from './contextLayouts/graphLayoutFunctions';
 
 const killChain = require("./contextLayouts/killChainSchema.json")
 const defense = require("./contextLayouts/defenseInDepthSchema.json")
@@ -341,6 +342,8 @@ export class main {
                 $("#dd-ctxLayoutNone").prop("style", "background-color: #0d6efd")
                 
                 removeCompoundNodes()
+                // Position the nodes with a layout
+                graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
             })
             $("#dd-ctxLayoutDefInDepth").on("click", () => {
                 $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-ctxLayout")}).prop("style", "background-color: white")
@@ -348,6 +351,7 @@ export class main {
 
                 removeCompoundNodes()
                 initDefenseGraph()
+                organizeOrphans()
             })
             killChain["kill-chain"].forEach(kc => {
                 $("#contextLayoutOptions").append(`<li><a id=ctxLayout${kc.type} class="dropdown-item latout-option">${kc.type}</a></li>`)
@@ -357,6 +361,7 @@ export class main {
 
                     removeCompoundNodes()
                     initKillChainGraph(kc.type)
+                    organizeOrphans()
                 })
             })
 
