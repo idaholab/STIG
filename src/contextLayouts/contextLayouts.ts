@@ -168,7 +168,7 @@ export function initKillChainGraph(type : string) {
                 },
                 position: {
                     x: 100 * iPhase,
-                    y: 150 + ((iPhase % 2) * 25)
+                    y: 150 + ((iPhase % 2) * 50)
                 },
                 selectable: false,
                 classes: 'phase',
