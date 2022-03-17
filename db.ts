@@ -974,6 +974,7 @@ export class StigDB {
      * @memberof StigDB
      */
     public async  updateDB(formdata: StixObject): Promise<StixObject[]> {
+        console.log(formdata.id)
         const db_obj = transform_to_db(formdata);
         // console.log(formdata)
         // console.log("Formdata id: ", formdata.id)

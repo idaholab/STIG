@@ -51,6 +51,7 @@ import { GraphQueryResult } from './db/db_types';
 import { QueryHistoryDialog } from './ui/queryHistoryWidget';
 import { DiffDialog } from './ui/diff-dialog';
 import tippy from 'tippy.js'
+import { openDatabaseUpload } from './ui/database-upload-widget';
 
 declare global {
     interface Window {
@@ -307,7 +308,9 @@ export class main {
             $("#database").on("click", () => {
                 openDatabaseConfiguration();
             })
-            
+            $("#databaseUpload").on("click", () => {
+                openDatabaseUpload();
+            })
 
 
             // used by some events to make cytoscape respond
