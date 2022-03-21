@@ -392,7 +392,8 @@ export class StigDB {
         };
         let result: StixObject[];
         try {
-            result = await this.odb.query(query, options).all() as StixObject[];
+            // result = await this.odb.query(query, options).all() as StixObject[];
+            result = await this.odb.select({id_: identifier}).one()
             if (result.length > 0) {
                 return result[0] as SDO;
             } else {
@@ -749,10 +750,6 @@ export class StigDB {
             if (stix_obj.type.startsWith('relation')) {
                 throw new Error("Attempt to create a relation, use createEdge instead!");
             }
-            const existing_node = await this.getSDO(stix_obj.id);
-            if (existing_node !== undefined) {
-                return existing_node["@rid"];
-            }
 
             let query: string;
             let q_action: string;
@@ -973,7 +970,7 @@ export class StigDB {
      * @returns  Promise<string>
      * @memberof StigDB
      */
-    public async  updateDB(formdata: StixObject): Promise<StixObject[]> {
+    public async updateDB(formdata: StixObject): Promise<StixObject[]> {
         console.log(formdata.id)
         const db_obj = transform_to_db(formdata);
         // console.log(formdata)
@@ -982,8 +979,7 @@ export class StigDB {
         
 
         // Check if the id already exists in the database
-        let rid = await this.odb.select("@rid").from(db_obj.type).where({id_: db_obj.id_}).one()
-        console.log(rid)
+        let rid = await this.getRID(formdata.id)
 
         let exists = rid != undefined
 
@@ -1006,8 +1002,9 @@ export class StigDB {
 
             } else {
                 // Existing node, must create a new modified date
+                console.log("Updating object: ", formdata.id)
                 db_obj.modified = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
-                result = await this.updateObject(db_obj, rid["@rid"].toString())
+                result = await this.updateObject(db_obj, rid.toString())
             }
             
             return result;

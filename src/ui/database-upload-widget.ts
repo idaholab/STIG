@@ -36,20 +36,34 @@ class DatabaseUploadDialog {
                     const bundle : BundleType = JSON.parse(r.result as string)
                     const objects : StixObject[] = bundle.objects as StixObject[]
                     const relationships : StixObject[] = []
+                    var numErrors = 0
+                    var i = 0
+                    $('.message-status').html(`Committing ${objects.length} to the database...`);
                     for (const obj of objects) {
+                        $('.message-status').html(`Committing object ${i++}/${objects.length} ...`);
                         // Save relationships for later
                         if (obj.type == "relationship" || obj.type == "sighting") {
                             relationships.push(obj)
                         } else {
                             // Commit everything else
                             console.log(obj)
-                            // commit(obj)
+                            let success = commit(obj)
+                            if (!success) {
+                                numErrors++
+                            }
                         }
                     }
                     for (const rel of relationships) {
                         console.log(rel)
-                        // commit(rel)
+                        $('.message-status').html(`Committing object ${i++}/${objects.length} ...`);
+                        let success = commit(rel)
+                        if (!success) {
+                            numErrors++
+                        }
                     }
+                    
+                    $('.message-status').html(`Successfully committed ${objects.length - numErrors} out of ${objects.length} objects.`);
+
                     this.close()
                 };
                 r.readAsText(f);
