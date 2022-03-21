@@ -733,7 +733,7 @@ export class main {
                              //console.log(ele.data("raw_data")["id"])
                                 return ele.data("raw_data")["id"] === node.id
                             })[0].position(node.position)
-                        }
+                        } 
                     } else {
                         graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
                     }
