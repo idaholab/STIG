@@ -163,6 +163,7 @@ export async function initKillChainGraph(type : string) {
                 data: {
                     id: phaseId,
                     name: phase.name,
+                    aliases: phase.aliases,
                     number: iPhase,
                     parent: killChainId
                 },
@@ -216,11 +217,13 @@ export async function initKillChainGraph(type : string) {
                 for (var i = 0; i < data["kill_chain_phases"].length; i++) {
                     const killChainName = data["kill_chain_phases"][i]["kill_chain_name"]
                     
-                    if (killChainName === killChain.type) {
+                    if (compareNames(killChainName, killChain.type, null)) {
                         const killChainNode = cy.$(`#${killChainId}`)
                         killChainNode.children().forEach(phase => {
-                            if (data["kill_chain_phases"][i]["phase_name"] === phase.data("name")) {
+                            if (compareNames(data["kill_chain_phases"][i]["phase_name"], phase.data("name"), phase.data("aliases"))) {
                                 node.move({parent: phase.id()})
+                            } else {
+                                console.log("Kill chain didn't match")
                             }
                         })
                     }
@@ -232,6 +235,36 @@ export async function initKillChainGraph(type : string) {
 
     }
 
+}
+
+function compareNames(name : string, parent : string, aliases : Array<string>) : boolean {
+    var match = false
+
+    var convert = function(value : string) : string {
+        var newString = ""
+        for (const c of value) {
+            if (c.toLowerCase() != c.toUpperCase()) {
+                // Only letters will return true
+                newString += c.toLowerCase()
+            }
+        }
+
+        return newString
+    }
+
+    if (convert(name) === convert(parent)) {
+        console.log("It's a match!", name, parent)
+        match = true
+    } else if (aliases) {
+        aliases.forEach(alias => {
+            if (convert(name) === convert(alias)) {
+                console.log("It's a match!", name, alias)
+                match = true
+            }
+        })
+    }
+
+    return match
 }
 
 function handleDropNode(e : cytoscape.EventObject) {
@@ -339,11 +372,9 @@ function handleDropNode(e : cytoscape.EventObject) {
 
 function handleDrag(e: cytoscape.EventObject) {
     var ele = e.target
-    
 
     if (ele.hasClass("stix_node") && ele.isChild()) {
         var parent = e.cy.$(`#${ele.data("parent")}`)
-        
 
         var prevPosition = {x:0, y:0}
     
@@ -357,29 +388,12 @@ function handleDrag(e: cytoscape.EventObject) {
             prevPosition = ele.data("prevPosition")
         }
 
-        var prevBounds = parent.data("prevBounds")
-
-        if (prevBounds == null || prevBounds == undefined) {
-            prevBounds = parent.boundingBox({})
-            parent.data("prevBounds", prevBounds)
-        }
-        
-
-        // console.log(JSON.stringify(prevPosition))
-        // console.log(JSON.stringify(ele.position()))
-
         // Check if the node can be removed from a layer
         var dX = ele.position().x - prevPosition.x
         var dY = ele.position().y - prevPosition.y
-
-        // console.log(`dX: ${dX}, dY: ${dY}`)
-        // console.log(layer.width())
-        // console.log(layer.height())
-
-        var numChildren = parent.children().length
-        if (numChildren == 2) {
-            if (Math.abs(dX) > DRAG_DIST || Math.abs(dY) > DRAG_DIST) {
-                var lPos = parent.position()
+        
+        if (canRemove(parent, dX, dY)) {
+            var lPos = parent.position()
                 lPos.x -= dX
                 lPos.y -= dY
                 parent.position(lPos)
@@ -392,29 +406,29 @@ function handleDrag(e: cytoscape.EventObject) {
                     } else {
                         // There are multiple extensions defined. Find the right one and delete it.
                         var extId = Object.getOwnPropertyNames(defenseExtension.property)[0]
-                        console.log("removing:", extId)
+                        // console.log("removing:", extId)
                         delete data["extensions"][extId]
                     }
                 } else if (parent.hasClass("phase")) {
                     if (data["kill_chain_phases"].length == 1) {
                         // There is only one kill chain phase. Delete the kill_chain_phases property.
                         delete data["kill_chain_phases"]
-                        console.log("check: ", data["kill_chain_phases"])
+                        // console.log("check: ", data["kill_chain_phases"])
                     } else {
                         // There are multiple kill chain phases defined. Find the right one and delete it.
 
-                        console.log("Multiple kill chains")
+                        // console.log("Multiple kill chains")
                         
                         var kill_chain_name = parent.parent()[0].data("name")
                         var phase_name = parent.data("name")
                         
-                        console.log(kill_chain_name, phase_name)
+                        // console.log(kill_chain_name, phase_name)
 
                         var phaseList = data["kill_chain_phases"] as Array<any>
                         var newPhaseList = []
 
                         for (const phase of phaseList) {
-                            if (phase["kill_chain_name"] != kill_chain_name || phase["phase_name"] != phase_name) {
+                            if (compareNames(phase["kill_chain_name"], kill_chain_name, null) || !compareNames(phase["phase_name"], phase_name, parent.data("aliases"))) {
                                 newPhaseList.push(phase)
                             }
                         }
@@ -423,51 +437,40 @@ function handleDrag(e: cytoscape.EventObject) {
                     }
                 }
                 ele.data("raw_data", data)
-                
-            }
-        } else if (numChildren > 2) {
-            var curBounds = parent.boundingBox({})
+        }
+    }
+}
+
+function canRemove(parent, dX, dY) : boolean {
+    
+
+    var prevBounds = parent.data("prevBounds")
+
+    if (prevBounds == null || prevBounds == undefined) {
+        prevBounds = parent.boundingBox({})
+        parent.data("prevBounds", prevBounds)
+    }
+
+    var numChildren = parent.children().length
+
+    // If there are two children (ghost + dragged), check the DRAG_DIST constant
+    if (numChildren == 2) {
+        if (Math.abs(dX) > DRAG_DIST || Math.abs(dY) > DRAG_DIST) {
+            return true
+        }
+
+    // If there are more than two children, check the width of the bounding box and compare that to DRAG_DIST
+    } else if (numChildren > 2 ) {
+        var curBounds = parent.boundingBox({})
             // console.log(`dx:${dX}|dy:${dY}|prevBounds:${JSON.stringify(prevBounds)}|curBounds:${JSON.stringify(curBounds)}`)
             if ((dX < 0 && Math.abs(curBounds.x1 - prevBounds.x1) > DRAG_DIST) ||
                 (dX > 0 && Math.abs(curBounds.x2 - prevBounds.x2) > DRAG_DIST) ||
                 (dY < 0 && Math.abs(curBounds.y1 - prevBounds.y1) > DRAG_DIST) ||
                 (dY > 0 && Math.abs(curBounds.y2 - prevBounds.y2) > DRAG_DIST)) {
-                    ele.move({parent: null})
-                    var data = ele.data("raw_data")
-                    if (parent.hasClass("layer")) {
-                        if (Object.getOwnPropertyNames(data["extensions"]).length == 1) {
-                            // There is only one extension. Delete the extensions property.
-                            delete data["extensions"]
-                        } else {
-                            // There are multiple extensions defined. Find the right one and delete it.
-                            var extId = Object.getOwnPropertyNames(defenseExtension.property)[0]
-                            console.log("removing:", extId)
-                            delete data["extensions"][extId]
-                        }
-                    } else if (parent.hasClass("phase")) {
-                        if (data["kill_chain_phases"].length == 1) {
-                            // There is only one kill chain phase. Delete the kill_chain_phase property.
-                            delete data["kill_chain_phases"]
-                        } else if (data["kill_chain_phases"].length > 1) {
-                            // There are multiple kill chain phases defined. Find the right one and delete it.
-
-                            console.log("Multiple kill chains")
-                            
-                            var kill_chain_name = parent.parent()[0].data("name")
-                            var phase_name = parent.data("name")
-                            
-                            var phaseList = data["kill_chain_phases"] as Array<any>
-                            var index = phaseList.findIndex(v => {return v["kill_chain_name"] == kill_chain_name && v["phase_name"] == phase_name})
-                            data["kill_chain_phases"] = phaseList.splice(index, 1)
-                        }
-                    }
-                    ele.data("raw_data", data)
-            }
-        }
-            
-        
-
+                    return true
+                }
     }
+    return false
 }
 
 function handleDblClickNode(e: cytoscape.EventObject) {
