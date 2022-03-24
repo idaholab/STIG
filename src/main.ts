@@ -105,13 +105,6 @@ export class main {
             window.cycore = cy;
             const graph_utils = new GraphUtils(cy);//, db);
 
-            // Get the layout from the cookie and set the graph layout
-            let layout = (await settings.getSettings()).layout
-         //console.log('layout: ', layout)
-            if (layouts[layout]) {
-                graph_utils.myLayout(layout)
-            }
-
             // Add event listeners to dropdown menu items
 
             // GRAPH
@@ -350,6 +343,13 @@ export class main {
             euler(cytoscape);
             // ngraph(cytoscape);
             spread(cytoscape);
+
+            // Get the layout from the cookie and set the graph layout
+            let layout = (await settings.getSettings()).layout
+            //console.log('layout: ', layout)
+            if (layouts[layout]) {
+                graph_utils.myLayout(layout)
+            }
 
             // the editor form that is filled when a node is clicked
             const editor = new StixEditor(cy);
