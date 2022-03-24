@@ -724,7 +724,7 @@ export class StigDB {
     public async isEqualToDB(changedNodeData: StixObject): Promise<boolean> {
         // see if the item in the UI is really different from the one in the DB
         // Being explicit about this to avoid having different versions of a node
-        // that onyl differ by timestamp
+        // that only differ by timestamp
         let db_instance;
         try {
             db_instance = await this.getSDO(changedNodeData.id);
@@ -978,8 +978,15 @@ export class StigDB {
         // console.log(formdata)
         // console.log("Formdata id: ", formdata.id)
         // created, modified, first_seen, last_seen, 
+        
+
+        // Check if the id already exists in the database
+        let id = await this.odb.select("id_").from(db_obj.type).where({id_: db_obj.id_}).one()
+
+        let exists = id != undefined
+
         const old_modified = await this.getModified(formdata.id);
-        if (old_modified === undefined) {
+        if (!exists) {
             // New node, make sure dates are good
             if (!moment(db_obj.created).isValid()) {
                 db_obj.created = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
@@ -988,17 +995,26 @@ export class StigDB {
                 db_obj.modified = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
             }
 
-        } else if (old_modified !== undefined && moment(old_modified).isSame(db_obj.modified)) {
-            // Existing node, must create a new modified date and create a new object in the database
+        } else {
+            // Existing node, must create a new modified date
             db_obj.modified = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
         }
         let result;
         try {
             if (db_obj.type.startsWith('relation') || db_obj.type.startsWith('sighting')) {
                 // tslint:disable-next-line:no-string-literal
-                result = await this.createEdge(db_obj['source_ref'], db_obj['target_ref'], db_obj);
+                if (exists) {
+                    result = await this.updateEdge(db_obj as SRO)
+                } else {
+                    result = await this.createEdge(db_obj['source_ref'], db_obj['target_ref'], db_obj);
+                }
             } else {
-                result = await this.createVertex(db_obj);
+                if (exists) {
+                    console.log("Updating vertex")
+                    result = await this.updateVertex(db_obj as SDO)
+                } else {
+                    result = await this.createVertex(db_obj);
+                }
             }
             return result;
         } catch (e) {
@@ -1024,7 +1040,7 @@ export class StigDB {
         let result;
         try {
             // tslint:disable-next-line:no-string-literal
-            result = await this.odb.update(`${edge['relationship_type']}`).set(transform_to_db(edge)).where({ id_: `${edge.id}` }).exec<string>();
+            result = await this.odb.update(`${edge['relationship_type']}`).set(transform_to_db(edge)).where({ id_: `${edge.id_}` }).exec<string>();
             return result;
         } catch (e) {
             e.stack += (new Error()).stack;
@@ -1039,10 +1055,10 @@ export class StigDB {
      * @returns
      * @memberof StigDB
      */
-    public async updateVertex(vertex: SDO, old_modified: string): Promise<string> {
+    public async updateVertex(vertex: SDO): Promise<string> {
         let result;
         try {
-            result = await this.odb.update(`\`${vertex.type}\``).set(transform_to_db(vertex)).where({ id_: `${vertex.id}`, modified: `${old_modified}` }).exec<string>();
+            result = await this.odb.update(`\`${vertex.type}\``).set(transform_to_db(vertex)).where({ id_: `${vertex.id_}`}).exec<string>();
             return result;
         } catch (e) {
             e.stack += (new Error()).stack;
