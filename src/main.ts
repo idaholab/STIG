@@ -361,7 +361,7 @@ export class main {
 
                     removeCompoundNodes()
                     initKillChainGraph(kc.type)
-                    organizeOrphans()
+                    
                 })
             })
 

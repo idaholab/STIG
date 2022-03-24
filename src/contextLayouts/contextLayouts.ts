@@ -3,7 +3,7 @@ import { setup_ctx_menu } from "../graph/context-menu"
 import { GraphUtils } from "../graph/graphFunctions"
 import { node_img } from "../stix"
 import { schema_map } from "../stix/stix_schemas"
-import { alignCompoundNodes, stackCompoundNodes } from "./graphLayoutFunctions"
+import { alignCompoundNodes, organizeOrphans, stackCompoundNodes } from "./graphLayoutFunctions"
 
 const defense = require("./defenseInDepthSchema.json")
 const defenseExtension = require("./defenseInDepthExtension.json")
@@ -130,7 +130,7 @@ export function initDefenseGraph() {
     }
 }
 
-export function initKillChainGraph(type : string) {
+export async function initKillChainGraph(type : string) {
 
     var cy = window.cycore
     if (cy.$(".killchain").length == 0) {
@@ -213,20 +213,22 @@ export function initKillChainGraph(type : string) {
         nodes.forEach(node => {
             var data = node.data("raw_data")
             if (data["kill_chain_phases"]) {
-                const killChainName = data["kill_chain_phases"][0]["kill_chain_name"]
-                
-                if (killChainName === killChain.type) {
-                    const killChainNode = cy.$(`#${killChainId}`)
-                    killChainNode.children().forEach(phase => {
-                        if (data["kill_chain_phases"][0]["phase_name"] === phase.data("name")) {
-                            node.move({parent: phase.id()})
-                        }
-                    })
+                for (var i = 0; i < data["kill_chain_phases"].length; i++) {
+                    const killChainName = data["kill_chain_phases"][i]["kill_chain_name"]
+                    
+                    if (killChainName === killChain.type) {
+                        const killChainNode = cy.$(`#${killChainId}`)
+                        killChainNode.children().forEach(phase => {
+                            if (data["kill_chain_phases"][i]["phase_name"] === phase.data("name")) {
+                                node.move({parent: phase.id()})
+                            }
+                        })
+                    }
                 }
             }
         })
 
-        alignCompoundNodes(".phase")
+        alignCompoundNodes(".phase").then(organizeOrphans)
 
     }
 

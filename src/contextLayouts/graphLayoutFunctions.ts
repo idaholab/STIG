@@ -36,7 +36,7 @@ export function stackCompoundNodes(clss : string) {
     }
 }
 
-export function alignCompoundNodes(clss : string) {
+export async function alignCompoundNodes(clss : string) {
     var layers = window.cycore.$(clss)
     
     var prevPosition = {x: 0, y: 0}
@@ -103,7 +103,7 @@ export function organizeOrphans() {
         
             fit: false, // whether to fit the viewport to the graph
             padding: 20, // padding used on fit
-            boundingBox: {x1: prevPosition.x, y1: prevPosition.y, w: boundingBox.w, h: boundingBox.h}, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+            boundingBox: {x1: boundingBox.x1, y1: boundingBox.y2, w: 100, h: 100}, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
             avoidOverlap: true, // prevents node overlap, may overflow boundingBox if not enough space
             avoidOverlapPadding: 100, // extra spacing around nodes when avoidOverlap: true
             nodeDimensionsIncludeLabels: true, // Excludes the label when calculating node bounding boxes for the layout algorithm
@@ -123,6 +123,13 @@ export function organizeOrphans() {
 
         const layout = movers.layout(grid_options)
         layout.run()
+        
+        window.cycore.animate({
+            fit: {
+                eles: window.cycore.$(":parents"),
+                padding: 50
+            }
+        })
     
         // // Based on the length, figure out how many nodes go in a row/column
         // var numNodes = 0
