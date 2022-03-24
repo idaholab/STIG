@@ -31,6 +31,14 @@ app.use(express.static('src'))
 app.use('/node_modules', express.static('node_modules'))
 app.use(express.static('dist'))
 
+app.get("/script", (req, res) => {
+  if (process.env.NODE_ENV == "development") {
+    res.redirect("http://localhost:8080/index.js")
+  } else {
+    res.redirect("/static/index.js")
+  }
+})
+
 /*********************
  * Check db
  * 

@@ -105,6 +105,9 @@ ALL RIGHTS RESERVED
         <button id="database" class="btn btn-secondary" type="button">
             Database: <span id="db-status" class="db-status-red">not connected</span>
         </button>
+        <button id="databaseUpload" class="btn btn-secondary" type="button">
+            Upload Bundle to DB
+        </button>
         </form>
     </div>
     <div class="main-grid-container">
@@ -281,6 +284,7 @@ ALL RIGHTS RESERVED
     <div id="new-db-anchor" title="Edit Database Configuration"></div>
     <div id="diff-anchor" title="Diff" class="diff-dialog"></div>
     <div id="error-anchor" title="Error" class="error-dialog"></div>
+    <dib id="db-upload-anchor" title="Upload Bundle to DB"></dib>
     <div id="history-list"></div>
     <div id="diff-list"></div>
     <div id="error-list"></div>
@@ -292,8 +296,5 @@ ALL RIGHTS RESERVED
         });
     </script> -->
 </body>
-<!-- Uncomment script below to use webpack HMR server -->
-<script src="http://localhost:8080/index.js"></script>
-<!-- Comment script below if using script above -->
-<!-- <script src="/static/index.js"></script> -->
+<script src="/script"></script>
 </html>

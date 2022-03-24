@@ -57,6 +57,7 @@ import { organizeOrphans } from './contextLayouts/graphLayoutFunctions';
 
 const killChain = require("./contextLayouts/killChainSchema.json")
 const defense = require("./contextLayouts/defenseInDepthSchema.json")
+import { openDatabaseUpload } from './ui/database-upload-widget';
 
 declare global {
     interface Window { 
@@ -370,7 +371,9 @@ export class main {
             $("#database").on("click", () => {
                 openDatabaseConfiguration();
             })
-            
+            $("#databaseUpload").on("click", () => {
+                openDatabaseUpload();
+            })
 
             // Graph handling functions
             
@@ -781,7 +784,7 @@ export class main {
                              //console.log(ele.data("raw_data")["id"])
                                 return ele.data("raw_data")["id"] === node.id
                             })[0].position(node.position)
-                        }
+                        } 
                     } else {
 
                         var canLayout = true
