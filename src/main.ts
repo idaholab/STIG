@@ -52,6 +52,7 @@ import { QueryHistoryDialog } from './ui/queryHistoryWidget';
 import { DiffDialog } from './ui/diff-dialog';
 import tippy from 'tippy.js'
 import { openDatabaseUpload } from './ui/database-upload-widget';
+import { openBundleExport } from './ui/export -bundle-widget';
 
 declare global {
     interface Window {
@@ -159,10 +160,7 @@ export class main {
                     }
                 });
 
-                const jsonToSave = JSON.stringify(bundle);
-                const jsonBundleSave = new Blob([jsonToSave], { type: "application/json" });
-                fileSaver.saveAs(jsonBundleSave, "bundle.json");
-                $('.message-status').html(`Exported ${bundle.objects.length} objects`);
+                openBundleExport(bundle)
             })
             $("#dd-exportGraph").on("click", () => {
              //console.log("Export graph")
@@ -180,10 +178,7 @@ export class main {
                     }
                 });
 
-                const jsonToSave = JSON.stringify(bundle);
-                const jsonBundleSave = new Blob([jsonToSave], { type: "application/json" });
-                 fileSaver.saveAs(jsonBundleSave, "bundle.json");
-                $('.message-status').html(`Exported ${bundle.objects.length} objects`);
+                openBundleExport(bundle)                
             })
             $("#dd-exportAll").on("click", () => {  
              //console.log("Export all")
@@ -202,11 +197,7 @@ export class main {
                     });
                 bundle.metadata = getNodeMetadata(nodes);
 
-                // Convert to JSON and save
-                const jsonToSave = JSON.stringify(bundle);
-                const jsonBundleSave = new Blob([jsonToSave], { type: "application/json" });
-                fileSaver.saveAs(jsonBundleSave, "bundle.json");
-                $('.message-status').html(`Exported ${bundle.objects.length} objects`);
+                openBundleExport(bundle)
             })
             $("#dd-exportPos").on("click", () => {
              //console.log("Export positions")
@@ -747,11 +738,12 @@ export class main {
              *
              */
             $(document).on('click', '#btn-export-bundle', () => {
+
                 // Get raw data from all cy elements
                 // Create bundle object
                 const bundle_id = 'bundle--' + uuid.v4();
                 const bundle = { type: 'bundle', id: bundle_id, objects: [] } as BundleType;
-                let nodes = cy.$(':visible');
+                let nodes = window.cycore.$(':visible');
                 nodes = nodes.union(nodes.connectedEdges());
                 nodes.each((ele) => {
                     if (ele.length === 0) {
@@ -768,11 +760,8 @@ export class main {
                 //     bundle.objects.push(ele.data('raw_data'));
                 // });
 
-                // Convert to JSON and save
-                const jsonToSave = JSON.stringify(bundle, null, 2);
-                const jsonBundleSave = new Blob([jsonToSave], { type: "application/json" });
-                fileSaver.saveAs(jsonBundleSave, "bundle.json");
-                $('.message-status').html(`Exported ${bundle.objects.length} objects`);
+                // Open the export widget
+                openBundleExport(bundle)    
             });
 
             $(document).on('click', '#btn-diff', async () => {
