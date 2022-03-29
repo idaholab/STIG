@@ -135,29 +135,12 @@ export class GraphUtils {
                 }
             }
             const nodes_added = this.cy.add(to_add);
-            this.addMetadataToNodes(metadata, nodes_added);
 
             return [nodes_added, relationships, sightings];
         } catch (e) {
             console.error('Exception adding nodes to graph:', e);
             throw e;
         }
-    }
-
-    /**
-     *  add location data or other metadata to nodes on page
-     * @param metadata
-     * @param nodes
-     */
-    private addMetadataToNodes(metadata: object, nodes: cytoscape.CollectionReturnValue) {
-        if (metadata == null) return;
-        this.skipLayout = true;
-
-        nodes.map(node => {
-            console.log(node)
-            // let obj = metadata.find(x => x.id === node.id());
-            // if (obj) node.position(obj.position);
-        })
     }
 
     /**
@@ -176,7 +159,6 @@ export class GraphUtils {
 
         // let cont = false;
         if (sdos === undefined) {
-            this.addMetadataToNodes(metadata, this.cy.elements())
             return this.cy.elements('#nothing');
         }
         const data_source = from_db ? 'DB' : 'GUI';

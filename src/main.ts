@@ -720,10 +720,7 @@ export class main {
                         // Position the nodes
                         for (const node of pkg.metadata) {
                             // Find the element on the graph
-                            cy.nodes().filter((ele, _i, _eles) => {
-                             //console.log(ele.data("raw_data")["id"])
-                                return ele.data("raw_data")["id"] === node.id
-                            })[0].position(node.position)
+                            cy.$id(node.id).animate({position: node.position, duration: 1000, complete: () => cy.fit()})
                         } 
                     } else {
                         graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
