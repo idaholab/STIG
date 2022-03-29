@@ -23,7 +23,6 @@
             "description": "The name used to identify the type of relationship.",
             "pattern": "^[a-z0-9\\-]+$",
             "enum": [
-                
                 "uses",
                 "mitigates",
                 "indicates",
@@ -71,8 +70,7 @@
         "description": {
             "type": "string",
             "format": "textarea",
-            "description": "A description that helps provide context about the relationship.",
-            "format": "textbox"
+            "description": "A description that helps provide context about the relationship."
         },
         "source_ref": {
             "title": "source_ref",

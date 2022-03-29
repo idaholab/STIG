@@ -58,6 +58,7 @@ import { organizeOrphans } from './contextLayouts/graphLayoutFunctions';
 const killChain = require("./contextLayouts/killChainSchema.json")
 const defense = require("./contextLayouts/defenseInDepthSchema.json")
 import { openDatabaseUpload } from './ui/database-upload-widget';
+import { openBundleExport } from './ui/export -bundle-widget';
 
 declare global {
     interface Window { 
@@ -128,13 +129,6 @@ export class main {
 
             
 
-            // Get the layout from the cookie and set the graph layout
-            let layout = (await settings.getSettings()).layout
-         //console.log('layout: ', layout)
-            if (layouts[layout]) {
-                graph_utils.myLayout(layout)
-            }
-
             // Add event listeners to dropdown menu items
 
             // GRAPH
@@ -198,10 +192,7 @@ export class main {
                     }
                 });
 
-                const jsonToSave = JSON.stringify(bundle);
-                const jsonBundleSave = new Blob([jsonToSave], { type: "application/json" });
-                fileSaver.saveAs(jsonBundleSave, "bundle.json");
-                $('.message-status').html(`Exported ${bundle.objects.length} objects`);
+                openBundleExport(bundle)
             })
             $("#dd-exportGraph").on("click", () => {
              //console.log("Export graph")
@@ -219,10 +210,7 @@ export class main {
                     }
                 });
 
-                const jsonToSave = JSON.stringify(bundle);
-                const jsonBundleSave = new Blob([jsonToSave], { type: "application/json" });
-                 fileSaver.saveAs(jsonBundleSave, "bundle.json");
-                $('.message-status').html(`Exported ${bundle.objects.length} objects`);
+                openBundleExport(bundle)                
             })
             $("#dd-exportAll").on("click", () => {  
              //console.log("Export all")
@@ -241,11 +229,7 @@ export class main {
                     });
                 bundle.metadata = getNodeMetadata(nodes);
 
-                // Convert to JSON and save
-                const jsonToSave = JSON.stringify(bundle);
-                const jsonBundleSave = new Blob([jsonToSave], { type: "application/json" });
-                fileSaver.saveAs(jsonBundleSave, "bundle.json");
-                $('.message-status').html(`Exported ${bundle.objects.length} objects`);
+                openBundleExport(bundle)
             })
             $("#dd-exportPos").on("click", () => {
              //console.log("Export positions")
@@ -401,6 +385,13 @@ export class main {
             euler(cytoscape);
             // ngraph(cytoscape);
             spread(cytoscape);
+
+            // Get the layout from the cookie and set the graph layout
+            let layout = (await settings.getSettings()).layout
+            //console.log('layout: ', layout)
+            if (layouts[layout]) {
+                graph_utils.myLayout(layout)
+            }
 
             // the editor form that is filled when a node is clicked
             const editor = new StixEditor(cy);
@@ -780,10 +771,7 @@ export class main {
                         // Position the nodes
                         for (const node of pkg.metadata) {
                             // Find the element on the graph
-                            cy.nodes().filter((ele, _i, _eles) => {
-                             //console.log(ele.data("raw_data")["id"])
-                                return ele.data("raw_data")["id"] === node.id
-                            })[0].position(node.position)
+                            cy.$id(node.id).animate({position: node.position, duration: 1000, complete: () => cy.fit()})
                         } 
                     } else {
 
@@ -821,11 +809,12 @@ export class main {
              *
              */
             $(document).on('click', '#btn-export-bundle', () => {
+
                 // Get raw data from all cy elements
                 // Create bundle object
                 const bundle_id = 'bundle--' + uuid.v4();
                 const bundle = { type: 'bundle', id: bundle_id, objects: [] } as BundleType;
-                let nodes = cy.$(':visible');
+                let nodes = window.cycore.$(':visible');
                 nodes = nodes.union(nodes.connectedEdges());
                 nodes.each((ele) => {
                     if (ele.length === 0) {
@@ -842,11 +831,8 @@ export class main {
                 //     bundle.objects.push(ele.data('raw_data'));
                 // });
 
-                // Convert to JSON and save
-                const jsonToSave = JSON.stringify(bundle, null, 2);
-                const jsonBundleSave = new Blob([jsonToSave], { type: "application/json" });
-                fileSaver.saveAs(jsonBundleSave, "bundle.json");
-                $('.message-status').html(`Exported ${bundle.objects.length} objects`);
+                // Open the export widget
+                openBundleExport(bundle)    
             });
 
             $(document).on('click', '#btn-diff', async () => {

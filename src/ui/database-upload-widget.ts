@@ -7,7 +7,7 @@ export function openDatabaseUpload() {
 }
 
 const body = `<div class="mb-3">
-<label for="formFile" class="form-label">Bundle</label>
+<label for="bundleUploadFile" class="form-label">Bundle</label>
 <input class="form-control" type="file" id="bundleUploadFile">
 </div>`
 
