@@ -10,7 +10,9 @@ const app = express();
 // let client: OrientDBClient = null
 // let db: ODatabaseSession = null
 
-let db: StigDB = null;
+// let db: StigDB = null;
+
+let dbs: Map<string, StigDB> = new Map<string, StigDB>()
 
 const {
   PORT = 3000,
@@ -46,12 +48,21 @@ app.get("/script", (req, res) => {
  * If connected, returns the name of the database.
  * If not connected, returns undefined
  */
- app.get("/check_db", (req, res) => {
-  if (db?.odb) {
-    res.send({data: db.odb.name})
-  } else {
-    res.send({data: undefined})
-  }
+app.get("/check_db", (req, res) => {
+  // console.log("Check DB")
+  // if (dbs != null) {
+  //   // console.log(dbs.values())
+  //   console.log(req.session["dbId"])
+  //   var _db = dbs.get(req.session["dbId"])
+  //   console.log("Database: ", _db.odb.name)
+  // }
+  // if (db?.odb) {
+  //   res.send({data: db.odb.name})
+  // } else {
+  //   res.send({data: undefined})
+  // }
+
+  res.send({data: dbs?.get(req.session["dbId"])?.odb?.name})
 })
 
 app.use((req: Request, _res: Response, next: NextFunction) => {
@@ -60,7 +71,7 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
   next();
 })
 
-app.get('/', (_req: Request, res: Response) => {
+app.get('/', (req: Request, res: Response) => {
   res.redirect('/index.html')
 })
 
@@ -118,7 +129,16 @@ app.post("/use_db", async (req, res) => {
   let config: IDatabaseConfigOptions = req.body.config;
   if (config) {
     try {
-      db = new StigDB(config)
+      console.log("Session id: ", req.session["dbId"])
+      // db = new StigDB(config)
+      if (req.session["dbId"] == undefined) {
+        req.session["dbId"] = req.sessionID
+        console.log("set session: ", req.session["dbId"])
+        req.session.save()
+      }
+
+      dbs.set(req.session["dbId"], new StigDB(config))
+      console.log(dbs.values())
     } catch (err) {
       console.error(err)
       res.status(500)
@@ -140,7 +160,7 @@ app.post("/commit", (req, res) => {
   // console.log(data)
   if (data) {
     try {
-      db.updateDB(data)
+      dbs.get(req.session["dbId"]).updateDB(data)
     } catch (err) {
       console.error(err)
       res.status(500)
@@ -163,6 +183,7 @@ app.post("/delete", (req, res) => {
   console.log(data)
   if (data) {
     try {
+      let db = dbs.get(req.session["dbId"])
       // Check if the STIX object is an edge
       if (data.type === 'relationship') {
         // Delete edge
@@ -191,7 +212,7 @@ app.post('/query_incoming', async (req, res) => {
   let id = req.body.id
   if (id) {
     try {
-      let stix = await db.traverseNodeIn(id)
+      let stix = await dbs.get(req.session["dbId"]).traverseNodeIn(id)
       res.write(JSON.stringify({data: stix}))
     } catch (err) {
       console.error(err)
@@ -213,7 +234,7 @@ app.post('/query_outgoing', async (req, res) => {
   let id = req.body.id
   if (id) {
     try {
-      let stix = await db.traverseNodeOut(id)
+      let stix = await dbs.get(req.session["dbId"]).traverseNodeOut(id)
       res.write(JSON.stringify({data: stix}))
     } catch (err) {
       console.error(err)
@@ -235,7 +256,7 @@ app.post("/query", async (req, res) => {
   let query = req.body.query
   if (query) {
     try {
-      let stix = await db.executeQuery(query)
+      let stix = await dbs.get(req.session["dbId"]).executeQuery(query)
       res.write(JSON.stringify({data: stix}))
     } catch (err) {
       console.error(err)
@@ -257,7 +278,7 @@ app.post('/diff', async (req, res) => {
   let node = req.body.data;
   if (node) {
     try {
-      const diff = await db.getDiff(node)
+      const diff = await dbs.get(req.session["dbId"]).getDiff(node)
       res.write(JSON.stringify({data: diff}))
     } catch (e) {
       res.status(500)
