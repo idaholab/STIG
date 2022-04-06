@@ -131,17 +131,17 @@ app.post("/use_db", async (req, res) => {
   let config: IDatabaseConfigOptions = req.body.config;
   if (config) {
     try {
-      console.log("Session id: ", req.session["dbId"])
+      // console.log("Session id: ", req.session["dbId"])
       // db = new StigDB(config)
       if (req.session["dbId"] == undefined) {
         req.session["dbId"] = req.sessionID
-        console.log("set session: ", req.session["dbId"])
+        // console.log("set session: ", req.session["dbId"])
         req.session.save()
       }
 
       dbs.set(req.session["dbId"], new StigDB())
-      console.log(dbs.values())
-      await dbs[req.session["dbId"]].configure(config)
+      // console.log(dbs.values())
+      await dbs.get(req.session["dbId"]).configure(config)
       let message = "Connected to database " + config.name
       console.log(message)
       res.write(`{"message": "${message}"}`)
@@ -154,6 +154,11 @@ app.post("/use_db", async (req, res) => {
       } else if (err.code == 5) {
         let message = "Unable to connect to OrientDB. Invalid username/password."
         console.log(message)
+        res.write(`{"message": "${message}"}`)
+      } else {
+        let message = "Unknown error occurred"
+        console.log(message)
+        console.error(err)
         res.write(`{"message": "${message}"}`)
       }
       res.status(500)

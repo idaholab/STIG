@@ -29,7 +29,14 @@ export async function commit(stix: StixObject) {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({data: stix})
-        }).then(() => {return true})
+        }).then(res => res.json()).then(data => {
+            console.log(data)
+            if (data.message) {
+                $(".message-status").html(data.message)
+            }
+            
+            return true
+        })
     } else {
         return false;
     }
@@ -42,6 +49,11 @@ export function db_delete(stix: StixObject) {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({data: stix})
+    }).then(res => res.json()).then(data => {
+        console.log(data)
+        if (data.message) {
+            $(".message-status").html(data.message)
+        }
     })
 }
 
@@ -52,7 +64,17 @@ export async function query_incoming(stix: StixObject) : Promise<StixObject[]> {
             'Content-Type': 'application/json'
         }, 
         body: JSON.stringify({id: stix.id})
-    }).then(response => response.json()).then(response => {return response.data})
+    }).then(response => response.json()).then(response => {
+        if (response.data) {
+            return response.data
+        } else {
+            if (response.message) {
+                $(".message-status").html(response.message)
+            }
+            return undefined
+        }
+        
+    })
 }
 
 export async function query_outgoing(stix: StixObject) : Promise<StixObject[]> {
@@ -62,7 +84,17 @@ export async function query_outgoing(stix: StixObject) : Promise<StixObject[]> {
             'Content-Type': 'application/json'
         }, 
         body: JSON.stringify({id: stix.id})
-    }).then(response => response.json()).then(response => {return response.data})
+    }).then(response => response.json()).then(response => {
+        if (response.data) {
+            return response.data
+        } else {
+            if (response.message) {
+                $(".message-status").html(response.message)
+            }
+            return undefined
+        }
+        
+    })
 }
 
 export async function query(query: string) : Promise<StixObject[]> {
@@ -72,7 +104,18 @@ export async function query(query: string) : Promise<StixObject[]> {
             'Content-Type': 'application/json'
         }, 
         body: JSON.stringify({query: query})
-    }).then(response => response.json()).then(response => {return response.data})
+    }).then(response => response.json()).then(response => {
+        console.log(response)
+        if (response.data) {
+            return response.data
+        } else {
+            if (response.message) {
+                $(".message-status").html(response.message)
+            }
+            return undefined
+        }
+        
+    })
 }
 
 export async function get_diff(stix: StixObject) : Promise<diffpatch.Delta> {
@@ -82,7 +125,16 @@ export async function get_diff(stix: StixObject) : Promise<diffpatch.Delta> {
             'Content-Type': 'application/json'
         }, 
         body: JSON.stringify({data: stix})
-    }).then(response => response.json()).then(response => {return response.data})
+    }).then(response => response.json()).then(response => {
+        if (response.data) {
+            return response.data
+        } else {
+            if (response.message) {
+                $(".message-status").html(response.message)
+            }
+            return undefined
+        }
+    })
 }
 
 export async function check_db() {
