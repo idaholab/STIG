@@ -78,6 +78,8 @@ app.post('/save', (req: Request, res: Response) => {
 
   req.session[name] = data;
 
+  console.log(`Saving cookie ${name}`)
+
   res.status(200);
   res.end();
 })
@@ -118,9 +120,22 @@ app.post("/use_db", async (req, res) => {
   let config: IDatabaseConfigOptions = req.body.config;
   if (config) {
     try {
-      db = new StigDB(config)
+      db = new StigDB()
+      await db.configure(config)
+      let message = "Connected to database " + config.name
+      console.log(message)
+      res.write(`{"message": "${message}"}`)
     } catch (err) {
-      console.error(err)
+      // console.error(err)
+      if (err.code == "ECONNREFUSED") {
+        let message = "Unable to connect to OrientDB. Is it running?"
+        console.log(message)
+        res.write(`{"message": "${message}"}`)
+      } else if (err.code == 5) {
+        let message = "Unable to connect to OrientDB. Invalid username/password."
+        console.log(message)
+        res.write(`{"message": "${message}"}`)
+      }
       res.status(500)
     }
   } else {
@@ -142,7 +157,9 @@ app.post("/commit", (req, res) => {
     try {
       db.updateDB(data)
     } catch (err) {
-      console.error(err)
+      let message = "Error committing to OrientDB."
+      console.log(message)
+      res.write(`{"message": "${message}"}`)
       res.status(500)
     }
   } else {
@@ -172,7 +189,9 @@ app.post("/delete", (req, res) => {
         db.sdoDestroyedUI(data)
       }
     } catch (err) {
-      console.error(err)
+      let message = "Error deleting from DB."
+      console.log(message)
+      res.write(`{"message": "${message}"}`)
       res.status(500)
     }
   } else {
@@ -194,7 +213,9 @@ app.post('/query_incoming', async (req, res) => {
       let stix = await db.traverseNodeIn(id)
       res.write(JSON.stringify({data: stix}))
     } catch (err) {
-      console.error(err)
+      let message = "Error executing query."
+      console.log(message)
+      res.write(`{"message": "${message}"}`)
       res.status(500)
     }
   } else {
@@ -216,7 +237,9 @@ app.post('/query_outgoing', async (req, res) => {
       let stix = await db.traverseNodeOut(id)
       res.write(JSON.stringify({data: stix}))
     } catch (err) {
-      console.error(err)
+      let message = "Error executing query."
+      console.log(message)
+      res.write(`{"message": "${message}"}`)
       res.status(500)
     }
   } else {
@@ -238,7 +261,9 @@ app.post("/query", async (req, res) => {
       let stix = await db.executeQuery(query)
       res.write(JSON.stringify({data: stix}))
     } catch (err) {
-      console.error(err)
+      let message = "Error executing query."
+      console.log(message)
+      res.write(`{"message": "${message}"}`)
       res.status(500)
     }
   } else {
