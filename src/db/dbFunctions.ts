@@ -31,8 +31,9 @@ export async function commit(stix: StixObject) {
             body: JSON.stringify({data: stix})
         }).then(res => res.json()).then(data => {
             console.log(data)
-            if (data.message) {
+            if (data.message != "") {
                 $(".message-status").html(data.message)
+                return false
             }
             
             return true
@@ -51,7 +52,7 @@ export function db_delete(stix: StixObject) {
         body: JSON.stringify({data: stix})
     }).then(res => res.json()).then(data => {
         console.log(data)
-        if (data.message) {
+        if (data.message != "") {
             $(".message-status").html(data.message)
         }
     })
@@ -68,7 +69,7 @@ export async function query_incoming(stix: StixObject) : Promise<StixObject[]> {
         if (response.data) {
             return response.data
         } else {
-            if (response.message) {
+            if (response.message != "") {
                 $(".message-status").html(response.message)
             }
             return undefined
@@ -109,7 +110,7 @@ export async function query(query: string) : Promise<StixObject[]> {
         if (response.data) {
             return response.data
         } else {
-            if (response.message) {
+            if (response.message != "") {
                 $(".message-status").html(response.message)
             }
             return undefined

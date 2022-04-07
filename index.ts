@@ -142,11 +142,11 @@ app.post("/use_db", async (req, res) => {
       dbs.set(req.session["dbId"], new StigDB())
       // console.log(dbs.values())
       await dbs.get(req.session["dbId"]).configure(config)
-      let message = "Connected to database " + config.name
+      let message = "Connected to database " + dbs.get(req.session["dbId"]).odb.name
       console.log(message)
       res.write(`{"message": "${message}"}`)
     } catch (err) {
-      // console.error(err)
+      console.error(err)
       if (err.code == "ECONNREFUSED") {
         let message = "Unable to connect to OrientDB. Is it running?"
         console.log(message)
@@ -155,6 +155,9 @@ app.post("/use_db", async (req, res) => {
         let message = "Unable to connect to OrientDB. Invalid username/password."
         console.log(message)
         res.write(`{"message": "${message}"}`)
+      } else if (err.message == "Unable to create database") {
+        console.log(err.message)
+        res.write(`{"message": "${err.message}"}`)
       } else {
         let message = "Unknown error occurred"
         console.log(message)
@@ -175,21 +178,27 @@ app.post("/use_db", async (req, res) => {
  * 
  * Commits the object to the database
  */
-app.post("/commit", (req, res) => {
+app.post("/commit", async (req, res) => {
   let data = req.body.data;
   // console.log(data)
+  let message = ""
   if (data) {
     try {
-      dbs.get(req.session["dbId"]).updateDB(data)
+      await dbs.get(req.session["dbId"]).updateDB(data)
     } catch (err) {
-      let message = "Error committing to OrientDB."
+      if (err.toString().includes("does not have permission")) {
+        message = "Insufficient permissions."
+      } else {
+        message = "Error committing to DB."
+      }
       console.log(message)
-      res.write(`{"message": "${message}"}`)
-      res.status(500)
+      // res.status(500)
     }
   } else {
     res.status(400)
   }
+
+  res.write(`{"message": "${message}"}`)
 
   res.end()
   
@@ -200,29 +209,37 @@ app.post("/commit", (req, res) => {
  * 
  * Deletes the object from the database
  */
-app.post("/delete", (req, res) => {
+app.post("/delete", async (req, res) => {
   let data = req.body.data;
   console.log(data)
+  let message = ""
   if (data) {
     try {
-      let db = dbs.get(req.session["dbId"])
+      let db = await dbs.get(req.session["dbId"])
       // Check if the STIX object is an edge
       if (data.type === 'relationship') {
         // Delete edge
-        db.sroDestroyedUI(data)
+        await db.sroDestroyedUI(data)
       } else {
         // Delete node
-        db.sdoDestroyedUI(data)
+        await db.sdoDestroyedUI(data)
       }
     } catch (err) {
-      let message = "Error deleting from DB."
+      if (err.toString().includes("does not have permission")) {
+        message = "Insufficient permissions."
+      } else {
+        message = "Error deleting from db."
+        console.error(err)
+      }
       console.log(message)
-      res.write(`{"message": "${message}"}`)
-      res.status(500)
+      // res.status(500)
     }
   } else {
     res.status(400)
   }
+
+
+  res.write(`{"message": "${message}"}`)
 
   res.end()
 })
@@ -234,17 +251,26 @@ app.post("/delete", (req, res) => {
  */
 app.post('/query_incoming', async (req, res) => {
   let id = req.body.id
+  let message = ""
   if (id) {
     try {
       let stix = await dbs.get(req.session["dbId"]).traverseNodeIn(id)
       res.write(JSON.stringify({data: stix}))
     } catch (err) {
-      let message = "Error executing query."
+      if (err.toString().includes("does not have permission")) {
+        message = "Insufficient permissions."
+      } else {
+        message = "Error executing query."
+      }
       console.log(message)
+
       res.write(`{"message": "${message}"}`)
-      res.status(500)
+      // res.status(500)
     }
   } else {
+    message = "Invalid request"
+
+    res.write(`{"message": "${message}"}`)
     res.status(400)
   }
 
@@ -258,19 +284,29 @@ app.post('/query_incoming', async (req, res) => {
  */
 app.post('/query_outgoing', async (req, res) => {
   let id = req.body.id
+  let message = ""
   if (id) {
     try {
       let stix = await dbs.get(req.session["dbId"]).traverseNodeOut(id)
       res.write(JSON.stringify({data: stix}))
     } catch (err) {
-      let message = "Error executing query."
+      if (err.toString().includes("does not have permission")) {
+        message = "Insufficient permissions."
+      } else {
+        message = "Error executing query."
+      }
       console.log(message)
+
       res.write(`{"message": "${message}"}`)
-      res.status(500)
+      // res.status(500)
     }
   } else {
+    message = "Invalid request"
+
+    res.write(`{"message": "${message}"}`)
     res.status(400)
   }
+
 
   res.end()
 })
@@ -282,17 +318,27 @@ app.post('/query_outgoing', async (req, res) => {
  */
 app.post("/query", async (req, res) => {
   let query = req.body.query
+  let message = ""
   if (query) {
+    let message = ""
     try {
       let stix = await dbs.get(req.session["dbId"]).executeQuery(query)
       res.write(JSON.stringify({data: stix}))
     } catch (err) {
-      let message = "Error executing query."
-      console.log(message)
+      if (err.toString().includes("does not have permission")) {
+        message = "Insufficient permissions."
+      } else {
+        message = "Error executing query."
+      }
+
+
       res.write(`{"message": "${message}"}`)
-      res.status(500)
+      console.log(message)
+      // res.status(500)
     }
   } else {
+    message = "Invalid request"
+    res.write(`{"message": "${message}"}`)
     res.status(400)
   }
 
