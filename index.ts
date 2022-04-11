@@ -142,11 +142,11 @@ app.post("/use_db", async (req, res) => {
       dbs.set(req.session["dbId"], new StigDB())
       // console.log(dbs.values())
       await dbs.get(req.session["dbId"]).configure(config)
-      let message = "Connected to database " + dbs.get(req.session["dbId"]).odb.name
+      let message = "Connected to database " + dbs.get(req.session["dbId"]).odb.name + " as user '" + config.username + "'"
       console.log(message)
       res.write(`{"message": "${message}"}`)
     } catch (err) {
-      console.error(err)
+      // console.error(err)
       if (err.code == "ECONNREFUSED") {
         let message = "Unable to connect to OrientDB. Is it running?"
         console.log(message)
@@ -156,8 +156,9 @@ app.post("/use_db", async (req, res) => {
         console.log(message)
         res.write(`{"message": "${message}"}`)
       } else if (err.message == "Unable to create database") {
-        console.log(err.message)
-        res.write(`{"message": "${err.message}"}`)
+        let message = "Database does not exist, and user '" + config.username + "' does not have permission to create one."
+        console.log(message)
+        res.write(`{"message": "${message}"}`)
       } else {
         let message = "Unknown error occurred"
         console.log(message)
