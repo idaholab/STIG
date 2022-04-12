@@ -98,7 +98,7 @@ export class main {
             const cyto_options: cytoscape.CytoscapeOptions = {
                 container: $('#cy')[0],
                 style: [node_style, edge_style, select_node_style, modified_select_style, modified_unselect_style, ...edgehandles_style],
-                // wheelSensitivity: 0.25,
+                wheelSensitivity: 0.25,
             } as cytoscape.CytoscapeOptions;
 
             // set up cytoscape
