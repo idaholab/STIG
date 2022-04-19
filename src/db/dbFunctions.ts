@@ -10,7 +10,14 @@ export function use_db(config: IDatabaseConfigOptions) {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({config: config})
-    }).then(_ => check_db())
+    }).then(res => res.json()).then(data => {
+        console.log(data)
+        if (data.message) {
+            $(".message-status").html(data.message)
+        }
+
+        check_db()
+    })
 }
 
 export async function commit(stix: StixObject) {
