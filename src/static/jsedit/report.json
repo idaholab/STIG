@@ -52,8 +52,7 @@
     "required": [
         "name",
         "object_refs",
-        "published",
-        "report_types"
+        "published"
     ],
     "definitions": {
         "report-type-ov": {
