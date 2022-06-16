@@ -115,30 +115,36 @@ export class StigDB {
     public baseurl: string;
     public _properties_cache: { [k: string]: orientjs.OClassProperty[] } = {};
 
-    constructor(config: IDatabaseConfigOptions) {
-        // ipcRenderer.on('database_reconfigured', (_event: Event, options: IDatabaseConfigOptions) => this.changeConfig(options));
-        // this.diff_dialog = new DiffDialog($('#diff-anchor'));
-        // if (dbname === undefined) {
-        //     this.configure();
-        // } else {
-        //     this.changeConfig(DatabaseConfigurationStorage.Instance.get(dbname));
-        // }
-        this.configure(config);
-        
-    }
+    constructor() {}
 
-    private async configure(config: IDatabaseConfigOptions) {
+    public async configure(config: IDatabaseConfigOptions) {
         this.ojs = await OrientDBClient.connect({host: config.host, port: config.port})
         
-        let dbOptions = {name: config.name, username: config.username, password: config.password}
-        if (await this.ojs.existsDatabase(dbOptions)) {
+        let dbOptions: orientjs.ODatabaseSessionOptions = {name: config.name, username: config.username, password: config.password}
+        try {
             this.odb = await this.ojs.session(dbOptions)
-        } else {
-            this.ojs.createDatabase(dbOptions).then(async () => {
-                this.odb = await this.ojs.session(dbOptions)
-                this.createClasses()
-            })
-            
+            // if (await this.ojs.existsDatabase(dbOptions)) {
+            //     this.odb = await this.ojs.session(dbOptions)
+            // } else {
+                // this.ojs.createDatabase(dbOptions).then(async () => {
+                //     this.odb = await this.ojs.session(dbOptions)
+                //     this.createClasses()
+                // })
+                
+            // }
+        } catch (e) {
+            if (e.type == "com.orientechnologies.orient.core.exception.OStorageDoesNotExistException") {
+                try{
+                    await this.ojs.createDatabase(dbOptions).then(async () => {
+                        this.odb = await this.ojs.session(dbOptions)
+                        this.createClasses()
+                    })
+                } catch (err) {
+                    throw {message: "Unable to create database"}
+                }
+            } else {
+                throw e
+            }
         }
     }
 
@@ -1174,6 +1180,7 @@ export class StigDB {
    */
   public async executeQuery(query: string) : Promise<StixObject[]> {
       try {
+        console.log(`Executing query "${query}"`)
         // Get result
         const result = await this.odb.query(query).all() as StixObject[]
         // Sort into nodes and edges
@@ -1194,8 +1201,8 @@ export class StigDB {
             edgeRids.add(e.in.toString())
             edgeRids.add(e.out.toString())
         }
-        console.log(resEdges.length)
-        console.log(edgeRids)
+        // console.log(resEdges.length)
+        // console.log(edgeRids)
 
         // Get edges
         const edgeQuery = "select * from E where in in :nodes and out in :nodes"
