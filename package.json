@@ -172,7 +172,7 @@
     "jquery-ui-themes": "^1.12.0",
     "jsondiffpatch": "^0.3.7",
     "lodash": "^4.17.13",
-    "moment": "^2.21.0",
+    "moment": "^2.29.4",
     "normalize.css": "^8.0.1",
     "orientjs": "^3.0.3",
     "split.js": "^1.3.5",
