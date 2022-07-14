@@ -4,7 +4,6 @@ RUN mkdir /stig
 WORKDIR /stig
 COPY assets assets
 COPY db_setup db_setup
-COPY dist dist
 COPY images images
 COPY src src
 COPY *.ts ./
