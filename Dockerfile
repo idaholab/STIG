@@ -10,7 +10,7 @@ COPY *.ts ./
 COPY *.json ./
 COPY *.js ./
 COPY *.lock ./
-
+RUN npm config set strict-ssl false
 RUN npm install --quiet
 CMD ["npm", "start"]
  
