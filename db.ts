@@ -120,31 +120,33 @@ export class StigDB {
     public async configure(config: IDatabaseConfigOptions) {
         this.ojs = await OrientDBClient.connect({host: config.host, port: config.port})
         
-        let dbOptions: orientjs.ODatabaseSessionOptions = {name: config.name, username: config.username, password: config.password}
+        let dbOptions = {name: config.name, username: config.username, password: config.password}
+        //let dbOptions: orientjs.ODatabaseSessionOptions = {name: config.name, username: config.username, password: config.password}
         try {
-            this.odb = await this.ojs.session(dbOptions)
-            // if (await this.ojs.existsDatabase(dbOptions)) {
-            //     this.odb = await this.ojs.session(dbOptions)
-            // } else {
-                // this.ojs.createDatabase(dbOptions).then(async () => {
-                //     this.odb = await this.ojs.session(dbOptions)
-                //     this.createClasses()
-                // })
-                
-            // }
-        } catch (e) {
-            if (e.type == "com.orientechnologies.orient.core.exception.OStorageDoesNotExistException") {
-                try{
-                    await this.ojs.createDatabase(dbOptions).then(async () => {
-                        this.odb = await this.ojs.session(dbOptions)
-                        this.createClasses()
-                    })
-                } catch (err) {
-                    throw {message: "Unable to create database"}
-                }
+            // this.odb = await this.ojs.session(dbOptions)
+            if (await this.ojs.existsDatabase(dbOptions)) {
+                this.odb = await this.ojs.session(dbOptions)
             } else {
-                throw e
+                this.ojs.createDatabase(dbOptions).then(async () => {
+                    this.odb = await this.ojs.session(dbOptions)
+                     this.createClasses()
+                })
+           
             }
+        } catch (e) {
+            throw e
+            // if (e.type == "com.orientechnologies.orient.core.exception.OStorageDoesNotExistException") {
+            //     try{
+            //         await this.ojs.createDatabase(dbOptions).then(async () => {
+            //             this.odb = await this.ojs.session(dbOptions)
+            //             this.createClasses()
+            //         })
+            //     } catch (err) {
+            //         throw {message: "Unable to create database"}
+            //     }
+            // } else {
+            //     throw e
+            // }
         }
     }
 
