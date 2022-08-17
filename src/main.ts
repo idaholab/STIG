@@ -12,6 +12,7 @@ import {
     ObservedData,
     Report,
     StixNode,
+    StixRelationship,
     BundleType,
     SRO,
     SDO,
@@ -136,12 +137,68 @@ export class main {
                 window.cycore.elements().select()
             })
             $("#dd-invertSelect").on("click", () => {
-             //console.log("Invert")
+                console.log("Invert")
                 const unselected = window.cycore.$(':unselected');
                 const selected = window.cycore.$(':selected');
                 selected.unselect();
                 unselected.select();
             })
+            $("#dd-viewEmbeddedRels").on("click", () => {
+                // list all objects with property "object_refs"
+                let embedded_rel_types = ["report", "opinion", "grouping", "note", "observed-data"]
+
+                // get all current objects
+                let nodes = window.cycore.$(':visible')
+                nodes = nodes.union(nodes.connectedEdges());
+                //let new_rels = []
+
+                // if an object has "object_refs" property, create relationships for all reference objects
+                nodes.each((ele) => {
+                    let current_object = ele.data('raw_data');
+                    if (current_object !== undefined && embedded_rel_types.includes(current_object['type']) && current_object['object_refs']) {
+                        console.log(current_object["object_refs"])
+                        console.log(current_object["id"])
+                        for (var ref_id of current_object["object_refs"]) {
+                            console.log(ref_id)
+
+                            // Step 1.
+                            let rel_id = 'relationship--' + uuid.v4();
+                            let rel_created = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
+
+                            const raw_data: Relationship = {
+                                // get source node
+                                source_ref: current_object["id"],
+                                // get target node
+                                target_ref: ref_id,
+                                type: 'relationship',
+                                created: rel_created,
+                                id: rel_id,
+                                relationship_type: 'related-to',
+                            };
+                            
+                            const opts: stix.StixRelationshipData = {
+                                raw_data: raw_data,
+                                type: 'relationship',
+                                id: rel_id,
+                                created: rel_created,
+                                source: current_object["id"],
+                                target: ref_id,
+                                label: 'related-to'
+                            };
+
+                            console.log(opts)
+
+                            // Step 2.
+                            let rel_node = new StixRelationship(opts, 'GUI')
+
+                            // Step 3.
+                            cy.add(rel_node);
+                        }
+                    } 
+                    //&& ele.data('raw_data').object_refs
+                });
+            })
+
 
             // EXPORT
             $("#dd-exportSelected").on("click", () => {
