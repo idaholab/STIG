@@ -120,3 +120,22 @@ export class StixRelationship implements IStixRelationship {
         this.data.saved = this.saved;
     }
 }
+
+export interface VisualEdgeData extends cytoscape.EdgeDataDefinition {
+    raw_data: string;
+    target: Identifier;
+    source: Identifier;
+    id: string;
+}
+
+export interface IVisualEdge extends cytoscape.EdgeDefinition {
+    data: VisualEdgeData;
+}
+
+export class VisualEdge implements IVisualEdge {
+    public data: VisualEdgeData;
+
+    constructor(the_data: VisualEdgeData) {
+        this.data = the_data;
+    }
+}

@@ -154,6 +154,7 @@ export class main {
 
                 // if an object has "object_refs" property, create relationships for all reference objects
                 nodes.each((ele) => {
+                    console.log(ele)
                     let current_object = ele.data('raw_data');
                     if (current_object !== undefined && embedded_rel_types.includes(current_object['type']) && current_object['object_refs']) {
                         console.log(current_object["object_refs"])
@@ -162,37 +163,45 @@ export class main {
                             console.log(ref_id)
 
                             // Step 1.
-                            let rel_id = 'relationship--' + uuid.v4();
-                            let rel_created = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
+                            let rel_id = uuid.v4();
+                            //let rel_created = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
 
-                            const raw_data: Relationship = {
-                                // get source node
-                                source_ref: current_object["id"],
-                                // get target node
-                                target_ref: ref_id,
-                                type: 'relationship',
-                                created: rel_created,
+                            // const raw_data: Relationship = {
+                            //     // get source node
+                            //     source_ref: current_object["id"],
+                            //     // get target node
+                            //     target_ref: ref_id,
+                            //     type: 'relationship',
+                            //     created: rel_created,
+                            //     id: rel_id,
+                            //     relationship_type: 'related-to',
+                            // };
+
+                            const opts: stix.VisualEdgeData = {
+                                raw_data: "visual_edge",
                                 id: rel_id,
-                                relationship_type: 'related-to',
-                            };
-                            
-                            const opts: stix.StixRelationshipData = {
-                                raw_data: raw_data,
-                                type: 'relationship',
-                                id: rel_id,
-                                created: rel_created,
-                                source: current_object["id"],
                                 target: ref_id,
-                                label: 'related-to'
-                            };
+                                source: current_object["id"]
+                            }
+                            
+                            // const opts: stix.StixRelationshipData = {
+                            //     raw_data: raw_data,
+                            //     type: 'relationship',
+                            //     id: rel_id,
+                            //     created: rel_created,
+                            //     source: current_object["id"],
+                            //     target: ref_id,
+                            //     label: 'related-to'
+                            // };
 
-                            console.log(opts)
+                            // console.log(opts)
 
                             // Step 2.
-                            let rel_node = new StixRelationship(opts, 'GUI')
+                            let rel_node = new stix.VisualEdge(opts)
 
                             // Step 3.
                             cy.add(rel_node);
+                            // cy.add({data: {id: rel_id, source: current_object["id"], target: ref_id}});
                         }
                     } 
                     //&& ele.data('raw_data').object_refs
@@ -666,7 +675,10 @@ export class main {
 
             // Handler for when an edge is created via the graph editor
             cy.on('add', 'edge', (evt: cytoscape.EventObject) => {
+                console.log("in here")
+
                 let my_map = new Map();
+
                 my_map.set('attack-pattern', 'uses');
                 my_map.set('campaign', 'uses');
                 my_map.set('course-of-action', 'mitigates');
@@ -688,12 +700,13 @@ export class main {
 
                 const input_data = ele.data('raw_data');
                 if (input_data === undefined) {
-
+                    console.log("in here as well")
                     let src_obj_type = ele.source().data('raw_data').type;
                     let default_relationship = "";
                     if (my_map.has(src_obj_type)) {
                         default_relationship = my_map.get(src_obj_type);
-                    } else {
+                    } 
+                    else {
                         default_relationship = "related-to";
                     }
 
