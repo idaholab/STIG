@@ -16,7 +16,8 @@ import {
 import { 
     StixRelationshipData, StixRelationship, 
     DataSourceType, IStixNode, StixNode, 
-    node_img, StixNodeData } from './stixnode';
+    node_img, StixNodeData, VisualEdgeData, 
+    VisualEdge } from './stixnode';
 
 export {
     types, objects, BundleType, Relationship, 
@@ -26,4 +27,5 @@ export {
     StixRelationship, DataSourceType, IStixNode, 
     StixNode, SDO, SRO, Indicator,
     ObservedData, Report, node_img, StixNodeData,
+    VisualEdgeData, VisualEdge
 };

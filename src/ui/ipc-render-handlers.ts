@@ -50,7 +50,7 @@ export async function commit_all() {
             // This adds it if it isn't there already.
             // TODO: It might be better to just add the spec_version when an object is created.
             if (!stix_obj.spec_version) {
-                stix_obj.spec_version = 2.1
+                stix_obj.spec_version = "2.1"
             }
 
             if (await commit(stix_obj)) {
@@ -75,7 +75,7 @@ export async function commit_all() {
             // This adds it if it isn't there already.
             // TODO: It might be better to just add the spec_version when an object is created.
             if (!stix_obj.spec_version) {
-                stix_obj.spec_version = 2.1
+                stix_obj.spec_version = "2.1"
             }
 
             // Don't commit edges connected to invalid nodes
