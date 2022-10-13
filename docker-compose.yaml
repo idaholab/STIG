@@ -1,0 +1,29 @@
+version: "3.3"
+services:
+  npm:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./src:/stig/src
+  orientdb:
+    image: orientdb:3.0.42
+    ports:
+      - '2424:2424'
+      - '2480:2480'
+    volumes:
+      - config:/orientdb/config
+      - databases:/orientdb/databases
+      - backup:/orientdb/backup
+    environment:
+      ORIENTDB_ROOT_PASSWORD: 'toor'
+volumes:
+  config:
+  databases:
+  backup:
+  
+    
+      
+    

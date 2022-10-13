@@ -1,5 +1,7 @@
 FROM node:lts-alpine3.13
 COPY cert.crt /cert.crt
+COPY cert.crt /usr/local/share/ca-certificates/cert.crt
+RUN cat /usr/local/share/ca-certificates/cert.crt >> /etc/ssl/certs/ca-certificates.crt
 RUN mkdir /stig
 # This is likely excessive, we may wish to slim down the needed files at some point
 WORKDIR /stig
@@ -11,7 +13,7 @@ COPY *.ts ./
 COPY *.json ./
 COPY *.js ./
 COPY *.lock ./
-RUN npm config -g set cafile /cert.crt
+RUN npm config set strict-ssl false
 RUN npm install --quiet
 CMD ["npm", "start"]
  
