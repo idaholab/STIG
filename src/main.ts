@@ -53,6 +53,7 @@ import { QueryHistoryDialog } from './ui/queryHistoryWidget';
 import { DiffDialog } from './ui/diff-dialog';
 import tippy from 'tippy.js'
 import { openDatabaseUpload } from './ui/database-upload-widget';
+import { openConnectTaxii } from './ui/connect-taxii-widget';
 import { openBundleExport } from './ui/export -bundle-widget';
 
 declare global {
@@ -360,6 +361,9 @@ export class main {
             })
             $("#databaseUpload").on("click", () => {
                 openDatabaseUpload();
+            })
+            $("#connectTaxii").on("click", () => {
+                openConnectTaxii();
             })
 
 
