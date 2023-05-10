@@ -7,7 +7,7 @@ ALL RIGHTS RESERVED
 import { use_db } from "../db/dbFunctions";
 import { DatabaseConfigurationStorage } from "../storage";
 import { IDatabaseConfigOptions } from '../storage/database-configuration-storage';
-//const { spawn } = require('child_process');
+import { spawn } from 'child_process';
 
 export function openConnectTaxii(key?: string) {
     const dbdialog = new NewTaxiiConnection($('#connect-taxii-anchor'), key);
@@ -154,7 +154,7 @@ class NewTaxiiConnection {
 
         console.log(commandList)
 
-        spawn('python3', commandList)
+        spawn('python', commandList)
         // const options: IDatabaseConfigOptions = {
         //     host: $("#host").val() as string,
         //     port: $("#port").val() as number,
