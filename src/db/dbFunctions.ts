@@ -1,6 +1,6 @@
 import * as diffpatch from "jsondiffpatch";
 import { StixObject } from "../stix";
-import { IDatabaseConfigOptions } from "../storage/database-configuration-storage";
+import { IDatabaseConfigOptions, TaxiiParams } from "../storage/database-configuration-storage";
 import { schema } from "./schema"
 
 export function use_db(config: IDatabaseConfigOptions) {
@@ -135,6 +135,23 @@ export async function get_diff(stix: StixObject) : Promise<diffpatch.Delta> {
             }
             return undefined
         }
+    })
+}
+
+export function get_taxii(params: TaxiiParams) {
+    fetch("/taxii", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({params: params})
+    }).then(res => res.json()).then(data => {
+        console.log(data)
+        if (data.message) {
+            $(".message-status").html(data.message)
+        }
+
+        //check_db()
     })
 }
 
