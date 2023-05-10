@@ -49,6 +49,9 @@
             "syntax-async-functions"
         ]
     },
+    "browser":{
+        "child_process": false
+    }, 
     "config": {
         "forge": {
             "make_targets": {
