@@ -1,8 +1,10 @@
 import express, { NextFunction, response } from 'express';
 import { Request, Response } from 'express'; 
-import { IDatabaseConfigOptions } from './src/storage/database-configuration-storage';
+import { IDatabaseConfigOptions, TaxiiParams } from './src/storage/database-configuration-storage';
 import session from 'express-session';
 import { StigDB } from './db';
+import { exec } from 'child_process';
+//const spawn = require('child_process')
 const bodyParser = require('body-parser')
 // import path from 'path';
 const app = express();
@@ -357,6 +359,67 @@ app.post('/diff', async (req, res) => {
     try {
       const diff = await dbs.get(req.session["dbId"]).getDiff(node)
       res.write(JSON.stringify({data: diff}))
+    } catch (e) {
+      res.status(500)
+    }
+  } else {
+    res.status(400)
+  }
+
+  res.end()
+})
+
+/**************
+ * Taxii
+ * 
+ * Runs python code
+ */
+app.post('/taxii', async (req, res) => {
+  let params: TaxiiParams = req.body.params;
+  if (params) {
+    try {
+      // const diff = await dbs.get(req.session["dbId"]).getDiff(node)
+      // res.write(JSON.stringify({data: diff}))
+      //console.log(params)
+
+      let pyArgs = 'python3 taxii-client.py'
+      let test = ['taxii-client.py']
+      if (params.url != "") {
+          pyArgs += ' -u ' + params.url
+      }
+      if (params.apiroot_name) {
+          pyArgs += ' -a ' + params.apiroot_name
+      } 
+      if (params.collection_id) {
+          pyArgs += ' -c ' + params.collection_id
+      }
+      if (params.username) {
+          pyArgs += ' -n ' + params.username
+      }
+      if (params.password) {
+          pyArgs += ' -p ' + params.password
+      }
+
+      console.log(pyArgs)
+      //console.log("trying")
+
+      exec(pyArgs, (error, stdout, stderr) => {
+        if (error) {
+          console.log(`error: ${error.message}`);
+        }
+        else if (stderr) {
+          console.log(`stderr: ${stderr}`);
+        }
+        else {
+          console.log(stdout);
+        }
+      })
+
+      // let t = spawn("python3", test)
+      // t.stdout.on('data', (data) => {
+      //   console.log(`stdout: ${data}`);
+      // });
+      //console.log("lets see: ")
     } catch (e) {
       res.status(500)
     }
