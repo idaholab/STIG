@@ -1,8 +1,3 @@
-# f = open("test.txt", "w")
-# f.write("Hello world!")
-# f.close()
-
-# print("Hello, world")
 from taxii2client.v21 import Server, ApiRoot
 import sys, getopt
 import json

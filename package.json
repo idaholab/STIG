@@ -49,9 +49,9 @@
             "syntax-async-functions"
         ]
     },
-    "browser":{
+    "browser": {
         "child_process": false
-    }, 
+    },
     "config": {
         "forge": {
             "make_targets": {
@@ -160,6 +160,7 @@
         "font-awesome": "^4.7",
         "fontawesome": "^4.7.2",
         "foundation-sites": "^6.4.4-rc1",
+        "fs": "^0.0.1-security",
         "http-status-codes": "^1.3.0",
         "jquery-ui-themes": "^1.12.0",
         "jsondiffpatch": "^0.3.7",
