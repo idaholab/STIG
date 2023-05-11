@@ -9,6 +9,8 @@ import { DatabaseConfigurationStorage } from "../storage";
 import { IDatabaseConfigOptions, TaxiiParams } from '../storage/database-configuration-storage';
 import { BundleType, StixObject } from "../stix";
 import { commit } from "../db/dbFunctions";
+//const fs = require('fs');
+//import taxiiJson from '../../temp_stix_taxii.json';
 //var spawn = require('child_process').spawn;
 
 export function openConnectTaxii(key?: string) {
@@ -70,7 +72,11 @@ class NewTaxiiConnection {
     }
 
     private saveData() {
+
+        // Create File
+
     
+        // Get user Taxii input
         const params: TaxiiParams = {
             url: $("#url").val() as string,
             apiroot_name: $("#apiroot_name").val() as string,
@@ -79,47 +85,54 @@ class NewTaxiiConnection {
             password: $("#password").val() as string,
         };
 
-        //console.log(params)
+        // var parts = [
+        //     new Blob([])
+        // ]
+        // const f = new File([""], 'temp_stix_taxii.json')
+
+        console.log(params)
         get_taxii(params)
 
-        const f = '../../temp_stix_taxii.json'
-        const r = new FileReader();
+        // var objects = JSON.parse(fs.readFileSync('temp_stix_taxii.json', 'utf-8'))
+        // console.log(objects)
 
-        r.onload = (_e: Event) => {
-            const bundle : BundleType = JSON.parse(r.result as string)  ////////////////////////// skip making a bundle, go straght to objects. Parse JSON objects
-            const objects : StixObject[] = bundle.objects as StixObject[]
-            const relationships : StixObject[] = []
-            var numErrors = 0
-            var i = 0
-            $('.message-status').html(`Committing ${objects.length} to the database...`);
-            for (const obj of objects) {
-                $('.message-status').html(`Committing object ${i++}/${objects.length} ...`);
-                // Save relationships for later
-                if (obj.type == "relationship" || obj.type == "sighting") {
-                    relationships.push(obj)
-                } else {
-                    // Commit everything else
-                    console.log(obj)
-                    let success = commit(obj)
-                    if (!success) {
-                        numErrors++
-                    }
-                }
-            }
-            for (const rel of relationships) {
-                console.log(rel)
-                $('.message-status').html(`Committing object ${i++}/${objects.length} ...`);
-                let success = commit(rel)
-                if (!success) {
-                    numErrors++
-                }
-            }
+        // const r = new FileReader();
+
+        // r.onload = (_e: Event) => {
+        //     //const bundle : BundleType = JSON.parse(r.result as string)  ////////////////////////// skip making a bundle, go straght to objects. Parse JSON objects
+        //     const objects : StixObject[] = JSON.parse(r.result as string).objects as StixObject[]
+        //     const relationships : StixObject[] = []
+        //     var numErrors = 0
+        //     var i = 0
+        //     $('.message-status').html(`Committing ${objects.length} to the database...`);
+        //     for (const obj of objects) {
+        //         $('.message-status').html(`Committing object ${i++}/${objects.length} ...`);
+        //         // Save relationships for later
+        //         if (obj.type == "relationship" || obj.type == "sighting") {
+        //             relationships.push(obj)
+        //         } else {
+        //             // Commit everything else
+        //             console.log(obj)
+        //             let success = commit(obj)
+        //             if (!success) {
+        //                 numErrors++
+        //             }
+        //         }
+        //     }
+        //     for (const rel of relationships) {
+        //         console.log(rel)
+        //         $('.message-status').html(`Committing object ${i++}/${objects.length} ...`);
+        //         let success = commit(rel)
+        //         if (!success) {
+        //             numErrors++
+        //         }
+        //     }
         
-            $('.message-status').html(`Successfully committed ${objects.length - numErrors} out of ${objects.length} objects.`);
+        //     $('.message-status').html(`Successfully committed ${objects.length - numErrors} out of ${objects.length} objects.`);
 
-            this.close()
-        };
-        r.readAsText(f);
+        //     this.close()
+        // };
+        // r.readAsText(f);
       
     }
 

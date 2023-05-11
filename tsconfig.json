@@ -3,6 +3,7 @@
         "sourceMap":true,
         "module": "CommonJS",
         "target": "ES6",
+        "resolveJsonModule": true,
         "esModuleInterop": true
     }
 }
