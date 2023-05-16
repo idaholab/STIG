@@ -138,17 +138,22 @@ export async function get_diff(stix: StixObject) : Promise<diffpatch.Delta> {
     })
 }
 
-export function get_taxii(params: TaxiiParams) {
-    fetch("/taxii", {
+export async function get_taxii(params: TaxiiParams) : Promise<StixObject[]> {
+    return await fetch("/taxii", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({params: params})
-    }).then(res => res.json()).then(data => {
-        console.log(data)
-        if (data.message) {
-            $(".message-status").html(data.message)
+    }).then(response => response.json()).then(response => {
+        //console.log(data)
+        if (response.taxii) {
+            return JSON.parse(response.taxii)
+        } else {
+            if (response.message) {
+                $(".message-status").html(response.message)
+            }
+            return undefined
         }
 
         //check_db()

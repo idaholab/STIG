@@ -71,7 +71,7 @@ class NewTaxiiConnection {
         $('#user_password').val(params.password);
     }
 
-    private saveData() {
+    private async saveData() {
 
         // Create File
 
@@ -90,49 +90,59 @@ class NewTaxiiConnection {
         // ]
         // const f = new File([""], 'temp_stix_taxii.json')
 
-        console.log(params)
-        get_taxii(params)
+        // console.log(params)
+
+        
+        
+      
+        
 
         // var objects = JSON.parse(fs.readFileSync('temp_stix_taxii.json', 'utf-8'))
         // console.log(objects)
 
-        // const r = new FileReader();
+     
+        let objects = await get_taxii(params) //await
 
-        // r.onload = (_e: Event) => {
-        //     //const bundle : BundleType = JSON.parse(r.result as string)  ////////////////////////// skip making a bundle, go straght to objects. Parse JSON objects
-        //     const objects : StixObject[] = JSON.parse(r.result as string).objects as StixObject[]
-        //     const relationships : StixObject[] = []
-        //     var numErrors = 0
-        //     var i = 0
-        //     $('.message-status').html(`Committing ${objects.length} to the database...`);
-        //     for (const obj of objects) {
-        //         $('.message-status').html(`Committing object ${i++}/${objects.length} ...`);
-        //         // Save relationships for later
-        //         if (obj.type == "relationship" || obj.type == "sighting") {
-        //             relationships.push(obj)
-        //         } else {
-        //             // Commit everything else
-        //             console.log(obj)
-        //             let success = commit(obj)
-        //             if (!success) {
-        //                 numErrors++
-        //             }
-        //         }
-        //     }
-        //     for (const rel of relationships) {
-        //         console.log(rel)
-        //         $('.message-status').html(`Committing object ${i++}/${objects.length} ...`);
-        //         let success = commit(rel)
-        //         if (!success) {
-        //             numErrors++
-        //         }
-        //     }
-        
-        //     $('.message-status').html(`Successfully committed ${objects.length - numErrors} out of ${objects.length} objects.`);
 
-        //     this.close()
-        // };
-        // r.readAsText(f);
+        if (objects) {
+            console.log("try here: ", objects)
+        } else {
+            console.log("tried")
+        }
+
+
+
+        const relationships : StixObject[] = []
+        var numErrors = 0
+        var i = 0
+        $('.message-status').html(`Committing ${objects.length} to the database...`);
+        for (const obj of objects) {
+            $('.message-status').html(`Committing object ${i++}/${objects.length} ...`);
+            // Save relationships for later
+            if (obj.type == "relationship" || obj.type == "sighting") {
+                relationships.push(obj)
+            } else {
+                // Commit everything else
+                console.log(obj)
+                let success = commit(obj)
+                if (!success) {
+                    numErrors++
+                }
+            }
+        }
+        for (const rel of relationships) {
+            console.log(rel)
+            $('.message-status').html(`Committing object ${i++}/${objects.length} ...`);
+            let success = commit(rel)
+            if (!success) {
+                numErrors++
+            }
+        }
+    
+        $('.message-status').html(`Successfully committed ${objects.length - numErrors} out of ${objects.length} objects.`);
+
+        this.close()
+
       
     }
 

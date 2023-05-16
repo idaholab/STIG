@@ -1,6 +1,20 @@
 from taxii2client.v21 import Server, ApiRoot
-import sys, getopt
-import json
+import sys, getopt, json
+from flask import Flask, request
+
+# app = Flask(__name__)
+
+# @app.route('/taxiipy', methods = ['POST'])
+
+# def get_taxii_objs():
+
+    # data = request.get_json()
+    # print(data)
+
+    # ls = data['array']
+    # result = sum(ls)
+
+    # return json.dumps({"objects":objects})
 
 #Initialize user input variables
 url = ""
@@ -27,7 +41,7 @@ for opt, arg in opts:
         password = arg
 
 err = ""
-user_objs = []
+taxii_objs = []
 
 # URL check
 if url == "":
@@ -65,14 +79,19 @@ if collection_id != "":
                 continue
 
         user_col = col[collection_id]
-        user_objs = user_col.get_objects()
-        #print(user_objs)
+        taxii_objs = user_col.get_objects()['objects']
+        #print(taxii_objs)
     
 else:
     err = "Collection ID cannot be blank"
 
 
-with open('temp_stix_taxii.json', 'w', encoding='utf-8') as f:
-    json.dump(user_objs, f, ensure_ascii=False, indent=4)
-f.close()
-#print(err)
+print(json.dumps(taxii_objs))
+
+# with open('temp_stix_taxii.json', 'w', encoding='utf-8') as f:
+#     json.dump(taxii_objs, f, ensure_ascii=False, indent=4)
+# f.close()
+# print(err)
+
+# if __name__ == "__main__":
+#     app.run(port=4000)
