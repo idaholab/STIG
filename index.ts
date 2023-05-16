@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import { IDatabaseConfigOptions, TaxiiParams } from './src/storage/database-configuration-storage';
 import session from 'express-session';
 import { StigDB } from './db';
-import { exec } from 'child_process';
+import { execSync, spawnSync } from 'child_process';
 //const spawn = require('child_process')
 const bodyParser = require('body-parser')
 // import path from 'path';
@@ -383,7 +383,7 @@ app.post('/taxii', async (req, res) => {
       //console.log(params)
 
       let pyArgs = 'python3 taxii-client.py'
-      let test = ['taxii-client.py']
+      //let test = ['taxii-client.py']
       if (params.url != "") {
           pyArgs += ' -u ' + params.url
       }
@@ -400,20 +400,16 @@ app.post('/taxii', async (req, res) => {
           pyArgs += ' -p ' + params.password
       }
 
-      console.log(pyArgs)
+      //console.log(pyArgs)
       //console.log("trying")
 
-      exec(pyArgs, (error, stdout, stderr) => {
-        if (error) {
-          console.log(`error: ${error.message}`);
-        }
-        else if (stderr) {
-          console.log(`stderr: ${stderr}`);
-        }
-        else {
-          console.log(stdout);
-        }
-      })
+      var taxiiBuf = execSync(pyArgs)
+      const taxiiStr = taxiiBuf.toString()
+
+      //console.log("this is a test", taxiiStr)
+      //console.log("this is a json str: ", JSON.stringify(taxiiStr))
+
+      res.write(JSON.stringify({taxii: taxiiStr}))
 
       // let t = spawn("python3", test)
       // t.stdout.on('data', (data) => {
