@@ -49,9 +49,10 @@ if url == "":
 
 # Collection ID check
 if collection_id != "":
+    # One Api Root, one collection
     if apiroot_name != "":
         api_url = url + "/" + apiroot_name
-        print(api_url)
+        #print(api_url)
         api_root = ApiRoot(url=api_url, user='admin', password='admin')
 
         col = {}
@@ -63,7 +64,8 @@ if collection_id != "":
             print('')
 
         collection = col[collection_id]
-        print(collection.get_objects())
+        #print(collection.get_objects())
+    # All Api Roots, one collection
     else:
         server = Server(url, user='admin', password='admin')
 
@@ -75,15 +77,46 @@ if collection_id != "":
                 for collection in collections:
                     col[collection.id] = collection
             except:
-                print('')
+                #print('')
                 continue
 
         user_col = col[collection_id]
         taxii_objs = user_col.get_objects()['objects']
-        #print(taxii_objs)
-    
+        #print(taxii_objs) 
+
+# One Api Root, all collections
+elif apiroot_name != "":
+    api_url = url + "/" + apiroot_name
+    #print(api_url)
+    api_root = ApiRoot(url=api_url, user='admin', password='admin')
+
+    col = {}
+
+    try:
+        for collections in api_root.collections:
+            if collections:
+                for c in collections:
+                    if c.can_read and len(c.get_objects()) > 0:
+                        objs = c.get_objects()['objects']
+                        taxii_objs += objs
+    except:
+        print('')
+
+    #collection = col[collection_id]
+    #print(collection.get_objects())
+
+# All Api Roots, all collections
 else:
-    err = "Collection ID cannot be blank"
+    server = Server(url, user='admin', password='admin')
+    api_roots = server.api_roots
+    for a in api_roots:
+        cols = a.collections
+        if cols:
+            for c in cols:
+                if c.can_read and len(c.get_objects()) > 0:
+                    objs = c.get_objects()['objects']
+                    taxii_objs += objs
+    #print(objs)
 
 
 print(json.dumps(taxii_objs))
@@ -91,7 +124,7 @@ print(json.dumps(taxii_objs))
 # with open('temp_stix_taxii.json', 'w', encoding='utf-8') as f:
 #     json.dump(taxii_objs, f, ensure_ascii=False, indent=4)
 # f.close()
-# print(err)
+print(err)
 
 # if __name__ == "__main__":
 #     app.run(port=4000)
