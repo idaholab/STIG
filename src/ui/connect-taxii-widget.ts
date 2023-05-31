@@ -20,15 +20,15 @@ export function openConnectTaxii(key?: string) {
 
 const body = `    <p id="label">URL:</p>
 <p>
-    <input type="text" id="url" value="http://localhost:5000/taxii2">
+    <input type="text" id="url" value="http://0.0.0.0:5000/taxii2">
     <p id="label">API Root Name:</p>
     <input type="text" id="apiroot_name" value="">
     <p id="label">Collection ID:</p>
     <input type="text" id="collection_id" value="">
     <p id="label">Username:</p>
-    <input type="text" id="username" value="">
+    <input type="text" id="tax_username" value="">
     <p id="label">Password:</p>
-    <input type="password" id="password" value="">
+    <input type="password" id="tax_password" value="">
 </p>
 `;
 
@@ -77,12 +77,12 @@ class NewTaxiiConnection {
 
     
         // Get user Taxii input
-        const params: TaxiiParams = {
+        const tax: TaxiiParams = {
             url: $("#url").val() as string,
             apiroot_name: $("#apiroot_name").val() as string,
             collection_id: $("#collection_id").val() as string,
-            username: $("#username").val() as string,
-            password: $("#password").val() as string,
+            username: $("#tax_username").val() as string,
+            password: $("#tax_password").val() as string,
         };
 
         // var parts = [
@@ -101,7 +101,7 @@ class NewTaxiiConnection {
         // console.log(objects)
 
      
-        let objects = await get_taxii(params) //await
+        let objects = await get_taxii(tax) //await
 
 
         if (objects) {

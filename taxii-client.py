@@ -24,7 +24,7 @@ user = ""
 password = ""
 
 #Arguments
-opts, args = getopt.getopt(sys.argv[1:],"hu:a:c:np",["url=","apiroot=","collection=","username=","password="])
+opts, args = getopt.getopt(sys.argv[1:],"hu:a:c:n:p:",["url=","apiroot=","collection=","username=","password="])
 for opt, arg in opts:
     if opt in ("-h", "--help"):
         print ('stig-client.py -u <url> -a <apiroot name> -c <collection id> -n <username> -p <password>')
@@ -40,6 +40,10 @@ for opt, arg in opts:
     elif opt in ("-p", "--password"):
         password = arg
 
+# print(url)
+# print(user)
+# print(password)
+
 err = ""
 taxii_objs = []
 
@@ -53,7 +57,7 @@ if collection_id != "":
     if apiroot_name != "":
         api_url = url + "/" + apiroot_name
         #print(api_url)
-        api_root = ApiRoot(url=api_url, user='admin', password='admin')
+        api_root = ApiRoot(url=api_url, user=user, password=password)
 
         col = {}
 
@@ -67,7 +71,7 @@ if collection_id != "":
         #print(collection.get_objects())
     # All Api Roots, one collection
     else:
-        server = Server(url, user='admin', password='admin')
+        server = Server(url, user=user, password=password)
 
         col = {}
 
@@ -88,7 +92,7 @@ if collection_id != "":
 elif apiroot_name != "":
     api_url = url + "/" + apiroot_name
     #print(api_url)
-    api_root = ApiRoot(url=api_url, user='admin', password='admin')
+    api_root = ApiRoot(url=api_url, user=user, password=password)
 
     col = {}
 
@@ -107,7 +111,7 @@ elif apiroot_name != "":
 
 # All Api Roots, all collections
 else:
-    server = Server(url, user='admin', password='admin')
+    server = Server(url, user=user, password=password)
     api_roots = server.api_roots
     for a in api_roots:
         cols = a.collections

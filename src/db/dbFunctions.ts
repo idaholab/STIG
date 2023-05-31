@@ -138,13 +138,13 @@ export async function get_diff(stix: StixObject) : Promise<diffpatch.Delta> {
     })
 }
 
-export async function get_taxii(params: TaxiiParams) : Promise<StixObject[]> {
+export async function get_taxii(tax: TaxiiParams) : Promise<StixObject[]> {
     return await fetch("/taxii", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({params: params})
+        body: JSON.stringify({params: tax})
     }).then(response => response.json()).then(response => {
         //console.log(data)
         if (response.taxii) {
