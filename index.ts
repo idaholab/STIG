@@ -375,8 +375,8 @@ app.post('/diff', async (req, res) => {
  * Runs python code
  */
 app.post('/taxii', async (req, res) => {
-  let params: TaxiiParams = req.body.params;
-  if (params) {
+  let tax: TaxiiParams = req.body.params;
+  if (tax) {
     try {
       // const diff = await dbs.get(req.session["dbId"]).getDiff(node)
       // res.write(JSON.stringify({data: diff}))
@@ -384,23 +384,23 @@ app.post('/taxii', async (req, res) => {
 
       let pyArgs = 'python3 taxii-client.py'
       //let test = ['taxii-client.py']
-      if (params.url != "") {
-          pyArgs += ' -u ' + params.url
+      if (tax.url != "") {
+          pyArgs += ' -u ' + tax.url
       }
-      if (params.apiroot_name) {
-          pyArgs += ' -a ' + params.apiroot_name
+      if (tax.apiroot_name) {
+          pyArgs += ' -a ' + tax.apiroot_name
       } 
-      if (params.collection_id) {
-          pyArgs += ' -c ' + params.collection_id
+      if (tax.collection_id) {
+          pyArgs += ' -c ' + tax.collection_id
       }
-      if (params.username) {
-          pyArgs += ' -n ' + params.username
+      if (tax.username) {
+          pyArgs += ' -n ' + tax.username
       }
-      if (params.password) {
-          pyArgs += ' -p ' + params.password
+      if (tax.password) {
+          pyArgs += ' -p ' + tax.password
       }
 
-      //console.log(pyArgs)
+      console.log(pyArgs)
       //console.log("trying")
 
       var taxiiBuf = execSync(pyArgs)
