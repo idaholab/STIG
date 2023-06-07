@@ -204,7 +204,7 @@ export function checkProps(object : StixObject): Boolean {
         if (prop.name === "id_") continue;
         
         if (object[prop.name] === undefined) {
-            console.log("Prop not found on object")
+            console.log(prop.name, " not found on object")
 
             // Return false to indicate that this object is invalid
             return false

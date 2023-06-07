@@ -192,7 +192,8 @@ app.post("/commit", async (req, res) => {
       if (err.toString().includes("does not have permission")) {
         message = "Insufficient permissions."
       } else {
-        message = "Error committing to DB."
+        //message = "Error committing to DB."
+        message = "DB error here: " + err.toString()
       }
       console.log(message)
       // res.status(500)
@@ -406,16 +407,8 @@ app.post('/taxii', async (req, res) => {
       var taxiiBuf = execSync(pyArgs)
       const taxiiStr = taxiiBuf.toString()
 
-      //console.log("this is a test", taxiiStr)
-      //console.log("this is a json str: ", JSON.stringify(taxiiStr))
-
       res.write(JSON.stringify({taxii: taxiiStr}))
 
-      // let t = spawn("python3", test)
-      // t.stdout.on('data', (data) => {
-      //   console.log(`stdout: ${data}`);
-      // });
-      //console.log("lets see: ")
     } catch (e) {
       res.status(500)
     }

@@ -34,7 +34,7 @@
                 "type": "string",
                 "$ref": "#/definitions/report-type-ov"
             },
-            "minItems": 1
+            "minItems": 0
         },
         "published": {
             "type": "string",

@@ -72,9 +72,6 @@ class NewTaxiiConnection {
     }
 
     private async saveData() {
-
-        // Create File
-
     
         // Get user Taxii input
         const tax: TaxiiParams = {
@@ -85,33 +82,20 @@ class NewTaxiiConnection {
             password: $("#tax_password").val() as string,
         };
 
-        // var parts = [
-        //     new Blob([])
-        // ]
-        // const f = new File([""], 'temp_stix_taxii.json')
-
-        // console.log(params)
-
-        
-        
-      
-        
-
-        // var objects = JSON.parse(fs.readFileSync('temp_stix_taxii.json', 'utf-8'))
-        // console.log(objects)
-
-     
+        // Call backend taxii logic
         let objects = await get_taxii(tax) //await
 
-
+        // Debugging
         if (objects) {
+            $('.message-status').html(`${objects.length} TAXII objects found.`);
             console.log("try here: ", objects)
         } else {
+            // add error message "No found Taxii objects"
+            $('.message-status').html(`No TAXII objects found.`);
             console.log("tried")
         }
 
-
-
+        // Commit taxii objects to database
         const relationships : StixObject[] = []
         var numErrors = 0
         var i = 0
@@ -123,7 +107,7 @@ class NewTaxiiConnection {
                 relationships.push(obj)
             } else {
                 // Commit everything else
-                console.log(obj)
+                //console.log(obj)
                 let success = commit(obj)
                 if (!success) {
                     numErrors++
