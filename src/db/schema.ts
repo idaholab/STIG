@@ -350,6 +350,17 @@ export const schema: ISchemaFile = {
             ],
         },
         {
+            name: "extension-definition",
+            superClasses: ["core"],
+            properties: [
+                { name: "name", type: "String", collate: "default" },
+                { name: "schema", type: "String", mandatory: true, notNull: true , collate: "default" },
+                { name: "version", type: "String", mandatory: true, notNull: true , collate: "default" },
+                { name: "extension_types", type: "EmbeddedList", mandatory: true, notNull: true , collate: "default" },
+                { name: "extension_properties", type: "EmbeddedList", collate: "default" }
+            ],
+        },
+        {
             name: "file",
             superClasses: ["cyberobservablecore"],
             properties: [
