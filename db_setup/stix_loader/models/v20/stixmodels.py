@@ -99,6 +99,19 @@ class CourseOfAction(Node):
     name = String(nullable=False)
     description = String()
 
+class ExtensionDefinition(Node):
+    element_type = '`extension-definition`'
+    element_plural = 'extensions'
+    type = String(nullable=False)
+    id_ = String(nullable=False)
+    created_by_ref = String()
+    created = DateTime(nullable=False)
+    modified = DateTime(nullable=True)
+    revoked = Boolean(default=False, nullable=False)
+    schema = String()(nullable=False)
+    version = String()(nullable=False)
+    extension_types = EmbeddedList()(nullable=False)
+    extension_properties = EmbeddedList()
 
 class Identity(Node):
     element_type = '`identity`'
