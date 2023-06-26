@@ -1985,6 +1985,11 @@
   dependencies:
     "webcola" "^3.4.0"
 
+"cytoscape-compound-drag-and-drop@^1.0.0":
+  "integrity" "sha512-JbRR3+jrVd89l9k04L/YEKw9pFSc5gfQnGcAoDUGeJVe/6gMzQhBLWlytspGc95l8+45jlRERZt7tG1CsQ0GCQ=="
+  "resolved" "https://registry.npmjs.org/cytoscape-compound-drag-and-drop/-/cytoscape-compound-drag-and-drop-1.0.0.tgz"
+  "version" "1.0.0"
+
 "cytoscape-cose-bilkent@^4.0.0":
   "integrity" "sha512-wgQlVIUJF13Quxiv5e1gstZ08rnZj2XaLHGoFMYXz7SkNfCDOOteKBE6SYRfA9WxxI/iBc3ajfDoc6hb/MRAHQ=="
   "resolved" "https://registry.npmjs.org/cytoscape-cose-bilkent/-/cytoscape-cose-bilkent-4.1.0.tgz"
@@ -2038,7 +2043,7 @@
   dependencies:
     "mousetrap" "^1.6.0"
 
-"cytoscape@^2.7.0 || ^3.0.0", "cytoscape@^3.0.0", "cytoscape@^3.2.0", "cytoscape@^3.2.22", "cytoscape@^3.2.5":
+"cytoscape@^2.7.0 || ^3.0.0", "cytoscape@^3.0.0", "cytoscape@^3.2.0", "cytoscape@^3.2.22", "cytoscape@^3.2.5", "cytoscape@^3.4.0":
   "integrity" "sha512-V2OUoav8ltY9UPgdjuhQOqkkWT28IbJODioWCjcnLqmjym9lMpnD0ie0vdQCdAiZapjbTGAv8aoKmmSuVcC1gA=="
   "resolved" "https://registry.npmjs.org/cytoscape/-/cytoscape-3.20.0.tgz"
   "version" "3.20.0"

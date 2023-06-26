@@ -1,0 +1,41 @@
+{
+    "name":"Defense in Depth",
+    "layers": [
+        {
+            "name": "Risk management Program",
+            "num": 1
+        },
+        {
+            "name": "Cybersecurity Architecture",
+            "num": 2
+        },
+        {
+            "name": "Physical Security",
+            "num": 3
+        },
+        {
+            "name": "ICS Network Architecture",
+            "num": 4
+        },
+        {
+            "name": "ICS Network Perimeter Security",
+            "num": 5
+        },
+        {
+            "name": "Host Security",
+            "num": 6
+        },
+        {
+            "name": "Security Monitoring",
+            "num": 7
+        },
+        {
+            "name": "Vendor Management",
+            "num": 8
+        },
+        {
+            "name": "The Human Element",
+            "num": 9
+        }
+    ]
+}
