@@ -327,7 +327,12 @@ export class GraphUtils {
             this.skipLayout = !this.skipLayout;
             return;
         }
-        const layout = this.cy.layout(layouts[layout_type]);
+
+        // Select all nodes with no parents or children
+        const orphans = this.cy.$(":orphan").filter(":childless")
+
+        const layout = orphans.layout(layouts[layout_type]);
+        // const layout = this.cy.layout(layouts[layout_type]);
         layout.run();
         // layout.promiseOn('layoutstop').then((event) => {
         //     if (this.cy.$(':selected').length > 0) {

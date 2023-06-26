@@ -424,3 +424,13 @@ div.btn-history {
     border-radius: 5px;
     border: 1px solid #50a03c;
 }
+
+/*====  Context Layout Nodes ====*/
+.context-node {
+    content: 'data(id)';
+    text-align: 'center';
+}
+
+.layer {
+    background-color: #2196F3
+}

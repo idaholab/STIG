@@ -145,6 +145,7 @@
         "css-loader": "^6.5.1",
         "cytoscape": "^3.2.5",
         "cytoscape-cola": "^2.0.1",
+        "cytoscape-compound-drag-and-drop": "^1.0.0",
         "cytoscape-cose-bilkent": "^4.0.0",
         "cytoscape-cxtmenu": "^3.4.0",
         "cytoscape-dagre": "^2.1.0",
