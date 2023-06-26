@@ -18,6 +18,13 @@ const defaults = {
     edgeType(_sourceNode: cytoscape.SingularElementArgument, _targetNode: cytoscape.SingularElementArgument) {
         // can return 'flat' for flat edges between nodes or 'node' for intermediate node between them
         // returning null/undefined means an edge can't be added between the two nodes
+
+        // Disable edges for compound nodes
+        var src = window.cycore.$(`#${_sourceNode.id()}`)
+        var tgt = window.cycore.$(`#${_targetNode.id()}`)
+        if (src.isParent() || tgt.isParent()) {
+            return null
+        }
         return 'flat';
     },
     loopAllowed(_node: cytoscape.SingularElementArgument) {
