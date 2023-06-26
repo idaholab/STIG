@@ -1,0 +1,135 @@
+{
+    "kill-chain": [
+        {
+            "type": "lockheed-martin",
+            "id": 1,
+            "phases": [
+                {
+                    "name": "Reconnaissance",
+                    "aliases": [
+                        "Recon"
+                    ]
+                },
+                {
+                    "name": "Weaponization",
+                    "aliases": [
+                        "Weaponize"
+                    ]
+                },
+                {
+                    "name": "Delivery",
+                    "aliases": [
+                        "Deliver"
+                    ]
+                },
+                {
+                    "name": "Exploitation",
+                    "aliases": [
+                        "Exploit"
+                    ]
+                },
+                {
+                    "name": "Installation",
+                    "aliases": [
+                        "Install"
+                    ]
+                },
+                {
+                    "name": "Command and Control",
+                    "aliases": [
+                        "Command & Control",
+                        "C2",
+                        "Callback"
+                    ]
+                },
+                {
+                    "name": "Actions on Objectives",
+                    "aliases": [
+                        "Exfiltration",
+                        "Actions",
+                        "Act on Objectives",
+                        "Persistence",
+                        "Persist"
+                    ]
+                }
+            ]
+        }, 
+        {
+            "type": "MITRE-ICS",
+            "id": 2,
+            "phases": [
+                {
+                    "name": "Initial Access"
+                },
+                {
+                    "name": "Execution"
+                },
+                {
+                    "name": "Persistence"
+                },
+                {
+                    "name": "Privilege Escalation"
+                },
+                {
+                    "name": "Evasion"
+                },
+                {
+                    "name": "Discovery"
+                },
+                {
+                    "name": "Lateral Movement"
+                },
+                {
+                    "name": "Collection"
+                },
+                {
+                    "name": "Inhibit Response Function"
+                },
+                {
+                    "name": "Impair Process Control"
+                },
+                {
+                    "name": "Impact"
+                }
+            ]
+        },
+        {
+            "type": "other",
+            "id": 3,
+            "phases": [
+                {
+                    "name": "Reconnaissance",
+                    "aliases": "Recon"
+                },
+                {
+                    "name": "Intrusion"
+                },
+                {
+                    "name": "Exploitation",
+                    "aliases": "Exploit"
+                },
+                {
+                    "name": "Privilege Escalation"
+                },
+                {
+                    "name": "Lateral Movement"
+                },
+                {
+                    "name": "Obfuscation/Anti-forensics",
+                    "aliases": [
+                        "Obfuscation",
+                        "Anti-forensics",
+                        "Obfuscation(anti-forensics)"
+                    ]
+                },
+                {
+                    "name": "Denial of Service",
+                    "aliases": "DoS"
+                },
+                {
+                    "name": "Exfiltration"
+                }
+            ]
+        } 
+    ]
+}

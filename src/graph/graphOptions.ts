@@ -11,19 +11,28 @@ import { IColaLayoutOptions } from './colaLayoutOptions';
 export let node_style: cytoscape.Stylesheet = {
     selector: '.stix_node',
     style: {
-        "label": "data(name)",
+        "content": "data(name)",
         "shape": "roundrectangle",
         "width": 77,
         "height": 77,
         "background-color": "black",
         'min-zoomed-font-size': 10,
         "text-wrap": "wrap",
+        "background-fit": "cover",
         // "text-margin-x": 7,
         'overlay-opacity': 0,
         'text-max-width': "120"
         // "border-width":5
     } //as cytoscape.Css.Node,
 };
+
+export let compound_style: cytoscape.Stylesheet = {
+    selector: ':parent',
+    style: {
+        "shape": "roundrectangle",
+        "background-color": "#FFFFFF"
+    }
+}
 
 export let edge_style: cytoscape.Stylesheet = {
     selector: 'edge',
@@ -61,7 +70,7 @@ export let select_node_style: cytoscape.Stylesheet = {
 };
 
 export let modified_unselect_style: cytoscape.Stylesheet = {
-    selector: '[!saved]',
+    selector: '.stix_node[!saved]',
     style: {
         "border-width": 2, 
         "text-background-color": 'yellow',

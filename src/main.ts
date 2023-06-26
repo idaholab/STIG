@@ -20,6 +20,7 @@ import {
 import * as stix from './stix';
 import * as fileSaver from 'file-saver';
 import {
+    compound_style,
     edge_style,
     node_style,
     select_node_style,
@@ -39,7 +40,7 @@ import { setup_ctx_menu } from './graph/context-menu';
 import { GraphUtils } from './graph/graphFunctions';
 import { StixEditor } from './ui/stix-editor';
 import Split from 'split.js';
-import cytoscape from 'cytoscape';
+import cytoscape, { CytoscapeOptions } from 'cytoscape';
 import { ViewUtilitiesOptions } from './graph/graphOptions';
 import edgehandles from 'cytoscape-edgehandles';
 import moment from 'moment';
@@ -51,13 +52,18 @@ import { commit_all, delete_selected } from './ui/ipc-render-handlers';
 import { GraphQueryResult } from './db/db_types';
 import { QueryHistoryDialog } from './ui/queryHistoryWidget';
 import { DiffDialog } from './ui/diff-dialog';
+import { removeCompoundNodes, initDefenseGraph, initKillChainGraph } from './contextLayouts/contextLayouts';
 import tippy from 'tippy.js'
+import { organizeOrphans } from './contextLayouts/graphLayoutFunctions';
+
+const killChain = require("./contextLayouts/killChainSchema.json")
+const defense = require("./contextLayouts/defenseInDepthSchema.json")
 import { openDatabaseUpload } from './ui/database-upload-widget';
 import { openConnectTaxii } from './ui/connect-taxii-widget';
 import { openBundleExport } from './ui/export -bundle-widget';
 
 declare global {
-    interface Window {
+    interface Window { 
         cycore: cytoscape.Core;
         layout: string;
     }
@@ -97,16 +103,33 @@ export class main {
             await StigSettings.Instance.getSettings()
             await QueryStorageService.Instance.getQueryHistory()
             
-            const cyto_options: cytoscape.CytoscapeOptions = {
+            const cyto_options: CytoscapeOptions = {
                 container: $('#cy')[0],
-                style: [node_style, edge_style, select_node_style, modified_select_style, modified_unselect_style, ...edgehandles_style],
+                style: [node_style, compound_style, edge_style, select_node_style, modified_select_style, modified_unselect_style, ...edgehandles_style],
                 wheelSensitivity: 0.25,
             } as cytoscape.CytoscapeOptions;
 
             // set up cytoscape
             const cy = cytoscape(cyto_options);
             window.cycore = cy;
-            const graph_utils = new GraphUtils(cy);//, db);
+            const graph_utils = new GraphUtils(cy);
+
+            
+            // used by some events to make cytoscape respond
+            window.addEventListener("resize", () => {cy.resize()}, false);
+            const call_forceRender = () => {
+                cy.resize();
+            };
+
+            var split = Split(['#cy', '#editpane'], {
+                direction: 'horizontal',
+                sizes: [75, 25],
+                gutterSize: 8,
+                cursor: 'col-resize',
+                onDragEnd: call_forceRender,
+            });
+
+            
 
             // Add event listeners to dropdown menu items
 
@@ -209,6 +232,15 @@ export class main {
                 });
             })
 
+            var relationshipsOn = true
+            $("#dd-toggleRelationships").on("click", () => {
+                if (relationshipsOn) {
+                    view_util.hide(cy.edges())
+                } else {
+                    view_util.show(cy.edges())
+                }
+                relationshipsOn = !relationshipsOn
+            })
 
             // EXPORT
             $("#dd-exportSelected").on("click", () => {
@@ -355,6 +387,37 @@ export class main {
                 settings.setLayout("grid");
             })
 
+            // CONTEXT LAYOUTS
+            $("#dd-ctxLayoutNone").prop("style", "background-color: #0d6efd")
+            $("#dd-ctxLayoutNone").on("click", () => {
+                $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-ctxLayout")}).prop("style", "background-color: white")
+                $("#dd-ctxLayoutNone").prop("style", "background-color: #0d6efd")
+                
+                removeCompoundNodes()
+                // Position the nodes with a layout
+                graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
+            })
+            $("#dd-ctxLayoutDefInDepth").on("click", () => {
+                $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-ctxLayout")}).prop("style", "background-color: white")
+                $("#dd-ctxLayoutDefInDepth").prop("style", "background-color: #0d6efd")
+
+                removeCompoundNodes()
+                initDefenseGraph()
+                organizeOrphans()
+            })
+            killChain["kill-chain"].forEach(kc => {
+                $("#contextLayoutOptions").append(`<li><a id=ctxLayout${kc.type} class="dropdown-item latout-option">${kc.type}</a></li>`)
+                $(`#ctxLayout${kc.type}`).on("click", () => {
+                    $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-ctxLayout")}).prop("style", "background-color: white")
+                    $(`#dd-ctxLayout${kc.type}`).prop("style", "background-color: #0d6efd")
+
+                    removeCompoundNodes()
+                    initKillChainGraph(kc.type)
+                    
+                })
+            })
+
+
             // DATABASE
             $("#database").on("click", () => {
                 openDatabaseConfiguration();
@@ -366,26 +429,14 @@ export class main {
                 openConnectTaxii();
             })
 
-
-            // used by some events to make cytoscape respond
-            window.addEventListener("resize", () => cy.resize(), false);
-            const call_forceRender = () => {
-                cy.resize();
-            };
-
-            Split(['#cy', '#editpane'], {
-                direction: 'horizontal',
-                sizes: [75, 25],
-                gutterSize: 8,
-                cursor: 'col-resize',
-                onDragEnd: call_forceRender,
-            });
-
             // Graph handling functions
             
             // configures edge behaviors
             edgehandles(cytoscape);
-            setup_edge_handles(cy);
+            var eh = setup_edge_handles(cy);
+
+            // Disable edgehandles for compound nodes
+            cy.on("mouseover", ":parent", _ => {eh.hide()})
 
             // set up view utilities
             const jquery = require('jquery');
@@ -797,8 +848,31 @@ export class main {
                             cy.$id(node.id).animate({position: node.position, duration: 1000, complete: () => cy.fit()})
                         } 
                     } else {
-                        graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
+
+                        var canLayout = true
+
+                        // Check if defense in depth is on
+                        if (cy.nodes(`#${defense.name.replaceAll(" ", "_")}`).length > 0) {
+                            canLayout = false
+                            $("#dd-ctxLayoutDefInDepth").trigger("click")
+                        }
+
+                        // Check if a kill chain is on
+                        killChain["kill-chain"].forEach(kc => {
+                            // `#ctxLayout${kc.type}`
+                            if (cy.nodes(`#${kc.type}`).length > 0) {
+                                canLayout = false
+                                $(`#ctxLayout${kc.type}`).trigger("click")
+                            }
+                        })
+
+                        // Only do this if there aren't any defense in depth or kill chain layouts open
+                        if (canLayout) {
+                            graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
+                        }
                     }
+
+                    
                 });
             }
             uploader.addEventListener('dragover', handleDragOver, false);
