@@ -15,36 +15,106 @@ ALL RIGHTS RESERVED
     <!-- <link rel="stylesheet" href="../node_modules/foundation-sites/dist/css/foundation.min.css">
         <script src="../node_modules/what-input/dist/what-input.min.js"></script>
         <script src="../node_modules/foundation-sites/dist/js/foundation.min.js"></script> -->
-    <link rel="stylesheet" href="../node_modules/normalize.css/normalize.css" type="text/css">
-    <link rel="stylesheet" href="../node_modules/jquery-ui-themes/jquery-ui.css" type="text/css" />
-    <link rel="stylesheet" href="../node_modules/jquery-ui-themes/themes/base/jquery-ui.min.css" type="text/css" />
-    <link rel="stylesheet" href="../node_modules/bootstrap-css-only/css/bootstrap.min.css" type="text/css" />
-    <link href="../node_modules/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="./node_modules/normalize.css/normalize.css" type="text/css">
+    <link rel="stylesheet" href="./node_modules/jquery-ui-themes/jquery-ui.css" type="text/css" />
+    <link rel="stylesheet" href="./node_modules/jquery-ui-themes/themes/base/jquery-ui.min.css" type="text/css" />
+    <!-- <link rel="stylesheet" href="./node_modules/bootstrap-css-only/css/bootstrap.min.css" type="text/css" /> -->
+    <link href="./node_modules/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="static/index.css" type="text/css" />
+
+    <!--Bootstrap-->
+    <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Tippy -->
+    <link href="node_modules/tippy.js/dist/tippy.css" rel="stylesheet">
+
     <script>
         if (typeof module === 'object') {
             window.module = module;
             module = undefined;
         }
     </script>
-    <script src="../node_modules/jquery/dist/jquery.js"></script>
-    <script src="../node_modules/jquery-ui-dist/jquery-ui.js"></script>
-    <script src="../node_modules/split.js/dist/split.js"></script>
-    <link rel="stylesheet" href="../node_modules/flatpickr/dist/flatpickr.min.css" />
-    <script src="../node_modules/flatpickr/dist/flatpickr.js"></script>
-    <script src="../node_modules/@json-editor/json-editor/dist/jsoneditor.js"></script>
+    <!-- <script src="./node_modules/jquery/dist/jquery.js"></script>
+    <script src="./node_modules/jquery-ui-dist/jquery-ui.js"></script> -->
+    <script src="./node_modules/split.js/dist/split.js"></script>
+    <link rel="stylesheet" href="./node_modules/flatpickr/dist/flatpickr.min.css" />
+    <script src="./node_modules/flatpickr/dist/flatpickr.js"></script>
+    <script src="./node_modules/@json-editor/json-editor/dist/jsoneditor.js"></script>
 
-    <script src='../node_modules/cytoscape/dist/cytoscape.min.js'></script>
-    <script src='../node_modules/klayjs/klay.js'>
+    <script src='./node_modules/cytoscape/dist/cytoscape.min.js'></script>
+    <script src='./node_modules/klayjs/klay.js'>
     </script>
-    <script src='../node_modules/cytoscape-klay/cytoscape-klay.js'></script>
+    <script src='./node_modules/cytoscape-klay/cytoscape-klay.js'></script>
 
 </head>
 
-<body>
+<body style="height: 95vh">
     <div id="uploader"></div>
     <span id="chosen-files" hidden="true"></span>
     <span id="current_node" hidden="true"></span>
+    <div id="top-menu" class="btn-group dropdown">
+        <form class="form-inline">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="graphDropdown" data-bs-toggle="dropdown" aria-haspopup="true">
+            Graph
+        </button>
+        <ul class="dropdown-menu">
+            <li><a id="dd-copyElem" class="dropdown-item">Copy Selected Elements</a></li>
+            <li><a id="dd-cutElem" class="dropdown-item">Cut Selected Elements</a></li>
+            <li><a id="dd-pasteElem" class="dropdown-item">Paste Elements</a></li>
+            <li><a id="dd-commitElem" class="dropdown-item">Commit All Elements</a></li>
+            <li><a id="dd-dbDelete" class="dropdown-item">Delete Selected from Database</a></li>
+            <li><a id="dd-selectElem" class="dropdown-item">Select All Elements</a></li>
+            <li><a id="dd-invertSelect" class="dropdown-item">Invert Selection</a></li>
+            <li><a id="dd-viewEmbeddedRels" class="dropdown-item">View Embedded Relationships</a></li>
+            <li><a id="dd-toggleRelationships" class="dropdown-item">Toggle Relationships</a></li>
+        </ul>
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="exportDropdown" data-bs-toggle="dropdown" aria-haspopup="true">
+            Export
+        </button>
+        <ul class="dropdown-menu">
+            <li><a id="dd-exportSelected" class="dropdown-item">Export Selected Elements</a></li>
+            <li><a id="dd-exportGraph" class="dropdown-item">Export All Elements</a></li>
+            <li><a id="dd-exportAll" class="dropdown-item">Export All Elements w/ Positions</a></li>
+            <li><a id="dd-exportPos" class="dropdown-item">Export Positions</a></li>
+        </ul>
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="layoutDropdown" data-bs-toggle="dropdown" aria-haspopup="true">
+            Layout
+        </button>
+        <ul class="dropdown-menu">
+            <li><a id="dd-layoutCose" class="dropdown-item layout-option">Cose</a></li>            
+            <li><a id="dd-layoutCola" class="dropdown-item layout-option">Cola</a></li>
+            <li><a id="dd-layoutCircle" class="dropdown-item layout-option">Circle</a></li>
+            <li><a id="dd-layoutSpread" class="dropdown-item layout-option">Spread</a></li>
+            <li><a id="dd-layoutCoseBilkent" class="dropdown-item layout-option">Cose_Bilkent</a></li>
+            <li><a id="dd-layoutKlay" class="dropdown-item layout-option">Klay</a></li>
+            <li><a id="dd-layoutDagre" class="dropdown-item layout-option">Dagre</a></li>
+            <li><a id="dd-layoutRandom" class="dropdown-item layout-option">Random</a></li>
+            <li><a id="dd-layoutConcentric" class="dropdown-item layout-option">Concentric</a></li>
+            <li><a id="dd-layoutBreadthfirst" class="dropdown-item layout-option">Breadthfirst</a></li>
+            <li><a id="dd-layoutGrid" class="dropdown-item layout-option">Grid</a></li>            
+        </ul>
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="uploadDropdown" data-bs-toggle="dropdown" aria-haspopup="true">
+            Upload to DB
+        </button>
+        <ul class="dropdown-menu">
+            <li><a id="databaseUpload" class="dropdown-item layout-option">Upload Bundle to DB</a></li>            
+            <li><a id="connectTaxii" class="dropdown-item layout-option">Upload TAXII to DB</a></li>
+        </ul>
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="contextLayoutDropdown" data-bs-toggle="dropdown" aria-haspopup="true">
+            Context Layouts
+        </button>
+        <ul id="contextLayoutOptions" class="dropdown-menu">
+            <li><a id="dd-ctxLayoutNone" class="dropdown-item layout-option">None</a></li>
+            <li><a id="dd-ctxLayoutDefInDepth" class="dropdown-item layout-option">Defense in Depth</a></li>            
+            <li><h6 class="dropdown-header">Kill Chains</h6></li>
+        </ul>
+
+        <button id="database" class="btn btn-secondary" type="button">
+            Database: <span id="db-status" class="db-status-red">not connected</span>
+        </button>
+        </form>
+    </div>
     <div class="main-grid-container">
         <div class="label">STIX Domain Objects (SDOs)</div>
         <div class="label">STIX Cyber-observable Objects (SCOs)</div>
@@ -57,6 +127,9 @@ ALL RIGHTS RESERVED
             </div>
             <div class="icon-box" data-tippy-content="Course of Action">
                 <img name='course-of-action' class="loadlater" src="static/img/FlatIcons/SDOs/coa-square-flat-300-dpi.png" />
+            </div>
+            <div class="icon-box" data-tippy-content="Extension Definition">
+                <img name='extension-definition' class="loadlater" src="static/img/FlatIcons/INL/20-50360_r3_ExtensionDefinitions-Square.png">
             </div>
             <div class="icon-box" data-tippy-content="Grouping">
                 <img name='grouping' class="loadlater" src="static/img/FlatIcons/SDOs/grouping-square-flat-300-dpi.png" />
@@ -86,7 +159,7 @@ ALL RIGHTS RESERVED
                 <img name='malware-analysis' class="loadlater" src="static/img/FlatIcons/SDOs/malware-analysis-square-flat-300-dpi.png" />
             </div>
             <div class="icon-box" data-tippy-content="Marking Definition">
-                <img name='marking-definition' class="loadlater" src="static/img/stix2_object_marking_icon_v1.png">
+                <img name='marking-definition' class="loadlater" src="static/img/FlatIcons/INL/20-50360_r1_MarkingDefinition-Square.png">
             </div>
             <div class="icon-box" data-tippy-content="Note">
                 <img name='note' class="loadlater" src="static/img/FlatIcons/SDOs/note-square-flat-300-dpi.png" />
@@ -176,9 +249,9 @@ ALL RIGHTS RESERVED
             <div id='editpane' class="split split-horizontal content edit-pane .ui-widget">
                 <div id='metawidget' class="jsedit"></div>
                 <div id="commit-button" class="button-commit">
-                    <button type="button" title="Commit" class="ui-button ui-widget ui-state-default ui-corner-all btn-commit" disabled=true>
+                    <button id="btn-commit-db" type="button" title="Commit" class="btn ui-button ui-widget ui-state-default ui-corner-all btn-commit" disabled>
                             <i class="fa fa-download"></i> Commit Object to DB</button>
-                    <button type="button" title="Export" class="ui-button ui-widget ui-state-default ui-corner-all" id="btn-export-single">
+                    <button type="button" title="Export" class="btn ui-button ui-widget ui-state-default ui-corner-all" id="btn-export-single" disabled>
                             <i class="fa fa-download"></i> Save Object as JSON...</button>
                 </div>
             </div>
@@ -217,21 +290,22 @@ ALL RIGHTS RESERVED
     <div id="query-anchor" title="Query History" class="query-dialog"></div>
     <div id="db-dialog-anchor" title="Select Database" class="db-dialog"></div>
     <div id="new-db-anchor" title="Edit Database Configuration"></div>
+    <div id="connect-taxii-anchor" title="Connect to TAXII Server"></div>
     <div id="diff-anchor" title="Diff" class="diff-dialog"></div>
     <div id="error-anchor" title="Error" class="error-dialog"></div>
+    <div id="db-upload-anchor" title="Upload Bundle to DB"></div>
+    <div id="export-bundle-anchor" title="Save File"></div>
+
     <div id="history-list"></div>
     <div id="diff-list"></div>
     <div id="error-list"></div>
-    <script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js"></script>
-    <script src="https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.js"></script>
+    <!-- <script src="node_modules/@popperjs/core@2"></script>
+    <script src="node_modules/tippy.js/dist/tippy-bundle.umd.js"></script>
     <script>
         tippy('[data-tippy-content]', {
             theme: 'light',
         });
-    </script>
+    </script> -->
 </body>
-<script>
-    var main = require("./main.ts");
-    main.main.prototype.run();
-</script>
+<script src="/script"></script>
 </html>

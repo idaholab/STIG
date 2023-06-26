@@ -5,34 +5,35 @@ ALL RIGHTS RESERVED
  */
 
 import cytoscape from 'cytoscape';
-import * as moment from 'moment';
-import { StigDB } from "../db";
+import moment from 'moment';
+// import { StigDB } from "../db";
 import { StixNodeData } from '../stix';
 import { schema_map } from '../stix/stix_schemas';
 
-type JSONEditorOptionsExtended<TValue> = JSONEditorOptions<TValue> & { remove_empty_properties: boolean };
-class JSONEditorExtended<TValue> extends JSONEditor<TValue> {
-    constructor(element: HTMLElement, options: JSONEditorOptionsExtended<TValue>) {
+
+type JSONEditorOptionsExtended = JSONEditorOptions & { remove_empty_properties: boolean };
+class JSONEditorExtended extends JSONEditor {
+    constructor(element: HTMLElement, options: JSONEditorOptionsExtended) {
         super(element, options);
     }
 }
 
 export class StixEditor {
-    public editor: JSONEditorExtended<any>;
-    public db: StigDB;
+    public editor: JSONEditor;
+    // public db: StigDB;
     public form_changed: () => void;
     public cy: cytoscape.Core;
 
-    constructor(cy: cytoscape.Core, db: StigDB) {
-        try {
-            this.db = db;
-        } catch (e) {
-            const err = new Error();
-            err.message += e.message;
-            err.name = "StixEditorDatabaseFailure: ";
-            err.stack += e.stack;
-            throw err;
-        }
+    constructor(cy: cytoscape.Core) {//, db: StigDB) {
+        // try {
+        //     this.db = db;
+        // } catch (e) {
+        //     const err = new Error();
+        //     err.message += e.message;
+        //     err.name = "StixEditorDatabaseFailure: ";
+        //     err.stack += e.stack;
+        //     throw err;
+        // }
         this.cy = cy;
     }
 
@@ -48,7 +49,14 @@ export class StixEditor {
         $('#current_node').get().forEach((i) => {
             i.setAttribute('node_id', node.id());
         });
+
+        // Find the schema in schema_map
+        let schema = Object.keys(schema_map).find(s => s.includes(file_name + ".json"))
+
+
         const raw_data: StixNodeData = node.data('raw_data') as StixNodeData;
+
+        
         if (raw_data.id === undefined || /--$/.exec(raw_data.id)) {
             raw_data.id = node.data('type') + '--' + node.id();
         }
@@ -67,8 +75,9 @@ export class StixEditor {
             theme: "bootstrap4",
             iconlib: "fontawesome4",
             refs: schema_map,
-            schema: schema_map[`${file_name}.json`],
-            remove_empty_properties: true,
+            schema: schema_map[schema],
+            remove_empty_properties: true
+
         });
         if (node.data('saved') === true) {
             $('button.btn-commit').prop('disabled', true);
@@ -95,10 +104,11 @@ export class StixEditor {
                     ele.style('label', new_data.relationship_type);
                 }
                 ele.data("raw_data", new_data);
-                // ele.data('saved', false);
-                this.db.needs_save(ele.id(), window.cycore).then((save) => {
-                    save ? $('button.btn-commit').button('enable') : $('button.btn-commit').button('disable');
-                });
+                ele.data('saved', false);
+                $('button.btn-commit').button('enable');
+                // this.db.needs_save(ele.id(), window.cycore).then((save) => {
+                //     save ? $('button.btn-commit').button('enable') : $('button.btn-commit').button('disable');
+                // });
             };
 
             this.editor.on('change', this.form_changed);

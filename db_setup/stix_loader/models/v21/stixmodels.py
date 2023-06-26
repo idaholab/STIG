@@ -66,6 +66,22 @@ class MarkingDefinition(Node):
     definition = EmbeddedMap()
 
 
+    class ExtensionDefinition(Node):
+    # element_type = '`extension-definition`'
+    # element_plural = 'extensions'
+    type = String(nullable=False)
+    spec_version = String(nullable=False, default="2.1")
+    id_ = String(nullable=False)
+    created = DateTime(nullable=False)
+    modified = DateTime(nullable=False)
+    created_by_ref = String()
+    revoked = Boolean(default=False, nullable=False)
+    schema = String()(nullable=False)
+    version = String()(nullable=False)
+    extension_types() = EmbeddedList()(nullable=False)
+    extension_properties() = EmbeddedList()
+
+
 class AttackPattern(Node):
     # element_type = '`attack-pattern`'
     # element_plural = 'attack_patterns'

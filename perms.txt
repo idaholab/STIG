@@ -1,0 +1,1 @@
+database.create,database.drop,database.exists,database.freeze,database.release,database.passthrough,server.config.get,server.config.set,server.connect,server.info,server.listDatabases,server.listDatabases.system,server.replication,server.replication.start,server.replication.stop,server.replication.config,server.shutdown

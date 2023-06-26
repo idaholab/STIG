@@ -1,0 +1,22 @@
+{
+    "node": {
+        "id": "extension-definition--d83fce45-ef58-4c6c-a3f4-1fbc32e98c6e",
+        "type": "extension-definition",
+        "spec_version": "2.1",
+        "name": "Defense in Depth",
+        "description": "This schema adds property for Defense in Depth",
+        "created": "2022-02-02T09:16:08.989000Z",
+        "modified": "2022-02-02T09:16:08.989000Z",
+        "schema": "https://github.com/idaholab/STIG",
+        "version": "1.0.0",
+        "extension_types": [ "property-extension" ]
+    },
+    "property": {
+        "extension-definition--d83fce45-ef58-4c6c-a3f4-1fbc32e98c6e" : {
+            "extension_type": "property-extension",
+            "layer_name": "network",
+            "layer_number": 2
+        }
+
+    }
+}

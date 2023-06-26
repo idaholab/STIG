@@ -60,8 +60,7 @@
         }
     },
     "required": [
-        "id",
-        "infrastructure_types"
+        "id"
     ],
     "definitions": {
         "infrastructure-type-ov": {
@@ -76,12 +75,12 @@
                 "firewall",
                 "hosting-malware",
                 "hosting-target-lists",
-                "infrastructure",
                 "phishing",
                 "reconnaissance",
+                "routers-switches",
                 "staging",
-                "unknown",
-                "workstation"
+                "workstation",
+                "unknown"
             ]
         }
     }

@@ -16,3 +16,4 @@ out
 **/*.old
 **/*.bak
 **/*.swp
+src/static/index.js

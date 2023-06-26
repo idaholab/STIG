@@ -73,6 +73,8 @@ div#cy {
     /*border: 1px solid gray;*/
 }
 
+
+
 img.loadlater {
     box-sizing: border-box;
     height: auto;
@@ -167,6 +169,12 @@ div.btn-history {
 
 .error-dialog {
     z-index: 1000;
+}
+
+#top-menu {
+    cursor: default;
+    background-color: #6c757d;
+    width: 100%;
 }
 
 /*============================================
@@ -404,3 +412,25 @@ div.btn-history {
 /*=====  End of Messages Row  ======*/
 
 /*=====  End of Main Grid  ======*/
+
+.db-status-red {
+    background-color: #ff7a70;
+    border-radius: 5px;
+    border: 1px solid #ff7a70;
+}
+
+.db-status-green {
+    background-color: #50a03c;
+    border-radius: 5px;
+    border: 1px solid #50a03c;
+}
+
+/*====  Context Layout Nodes ====*/
+.context-node {
+    content: 'data(id)';
+    text-align: 'center';
+}
+
+.layer {
+    background-color: #2196F3
+}

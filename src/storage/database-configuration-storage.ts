@@ -4,7 +4,9 @@ Copyright 2018 Southern California Edison Company
 ALL RIGHTS RESERVED
 */
 
-import ElectronStore = require("electron-store");
+import { textChangeRangeIsUnchanged } from "typescript";
+
+// import ElectronStore = require("electron-store");
 
 export interface IDatabaseConfigOptions {
     host: string;
@@ -26,6 +28,14 @@ export interface IDatabaseConfigurationStorageStructure  {
     configs: IDatabaseConfigMap;
 }
 
+export interface TaxiiParams {
+    url: string;
+    apiroot_name: string;
+    collection_id: string;
+    username: string;
+    password: string;
+}
+
 /**
  * @description Stores database configuration
  * @export
@@ -33,12 +43,55 @@ export interface IDatabaseConfigurationStorageStructure  {
  */
 export class DatabaseConfigurationStorage {
     private static instance: DatabaseConfigurationStorage;
-    private store: ElectronStore<IDatabaseConfigurationStorageStructure>;
-    private constructor() {
-        this.store = new ElectronStore<IDatabaseConfigurationStorageStructure>({ name: "stig/db_config" });
-        if (!this.store.has("configs") || (Object.keys(this.store.get("configs")).length === 0)) {
-            this.create_default();
+    // private store: ElectronStore<IDatabaseConfigurationStorageStructure>;
+    private store: IDatabaseConfigurationStorageStructure;
+    // private constructor() {
+    //     // this.store = new ElectronStore<IDatabaseConfigurationStorageStructure>({ name: "stig/db_config" });
+        
+    //     fetch('/data', {
+    //         method: 'GET',
+    //         body: JSON.stringify({name: 'dbConfig'})
+    //     }).then(response => response.json())
+    //     .then(data => {
+    //         if (data) {
+    //             this.store = JSON.parse(data)
+    //         } else {
+    //             this.create_default();
+    //         }
+    //     })
+    // }
+
+    public async getConfigs() {
+        if (!this.store) {
+            let config = await fetch('/data?name=dbConfig', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => response.json())
+            // console.log(config.configs)
+            if (!config.configs) {
+                this.create_default()
+            } else {
+                this.store = config
+            }
+            
+            
         }
+
+     //console.log("<database> store: ", JSON.stringify(this.store))
+
+        return this.store
+    }
+
+    private saveConfigs() {
+        fetch('/save', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({name: 'dbConfig', data: this.store})
+        })
     }
 
     public create_default() {
@@ -53,8 +106,8 @@ export class DatabaseConfigurationStorage {
         const configmap: IDatabaseConfigMap = {
             [initial.name]: initial,
         };
-        this.store.set('configs', configmap);
-        this.current = 'stig';
+        this.store = {configs: configmap, current: 'stig'}
+        this.saveConfigs();
     }
 
     static get Instance(): DatabaseConfigurationStorage {
@@ -70,40 +123,42 @@ export class DatabaseConfigurationStorage {
      * @memberof ConfigurationStorageService
      */
     public save(options: IDatabaseConfigOptions) {
-        const configs = this.store.get('configs');
-        configs[options.name] = options;
-        this.store.set('configs', configs);
+        this.store.configs[options.name] = options;
+        this.saveConfigs();
     }
 
     public get(key: string): IDatabaseConfigOptions {
-        return this.configs[key];
+        return this.store.configs[key];
     }
 
     public keys(): string[] {
-        return Object.keys(this.configs);
+        // console.log("Database store: ", this.store)
+        return Object.keys(this.store.configs);
     }
 
     public get current(): string {
-        return this.store.get('current',  undefined);
+        return this.store.current;
     }
 
     public set current(name: string) {
-        this.store.set('current', name);
+        this.store.current = name;
+        this.saveConfigs();
     }
 
     public get configs(): IDatabaseConfigMap {
-        return this.store.get('configs');
+        return this.store.configs;
     }
 
     public currentConfig(): IDatabaseConfigOptions {
-        return this.configs[this.current];
+        return this.store.configs[this.store.current];
     }
 
     public removeConfig(name: string) {
-        const configs = this.store.get('configs');
+        const configs = this.store.configs;
         if (name in configs) {
             delete configs[name];
-            this.store.set('configs', configs);
+            this.store.configs = configs;
+            this.saveConfigs();
         }
     }
 }
