@@ -7,13 +7,8 @@ ALL RIGHTS RESERVED
 // import { ipcRenderer, dialog } from "electron";
 import { CollectionReturnValue, NodeSingular, EdgeCollection, CollectionElements, SingularElementReturnValue} from 'cytoscape';
 // import { StigDB } from '../db';
-import { StixObject, BundleType } from '../stix';
-import { DatabaseConfigurationStorage } from '../storage';
+import { StixObject } from '../stix';
 // import { open } from 'fs';
-import { openDatabaseConfiguration } from './database-config-widget';
-import { newDatabaseConfiguration } from './new-database-widget';
-import * as fileSaver from 'file-saver';
-import * as uuid from 'uuid';
 import { commit, db_delete } from '../db/dbFunctions';
 
 const getNodeMetadata = (nodes) => {
