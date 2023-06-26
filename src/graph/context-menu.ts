@@ -1,6 +1,5 @@
 /*
 Copyright 2018 Southern California Edison Company
-
 ALL RIGHTS RESERVED
 */
 
@@ -10,7 +9,8 @@ import { GraphUtils } from "./graphFunctions";
 import { graph_copy } from '../ui/clipboard';
 import { StigSettings } from '../storage/stig-settings-storage';
 import { db_delete, query_incoming, query_outgoing } from '../db/dbFunctions';
-import { BundleType } from '../stix';
+import { BundleType, node_img } from '../stix';
+import { json } from 'express';
 
 /**
  * @description
@@ -19,10 +19,10 @@ import { BundleType } from '../stix';
  * @param {StigDB} db
  * @param {*} view_util
  */
-export function setup_ctx_menu(cy: cytoscape.Core, /*db: StigDB,*/ view_util: any) {
-    const graph_utils = new GraphUtils(cy);//, db);
+export function setup_ctx_menu(cy: cytoscape.Core, view_util: any) {
+    const graph_utils = new GraphUtils(cy);
     cy.cxtmenu({
-        selector: 'node',
+        selector: '.stix_node',
         commands: [
         {
             content: 'Graph Remove',
@@ -151,7 +151,7 @@ export function setup_ctx_menu(cy: cytoscape.Core, /*db: StigDB,*/ view_util: an
                 })
                 
             },
-        },
+        }
         ],
     });
 
@@ -232,13 +232,13 @@ export function setup_ctx_menu(cy: cytoscape.Core, /*db: StigDB,*/ view_util: an
             {
                 content: 'Hide Not Selected',
                 select: () => {
-                    view_util.hide(cy.$(":unselected"));
+                    view_util.hide(cy.$(".stix_node:unselected"));
                 },
             },
             {
                 content: 'Show All',
                 select: () => {
-                    view_util.show(cy.elements()); // .showEles();
+                    view_util.show(cy.$(".stix_node")); // .showEles();
                 },
             },
             // {
