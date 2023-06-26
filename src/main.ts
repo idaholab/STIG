@@ -98,7 +98,7 @@ export class main {
             const cyto_options: cytoscape.CytoscapeOptions = {
                 container: $('#cy')[0],
                 style: [node_style, edge_style, select_node_style, modified_select_style, modified_unselect_style, ...edgehandles_style],
-                // wheelSensitivity: 0.25,
+                wheelSensitivity: 0.25,
             } as cytoscape.CytoscapeOptions;
 
             // set up cytoscape
@@ -796,6 +796,8 @@ export class main {
                             node[0].data('saved', true)
                         }
 
+                        $('.message-status').html(`Committed 1 object to the database.`);
+
                     }
                 } catch (e) {
                     console.error('Error saving to database:');
@@ -803,7 +805,6 @@ export class main {
                     throw e;
                 }
                 $('button.btn-commit').button('option', 'disabled', true);
-                $('.message-status').html(`Committed 1 object to the database.`);
             });
 
             /***********************************************************************************
