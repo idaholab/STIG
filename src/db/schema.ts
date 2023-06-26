@@ -350,6 +350,17 @@ export const schema: ISchemaFile = {
             ],
         },
         {
+            name: "extension-definition",
+            superClasses: ["core"],
+            properties: [
+                { name: "name", type: "String", collate: "default" },
+                { name: "schema", type: "String", mandatory: true, notNull: true , collate: "default" },
+                { name: "version", type: "String", mandatory: true, notNull: true , collate: "default" },
+                { name: "extension_types", type: "EmbeddedList", mandatory: true, notNull: true , collate: "default" },
+                { name: "extension_properties", type: "EmbeddedList", collate: "default" }
+            ],
+        },
+        {
             name: "file",
             superClasses: ["cyberobservablecore"],
             properties: [
@@ -419,7 +430,7 @@ export const schema: ISchemaFile = {
             properties: [
                 { name: "name", type: "String", collate: "default" },
                 { name: "description", type: "String", collate: "default" },
-                { name: "indicator_types", type: "EmbeddedList", mandatory: true, notNull: true, collate: "default" },
+                { name: "indicator_types", type: "EmbeddedList", notNull: true, collate: "default" },
                 { name: "pattern", type: "String", mandatory: true, notNull: true, collate: "default" },
                 { name: "pattern_type", type: "String", mandatory: true, notNull: true, collate: "default" },
                 { name: "pattern_version", type: "String", collate: "default" },
@@ -434,7 +445,7 @@ export const schema: ISchemaFile = {
             properties: [
                 { name: "name", type: "String", mandatory: true, notNull: true, collate: "default"},
                 { name: "description", type: "String", collate: "default" },
-                { name: "infrastructure_types", type: "EmbeddedList", mandatory: true, notNull: true, collate: "default"},
+                { name: "infrastructure_types", type: "EmbeddedList", notNull: true, collate: "default"},
                 { name: "aliases", type: "EmbeddedList", collate: "default" },
                 { name: "kill_chain_phases", type: "EmbeddedList", collate: "default" },
                 { name: "first_seen", type: "DateTime", collate: "default" },
@@ -672,7 +683,7 @@ export const schema: ISchemaFile = {
             properties: [
                 { name: "name", type: "String", mandatory: true, notNull: true, collate: "default" },
                 { name: "description", type: "String", collate: "default" },
-                { name: "report_types", type: "EmbeddedList", mandatory: true, notNull: true, collate: "default" },
+                { name: "report_types", type: "EmbeddedList", notNull: true, collate: "default" },
                 { name: "published", type: "DateTime", mandatory: true, notNull: true, collate: "default" },
                 { name: "object_refs", type: "EmbeddedList", mandatory: true, notNull: true, collate: "default" },
             ],

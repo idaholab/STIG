@@ -107,8 +107,7 @@
         }
     },
     "required": [
-        "name",
-        "threat_actor_types"
+        "name"
     ],
     "definitions": {
         "threat-actor-role-ov": {

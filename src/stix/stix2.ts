@@ -4,12 +4,13 @@ Copyright 2018 Southern California Edison Company
 ALL RIGHTS RESERVED
  */
 
+import { PositionDimension } from 'cytoscape';
 import * as uuid from 'uuid';
 
 export interface BundleType {
   type: 'bundle' | 'Bundle';
   objects: Core[];
-  metadata?: Core[];
+  metadata?: {id: string, position: {x: number, y: number}}[];
 }
 
 export type SDO = Asset | AttackPattern | Campaign | CourseOfAction | Identity | Indicator | IntrusionSet | Malware | ObservedData | Report | ThreatActor | Tool | Vulnerability;

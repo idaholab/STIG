@@ -52,6 +52,8 @@ export class StixNode implements IStixNode {
      */
     constructor(the_data: StixNodeData, the_type: StixType, d_source: DataSourceType) {
 
+     //console.log("<stixnode> type: ", the_data.name, the_type)
+
         this.data = {
             id: the_data.id,
             label: the_type === 'marking-definition' ? the_type : the_data.name,
@@ -76,7 +78,7 @@ export class StixNode implements IStixNode {
             x: 100,
             y: 100,
         };
-        const style: CSSStyleDeclaration = { backgroundImage: node_img[the_type], backgroundFit: 'contain' } as CSSStyleDeclaration;
+        const style: CSSStyleDeclaration = { backgroundImage: node_img[the_type] } as unknown as CSSStyleDeclaration;
         this.style = style;
         if (this.data.data_source === 'DB' || this.data.data_source === 'IGNORE') {
             this.saved = true;
@@ -116,5 +118,24 @@ export class StixRelationship implements IStixRelationship {
             this.saved = false;
         }
         this.data.saved = this.saved;
+    }
+}
+
+export interface VisualEdgeData extends cytoscape.EdgeDataDefinition {
+    raw_data: string;
+    target: Identifier;
+    source: Identifier;
+    id: string;
+}
+
+export interface IVisualEdge extends cytoscape.EdgeDefinition {
+    data: VisualEdgeData;
+}
+
+export class VisualEdge implements IVisualEdge {
+    public data: VisualEdgeData;
+
+    constructor(the_data: VisualEdgeData) {
+        this.data = the_data;
     }
 }

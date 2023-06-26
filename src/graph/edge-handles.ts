@@ -6,6 +6,7 @@ ALL RIGHTS RESERVED
 
 import * as cytoscape from 'cytoscape';
 
+
 const defaults = {
     preview: true, // whether to show added edges preview before releasing selection
     hoverDelay: 150, // time spent hovering over a target node before it is considered selected
@@ -17,6 +18,13 @@ const defaults = {
     edgeType(_sourceNode: cytoscape.SingularElementArgument, _targetNode: cytoscape.SingularElementArgument) {
         // can return 'flat' for flat edges between nodes or 'node' for intermediate node between them
         // returning null/undefined means an edge can't be added between the two nodes
+
+        // Disable edges for compound nodes
+        var src = window.cycore.$(`#${_sourceNode.id()}`)
+        var tgt = window.cycore.$(`#${_targetNode.id()}`)
+        if (src.isParent() || tgt.isParent()) {
+            return null
+        }
         return 'flat';
     },
     loopAllowed(_node: cytoscape.SingularElementArgument) {
@@ -73,6 +81,7 @@ const defaults = {
     },
 };
 
+
 export let edgehandles_style = [{
     selector: '.eh-handle',
     style: {
@@ -117,7 +126,7 @@ export let edgehandles_style = [{
 ];
 
 export function setup_edge_handles(cy: cytoscape.Core) {
-    const eh = cy.edgehandles( defaults);
+    const eh = cy.edgehandles( defaults );
     return eh;
 }
 

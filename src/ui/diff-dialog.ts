@@ -319,7 +319,7 @@ export class DiffDialog {
                 this.clearId(stix_id);
             }
             // tslint:disable-next-line:no-console
-            console.log(name, id);
+         //console.log(name, id);
         });
         this.updateNode(ids);
         this._anchor.dialog('close');

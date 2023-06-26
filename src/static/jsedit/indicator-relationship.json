@@ -33,8 +33,8 @@
         },
         "description": {
             "type": "string",
-            "description": "A description that helps provide context about the relationship.",
-            "format": "textbox"
+            "format": "textarea",
+            "description": "A description that helps provide context about the relationship."
         },
         "source_ref": {
             "title": "source_ref",

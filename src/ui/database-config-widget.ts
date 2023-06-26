@@ -4,11 +4,12 @@ Copyright 2018 Southern California Edison Company
 ALL RIGHTS RESERVED
 */
 
+import { use_db } from "../db/dbFunctions";
 import { DatabaseConfigurationStorage } from "../storage";
-import { ipcRenderer } from 'electron';
-import { newDatabaseConfiguration } from './new-database-widget';
+import { newDatabaseConfiguration } from './new-database-widget'
 
 export function openDatabaseConfiguration() {
+ //console.log("Open database dialog")
     const dbdialog = new DatabaseConfigDialog($('#db-dialog-anchor'));
     dbdialog.open();
 }
@@ -69,12 +70,15 @@ class DatabaseConfigDialog {
             ],
         });
 
-        $(".controlgroup").controlgroup({
-            direction: "vertical",
-        });
+        // $(".controlgroup").controlgroup({
+        //     direction: "vertical"
+        // });
+
+        $(".controlgroup").buttonset();
+        
         $( `#db-config-list input[type='radio']`).prop('checked', false);
-        $( `#db-config-list input[type='radio'][value='${this._storage.current}']` ).prop('checked', true);
-        $( "#db-config-list input[type='radio']" ).checkboxradio('refresh');
+        // $( `#db-config-list input[type='radio'][value='${this._storage.current}']` ).prop('checked', true);
+        // $( "#db-config-list input[type='radio']" ).buttonset('refresh');
     }
 
     public addToDialog() {
@@ -90,12 +94,12 @@ class DatabaseConfigDialog {
         this._list += `</div>`;
         this._anchor.empty();
         this._anchor.html(this._header + this._list + this._footer);
-        this.setupEventHandlers();
+        // this.setupEventHandlers();
     }
 
-    public setupEventHandlers() {
-        //     this.useConfig = $('#db-config-list .ui-selected')[0].innerText;
-    }
+    // public setupEventHandlers() {
+    //         this.useConfig = $('#db-config-list .ui-selected')[0].innerText;
+    // }
 
     private deleteSelected() {
         this._storage.removeConfig($( "#db-config-list input:checked" ).val() as string);
@@ -114,7 +118,8 @@ class DatabaseConfigDialog {
     private useDatabase() {
         this.useConfig = $( "#db-config-list input:checked" ).val() as string;
         this._storage.current = this.useConfig;
-        ipcRenderer.send('useDatabase', this._storage.get(this.useConfig));
+        // ipcRenderer.send('useDatabase', this._storage.get(this.useConfig));
+        use_db(this._storage.get(this._storage.current))
         //add progress bar here tied to
         this._anchor.dialog("close");
     }

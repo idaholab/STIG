@@ -1,60 +1,80 @@
-/*
-Copyright 2018 Southern California Edison Company
+// /*
+// Copyright 2018 Southern California Edison Company
 
-ALL RIGHTS RESERVED
- */
+// ALL RIGHTS RESERVED
+//  */
 
-import * as moment from 'moment';
-import * as unhandled from 'electron-unhandled';
-import * as uuid from 'uuid';
+import uuid from 'uuid';
 import {
-    BundleType,
     Relationship,
-    SDO,
-    SRO,
     StixObject,
     Indicator,
     ObservedData,
     Report,
     StixNode,
+    StixRelationship,
+    BundleType,
+    SRO,
+    SDO,
 } from './stix';
 import * as stix from './stix';
 import * as fileSaver from 'file-saver';
-// import { ViewUtilitiesOptions } from './cytoscape-view-utilities';
-import { StigDB } from './db/db';
 import {
+    compound_style,
     edge_style,
     node_style,
     select_node_style,
     view_utils_options,
     modified_unselect_style,
     modified_select_style,
+    layouts
 } from './graph/graphOptions';
-import * as cola from 'cytoscape-cola';
-import * as cosebilkent from 'cytoscape-cose-bilkent';
-import * as dagre from 'cytoscape-dagre';
-import * as euler from 'cytoscape-euler';
-import * as ngraph from 'cytoscape-ngraph.forcelayout';
-import * as spread from 'cytoscape-spread';
-import { QueryHistoryDialog } from './ui/queryHistoryWidget';
+import cola from 'cytoscape-cola';
+import cosebilkent from 'cytoscape-cose-bilkent';
+import dagre from 'cytoscape-dagre';
+import euler from 'cytoscape-euler';
+// import ngraph from 'cytoscape-ngraph.forcelayout';
+import spread from 'cytoscape-spread';
 import { setup_edge_handles, edgehandles_style } from './graph/edge-handles';
 import { setup_ctx_menu } from './graph/context-menu';
 import { GraphUtils } from './graph/graphFunctions';
 import { StixEditor } from './ui/stix-editor';
-import * as Split from 'split.js';
-import * as cytoscape from 'cytoscape';
+import Split from 'split.js';
+import cytoscape, { CytoscapeOptions } from 'cytoscape';
 import { ViewUtilitiesOptions } from './graph/graphOptions';
-import { ipcRenderer } from 'electron';
-import { GraphQueryResult } from './db/db_types';
-import * as edgehandles from 'cytoscape-edgehandles';
+import edgehandles from 'cytoscape-edgehandles';
+import moment from 'moment';
 import { QueryStorageService, DatabaseConfigurationStorage, StigSettings } from './storage';
-import { setHandlers } from './ui/ipc-render-handlers';
+import {graph_copy, graph_paste} from './ui/clipboard'
+import { openDatabaseConfiguration } from './ui/database-config-widget';
+import { check_db, commit, get_diff, query } from './db/dbFunctions';
+import { commit_all, delete_selected } from './ui/ipc-render-handlers';
+import { GraphQueryResult } from './db/db_types';
+import { QueryHistoryDialog } from './ui/queryHistoryWidget';
+import { DiffDialog } from './ui/diff-dialog';
+import { removeCompoundNodes, initDefenseGraph, initKillChainGraph } from './contextLayouts/contextLayouts';
+import tippy from 'tippy.js'
+import { organizeOrphans } from './contextLayouts/graphLayoutFunctions';
+
+const killChain = require("./contextLayouts/killChainSchema.json")
+const defense = require("./contextLayouts/defenseInDepthSchema.json")
+import { openDatabaseUpload } from './ui/database-upload-widget';
+import { openConnectTaxii } from './ui/connect-taxii-widget';
+import { openBundleExport } from './ui/export -bundle-widget';
 
 declare global {
-    interface Window {
+    interface Window { 
         cycore: cytoscape.Core;
         layout: string;
     }
+}
+
+// Returns nodes positions
+const getNodeMetadata = (nodes) => {
+    return nodes.map(obj => ({
+        id: obj.id(),
+        position: obj.position(),
+    }))
 }
 
 // tslint:disable-next-line:class-name
@@ -62,66 +82,389 @@ export class main {
     // tslint:disable-next-line:no-empty
     constructor() { }
 
-    public run() {
+    public async run() {
+
+        // Initialize tippy tooltips
+        tippy('[data-tippy-content]', {
+            theme: 'light',
+        });
+        // Initialize the query storage object
         const storage: QueryStorageService = QueryStorageService.Instance;
+
+        // Initialize the settings object
+        const settings = StigSettings.Instance;
+
         let loading: boolean = false;
 
         document.addEventListener('DOMContentLoaded', async () => {
-            unhandled();
-            const cyto_options: cytoscape.CytoscapeOptions = {
+
+            // load saved data
+            await DatabaseConfigurationStorage.Instance.getConfigs()
+            await StigSettings.Instance.getSettings()
+            await QueryStorageService.Instance.getQueryHistory()
+            
+            const cyto_options: CytoscapeOptions = {
                 container: $('#cy')[0],
-                style: [node_style, edge_style, select_node_style, modified_select_style, modified_unselect_style, ...edgehandles_style],
-                // wheelSensitivity: 0.25,
+                style: [node_style, compound_style, edge_style, select_node_style, modified_select_style, modified_unselect_style, ...edgehandles_style],
+                wheelSensitivity: 0.25,
             } as cytoscape.CytoscapeOptions;
 
             // set up cytoscape
             const cy = cytoscape(cyto_options);
             window.cycore = cy;
+            const graph_utils = new GraphUtils(cy);
 
+            
             // used by some events to make cytoscape respond
-            window.addEventListener("resize", () => cy.resize(), false);
+            window.addEventListener("resize", () => {cy.resize()}, false);
             const call_forceRender = () => {
                 cy.resize();
             };
 
-            Split(['#cy', '#editpane'], {
+            var split = Split(['#cy', '#editpane'], {
                 direction: 'horizontal',
                 sizes: [75, 25],
                 gutterSize: 8,
                 cursor: 'col-resize',
                 onDragEnd: call_forceRender,
             });
-            const current_db_config = DatabaseConfigurationStorage.Instance.current;
-            const db = new StigDB(current_db_config);
+
+            
+
+            // Add event listeners to dropdown menu items
+
+            // GRAPH
+            $("#dd-copyElem").on("click", () => {
+             //console.log("Copy element")
+                graph_copy();
+            })
+            $("#dd-cutElem").on("click", () => {
+             //console.log("Cut element")
+                const selected = window.cycore.$(":selected")
+                graph_copy()
+                window.cycore.remove(selected)
+            })
+            $("#dd-pasteElem").on("click", () => {
+             //console.log("paste element")
+                graph_paste()
+            })
+            $("#dd-commitElem").on("click", () => {
+             //console.log("Commit elements")
+                commit_all()
+            })
+            $("#dd-dbDelete").on("click", () => {
+             //console.log("Delete from db")
+                delete_selected()
+            })
+            $("#dd-selectElem").on("click", () => {Blob
+             //console.log("Select all elements")
+                window.cycore.elements().select()
+            })
+            $("#dd-invertSelect").on("click", () => {
+                console.log("Invert")
+                const unselected = window.cycore.$(':unselected');
+                const selected = window.cycore.$(':selected');
+                selected.unselect();
+                unselected.select();
+            })
+            $("#dd-viewEmbeddedRels").on("click", () => {
+                // list all objects with property "object_refs"
+                let embedded_rel_types = ["report", "opinion", "grouping", "note", "observed-data"]
+
+                // get all current objects
+                let nodes = window.cycore.$(':visible')
+                nodes = nodes.union(nodes.connectedEdges());
+                //let new_rels = []
+
+                // if an object has "object_refs" property, create relationships for all reference objects
+                nodes.each((ele) => {
+                    console.log(ele)
+                    let current_object = ele.data('raw_data');
+                    if (current_object !== undefined && embedded_rel_types.includes(current_object['type']) && current_object['object_refs']) {
+                        console.log(current_object["object_refs"])
+                        console.log(current_object["id"])
+                        for (var ref_id of current_object["object_refs"]) {
+                            console.log(ref_id)
+
+                            // Step 1.
+                            let rel_id = uuid.v4();
+                            //let rel_created = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
+
+                            // const raw_data: Relationship = {
+                            //     // get source node
+                            //     source_ref: current_object["id"],
+                            //     // get target node
+                            //     target_ref: ref_id,
+                            //     type: 'relationship',
+                            //     created: rel_created,
+                            //     id: rel_id,
+                            //     relationship_type: 'related-to',
+                            // };
+
+                            const opts: stix.VisualEdgeData = {
+                                raw_data: "visual_edge",
+                                id: rel_id,
+                                target: ref_id,
+                                source: current_object["id"]
+                            }
+                            
+                            // const opts: stix.StixRelationshipData = {
+                            //     raw_data: raw_data,
+                            //     type: 'relationship',
+                            //     id: rel_id,
+                            //     created: rel_created,
+                            //     source: current_object["id"],
+                            //     target: ref_id,
+                            //     label: 'related-to'
+                            // };
+
+                            // console.log(opts)
+
+                            // Step 2.
+                            let rel_node = new stix.VisualEdge(opts)
+
+                            // Step 3.
+                            cy.add(rel_node);
+                            // cy.add({data: {id: rel_id, source: current_object["id"], target: ref_id}});
+                        }
+                    } 
+                    //&& ele.data('raw_data').object_refs
+                });
+            })
+
+            var relationshipsOn = true
+            $("#dd-toggleRelationships").on("click", () => {
+                if (relationshipsOn) {
+                    view_util.hide(cy.edges())
+                } else {
+                    view_util.show(cy.edges())
+                }
+                relationshipsOn = !relationshipsOn
+            })
+
+            // EXPORT
+            $("#dd-exportSelected").on("click", () => {
+             //console.log("Export selected")
+                const bundle_id = 'bundle--' + uuid.v4();
+                const bundle = { type: 'bundle', id: bundle_id, objects: [] } as BundleType;
+                
+                let nodes = window.cycore.$(':selected');
+                nodes.each((ele) => {
+                    if (ele.length === 0) {
+                        return;
+                    }
+                    //logic to remove null on json export
+                    if(ele.data('raw_data')!==undefined){
+                        bundle.objects.push(ele.data('raw_data'));
+                    }
+                });
+
+                openBundleExport(bundle)
+            })
+            $("#dd-exportGraph").on("click", () => {
+             //console.log("Export graph")
+                const bundle_id = 'bundle--' + uuid.v4();
+                const bundle = { type: 'bundle', id: bundle_id, objects: [] } as BundleType;
+                
+                let nodes = window.cycore.$(':selected');
+                nodes.each((ele) => {
+                    if (ele.length === 0) {
+                        return;
+                    }
+                    //logic to remove null on json export
+                    if(ele.data('raw_data')!==undefined){
+                        bundle.objects.push(ele.data('raw_data'));
+                    }
+                });
+
+                openBundleExport(bundle)                
+            })
+            $("#dd-exportAll").on("click", () => {  
+             //console.log("Export all")
+                const bundle_id = 'bundle--' + uuid.v4();
+                const bundle = { type: 'bundle', id: bundle_id, objects: [] } as BundleType;
+                let nodes = window.cycore.$(':visible');
+                nodes = nodes.union(nodes.connectedEdges());
+                nodes.each((ele) => {
+                    if (ele.length === 0) {
+                        return;
+                    }
+                    //logic to remove null on json export
+                    if(ele.data('raw_data')!==undefined){
+                        bundle.objects.push(ele.data('raw_data'));
+                    }
+                    });
+                bundle.metadata = getNodeMetadata(nodes);
+
+                openBundleExport(bundle)
+            })
+            $("#dd-exportPos").on("click", () => {
+             //console.log("Export positions")
+                let nodes = window.cycore.$(':visible')
+
+                const jsonObj = JSON.stringify({metadata: getNodeMetadata(nodes)}, null, 2);
+                const blob = new Blob([jsonObj], { type: "application/json" });
+                fileSaver.saveAs(blob, "metadata.json");
+                $('.message-status').html("exported metadata")
+            })
+
+            // LAYOUT
+            $("#dd-layoutCose").on("click", () => {
+                $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-layout")}).prop("style", "background-color: white")
+                $("#dd-layoutCose").prop("style", "background-color: #0d6efd")
+
+                graph_utils.myLayout("cose");
+                settings.setLayout("cose");
+            })
+            $("#dd-layoutCola").on("click", () => {
+                $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-layout")}).prop("style", "background-color: white")
+                $("#dd-layoutCola").prop("style", "background-color: #0d6efd")
+
+                graph_utils.myLayout("cola");
+                settings.setLayout("cola");
+            })
+            $("#dd-layoutCircle").on("click", () => {
+                $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-layout")}).prop("style", "background-color: white")
+                $("#dd-layoutCircle").prop("style", "background-color: #0d6efd")
+
+                graph_utils.myLayout("circle");
+                settings.setLayout("circle");
+            })
+            $("#dd-layoutSpread").on("click", () => {
+                $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-layout")}).prop("style", "background-color: white")
+                $("#dd-layoutSpread").prop("style", "background-color: #0d6efd")
+
+                graph_utils.myLayout("spread");
+                settings.setLayout("spread");
+            })
+            $("#dd-layoutCoseBilkent").on("click", () => {
+                $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-layout")}).prop("style", "background-color: white")
+                $("#dd-layoutCoseBilkent").prop("style", "background-color: #0d6efd")
+
+                graph_utils.myLayout("cose_bilkent");
+                settings.setLayout("cose_bilkent");
+            })
+            $("#dd-layoutKlay").on("click", () => {
+                $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-layout")}).prop("style", "background-color: white")
+                $("#dd-layoutKlay").prop("style", "background-color: #0d6efd")
+
+                graph_utils.myLayout("klay");
+                settings.setLayout("klay");
+            })
+            $("#dd-layoutDagre").on("click", () => {
+                $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-layout")}).prop("style", "background-color: white")
+                $("#dd-layoutDagre").prop("style", "background-color: #0d6efd")
+
+                graph_utils.myLayout("dagre");
+                settings.setLayout("dagre");
+            })
+            $("#dd-layoutRandom").on("click", () => {
+                $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-layout")}).prop("style", "background-color: white")
+                $("#dd-layoutRandom").prop("style", "background-color: #0d6efd")
+
+                graph_utils.myLayout("random");
+                settings.setLayout("random");
+            })
+            $("#dd-layoutConcentric").on("click", () => {
+                $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-layout")}).prop("style", "background-color: white")
+                $("#dd-layoutConcentric").prop("style", "background-color: #0d6efd")
+
+                graph_utils.myLayout("concentric");
+                settings.setLayout("concentric");
+            })
+            $("#dd-layoutBreadthfirst").on("click", () => {
+                $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-layout")}).prop("style", "background-color: white")
+                $("#dd-layoutBreadthfirst").prop("style", "background-color: #0d6efd")
+
+                graph_utils.myLayout("breadthfirst");
+                settings.setLayout("breadthfirst");
+            })
+            $("#dd-layoutGrid").on("click", () => {
+                $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-layout")}).prop("style", "background-color: white")
+                $("#dd-layoutGrid").prop("style", "background-color: #0d6efd")
+
+                graph_utils.myLayout("grid");
+                settings.setLayout("grid");
+            })
+
+            // CONTEXT LAYOUTS
+            $("#dd-ctxLayoutNone").prop("style", "background-color: #0d6efd")
+            $("#dd-ctxLayoutNone").on("click", () => {
+                $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-ctxLayout")}).prop("style", "background-color: white")
+                $("#dd-ctxLayoutNone").prop("style", "background-color: #0d6efd")
+                
+                removeCompoundNodes()
+                // Position the nodes with a layout
+                graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
+            })
+            $("#dd-ctxLayoutDefInDepth").on("click", () => {
+                $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-ctxLayout")}).prop("style", "background-color: white")
+                $("#dd-ctxLayoutDefInDepth").prop("style", "background-color: #0d6efd")
+
+                removeCompoundNodes()
+                initDefenseGraph()
+                organizeOrphans()
+            })
+            killChain["kill-chain"].forEach(kc => {
+                $("#contextLayoutOptions").append(`<li><a id=ctxLayout${kc.type} class="dropdown-item latout-option">${kc.type}</a></li>`)
+                $(`#ctxLayout${kc.type}`).on("click", () => {
+                    $("a").filter(function(_index: number, ele: HTMLElement) {return ele.id.includes("dd-ctxLayout")}).prop("style", "background-color: white")
+                    $(`#dd-ctxLayout${kc.type}`).prop("style", "background-color: #0d6efd")
+
+                    removeCompoundNodes()
+                    initKillChainGraph(kc.type)
+                    
+                })
+            })
+
+
+            // DATABASE
+            $("#database").on("click", () => {
+                openDatabaseConfiguration();
+            })
+            $("#databaseUpload").on("click", () => {
+                openDatabaseUpload();
+            })
+            $("#connectTaxii").on("click", () => {
+                openConnectTaxii();
+            })
 
             // Graph handling functions
-            const graph_utils = new GraphUtils(cy, db);
+            
             // configures edge behaviors
             edgehandles(cytoscape);
-            setup_edge_handles(cy);
+            var eh = setup_edge_handles(cy);
+
+            // Disable edgehandles for compound nodes
+            cy.on("mouseover", ":parent", _ => {eh.hide()})
 
             // set up view utilities
             const jquery = require('jquery');
-            // var jquery;
             const viewUtilities = require('cytoscape-view-utilities');
             viewUtilities(cytoscape, jquery);
             const view_util = cy.viewUtilities(view_utils_options as ViewUtilitiesOptions);
             // context menus inside the graph
             const cxtmenu = require('cytoscape-cxtmenu');
             cxtmenu(cytoscape);
-            setup_ctx_menu(cy, db, view_util);
+            setup_ctx_menu(cy, view_util);
             const klay = require('cytoscape-klay');
             klay(cytoscape);
             cola(cytoscape);
             cosebilkent(cytoscape);
             dagre(cytoscape);
             euler(cytoscape);
-            ngraph(cytoscape);
+            // ngraph(cytoscape);
             spread(cytoscape);
-            setHandlers();
+
+            // Get the layout from the cookie and set the graph layout
+            let layout = (await settings.getSettings()).layout
+            //console.log('layout: ', layout)
+            if (layouts[layout]) {
+                graph_utils.myLayout(layout)
+            }
 
             // the editor form that is filled when a node is clicked
-            const editor = new StixEditor(cy, db);
+            const editor = new StixEditor(cy);
             //#endregion
 
             // function to search elements inside the displayed graph
@@ -239,42 +582,46 @@ export class main {
                     return;
                 }
                 storage.add(text);
-                hist_dialog.addToHistoryDialog();
-                const result = await db.doGraphQuery({
-                    command: text,
-                    mode: 'graph',
-                    parameters: [],
-                });
-                if (result.graph === undefined || result.graph.vertices === undefined) {
-                    $('#query-status').html('No results');
-                    return;
-                }
-                // console.log(result);
-                $('#query-status').html(`Returned ${result.graph.vertices.length} nodes and ${result.graph.edges.length} edges.`);
+                // hist_dialog.addToHistoryDialog();
+                // const result = await db.doGraphQuery({
+                //     command: text,
+                //     mode: 'graph',
+                //     parameters: [],
+                // });
+                const result = await query(text)
+                // if (result.graph === undefined || result.graph.vertices === undefined) {
+                //     $('#query-status').html('No results');
+                //     return;
+                // }
+
+             //console.log(result);
+                
                 const add_graph: GraphQueryResult = {
                     graph: {
                         vertices: [],
                         edges: [],
                     },
                 };
-                let results: StixObject[] = [];
-                results = results.concat(result.graph.edges, result.graph.vertices);
+                // let results: StixObject[] = [];
+                // results = results.concat(result.graph.edges, result.graph.vertices);
                 // results.concat(result.graph.vertices);
                 loading = true;
-                results.forEach((item: StixObject) => {
+                result.forEach((item: StixObject) => {
                     if (cy.getElementById(item.id_).length === 0) {
                         /((r|R)elationship)|((s|S)ighting)/.exec(item.type) ? add_graph.graph.edges.push(item as SRO) : add_graph.graph.vertices.push(item as SDO);
                     }
                 });
+                $('#query-status').html(`Returned ${add_graph.graph.vertices.length} nodes and ${add_graph.graph.edges.length} edges.`);
                 try {
-                    const bundle = await db.handleResponse(add_graph);
-                    const new_nodes = await graph_utils.buildNodes(bundle, true);
+                    // const bundle = await db.handleResponse(add_graph);
+                    let bundle : BundleType = {type: "bundle", objects: result}
+                    await graph_utils.buildNodes(bundle, true);
                     // const selected = cy.$(':selected');
                     // view_util.removeHighlights(selected);
-                    cy.elements().unselect();
+                    // cy.elements().unselect();
                     graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
-                    new_nodes.select();
-                    $('.message-status').html(`Added ${new_nodes.length} elements to graph`);
+                    // new_nodes.select();
+                    $('.message-status').html(`Added ${result.length} elements to graph`);
                     loading = false;
                 } catch (err) {
                     loading = false;
@@ -292,13 +639,14 @@ export class main {
                     $("#btn-db-search").trigger("click");
                 }
             });
+
             // clears all items from displayed graph
             $("#button-clear-graph").on("click", (e: JQuery.Event) => {
                 e.preventDefault();
                 e.stopPropagation();
                 cy.elements().remove();
                 $('#metawidget').empty();
-                db.diff_dialog.reset();
+                // db.diff_dialog.reset();
                 cy.reset();
                 $("#query-status").html("No Results");
             });
@@ -313,18 +661,20 @@ export class main {
                 const input_data = ele.data('raw_data');
                 if (input_data === undefined) { return true; }
                 if (ele.isNode()) {
+                    // console.log("<editor> search schema", schema)
                     // load the form for this node
                     try {
                         editor.buildWidget(ele, ele.data('type'), input_data);
                     }
                     catch(err) {
-                        if(err.message === "Cannot read property '$ref' of undefined"){
-                            // added to handle sub directory 'observables'
-                            editor.buildWidget(ele, 'observables/' + ele.data('type'), input_data);
-                        }
-                        else{
+                        // console.log(err.message);
+                        // if(err.message === "Cannot read property '$ref' of undefined"){
+                        //     // added to handle sub directory 'observables'
+                        //     editor.buildWidget(ele, 'observables/' + ele.data('type'), input_data);
+                        // }
+                        // else{
                             console.error(err);
-                        }
+                        // }
                     }
                 } else {
                     // edge
@@ -362,7 +712,7 @@ export class main {
                 // console.log(editor.root.getValue())
                 e.preventDefault();
                 e.stopPropagation();
-                const form_data = editor.editor.getEditor('root').getValue();
+                const form_data = editor.editor.getValue();
                 const jsonToSave = JSON.stringify(form_data, null, 2);
                 const jsonSingleSave = new Blob([jsonToSave], { type: "application/json" });
                 fileSaver.saveAs(jsonSingleSave, `${form_data.id}.json`);
@@ -370,7 +720,7 @@ export class main {
             });
 
             // Clear Stix form editor when node/edge is unselected
-            cy.on("unselect", 'node, edge', (_evt: cytoscape.EventObject) => {
+            cy.on("unselect", 'node, edge', (evt: cytoscape.EventObject) => {
                 // editor.editor.destroy();
                 $('#metawidget').empty();
                 $('#current_node').empty();
@@ -380,7 +730,10 @@ export class main {
 
             // Handler for when an edge is created via the graph editor
             cy.on('add', 'edge', (evt: cytoscape.EventObject) => {
+                console.log("in here")
+
                 let my_map = new Map();
+
                 my_map.set('attack-pattern', 'uses');
                 my_map.set('campaign', 'uses');
                 my_map.set('course-of-action', 'mitigates');
@@ -402,12 +755,13 @@ export class main {
 
                 const input_data = ele.data('raw_data');
                 if (input_data === undefined) {
-
+                    console.log("in here as well")
                     let src_obj_type = ele.source().data('raw_data').type;
                     let default_relationship = "";
                     if (my_map.has(src_obj_type)) {
                         default_relationship = my_map.get(src_obj_type);
-                    } else {
+                    } 
+                    else {
                         default_relationship = "related-to";
                     }
 
@@ -426,20 +780,6 @@ export class main {
                     ele.data('saved', false);
                     ele.style('label', default_relationship);
                 }
-            });
-
-            ipcRenderer.on("layout", (_event: Electron.Event, layout_type: string) => {
-                // layout = layout_type;
-                // window.layout = layout_type;
-                graph_utils.myLayout(layout_type);
-            });
-
-            ipcRenderer.on('database_reconfigured', () => {
-                cy.elements().remove();
-                $('#metawidget').empty();
-                db.diff_dialog.reset();
-                cy.reset();
-                $("#query-status").html("No Results");
             });
 
             //  Handlers for drag and drop of files containing stix bundles
@@ -501,8 +841,39 @@ export class main {
             function addToGraph(pkg: BundleType) {
                 graph_utils.buildNodes(pkg, false).then((added) => {
                     $('.message-status').html(`Added ${added.length} elements to graph.`);
+                    if (pkg.metadata) {
+                        // Position the nodes
+                        for (const node of pkg.metadata) {
+                            // Find the element on the graph
+                            cy.$id(node.id).animate({position: node.position, duration: 1000, complete: () => cy.fit()})
+                        } 
+                    } else {
+
+                        var canLayout = true
+
+                        // Check if defense in depth is on
+                        if (cy.nodes(`#${defense.name.replaceAll(" ", "_")}`).length > 0) {
+                            canLayout = false
+                            $("#dd-ctxLayoutDefInDepth").trigger("click")
+                        }
+
+                        // Check if a kill chain is on
+                        killChain["kill-chain"].forEach(kc => {
+                            // `#ctxLayout${kc.type}`
+                            if (cy.nodes(`#${kc.type}`).length > 0) {
+                                canLayout = false
+                                $(`#ctxLayout${kc.type}`).trigger("click")
+                            }
+                        })
+
+                        // Only do this if there aren't any defense in depth or kill chain layouts open
+                        if (canLayout) {
+                            graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
+                        }
+                    }
+
+                    
                 });
-                graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
             }
             uploader.addEventListener('dragover', handleDragOver, false);
             uploader.addEventListener('drop', handleFileDrop, false);
@@ -512,11 +883,12 @@ export class main {
              *
              */
             $(document).on('click', '#btn-export-bundle', () => {
+
                 // Get raw data from all cy elements
                 // Create bundle object
                 const bundle_id = 'bundle--' + uuid.v4();
                 const bundle = { type: 'bundle', id: bundle_id, objects: [] } as BundleType;
-                let nodes = cy.$(':visible');
+                let nodes = window.cycore.$(':visible');
                 nodes = nodes.union(nodes.connectedEdges());
                 nodes.each((ele) => {
                     if (ele.length === 0) {
@@ -533,39 +905,54 @@ export class main {
                 //     bundle.objects.push(ele.data('raw_data'));
                 // });
 
-                // Convert to JSON and save
-                const jsonToSave = JSON.stringify(bundle, null, 2);
-                const jsonBundleSave = new Blob([jsonToSave], { type: "application/json" });
-                fileSaver.saveAs(jsonBundleSave, "bundle.json");
-                $('.message-status').html(`Exported ${bundle.objects.length} objects`);
+                // Open the export widget
+                openBundleExport(bundle)    
             });
 
-            $(document).on('click', '#btn-diff', () => {
-                db.diff_dialog.open();
+            $(document).on('click', '#btn-diff', async () => {
+                const node = editor.editor.getValue()
+                const diff = await get_diff(node)
+                if (diff) {
+                    let diff_dialog = new DiffDialog($('#diff-anchor'))
+                    diff_dialog.addDiff(node.id, diff, node, node.name)
+                    diff_dialog.open();
+                } else {
+                    console.log("Error: no diff")
+                }
             });
 
             /***************************************** *
             *        Save stix form to DB on click
             *************************************** */
             $('button').button();
-            $('button.btn-commit').on("click", (e: JQuery.Event) => {
+            $('button.btn-commit').on("click", async (e: JQuery.Event) => {
                 e.preventDefault();
                 e.stopPropagation();
-                let result: StixObject[];
-                let ourres = '';
+                // let result: StixObject[];
+                // let ourres = '';
                 try {
                     const formdata: StixObject = editor.editor.getValue();
-                    db.updateDB(formdata).then((r) => {
-                        result = r;
-                        // ourres = result[0]['type'];
-                    });
+                    if (await commit(formdata)) {
+                        // Find the node in the graph
+                        let node = cy.elements().filter((ele) => {
+                         //console.log(JSON.stringify(ele.data('saved')))
+                            return ele?.data('id') === formdata.id;
+                        })
+
+                        // Set it as saved
+                        if (node[0]) {
+                            node[0].data('saved', true)
+                        }
+
+                        $('.message-status').html(`Committed 1 object to the database.`);
+
+                    }
                 } catch (e) {
                     console.error('Error saving to database:');
                     console.error(e);
                     throw e;
                 }
                 $('button.btn-commit').button('option', 'disabled', true);
-                $('.message-status').html(`Committed 1 object to the database.`);
             });
 
             /***********************************************************************************
@@ -647,14 +1034,14 @@ export class main {
                     opacity: 0.7,
                     helper: 'clone',
                     zIndex: 999,
-                    start() {
-                        // console.log('icon position:' + $(element).attr('position').x + $(element).attr('position').y)
-                        // console.log('drag start:' + ui.position.left.toString() + ' ' + ui.position.top.toString())
-                    },
+                    // start(_, ui) {
+                    //     // console.log('icon position:' + $(element).attr('position').x + $(element).attr('position').y)
+                    //     console.log('drag start:' + ui.position.left.toString() + ' ' + ui.position.top.toString())
+                    // },
                     // handle widgets being dragged in from the widget bar
-                    stop: async (evt: DragEvent) => {
+                    stop: async function(_, ui) {
                         const my_node = await event_add_node($(element).attr('name')!);
-                        const view_pos = cy._private.renderer.projectIntoViewport(evt.clientX, evt.clientY);
+                        const view_pos = cy._private.renderer.projectIntoViewport(ui.position.left, ui.position.top);
                         my_node.position = {
                             x: view_pos[0],
                             y: view_pos[1],
@@ -664,9 +1051,49 @@ export class main {
                 });
                 return;
             });
+
+            // // Save graph if the page refreshes
+            // // Note: Doesn't work on large graphs. Cookies have limited size.
+            // $(window).on('beforeunload', async () => {
+            //     let graph = []
+            //     window.cycore.elements().each(ele => {
+            //         if (ele.data('raw_data')) {
+            //             graph.push(ele.data('raw_data'))
+            //         }
+            //     })
+
+            //     document.cookie = `bundle=${JSON.stringify({type: 'bundle', objects: graph})}; sameSite=strict`
+            //     // fetch('/save', {
+            //     //     method: 'POST',
+            //     //     headers: {
+            //     //         'Content-Type': 'application/json'
+            //     //     },
+            //     //     body: JSON.stringify({name: 'graph', data: {type: 'bundle', objects: graph}})
+            //     // })
+            // })
+
+            // // Check if there is a saved graph in the cookies
+            // if (document.cookie.includes('bundle')) {
+            //     //let bundle = JSON.stringify(document.cookie)
+            //     let cookie = document.cookie;
+            //     let cookiePieces = cookie.split(';')
+            //     let bundleCookie = cookiePieces.find(piece => {return piece.includes('bundle=')})
+            //     console.log(bundleCookie)
+            //     let bundle = bundleCookie.split('=');
+            //     console.log(bundle[1])
+            //     let parsed = JSON.parse(bundle[1])
+            //     const test_stix = (i: any) => {
+            //         const ret = i instanceof Object && i.hasOwnProperty('type') && i.hasOwnProperty('created');
+            //         return ret;
+            //     };
+            //     parsed.objects.every(test_stix) ? parsed.objects : parsed.objects = [];
+                
+            //     graph_utils.buildNodes(parsed).then(() => graph_utils.myLayout(settings.layout))
+                
+            // }
         },
         );
-        //
+        
         /*document.addEventListener("DOMContentLoaded", function() {
             var cy = (window.cy = cytoscape({
               container: document.getElementsByClassName("icon-box"),
@@ -708,5 +1135,7 @@ export class main {
 
         });
         //*/
+
+        setInterval(check_db, 10000)
     }
 }
