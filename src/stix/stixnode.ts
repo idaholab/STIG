@@ -53,10 +53,36 @@ export class StixNode implements IStixNode {
     constructor(the_data: StixNodeData, the_type: StixType, d_source: DataSourceType) {
 
      //console.log("<stixnode> type: ", the_data.name, the_type)
+     const labelorder = ["name", "value", "key", "path", "product", "dst_port", "command_line", "type", "id"]
+     var nodelabel;
+        nodelabel = undefined
+        if (the_type === 'marking-definition'){
+            nodelabel = the_data.name
+        }
+        else {
+            for (let index = 0; index < labelorder.length; index++) {
+                const element = labelorder[index];
+                if (the_data.hasOwnProperty(element)){
+                    
+                    if (element === "dst_port") {
+                        const { [element]: nodelabel1, src_port: src_port, protocols: protocols } = the_data;
+                        nodelabel = src_port.toString().concat(" -> ", nodelabel1.toString(), "/", protocols.toString())
+                    }
+                    else {
+                        const { [element]: nodelabel1 } = the_data;
+                        nodelabel = nodelabel1
+                    }
+                    
+                    
+                    break
+                }
+            }
+            
+        }
 
         this.data = {
             id: the_data.id,
-            label: the_type === 'marking-definition' ? the_type : the_data.name,
+            label: nodelabel ,
             type: the_type,
             level: 1,
             created: the_data.created,
@@ -65,14 +91,12 @@ export class StixNode implements IStixNode {
             raw_data: the_data,
             data_source: d_source,
         };
-        if (the_type !== 'marking-definition') {
-            if(the_data.name == undefined){
-                this.data.name = the_data.type;
-            }else{
-                this.data.name = the_data.name;
-            }
-            this.data.modified = the_data.modified;
+        if (nodelabel.length > 60) {
+            nodelabel = nodelabel.substring(0,60).concat("...");
         }
+        this.data.name = nodelabel;
+        this.data.modified = the_data.modified;
+        
 
         this.position = {
             x: 100,
