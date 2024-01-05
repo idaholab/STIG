@@ -18,7 +18,7 @@ import {
     SDO,
 } from './stix';
 import * as stix from './stix';
-import * as fileSaver from 'file-saver';
+import fileSaver from 'file-saver';
 import {
     compound_style,
     edge_style,
@@ -56,8 +56,8 @@ import { removeCompoundNodes, initDefenseGraph, initKillChainGraph } from './con
 import tippy from 'tippy.js'
 import { organizeOrphans } from './contextLayouts/graphLayoutFunctions';
 
-const killChain = require("./contextLayouts/killChainSchema.json")
-const defense = require("./contextLayouts/defenseInDepthSchema.json")
+import killChain from "./contextLayouts/killChainSchema.json";
+import defense from "./contextLayouts/defenseInDepthSchema.json";
 import { openDatabaseUpload } from './ui/database-upload-widget';
 import { openConnectTaxii } from './ui/connect-taxii-widget';
 import { openBundleExport } from './ui/export -bundle-widget';
@@ -808,28 +808,19 @@ export class main {
             }
 
             /**
-             * Handles files added to UI via drag and drop
+             * Handles files added to UI via drag and drop or file selector
              *
              * @param {FileList} files
              */
             function handleFiles(files: FileList) {
-                // files is a FileList of File objects (in our case, just one)
-                let f;
-                // tslint:disable-next-line:prefer-for-of
-                for (let i = 0; i < files.length; i++) {
-                    if (files[i] && files[i] instanceof File) {
-                        f = files[i];
-                        document.getElementById('chosen-files')!.innerText += f.name + " ";
-                        // hideMessages();
+                for (let file of files) {
+                    document.getElementById('chosen-files')!.innerText += file.name + " ";
 
-                        const r = new FileReader();
-                        r.onload = (_e: Event) => {
-                            // this.result
-                            // addToGraph(JSON.parse(e.target.result))
-                            addToGraph(JSON.parse(r.result as string));
-                        };
-                        r.readAsText(f);
-                    }
+                    const r = new FileReader();
+                    r.onload = (_e: Event) => {
+                        addToGraph(JSON.parse(r.result as string));
+                    };
+                    r.readAsText(file);
                 }
             }
 
@@ -879,8 +870,14 @@ export class main {
             uploader.addEventListener('drop', handleFileDrop, false);
 
             /**
+             * Handler for Import Bundle button
+             */
+            $(document).on('change', '#btn-import-bundle', (e) => {
+                handleFiles(e.target.files);
+            });
+
+            /**
              * Handler for Export Bundle button
-             *
              */
             $(document).on('click', '#btn-export-bundle', () => {
 

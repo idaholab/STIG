@@ -371,21 +371,32 @@ div.btn-history {
 .button-clear-graph {
     grid-row: 1;
     grid-column: 5;
-    /* align-self: center; */
+    align-self: center;
     justify-self: center;
     margin: 10px;
 }
 
 .diff-button {
     grid-row: 1;
+    grid-column: 6;
+    align-self: center;
+    justify-self: center;
+    margin: 10px;
+}
+
+.import-bundle-button {
+    grid-row: 2;
     grid-column: 5;
-    justify-self: right;
+    align-self: center;
+    justify-self: center;
     margin: 10px;
 }
 
 .export-bundle-button {
-    grid-row: 1;
+    grid-row: 2;
     grid-column: 6;
+    align-self: center;
+    justify-self: center;
     margin: 10px;
 }
 
@@ -397,7 +408,7 @@ div.btn-history {
 }
 
 .message-status {
-    grid-row: 2;
+    grid-row: 3;
     grid-column: 5/-1;
     margin: 5px;
     justify-self: center;
