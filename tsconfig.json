@@ -2,7 +2,7 @@
     "compilerOptions": {
         "sourceMap":true,
         "module": "CommonJS",
-        "target": "ES6",
+        "target": "ESNext",
         "resolveJsonModule": true,
         "esModuleInterop": true
     }

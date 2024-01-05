@@ -276,11 +276,20 @@ ALL RIGHTS RESERVED
             <div class="button-clear-graph">
                 <button id="button-clear-graph" type="button" class="ui-button ui-state-default ui-corner-all"> Clear Graph</button>
             </div>
-            <div class="export-bundle-button">
+            <div class="diff-button">
                 <button type="button" title="Diff" class="ui-button ui-state-default ui-corner-all" id="btn-diff">
                         <i class="ui ui-icon-transfer-e-w"></i>Diff</button>
+            </div>
+            <div class="import-bundle-button">
+                <label>
+                    <div title="Import" class="ui-button ui-widget ui-state-default ui-corner-all">
+                        <i class="fa fa-upload"></i> Import JSON Bundle</div>
+                    <input type="file" id="btn-import-bundle" style="display:none" accept=".json,text/json" multiple/>
+                </label>
+            </div>
+            <div class="export-bundle-button">
                 <button type="button" title="Export" class="ui-button ui-widget ui-state-default ui-corner-all" id="btn-export-bundle">
-                        <i class="fa fa-download"></i> JSON Bundle</button>
+                        <i class="fa fa-download"></i> Export JSON Bundle</button>
             </div>
             <div class="message-status panel">
             <span id="message-status" ></span>
