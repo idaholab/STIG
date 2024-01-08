@@ -24,7 +24,8 @@
     "scripts": {
         "build": "webpack",
         "start": "npm run build && concurrently --restart-tries -1 \"ts-node index.ts\"",
-        "start:dev": "concurrently -k \"webpack serve\" \"NODE_ENV=development nodemon index.ts\""
+        "start:dev": "concurrently -k \"webpack serve\" \"NODE_ENV=development nodemon index.ts\"",
+        "start:win": "concurrently -k \"webpack serve\" \"SET NODE_ENV=development & nodemon index.ts\""
     },
     "nodemonConfig": {
         "ignore": [
