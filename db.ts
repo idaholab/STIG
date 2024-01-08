@@ -4,102 +4,14 @@ Copyright 2018 Southern California Edison Company
 ALL RIGHTS RESERVED
 */
 
-import { DiffPatcher } from "jsondiffpatch";
 import _ from "lodash";
 import moment from "moment";
-import orientjs, { QueryOptions, PropertyCreateConfig, OResult, OrientDBClient } from "orientjs";
-import { GraphQueryResult } from "./src/db/db_types";
+import orientjs, { QueryOptions, PropertyCreateConfig, OrientDBClient } from "orientjs";
 import { IOrientJSONClassOptions, schema } from "./src/db/schema";
-import { BundleType, Id, Identifier, SDO, SRO, StixObject } from "./src/stix";
-import { DatabaseConfigurationStorage } from "./src/storage";
-import { IDatabaseConfigMap, IDatabaseConfigOptions } from "./src/storage/database-configuration-storage";
-import { openDatabaseConfiguration } from "./src/ui/database-config-widget";
+import { Id, Identifier, SDO, SRO, StixObject } from "./src/stix";
+import { IDatabaseConfigOptions } from "./src/storage/database-configuration-storage";
 
-// import * as moment from 'moment';
-// import * as cytoscape from 'cytoscape';
-// import { HTTPCommandQuery, GraphQueryResult, OrientErrorMessage, string } from './db_types';
-// import { BundleType, Id, Identifier, SDO, SRO, StixNodeData, StixObject } from '../stix';
-// // import { } from './stixnode';
-// import * as _ from 'lodash';
 import * as diffpatch from 'jsondiffpatch';
-// import { DiffDialog } from '../ui/diff-dialog';
-// import * as http_codes from 'http-status-codes';
-// import { ErrorWidget } from '../ui/errorWidget';
-// import * as orientjs from 'orientjs';
-// import { PropertyCreateConfig, QueryOptions } from 'orientjs';
-// import { DatabaseConfigurationStorage } from '../storage';
-// import { ipcRenderer } from 'electron';
-// import { IDatabaseConfigOptions } from '../storage/database-configuration-storage';
-// import { openDatabaseConfiguration } from '../ui/database-config-widget';
-
-// export class DBConnectionError implements Error {
-//     public message: string;
-//     public name: string;
-//     constructor(message: string, stack: string) {
-//         const dialog = new ErrorWidget($('#error-anchor'));
-//         $('#query-status').html('Database Connection Error!');
-//         this.message = message;
-//         dialog.populate("Error Connecting to database", `
-//         <p>Message: ${message}</p>
-//         <p>Stack: ${stack}</p>`);
-//     }
-//     public display() {
-//         const dialog = new ErrorWidget($('#error-anchor'));
-//         dialog.open();
-//     }
-// }
-
-// export class HTTPQueryError implements Error {
-//     public props: any;
-//     public code: number;
-//     public name: string = "QueryError";
-//     public message: string;
-//     public json: OrientErrorMessage;
-//     public statusCode = this.code;
-//     public statusMessage = this.message;
-//     constructor(code: string | number, msg: string, props?: any) {
-//         if (typeof code === "string") { (this.isCodeString(code)) ? code = http_codes[code] : code = +code; }
-//         if (typeof code !== "number") { throw new TypeError(`unsupported HTTP Code: ${code}`); }
-//         if (typeof msg === "object" && msg !== null) { props = msg; msg = null; }
-//         this.code = code;
-//         try {
-//             this.json = JSON.parse(msg);
-//             this.message = JSON.stringify(this.json);
-//         } catch (e) {
-//             this.json = undefined;
-//             this.message = msg;
-//         }
-//         this.props = props;
-//         $('#query-status').html('Query Error!');
-//     }
-
-//     private isCodeString(code: string) {
-//         // tslint:disable-next-line:use-isnan
-//         return +code === NaN;
-//     }
-
-//     public toHtml() {
-//         let msg = '<h3> Query Error </h3>';
-//         if (this.json !== undefined && this.json.errors && this.json.errors.length > 0) {
-//             this.json.errors.forEach((e) => {
-//                 msg += `<p><b>Status Code:</b> ${e.code}
-//                             ${http_codes.getStatusText(e.code)}<\p>
-//                             <b>Error: </b>`;
-//                 msg += `<p>${e.content.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>')}</p>`;
-//             });
-//         } else {
-//             msg += this.message;
-//         }
-//         // console.log(msg);
-//         return msg;
-//     }
-
-//     public display() {
-//         const dialog = new ErrorWidget($('#error-anchor'));
-//         dialog.populate('Query Error', this.toHtml());
-//         dialog.open();
-//     }
-// }
 
 export class StigDB {
 
@@ -107,7 +19,6 @@ export class StigDB {
     public headersLocal: { "Authorization": string; "Content-Type": string; };
     public ojs: orientjs.OrientDBClient;
     public odb: orientjs.ODatabaseSession;
-    // public diff_dialog: DiffDialog;
     public dbhost: string;
     public dbname: string;
     public commandurl: string;
@@ -121,70 +32,16 @@ export class StigDB {
         this.ojs = await OrientDBClient.connect({host: config.host, port: config.port})
         
         let dbOptions = {name: config.name, username: config.username, password: config.password}
-        //let dbOptions: orientjs.ODatabaseSessionOptions = {name: config.name, username: config.username, password: config.password}
-        try {
-            // this.odb = await this.ojs.session(dbOptions)
-            if (await this.ojs.existsDatabase(dbOptions)) {
+        if (await this.ojs.existsDatabase(dbOptions)) {
+            this.odb = await this.ojs.session(dbOptions)
+        } else {
+            this.ojs.createDatabase(dbOptions).then(async () => {
                 this.odb = await this.ojs.session(dbOptions)
-            } else {
-                this.ojs.createDatabase(dbOptions).then(async () => {
-                    this.odb = await this.ojs.session(dbOptions)
-                     this.createClasses()
-                })
-           
-            }
-        } catch (e) {
-            throw e
-            // if (e.type == "com.orientechnologies.orient.core.exception.OStorageDoesNotExistException") {
-            //     try{
-            //         await this.ojs.createDatabase(dbOptions).then(async () => {
-            //             this.odb = await this.ojs.session(dbOptions)
-            //             this.createClasses()
-            //         })
-            //     } catch (err) {
-            //         throw {message: "Unable to create database"}
-            //     }
-            // } else {
-            //     throw e
-            // }
+                    this.createClasses()
+            })
+        
         }
     }
-
-    // private changeConfig(options: IDatabaseConfigOptions): void {
-
-    //     this.db_config = options;
-    //     this.headersLocal = {
-    //         "Authorization": "Basic " + Buffer.from(`${options.username}:${options.password}`).toString('base64'),
-    //         "Content-Type": "application/json;charset=utf-8",
-    //     };
-    //     this.dbname = options.name;
-    //     this.commandurl = `http://${this.db_config.host}:2480/command/${this.dbname}/sql/-/-1`;
-    //     this.gremlinurl = `http://${this.db_config.host}:2480/command/${this.dbname}/gremlin/-/-1`;
-    //     this.baseurl = 'http://' + this.db_config.host + ':2480';
-    //     this.diff_dialog = new DiffDialog($('#diff-anchor'));
-    //     if (this.ojs !== undefined) {
-    //         this.ojs.close();
-    //     }
-    //     try {
-    //         this.ojs = new orientjs.ODatabase(options);
-    //         this.ojs.open().then((db) => this.odb = db);
-    //     } catch (e) {
-    //         alert(`Error Opening Database: \n\t${e.name}\nMessage: \n\t${e.message}\n\nOpening Configuration`);
-    //         openDatabaseConfiguration();
-    //         console.error(e.name, e.message);
-    //     }
-
-    //     DatabaseConfigurationStorage.Instance.current = options.name;
-    // }
-
-    // private _aliases = {
-    //     "attack-pattern": "attackpattern",
-    //     "course-of-action": "courseofaction",
-    //     "intrusion-set": "intrusionset",
-    //     "marking-definition":  "markingdefinition",
-    //     "observed-data": "observeddata",
-    //     "threat-actor": "threatactor",
-    // };
 
     /**
      * @description
@@ -193,11 +50,6 @@ export class StigDB {
      * @memberof StigDB
      */
     public async  listPropertiesForClass(clazz: string): Promise<orientjs.OClassProperty[]> {
-        // let classes = this.metadata['classes'];
-        // if (clazz in this._aliases) {
-        //     clazz = this._aliases[clazz];
-        // }
-
         if (clazz in this._properties_cache) {
             return this._properties_cache[clazz];
         }
@@ -219,111 +71,22 @@ export class StigDB {
             return fields;
         } catch (err) {
             // tslint:disable-next-line:no-console
-            console.error(`Error in listPropertiesForClass:
-            ${err}`);
+            console.error(`Error in listPropertiesForClass: ${err}`);
             err.stack += (new Error()).stack;
             throw err;
         }
     }
 
-    public async OJSQuery(query: string, options: QueryOptions): Promise<StixObject[]> {
-        let ret;
+    public OJSQuery(query: string, options: QueryOptions): Promise<StixObject[]> {
         try {
             // options.mode = 'graph';
-            ret = await this.odb.query(query, options);
-            return ret;
+            return this.odb.query(query, options) as unknown as Promise<StixObject[]>;
         } catch (err) {
             // console.error(`OJSQuery Error:\n${err}`);
             err.stack += (new Error()).stack;
             throw err;
         }
     }
-    // public async doQuery(query: HTTPCommandQuery): Promise<GraphQueryResult> {
-    //     const fetchData: RequestInit = {
-    //         method: 'POST',
-    //         body: JSON.stringify(query),
-    //         mode: "cors" as RequestMode,
-    //         headers: this.headersLocal,
-    //     };
-    //     if (query.command.length === 0) {
-    //         const ret: GraphQueryResult = {
-    //             graph: {
-    //                 edges: [],
-    //                 vertices: [],
-    //             },
-    //         };
-    //         return ret;
-    //     }
-    //     let url;
-    //     if (query.command.startsWith('g.')) { url = this.gremlinurl; } else { url = this.commandurl; }
-    //     let result;
-    //     try {
-    //         result = await fetch(url, fetchData);
-    //         if (result.ok) {
-    //             const ret = result.json();
-    //             return ret as Promise<GraphQueryResult>;
-    //         } else {
-    //             const error = new HTTPQueryError(result.status, await result.text(), { response: result });
-    //             error.display();
-    //             return {
-    //                 graph: {
-    //                     edges: [],
-    //                     vertices: [],
-    //                 },
-    //             };
-    //             // throw error;
-    //         }
-    //     } catch (e) {
-    //         const ee: Error = e;
-    //         const error = new HTTPQueryError(ee.name, ee.message, ee.stack);
-    //         error.display();
-    //         return {
-    //             graph: {
-    //                 edges: [],
-    //                 vertices: [],
-    //             },
-    //         };
-    //     }
-    // }
-
-    // public async doGraphQuery(query: HTTPCommandQuery): Promise<GraphQueryResult> {
-    //     query.mode = 'graph';
-    //     let url: string;
-    //     if (query.command.startsWith('g.')) { url = this.gremlinurl; } else { url = this.commandurl; }
-    //     const fetchData: RequestInit = {
-    //         method: 'POST',
-    //         body: JSON.stringify(query),
-    //         mode: "cors" as RequestMode,
-    //         headers: this.headersLocal,
-    //     };
-    //     let result;
-    //     try {
-    //         result = await fetch(url, fetchData);
-    //         if (result.status === 200) {
-    //             const ret = result.json();
-    //             return ret as Promise<GraphQueryResult>;
-    //         } else {
-    //             const error = new HTTPQueryError(result.status, await result.text(), { response: result });
-    //             error.display();
-    //             return {
-    //                 graph: {
-    //                     edges: [],
-    //                     vertices: [],
-    //                 },
-    //             };
-    //         }
-    //     } catch (e) {
-    //         alert(`Error Running Query: \n\t${e.name}\nMessage: \n\t${e.message}\n\nOpening Configuration`);
-    //         openDatabaseConfiguration();
-    //         console.error(e.name, e.message);
-    //         return {
-    //             graph: {
-    //                 edges: [],
-    //                 vertices: [],
-    //             },
-    //         };
-    //     }
-    // }
 
     /**
      * @description For a given Stix identifier, returns the Orient record ID, or undefined if it is not in the database
@@ -333,7 +96,7 @@ export class StigDB {
      */
     public async getRID(identifier: Identifier): Promise<string | undefined> {
         let rid: string;
-        let query;
+        let query: string;
         try {
             if (identifier.startsWith('relationship') || identifier.startsWith('sighting')) {
                 query = "select from E where id_=:id order by modified desc limit 1";
@@ -353,6 +116,7 @@ export class StigDB {
             throw e;
         }
     }
+    
     /**
      * @description Returns the modified date for the most recent record, returns undefined if no record is found
      * @param {Identifier} identifier
@@ -370,7 +134,6 @@ export class StigDB {
         const options: QueryOptions = {
             params: { id: identifier },
         };
-        let result: StixObject[];
         try {
             let result = await this.odb.query(command, options).all() as StixObject[];
             if (result && result.length > 0) {
@@ -393,20 +156,9 @@ export class StigDB {
      */
     public async getSDO(identifier: Identifier): Promise<SDO | undefined> {
         const query = "select from V where id_=:id ORDER BY modified DESC limit 1";
-        const options: QueryOptions = {
-            params: {
-                id: identifier,
-            },
-        };
-        let result: StixObject[];
         try {
-            // result = await this.odb.query(query, options).all() as StixObject[];
-            result = await this.odb.select({id_: identifier}).one()
-            if (result.length > 0) {
-                return result[0] as SDO;
-            } else {
-                return undefined;
-            }
+           const result = await this.odb.select({id_: identifier}).one() as StixObject[];
+            return result.length > 0 ? result[0] as SDO : undefined;
         } catch (e) {
             console.error('Exception in getSDO: ' + query);
             e.stack += (new Error()).stack;
@@ -426,12 +178,9 @@ export class StigDB {
                 id: identifier,
             },
         };
-        let result: StixObject[];
-        let ret: SRO | undefined;
         try {
-            result = await this.odb.query(query, options).all() as StixObject[];
-            (result.length > 0) ? ret = result[0] as SRO : ret = undefined;
-            return ret;
+            const result = await this.odb.query(query, options).all() as StixObject[];
+            return (result.length > 0) ? result[0] as SRO : undefined;
         } catch (e) {
             console.error('Exception in getSDO:' + query);
             e.stack += (new Error()).stack;
@@ -440,21 +189,20 @@ export class StigDB {
     }
 
     public async exists(identifier: Identifier): Promise<boolean> {
-        let query = "select from V where id_= :id";
         const options: QueryOptions = {
             params: {
                 id: identifier,
             },
         };
-        let v_result;
-        let e_result;
+        let query: string;
         try {
             //  vertex?
-            v_result = await this.OJSQuery(query, options);
+            query = "select from V where id_= :id";
+            const v_result = await this.OJSQuery(query, options);
             if (v_result && v_result.length > 0) { return true; }
             // edge?
             query = "select from E where id_= :id";
-            e_result = await this.OJSQuery(query, options);
+            const e_result = await this.OJSQuery(query, options);
             if (e_result && e_result.length > 0) { return true; }
             // nuthin
             return false;
@@ -471,12 +219,10 @@ export class StigDB {
      * @returns {Promise<orientjs.Class>}
      * @memberof StigDB
      */
-    public async getClass(cls_name: string): Promise<orientjs.OClass> {
-        let ret: orientjs.OClass;
+    public getClass(cls_name: string): Promise<orientjs.OClass> {
         try {
             const regex = /-/g;
-            ret = await this.odb.class.get(cls_name.replace(regex, ''));
-            return ret;
+            return this.odb.class.get(cls_name.replace(regex, ''));
         } catch (e) {
             console.error('Exception in getClass:');
             e.stack += (new Error()).stack;
@@ -491,12 +237,9 @@ export class StigDB {
      * @memberof StigDB
      */
     public async getClassProperties(cls_name: string): Promise<orientjs.OClassProperty[] | undefined> {
-        let cls;
         try {
-            const regex = /-/g;
-            cls = await this.odb.class.get(cls_name.replace(regex, ''));
-            if (cls === undefined) { return undefined; }
-            return cls.property.list();
+            const cls = await this.odb.class.get(cls_name.replace(/-/g, ''));
+            return cls?.property.list();
         } catch (e) {
             console.error('Exception in getClass:');
             e.stack += (new Error()).stack;
@@ -512,9 +255,8 @@ export class StigDB {
      * @memberof StigDB
      */
     public async createVertexClass(className: string, props: PropertyCreateConfig[]): Promise<orientjs.OClass> {
-        let cls;
         try {
-            cls = await this.odb.class.create(className, 'V.Core', undefined, false, true);  // create the class
+            const cls = await this.odb.class.create(className, 'V.Core', undefined, false, true);  // create the class
             for (const p of props) {
                 cls.property.create(p);
             }
@@ -534,13 +276,9 @@ export class StigDB {
      * @memberof StigDB
      */
     public async addPropertyToClass(className: string, propertyName: string, propertyType: string): Promise<orientjs.OClassProperty> {
-        let cls;
-        let property;
         try {
-            const regex = /-/g;
-            cls = await this.odb.class.get(className.replace(regex, ''));
-            property = await cls.property.create({ name: propertyName, type: propertyType } as PropertyCreateConfig);
-            return property;
+            const cls = await this.odb.class.get(className.replace(/-/g, ''));
+            return cls.property.create({ name: propertyName, type: propertyType } as PropertyCreateConfig);
         } catch (e) {
             e.stack += (new Error()).stack;
             throw e;
@@ -555,9 +293,8 @@ export class StigDB {
      * @memberof StigDB
      */
     public async createEdgeClass(className: string, props: PropertyCreateConfig[]): Promise<orientjs.OClass> {
-        let cls;
         try {
-            cls = await this.odb.class.create(className, 'E.relationship', undefined, false, true);  // create the class
+            const cls = await this.odb.class.create(className, 'E.relationship', undefined, false, true);  // create the class
             for (const p of props) {
                 cls.property.create(p);
             }
@@ -575,15 +312,10 @@ export class StigDB {
      * @memberof StigDB
      */
     public async sroDestroyedUI(sro: SRO): Promise<StixObject[]> {
-        let rid = await this.getRID(sro.id);
+        const rid = await this.getRID(sro.id);
         const q = `DELETE EDGE E WHERE @rid == "${rid}"`;
-
-        const options: QueryOptions = {};
-        let result: StixObject[];
         try {
-            // result = await this.OJSQuery(q, options);
-            result = await this.odb.command(q, options).all() as StixObject[];
-            return result;
+            return this.odb.command(q, {}).all() as unknown as Promise<StixObject[]>;
         } catch (e) {
             e.stack += (new Error()).stack;
             throw e;
@@ -598,12 +330,8 @@ export class StigDB {
      */
     public async sdoDestroyedUI(sdo: SDO): Promise<StixObject[]> {
         const q = `DELETE VERTEX FROM (SELECT FROM V where id_="${sdo.id}")`;
-        const options: QueryOptions = {};
-        let result: StixObject[];
         try {
-            // result = await this.OJSQuery(q, options);
-            result = await this.odb.command(q, options).all() as StixObject[];
-            return result;
+            return this.odb.command(q, {}).all() as Promise<StixObject[]>;
         } catch (e) {
             e.stack += (new Error()).stack;
             throw e;
@@ -618,32 +346,39 @@ export class StigDB {
      * @memberof StigDB
      */
     public async getChildren(identifier: string, relationship_type?: string): Promise<{ nodes: StixObject[], edges: StixObject[] }> {
-        let query: string;
-        if (relationship_type === undefined) {
-            query = "select expand(out()) from V where id_= :id";
-        } else {
-            query = `select expand(out('${relationship_type}')) from V where id_= :id`;
-        }
         const options: QueryOptions = {
             params: {
                 id: identifier,
             },
         };
-        let vtx_results: StixObject[];
-        let edge_results: StixObject[];
         try {
-            vtx_results = await this.OJSQuery(query, options);
-            if (relationship_type === undefined) {
-                query = "select expand(outE()) from V where id_= :id";
-            } else {
-                query = `select expand(outE('${relationship_type}')) from V where id_= :id`;
-            }
-            edge_results = await this.OJSQuery(query, options);
-            return { nodes: vtx_results, edges: edge_results };
+            const rel_t = relationship_type ? `'${relationship_type}'` : '';
+            const [nodes, edges] = await Promise.all([
+                this.OJSQuery(`select expand(out(${rel_t})) from V where id_= :id`, options),
+                this.OJSQuery(`select expand(outE(${rel_t})) from V where id_= :id`, options),
+            ]);  
+            return { nodes, edges };
         } catch (e) {
             e.stack += (new Error()).stack;
             throw e;
         }
+    }
+
+    private async traverseNode(id: Identifier, dir: string): Promise<StixObject[]> {
+        const node = await this.odb.select().from('V').where({id_: id}).one() as StixObject;
+        const in_edges = await this.odb.select().from('E').where({in: node['@rid']}).all() as StixObject[];
+
+        const results = [node];
+        await Promise.all(
+            in_edges.map(async (edge) => {
+                const in_node = await this.odb.select()
+                        .from(edge[dir].toString())
+                        .one() as StixObject;
+                results.push(in_node, edge);
+            })
+        );
+
+        return transform_records_to_stix(results);
     }
 
     /**
@@ -652,91 +387,30 @@ export class StigDB {
      * @returns {Promise<GraphQueryResult>}
      * @memberof StigDB
      */
-    public async traverseNodeIn(id: Identifier): Promise<StixObject[]> {
-        // const query = {
-        //     command: "traverse in()  from (select from V where id_=? ORDER BY modified DESC limit 1) while $depth < 2 ",
-        //     mode: "graph",
-        //     parameters: [id],
-        // };
-        let results;
+    public traverseNodeIn(id: Identifier): Promise<StixObject[]> {
         try {
-            let node = await this.odb.select().from('V').where({id_: id}).one() as StixObject
-            results = [node];
-            let in_edges = await this.odb.select().from('E').where({in: node['@rid']}).all() as StixObject[]
-
-            for (const edge of in_edges) {
-                // console.log(edge)
-                let in_node = await this.odb.select().from(edge["out"].toString()).one() as StixObject
-                // console.log(in_node)
-                results.push(in_node)
-                results.push(edge)
-            }
-
-            return await transform_records_to_stix(results)
+            return this.traverseNode(id, "out");
         } catch (e) {
             e.stack += (new Error()).stack;
             throw e;
         }
     }
 
-    public async traverseNodeOut(id: Identifier): Promise<StixObject[]> {
-        // const query = {
-        //     command: "traverse out()  from (select from V where id_=? ORDER BY modified DESC limit 1) while $depth < 2 ",
-        //     mode: "graph",
-        //     // parameters:(relationship_type)?[relationship_type, id]: ['', id]
-        //     parameters: [id],
-        // };
-        let results: StixObject[];
+    public traverseNodeOut(id: Identifier): Promise<StixObject[]> {
         try {
-            // results = await this.odb.query(query.command, {params: query.parameters}).all() as StixObject[];;
-            // return transform_records_to_stix(results);
-
-            let node = await this.odb.select().from('V').where({id_: id}).one() as StixObject
-            results = [node];
-            let in_edges = await this.odb.select().from('E').where({out: node['@rid']}).all() as StixObject[]
-            
-            for (const edge of in_edges) {
-                // console.log(edge)
-                let in_node = await this.odb.select().from(edge["in"].toString()).one() as StixObject
-                // console.log(in_node)
-                results.push(in_node)
-                results.push(edge)
-            }
-
-            return await transform_records_to_stix(results)
-
+            return this.traverseNode(id, "in");
         } catch (e) {
             e.stack += (new Error()).stack;
             throw e;
         }
     }
-
-    // public async getParents(id: string): Promise<GraphQueryResult> {
-    //     // get the parents for a given node{
-    //     // this should include the ability to filter by SDO type or relationship type
-    //     const query: HTTPCommandQuery = {
-    //         command: "select expand(in()) from V where id_= :?",
-    //         mode: "graph",
-    //         parameters: [id],
-    //     };
-    //     try {
-    //         const vtx_results = await this.doGraphQuery(query);
-    //         query.command = "select expand(inE()) from V where id_=:id";
-    //         const edge_results = await this.doGraphQuery(query);
-    //         return { graph: { vertices: vtx_results.graph.vertices, edges: edge_results.graph.edges } };
-    //     } catch (e) {
-    //         e.stack += (new Error()).stack;
-    //         throw e;
-    //     }
-    // }
 
     public async isEqualToDB(changedNodeData: StixObject): Promise<boolean> {
         // see if the item in the UI is really different from the one in the DB
         // Being explicit about this to avoid having different versions of a node
         // that only differ by timestamp
-        let db_instance;
         try {
-            db_instance = await this.getSDO(changedNodeData.id);
+            const db_instance = await this.getSDO(changedNodeData.id);
             if (db_instance === undefined) { return false; }
             return _.isEqual(db_instance, changedNodeData);
         } catch (e) {
@@ -752,25 +426,16 @@ export class StigDB {
      * @returns {Promise<string>}
      * @memberof StigDB
      */
-    public async createVertex(stix_obj: StixObject): Promise<StixObject[]> {
-        let result: StixObject[];
+    public createVertex(stix_obj: StixObject): Promise<StixObject[]> {
         try {
             if (stix_obj.type.startsWith('relation')) {
                 throw new Error("Attempt to create a relation, use createEdge instead!");
             }
 
-            let query: string;
-            let q_action: string;
-            let q_class: string;
-            q_class = "`" + stix_obj.type + "`";
-            q_action = 'Create VERTEX ';
-            query = q_action + q_class + ' CONTENT ' + JSON.stringify(transform_to_db(stix_obj));
-            // console.log(query);
-            // result = await this.OJSQuery(query, {});
-            result = await this.odb.command(query).all() as StixObject[];
-            // console.log('Query result:');
-            // console.log(result);
-            return result;
+            const q_class = "`" + stix_obj.type + "`";
+            const q_action = 'Create VERTEX ';
+            const query = q_action + q_class + ' CONTENT ' + JSON.stringify(transform_to_db(stix_obj));
+            return this.odb.command(query).all() as Promise<StixObject[]>;
         } catch (e) {
             e.stack += (new Error()).stack;
             throw e;
@@ -785,8 +450,7 @@ export class StigDB {
      * @returns {Promise<SRO[]>}
      * @memberof StigDB
      */
-    public async createEdgeRID(from_RID: string, to_RID: string, data: StixObject): Promise<StixObject[]> {
-        let result: StixObject[];
+    public createEdgeRID(from_RID: string, to_RID: string, data: StixObject): Promise<StixObject[]> {
         try {
             const query = "CREATE EDGE `" + data.type + "` FROM :from_rid to :to_rid CONTENT :content";
             const parameters = {
@@ -796,9 +460,7 @@ export class StigDB {
                     content: transform_to_db(data),
                 },
             };
-            // result = await this.OJSQuery(query, parameters);
-            result = await this.odb.command(query, parameters).all() as StixObject[];
-            return result;
+            return this.odb.command(query, parameters).all() as Promise<StixObject[]>;
         } catch (e) {
             e.stack += (new Error()).stack;
             throw e;
@@ -814,29 +476,11 @@ export class StigDB {
      * @memberof StigDB
      */
     public async createEdge(from_node: Identifier, to_node: Identifier, data: StixObject): Promise<StixObject[]> {
-        let result;
-        let to_RID: string;
-        let from_RID: string;
         try {
-            if (from_node.includes('--')) {
-                from_RID = await this.getRID(from_node);
-                to_RID = await this.getRID(to_node);
-            } else {
-                from_RID = from_node;
-                to_RID = to_node;
-            }
-            // if (from_RID === undefined) {
-            //     console.debug(`createEdge saving ${from_node} to database`);
-            //     const node_data = window.cycore.getElementById(from_node);
-            //     from_RID = await this.createVertex(node_data.data('raw_data'))[0].RID;
-            // }
-            // if (to_RID === undefined) {
-            //     console.debug(`createEdge saving ${to_node} to database`);
-            //     const node_data = window.cycore.getElementById(to_node);
-            //     to_RID = await this.createVertex(node_data.data('raw_data'))[0].RID;
-            // }
-            result = this.createEdgeRID(from_RID, to_RID, transform_to_db(data));
-            return result;
+            const [from_RID, to_RID] = from_node.includes('--') ?
+                await Promise.all([this.getRID(from_node), this.getRID(to_node)]) :
+                [from_node, to_node];
+            return this.createEdgeRID(from_RID, to_RID, transform_to_db(data));
         } catch (e) {
             e.stack += (new Error()).stack;
             throw e;
@@ -844,110 +488,6 @@ export class StigDB {
     }
 
     /**
-     * @description
-     * @param {Identifier} id
-     * @param {cytoscape.Core} cy
-     * @returns {Promise<boolean>}
-     * @memberof StigDB
-     */
-    // public async needs_save(id: Identifier, cy: cytoscape.Core): Promise<boolean> {
-    //     let ret: StixObject;
-    //     let retval = true;
-    //     try {
-    //         const graph_node = cy.getElementById(id);
-    //         // if (graph_node.length == 0){return true;}
-    //         const db = this;
-    //         const exists = await db.exists(id);
-    //         if (!exists) {
-    //             graph_node.data('saved', false);
-    //             return true;
-    //         }
-    //         let db_copy;
-    //         const node_data = graph_node.data().raw_data as StixObject;
-
-    //         switch (node_data.type) {
-    //             case 'relationship':
-    //             case 'sighting':
-    //                 ret = await db.getEdge(node_data.id);
-    //                 break;
-    //             default:
-    //                 ret = await db.getSDO(node_data.id);
-    //                 break;
-    //         }
-    //         // const diffpatcher = new diffpatch.DiffPatcher({
-    //         //     arrays: {
-    //         //         detectMove: true,
-    //         //         includeValueOnMove: false,
-    //         //     },
-    //         //     propertyFilter: (name: string) => {
-    //         //         if (name.startsWith('@', 0)) {
-    //         //             return false;
-    //         //         }
-    //         //         return true;
-    //         //     },
-    //         // });
-    //         if (ret === undefined) {
-    //             graph_node.data('saved', false);
-    //             const dif = diffpatcher.diff(node_data, { id: ' ' });
-    //             if (dif !== undefined) {
-    //                 // tslint:disable-next-line:no-string-literal
-    //                 this.diff_dialog.addDiff(node_data.id, dif, {} as StixObject, node_data['name'] || '');
-    //             }
-    //             return true;
-    //         }
-    //         db_copy = ret as StixObject;
-    //         // const class_props: orientjs.OClassProperty[] = await db.listPropertiesForClass(node_data.type.replace(/-/g, ''));
-    //         const class_props: orientjs.OClassProperty[] = await db.listPropertiesForClass(node_data.type);
-    //         const db_tmp = {};
-    //         for (const p in class_props) {
-    //             if (class_props[p]) {
-    //                 const n = class_props[p].name;
-    //                 const db_type = class_props[p].type;
-    //                 // const cp_n = db_copy[n];
-    //                 // console.log(n)
-    //                 if (db_copy[n] === undefined) {
-    //                     if (node_data[n] !== undefined) {
-    //                         retval = false;
-    //                         continue;
-    //                     }
-    //                 }
-    //                 if (n.endsWith('_')) {
-    //                     db_tmp[n.replace(/_$/, '')] = db_copy[n];
-    //                 } else if (+db_type === 6 && db_copy[n] !== undefined) {
-    //                     db_tmp[n] = db_copy[n].toISOString();
-    //                 } else if (db_copy[n] !== undefined) {
-    //                     if (!n.startsWith('@', 0)) {
-    //                         db_tmp[n] = db_copy[n];
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //         // if (db_tmp.hasOwnProperty('revoked') && !node_data.hasOwnProperty('revoked')) {
-    //         //     node_data['revoked'] = db_tmp['revoked'];
-    //         // }
-    //         // if (retval  && _.isEqual(node_data, db_tmp)) {
-    //         const diff = diffpatcher.diff(node_data, db_tmp);
-    //         if (retval && diff === undefined) {
-    //             graph_node.data('saved', true);
-    //             retval = false;
-    //         } else {
-    //             graph_node.data('saved', false);
-    //             retval = true;
-    //             if (node_data !== undefined && db_tmp !== undefined) {
-    //                 if (diff !== undefined) {
-    //                     // tslint:disable-next-line:no-string-literal
-    //                     this.diff_dialog.addDiff(node_data.id, diff, db_tmp as StixObject, node_data['name'] || '');
-    //                 }
-    //             }
-    //         }
-    //         return retval;
-    //     } catch (e) {
-    //         e.stack += (new Error()).stack;
-    //         throw e;
-    //     }
-    // }
-
-    /***
      * @description Determines the difference between a node from the graph and what is in the database
      * @param {StixObject} node
      * @returns {Promise<diffpatch.Delta>}
@@ -959,18 +499,15 @@ export class StigDB {
         
         // Return if node isn't in the database
         if (!dbNode) {
-            return undefined
+            return undefined;
         }
         
         // Convert node to STIX
-        const compNode = transform_to_stix(dbNode)
+        const compNode = transform_to_stix(dbNode);
         
         // Get the difference between the two
-        const diff = diffpatch.diff(node, compNode)
-
-        return diff;
+        return diffpatch.diff(node, compNode);
     }
-
 
     /**
      * @description Updates the database from the editor form
@@ -978,20 +515,14 @@ export class StigDB {
      * @returns  Promise<string>
      * @memberof StigDB
      */
-    public async updateDB(formdata: StixObject): Promise<StixObject[]> {
+    public async updateDB(formdata: StixObject): Promise<StixObject[]|string> {
         console.log(formdata.id)
         const db_obj = transform_to_db(formdata);
-        // console.log(formdata)
-        // console.log("Formdata id: ", formdata.id)
-        // created, modified, first_seen, last_seen, 
-        
 
         // Check if the id already exists in the database
-        let rid = await this.getRID(formdata.id)
+        const rid = await this.getRID(formdata.id);
+        const exists = rid != undefined;
 
-        let exists = rid != undefined
-
-        let result;
         try {
             if (!exists) {
                 // New node, make sure dates are good
@@ -1003,19 +534,17 @@ export class StigDB {
                 }
 
                 if (db_obj.type.startsWith('relation') || db_obj.type.startsWith('sighting')) {
-                    result = await this.createEdge(db_obj['source_ref'], db_obj['target_ref'], db_obj);
-                } else {
-                    result = await this.createVertex(db_obj);
+                    return this.createEdge(db_obj['source_ref'], db_obj['target_ref'], db_obj);
                 }
 
-            } else {
-                // Existing node, must create a new modified date
-                console.log("Updating object: ", formdata.id)
-                db_obj.modified = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
-                result = await this.updateObject(db_obj, rid.toString())
+                return this.createVertex(db_obj);
             }
-            
-            return result;
+
+            // Existing node, must create a new modified date
+            console.log("Updating object: ", formdata.id)
+            db_obj.modified = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+            return this.updateObject(db_obj, rid.toString());
+
         } catch (e) {
             e.stack += (new Error()).stack;
             throw e;
@@ -1029,33 +558,14 @@ export class StigDB {
      * @returns
      * @memberof StigDB
      */
-    public async updateObject(object: StixObject, rid: string): Promise<string> {
+    public updateObject(object: StixObject, rid: string): Promise<string> {
         try {
-            let result = await this.odb.update(rid).set(transform_to_db(object)).one() as string;
-            return result;
+            return this.odb.update(rid).set(transform_to_db(object)).one() as Promise<string>;
         } catch (e) {
             e.stack += (new Error()).stack;
             throw e;
         }
     }
-
-    // /**
-    //  * @description Updates modified timestamp for vertex
-    //  * @param {SDO} vertex
-    //  * @param {string} old_modified
-    //  * @returns
-    //  * @memberof StigDB
-    //  */
-    // public async updateVertex(vertex: SDO): Promise<string> {
-    //     let result;
-    //     try {
-    //         result = await this.odb.update(`\`${vertex.type}\``).set(transform_to_db(vertex)).where({ id_: `${vertex.id_}`}).exec<string>();
-    //         return result;
-    //     } catch (e) {
-    //         e.stack += (new Error()).stack;
-    //         throw e;
-    //     }
-    // }
 
     /**
      * @description
@@ -1065,12 +575,11 @@ export class StigDB {
      * @memberof StigDB
      */
     public async revokeID(type: "VERTEX" | "EDGE", identifier: Id): Promise<StixObject[]> {
-        let query: string;
-        type === "EDGE" ? query = "UPDATE EDGE E SET revoked = 'True' where id_=? " : query = "UPDATE V SET revoked = 'True' where id_=?";
-        let result: StixObject[];
+        const query = type === "EDGE" ?
+            "UPDATE EDGE E SET revoked = 'True' where id_=? ":
+            "UPDATE V SET revoked = 'True' where id_=?";
         try {
-            result = await this.OJSQuery(query, { params: { id: identifier } });
-            return result;
+            return this.OJSQuery(query, { params: { id: identifier } });
         } catch (e) {
             e.stack += (new Error()).stack;
             throw e;
@@ -1078,165 +587,96 @@ export class StigDB {
     }
 
     /**
-     * @description
-     * @param {GraphQueryResult} records
-     * @returns {Promise<BundleType>}
-     * @memberof StigDB
+     * @description Creates the classes from the schema
      */
-    // public async  handleResponse(records: GraphQueryResult): Promise<BundleType> {
-    //     // response handler
-    //     let resp: StixObject[] = [];
-    //     resp = resp.concat(records.graph.vertices, records.graph.edges);
-    //     // resp = resp.concat(records.graph.edges);
-    //     const bundle: BundleType = {
-    //         type: "bundle",
-    //         objects: [],
-    //     };
-    //     try {
-    //         for (const record of resp) {
-
-    //             const sdo = {} as StixObject;
-    //             for (const prop of Object.keys(record)) {
-    //                 if (prop === undefined || prop === null) {
-    //                     continue;
-    //                 }
-    //                 if (record.type.toLowerCase() === "relationship" && (prop === 'in' || prop === 'out')) {
-    //                     continue;
-    //                 }
-    //                 if (!prop.startsWith('@')) {
-    //                     if (prop.endsWith('_')) {
-    //                         sdo[prop.replace(/_$/, '')] = record[prop];
-    //                     } else {
-    //                         sdo[prop] = record[prop];
-    //                     }
-    //                 }
-    //             }
-    //             bundle.objects.push(sdo);
-    //         }
-    //         return bundle;
-    //     } catch (e) {
-    //         e.stack += (new Error()).stack;
-    //         throw e;
-    //     }
-    // }
-
-
-  /**
-   * @description Creates the classes from the schema
-   */
-  private async createClasses() {
-    for (const cls of schema.classes) {
-      const c = await this.class_query(cls);
-      await this.create_properties(c, cls.properties)
+    private async createClasses() {
+        return Promise.all(
+            schema.classes.map(async (cls) => {
+                const c = await this.class_query(cls);
+                return this.create_properties(c, cls.properties);
+            })
+        );
     }
-  }
-  
-  /**
-   * 
-   * @param options 
-   * @returns 
-   */
-  private async class_query(options: IOrientJSONClassOptions) {
-    let name = options.name;
-      const idx = name.indexOf('-');
-      let alias: string;
-      if (idx > -1) {
-          alias = name;
-          const replaced = name.replace(/-/g, '');
-          console.log('found aliases: ', replaced);
-  
-          name = replaced;
-      }
-      try {
-          const exists = await this.odb.class.get(name);
-          if (exists !== undefined) {
-              await this.odb.class.drop(name);
-          }
-          // tslint:disable-next-line:no-empty
-      } catch (e) { }
-      const cls = await this.odb.class.create(name, options.superClasses[0]);
-      if (alias !== undefined) {
-          alias = "`" + alias + "`";
-          const query = `ALTER CLASS  ${name}  SHORTNAME ${alias}`;
-          await this.odb.exec(query);
-      }
-      console.log('done with creating superclasses');
-      return cls;
-  }
-  
-  /**
-   * 
-   * @param cls 
-   * @param props 
-   * @returns 
-   */
-  private async create_properties(cls: orientjs.OClass, props: orientjs.PropertyCreateConfig[]): Promise<orientjs.OClassProperty[]> {
-    const created = await cls.property.create(props);
-    return created;
-  }
 
-  /**
-   * 
-   * @param query 
-   * @returns 
-   */
-  public async executeQuery(query: string) : Promise<StixObject[]> {
-      try {
+    /**
+     * @param options 
+     * @returns 
+     */
+    private async class_query(options: IOrientJSONClassOptions) {
+        let name = options.name;
+        const idx = name.indexOf('-');
+        let alias: string;
+        if (idx > -1) {
+            alias = name;
+            const replaced = name.replace(/-/g, '');
+            console.log('found aliases: ', replaced);
+
+            name = replaced;
+        }
+        try {
+            const exists = await this.odb.class.get(name);
+            if (exists !== undefined) {
+                await this.odb.class.drop(name);
+            }
+            // tslint:disable-next-line:no-empty
+        } catch (e) { }
+        const cls = await this.odb.class.create(name, options.superClasses[0]);
+        if (alias !== undefined) {
+            alias = "`" + alias + "`";
+            const query = `ALTER CLASS  ${name}  SHORTNAME ${alias}`;
+            await this.odb.exec(query);
+        }
+        console.log('done with creating superclasses');
+        return cls;
+    }
+
+    /**
+     * @param cls 
+     * @param props 
+     * @returns 
+     */
+    private create_properties(cls: orientjs.OClass, props: orientjs.PropertyCreateConfig[]): Promise<orientjs.OClassProperty[]> {
+        return cls.property.create(props);
+    }
+
+    /**
+     * @param query 
+     * @returns 
+     */
+    public async executeQuery(query: string) : Promise<StixObject[]> {
+        try {
         console.log(`Executing query "${query}"`)
         // Get result
         const result = await this.odb.query(query).all() as StixObject[]
         // Sort into nodes and edges
-        const resNodes = []
-        const resEdges = []
-        result.forEach((item: StixObject) => {
-            /((r|R)elationship)|((s|S)ighting)/.exec(item.type) ? resEdges.push(item as SRO) : resNodes.push(item as SDO);
-        });
+        const resNodes = [];
+        const resEdges = [];
+        for (const item of result) {
+            (/((r|R)elationship)|((s|S)ighting)/.exec(item.type) ? resEdges : resNodes).push(item);
+        }
         // Make a list of node rids
-        const nodeRids = []
-        for (const n of resNodes) {
-            nodeRids.push(n['@rid'].toString())
-        }
-
-        // Make a list of in and out rids 
-        const edgeRids:Set<string> = new Set
-        for (const e of resEdges) {
-            edgeRids.add(e.in.toString())
-            edgeRids.add(e.out.toString())
-        }
-        // console.log(resEdges.length)
-        // console.log(edgeRids)
+        const nodeRids = resNodes.map(n => n['@rid'].toString());
 
         // Get edges
         const edgeQuery = "select * from E where in in :nodes and out in :nodes"
-        
         const edges = await this.odb.query(edgeQuery, {params: {nodes: nodeRids}}).all() as StixObject[]
         
+        // Make a set of in and out rids 
+        const edgeRids:Set<string> = new Set(resEdges.flatMap(e => [e.in.toString(), e.out.toString()]));
+
         // Get nodes to complete the edges
         const nodeQuery = "select * from V where @rid in :rids"
         const nodes = await this.odb.query(nodeQuery, {params: {rids: Array.from(edgeRids)}}).all() as StixObject[]
 
-        for (const n of nodes) {
-            result.push(n)
-        }
-        for (const e of edges) {
-            result.push(e)
-        }
-        
-
-        // console.log(result)
-
-        return transform_records_to_stix(result)
-      } catch (e) {
+        return transform_records_to_stix([...nodes, ...edges])
+        } catch (e) {
         console.error(e)
         throw e;
-      }
-  }
-
+        }
+    }
 }
 
 /**
- *
- *
  * @export
  * @param {string} timestamp
  * @returns {string}
@@ -1246,8 +686,6 @@ export function toDBTime(timestamp: string): string {
 }
 
 /**
- *
- *
  * @export
  * @param {string} timestamp
  * @returns {string}
@@ -1257,34 +695,23 @@ export function toStixTime(timestamp: string): string {
 }
 
 /**
- *
- *
  * @export
  * @param {StixObject} stix_record
  * @returns {StixObject}
  */
 export function transform_to_db(stix_record: StixObject): StixObject {
     const ret = {} as StixObject;
-    Object.keys(stix_record).forEach((prop) => {
-
-        switch (prop) {
-            case "id":
-                // tslint:disable-next-line:no-string-literal
-                ret['id_'] = stix_record.id;
-                break;
-            default:
-                // Check if value contains date in STIX format
-                if (/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(.\d*Z|Z)/.test(stix_record[prop])) {
-                    // console.log("Fixing time for " + prop)
-                    // Change the data from STIX format to DB format
-                    ret[prop] = toDBTime(stix_record[prop])
-                } else {
-                    ret[prop] = stix_record[prop];
-                }
+    for (const prop of Object.keys(stix_record)) {
+        if (prop === 'id') {
+            // tslint:disable-next-line:no-string-literal
+            ret['id_'] = stix_record.id;
+        } else // Check if value contains date in STIX format
+        if (/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(.\d*Z|Z)/.test(stix_record[prop])) {
+            ret[prop] = toDBTime(stix_record[prop])
+        } else {
+            ret[prop] = stix_record[prop];
         }
-
-        
-    });
+    }
     return ret;
 }
 
@@ -1292,12 +719,10 @@ export function transform_to_db(stix_record: StixObject): StixObject {
  * @description Converts a stix record from DB format to STIX format. (Converts dates and id_)
  * @param {StixObject} stix_record
  * @returns {StixObject}
- * 
  */
 export function transform_to_stix(stix_record: StixObject): StixObject {
     const ret = {} as StixObject;
-    Object.keys(stix_record).forEach((prop) => {
-        
+    for (const prop of Object.keys(stix_record)) {
         switch (prop) {
             case "id_":
                 // tslint:disable-next-line:no-string-literal
@@ -1312,45 +737,27 @@ export function transform_to_stix(stix_record: StixObject): StixObject {
             default:
                 // Check if value contains date in DB format
                 if (/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}.\d{3}/.test(stix_record[prop])) {
-                    // console.log("Fixing time for " + prop)
-                    // Change the data from DB format to STIX format
                     ret[prop] = toStixTime(stix_record[prop])
                 } else {
                     ret[prop] = stix_record[prop];
                 }
         }
-
-        
-    });
+    }
     return ret;
 }
 
 /**
- *
- *
  * @param {StixObject[]} stix_records
  * @returns {StixObject[]}
  */
 export function transform_records_to_db(stix_records: StixObject[]): StixObject[] {
-    const ret = [] as StixObject[];
-    stix_records.forEach((r) => {
-        const revised = transform_to_db(r);
-        ret.push(revised);
-    });
-    return ret;
+    return stix_records.map(transform_to_db);
 }
 
 /**
- *
- *
  * @param {StixObject[]} stix_records
  * @returns {StixObject[]}
  */
  export function transform_records_to_stix(stix_records: StixObject[]): StixObject[] {
-    const ret = [] as StixObject[];
-    stix_records.forEach((r) => {
-        const revised = transform_to_stix(r);
-        ret.push(revised);
-    });
-    return ret;
+    return stix_records.map(transform_to_stix);
 }
