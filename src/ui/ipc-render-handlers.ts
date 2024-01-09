@@ -6,7 +6,7 @@ ALL RIGHTS RESERVED
 
 import { CollectionReturnValue, EdgeCollection } from 'cytoscape';
 import { StixObject } from '../stix';
-import { commit, db_delete } from '../db/dbFunctions';
+import { commit, db_delete } from './dbFunctions';
 
 /*************************************
  * Commit all
@@ -83,9 +83,7 @@ export async function commit_all () {
 // user selected delete selected from dropdown
 // TODO: test single edge delete
 export function delete_selected () {
-  // const db = new StigDB(DatabaseConfigurationStorage.Instance.current);
   const selected: CollectionReturnValue = window.cycore.$(':selected');
-  // const to_save: CollectionReturnValue = window.cycore.$('[saved]');
   const vis: CollectionReturnValue = window.cycore.$(':visible');
   const edges: EdgeCollection = selected.edgesWith(vis);
   const results: StixObject[] = [];
@@ -93,14 +91,14 @@ export function delete_selected () {
   // Delete incoming/outgoing edges first.
   edges.forEach((ele) => {
     const sro = ele.data('raw_data');
-    db_delete(sro);
+    void db_delete(sro);
 
     window.cycore.remove(ele);
   });
 
   selected.forEach((ele) => {
     const sdo = ele.data('raw_data');
-    db_delete(sdo);
+    void db_delete(sdo);
 
     window.cycore.remove(ele);
   });

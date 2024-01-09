@@ -19,30 +19,18 @@ class JSONEditorExtended extends JSONEditor {
 
 export class StixEditor {
   public editor: JSONEditor;
-  // public db: StigDB;
   public form_changed: () => void;
   public cy: cytoscape.Core;
 
-  constructor (cy: cytoscape.Core) { //, db: StigDB) {
-    // try {
-    //     this.db = db;
-    // } catch (e) {
-    //     const err = new Error();
-    //     err.message += e.message;
-    //     err.name = "StixEditorDatabaseFailure: ";
-    //     err.stack += e.stack;
-    //     throw err;
-    // }
+  constructor (cy: cytoscape.Core) {
     this.cy = cy;
   }
 
   /**
-     *
-     *
-     * @param {cytoscape.Singular} node The Node object from the graph
-     * @param {string} file_name The name of the json_schema -- use the name of the type field in the schema
-     * @param {any} to_inspect JSON Data to populate the form widget
-     */
+   * @param {cytoscape.Singular} node The Node object from the graph
+   * @param {string} file_name The name of the json_schema -- use the name of the type field in the schema
+   * @param {any} to_inspect JSON Data to populate the form widget
+   */
   public buildWidget (node: cytoscape.Singular, file_name: string, to_inspect: unknown): void {
     $('#metawidget').empty();
     $('#current_node').get().forEach((i) => {
@@ -85,7 +73,6 @@ export class StixEditor {
     /** *************************************** *
         *        Export Single JSON
         *************************************** */
-    // $(document).off('click', '#btn-export-single').on('click', '#btn-export-single', function (e) {
 
     this.editor.on('ready', () => {
       this.form_changed = () => {
@@ -103,13 +90,9 @@ export class StixEditor {
         ele.data('raw_data', new_data);
         ele.data('saved', false);
         $('button.btn-commit').button('enable');
-        // this.db.needs_save(ele.id(), window.cycore).then((save) => {
-        //     save ? $('button.btn-commit').button('enable') : $('button.btn-commit').button('disable');
-        // });
       };
 
       this.editor.on('change', this.form_changed);
-      // this.editor.watch('root', this.form_changed);
     });
   }
 }

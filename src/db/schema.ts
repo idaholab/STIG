@@ -4,17 +4,23 @@ Copyright 2018 Southern California Edison Company
 ALL RIGHTS RESERVED
 */
 
-import { PropertyCreateConfig } from 'orientjs';
+export interface PropertyConfig {
+  name: string;
+  type: string;
+  mandatory?: boolean;
+  notNull?: boolean;
+  collate?: string;
+  default?: string;
+}
 
-// Called by create-db.ts new_database func, sets up the database classes/schema
-export interface IOrientJSONClassOptions {
-  name: string
-  superClasses: string[]
-  properties: PropertyCreateConfig[]
+export interface IJSONClassOptions {
+  name: string;
+  superClasses: string[];
+  properties: PropertyConfig[];
 }
 
 export interface ISchemaFile {
-  classes: IOrientJSONClassOptions[]
+  classes: IJSONClassOptions[];
 }
 
 export const schema: ISchemaFile = {

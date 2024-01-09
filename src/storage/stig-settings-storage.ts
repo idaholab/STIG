@@ -5,7 +5,7 @@ ALL RIGHTS RESERVED
 */
 
 export interface IStigSettingsOptions {
-  layout: string
+  layout: string;
   // bounds: Rectangle;
   // maximize: boolean;
   // fullScreen: boolean;

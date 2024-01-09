@@ -1,7 +1,7 @@
 import diffpatch from 'jsondiffpatch';
 import { StixObject } from '../stix';
 import { IDatabaseConfigOptions, TaxiiParams } from '../storage/database-configuration-storage';
-import { schema } from './schema';
+import { schema, IJSONClassOptions } from '../db/schema';
 
 async function req (path: string, body: unknown): Promise<any> {
   const res = await fetch(path, {
@@ -81,26 +81,28 @@ export async function check_db () {
   }
 }
 
+function getAllProps (schemaObject: IJSONClassOptions) {
+  const props = schemaObject.properties;
+  for (const superClass of schemaObject.superClasses) {
+    const superClassObject = schema.classes.find(c =>
+      c.name.replace(/-/g, '') === superClass
+    );
+    if (superClassObject) {
+      props.concat(getAllProps(superClassObject));
+    }
+  }
+  return props;
+}
+
 export function checkProps (object: StixObject): boolean {
   const schemaObject = schema.classes.find(c => { return c.name === object.type; });
   if (typeof schemaObject !== 'object') {
     return false;
   }
 
-  // Get the requireed props from the schema
-  const reqProps = schemaObject.properties.filter(prop => { return prop.mandatory; });
-  // Get the required props from the super classes
-  for (const superClass of schemaObject.superClasses) {
-    const superClassObject = schema.classes.find(c => {
-      const name = c.name.replace(/-/g, '');
-      return name === superClass;
-    });
-    if (superClassObject) {
-      const superReqProps = superClassObject.properties.filter(prop => { return prop.mandatory; });
-      reqProps.concat(superReqProps);
-    }
-  }
-
+  // Get the required props from the schema
+  const props = getAllProps(schemaObject);
+  const reqProps = props.filter(prop => { return prop.mandatory; });
   for (const prop of reqProps) {
     // id_ only exists on the database side. Skip this.
     if (prop.name === 'id_') continue;

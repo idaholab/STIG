@@ -4,7 +4,7 @@ Copyright 2018 Southern California Edison Company
 ALL RIGHTS RESERVED
 */
 
-import { use_db } from '../db/dbFunctions';
+import { use_db } from './dbFunctions';
 import { DatabaseConfigurationStorage } from '../storage';
 import { IDatabaseConfigOptions } from '../storage/database-configuration-storage';
 
@@ -68,7 +68,7 @@ class NewDatabaseDialog {
     // $('#admin_password').val(params.admin_password);
   }
 
-  private saveData () {
+  private async saveData () {
     const options: IDatabaseConfigOptions = {
       host: $('#host').val() as string,
       port: $('#port').val() as number,
@@ -80,7 +80,7 @@ class NewDatabaseDialog {
       usetoken: true
     };
     DatabaseConfigurationStorage.Instance.save(options);
-    use_db(options);
+    await use_db(options);
     this.close();
   }
 
@@ -105,7 +105,7 @@ class NewDatabaseDialog {
         },
         {
           text: 'Save',
-          click: () => { this.saveData(); }
+          click: () => { void this.saveData(); }
         }
       ]
     });
