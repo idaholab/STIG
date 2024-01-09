@@ -8,13 +8,13 @@ import * as diffpatch from 'jsondiffpatch';
 import { Identifier, StixObject } from '../stix';
 
 export interface ITrackedItem {
-    name: string;
-    diff: diffpatch.Delta;
-    original: any;
+  name: string
+  diff: diffpatch.Delta
+  original: any
 }
 
 export interface IDialogEventData {
-    self: any;
+  self: any
 }
 
 const html_style = `<style>
@@ -170,67 +170,68 @@ const html_style = `<style>
   </style>`;
 
 export class DiffDialog {
-    public html: string;
-    public tracked: { [key: string]: ITrackedItem };
-    public diffpatcher: diffpatch.DiffPatcher;
-    public config: diffpatch.Config;
-    private _anchor: JQuery<HTMLElement>;
-    private _header: string = `${html_style} <div id="diff-list">`;
-    private _footer: string = "</div>";  // + this._createUpdateDBButton();
+  public html: string;
+  public tracked: Record<string, ITrackedItem>;
+  public diffpatcher: diffpatch.DiffPatcher;
+  public config: diffpatch.Config;
+  private readonly _anchor: JQuery<HTMLElement>;
+  private readonly _header: string = `${html_style} <div id="diff-list">`;
+  private readonly _footer: string = '</div>'; // + this._createUpdateDBButton();
 
-    constructor(anchor: JQuery) {
-        this._anchor = anchor;
-        this.html = this._header;
-        this.tracked = {};
-        this.config = {
-            arrays: {
-                detectMove: true,
-                includeValueOnMove: false,
-            },
-            propertyFilter: (name: string, _context: diffpatch.DiffContext) => {
-                if (name.startsWith('@', 0)) {
-                    return false;
-                }
-                return true;
-            },
-        };
-        this.diffpatcher = new diffpatch.DiffPatcher(this.config);
-    }
-
-    public addDiff(id: Identifier, dif: diffpatch.Delta, orig: StixObject, name?: string) {
-        if (id in this.tracked) {
-            if (dif !== this.tracked[id]) {
-                this.tracked[id].diff = dif;
-            }
-        } else {
-            this.tracked[id] = { name: name || "", diff: dif, original: orig };
+  constructor (anchor: JQuery) {
+    this._anchor = anchor;
+    this.html = this._header;
+    this.tracked = {};
+    this.config = {
+      arrays: {
+        detectMove: true,
+        includeValueOnMove: false
+      },
+      propertyFilter: (name: string, _context: diffpatch.DiffContext) => {
+        if (name.startsWith('@', 0)) {
+          return false;
         }
-    }
+        return true;
+      }
+    };
+    this.diffpatcher = new diffpatch.DiffPatcher(this.config);
+  }
 
-    public clearId(id: Identifier) {
-        if (id in this.tracked) {
-            delete (this.tracked[id]);
-            this._buildHTML();
-            this._anchor.html(this.html);
-            ($("input[type='radio']") as any).checkboxradio();
-        }
+  public addDiff (id: Identifier, dif: diffpatch.Delta, orig: StixObject, name?: string) {
+    if (id in this.tracked) {
+      if (dif !== this.tracked[id]) {
+        this.tracked[id].diff = dif;
+      }
+    } else {
+      this.tracked[id] = { name: name ?? '', diff: dif, original: orig };
     }
+  }
 
-    public reset() {
-        this.html = '';
-        this._anchor.html('');
-        this.tracked = {};
+  public clearId (id: Identifier) {
+    if (id in this.tracked) {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+      delete this.tracked[id];
+      this._buildHTML();
+      this._anchor.html(this.html);
+      ($("input[type='radio']") as any).checkboxradio();
     }
+  }
 
-    private _buildHTML() {
-        this.html = this._header;
-        for (const k in this.tracked) {
-            if (this.tracked.hasOwnProperty(k)) {
-                const name = this.tracked[k].name ? this.tracked[k].name : k;
-                const type = k.split("--", 1)[0];
-                const formatted = diffpatch.formatters.html.format(this.tracked[k].diff, this.tracked[k].original);
-                const radiobutton = this._createRadioButton(k);
-                this.html += `<h3>${type}: ${name}</h3>
+  public reset () {
+    this.html = '';
+    this._anchor.html('');
+    this.tracked = {};
+  }
+
+  private _buildHTML () {
+    this.html = this._header;
+    for (const k in this.tracked) {
+      if (Object.prototype.hasOwnProperty.call(this.tracked, k)) {
+        const name = this.tracked[k].name ? this.tracked[k].name : k;
+        const type = k.split('--', 1)[0];
+        const formatted = diffpatch.formatters.html.format(this.tracked[k].diff, this.tracked[k].original);
+        const radiobutton = this._createRadioButton(k);
+        this.html += `<h3>${type}: ${name}</h3>
             <div x-diff-key="${k}">
             <fieldset>
             <p>ID: ${k}</p>
@@ -238,105 +239,82 @@ export class DiffDialog {
             ${radiobutton}
             </fieldset>
             </div>`;
-            }
-        }
-        this.html += this._footer;
+      }
     }
+    this.html += this._footer;
+  }
 
-    private _deleteSelected(e: JQueryEventObject) {
-        e.preventDefault();
-        e.stopPropagation();
-        const self = e.data.self;
-        const diff_idx = e.target.parentElement.getAttribute('x-diff-key');
-        self.clearId(diff_idx);
-        self._buildHTML();
-        self._anchor.html(self.html)
-            ($("input[type='radio']") as any).checkboxradio();
-    }
-
-    private _createRadioButton(index: string) {
-        const but: string = `<fieldset>
+  private _createRadioButton (index: string) {
+    const but: string = `<fieldset>
         <label for="radio-local-${index}"> Keep Local </label>
         <input type="radio" name="radio-${index}" id="radio-local-${index}">
         <label for="radio-db-${index}"> Use DB </label>
         <input type="radio" name="radio-${index}" id="radio-db-${index}">
         </fieldset>`;
-        return but;
-    }
+    return but;
+  }
 
-    public open() {
-        this._anchor.empty();
-        this._buildHTML();
-        this._anchor.html(this.html);
-        ($("input[type='radio']") as any).checkboxradio();
-        this._anchor.dialog({ autoOpen: false });
-        this._anchor.dialog("option", {
-            width: '50%',
-            // height: '75%',
-            maxHeight: window.innerHeight - 100,
-            maxWidth: window.innerWidth / 2,
-            buttons: [{
-                text: "Commit",
-                id: "diff-dialog-commit-btn",
-                click: (e: JQueryEventObject) => { this._doUpdateAsSelected(e); },
-            }, {
-                text: "Close",
-                click: this._close,
-            }],
+  public open () {
+    this._anchor.empty();
+    this._buildHTML();
+    this._anchor.html(this.html);
+    ($("input[type='radio']") as any).checkboxradio();
+    this._anchor.dialog({ autoOpen: false });
+    this._anchor.dialog('option', {
+      width: '50%',
+      // height: '75%',
+      maxHeight: window.innerHeight - 100,
+      maxWidth: window.innerWidth / 2,
+      buttons: [{
+        text: 'Commit',
+        id: 'diff-dialog-commit-btn',
+        click: (e: JQueryEventObject) => { this._doUpdateAsSelected(e); }
+      }, {
+        text: 'Close',
+        click: this._close
+      }]
+    });
+    this._anchor.dialog('open');
+  }
+
+  private _close (_e: JQueryEventObject) {
+    $(this).dialog('close');
+  }
+
+  private _doUpdateAsSelected (e: JQueryEventObject): void {
+    e.stopPropagation();
+    e.preventDefault();
+    const ids: Identifier[] = [];
+    let stix_id: string;
+    $("input[type='radio']:checked").each((_index, ele) => {
+      const id = ele.getAttribute('id');
+      if (!id) {
+        return;
+      }
+      if (id.startsWith('radio-db-')) {
+        stix_id = id.split('radio-db-')[1];
+        ids.push(stix_id);
+      } else {
+        stix_id = id.split('radio-local-')[1];
+        this.clearId(stix_id);
+      }
+    });
+    this.updateNode(ids);
+    this._anchor.dialog('close');
+  }
+
+  private updateNode (ids: Identifier[]): void {
+    let nodes: cytoscape.CollectionReturnValue;
+    for (const stix_id of ids) {
+      const diff = this.tracked[stix_id].original;
+      nodes = window.cycore.getElementById(stix_id);
+      if (nodes.length > 0) {
+        nodes.each((n) => {
+          n.data('raw_data', diff);
+          n.data('saved', true);
         });
-        this._anchor.dialog("open");
+      }
+      this.clearId(stix_id);
     }
-
-    private _close(_e: JQueryEventObject) {
-        $(this).dialog("close");
-    }
-
-    private _createDeleteButton(id: string): string {
-        const ret = `<button type="button" title="Remove Selected" class="ui-button ui-widget ui-corner-all ui-button-icon-only btn-diff-delete" id="btn-diff-delete"
-        x-diff-key="${id}" >
-        ret += '<span class="ui-icon ui-icon-close"></span></button>`;
-        return ret;
-    }
-
-    private _createUpdateDBButton(): string {
-        const ret = `<button type="button" title="Commit" class="ui-button ui-widget ui-corner-all ui-button-icon-only btn-diff-update" id="btn-diff-update"><span class="ui-icon ui-icon-check"></span>Commit</button>`;
-        return ret;
-    }
-
-    private _doUpdateAsSelected(e: JQueryEventObject): void {
-        e.stopPropagation();
-        e.preventDefault();
-        const ids: Identifier[] = [];
-        let stix_id;
-        $("input[type='radio']:checked").each((_index, ele) => {
-            const name = ele.getAttribute('name');
-            const id = ele.getAttribute('id');
-            if (id.startsWith('radio-db-')) {
-                stix_id = id.split('radio-db-')[1];
-                ids.push(stix_id);
-            } else {
-                stix_id = id.split('radio-local-')[1];
-                this.clearId(stix_id);
-            }
-            // tslint:disable-next-line:no-console
-         //console.log(name, id);
-        });
-        this.updateNode(ids);
-        this._anchor.dialog('close');
-    }
-
-    private updateNode(ids: Identifier[]): void {
-        let nodes: cytoscape.CollectionReturnValue;
-        for (const stix_id of ids) {
-            const diff = this.tracked[stix_id].original;
-            nodes = window.cycore.getElementById(stix_id);
-            if (nodes.length > 0) {
-              nodes.each((n) => {
-                n.data('raw_data', diff);
-                n.data('saved', true);
-              });
-            }
-            this.clearId(stix_id);
-        }
-    }
+  }
 }

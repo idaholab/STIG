@@ -4,6 +4,7 @@
         "module": "CommonJS",
         "target": "ESNext",
         "resolveJsonModule": true,
-        "esModuleInterop": true
+        "esModuleInterop": true,
+        "strictNullChecks": true,
     }
 }

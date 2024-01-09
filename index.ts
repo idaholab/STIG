@@ -1,24 +1,17 @@
-import express, { NextFunction, response } from 'express';
-import { Request, Response } from 'express'; 
+import express, { NextFunction, Request, Response } from 'express';
 import { IDatabaseConfigOptions, TaxiiParams } from './src/storage/database-configuration-storage';
 import session from 'express-session';
 import { StigDB } from './db';
-import { execSync, spawnSync } from 'child_process';
-//const spawn = require('child_process')
-const bodyParser = require('body-parser')
-// import path from 'path';
+import { execSync } from 'child_process';
+import bodyParser from 'body-parser';
+
 const app = express();
 
-// let client: OrientDBClient = null
-// let db: ODatabaseSession = null
-
-// let db: StigDB = null;
-
-let dbs: Map<string, StigDB> = new Map<string, StigDB>()
+const dbs: Map<string, StigDB> = new Map<string, StigDB>();
 
 const {
   PORT = 3000,
-  COOKIE_SECRET = "stig_cookie"
+  COOKIE_SECRET = 'stig_cookie'
 } = process.env;
 
 app.use(session({
@@ -26,401 +19,364 @@ app.use(session({
   resave: true,
   saveUninitialized: false,
   cookie: { maxAge: 9999999999, sameSite: 'strict' } // Set the session cookie to expire far in the future
-}))
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({extended: true}))
+}));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
+app.use(express.static('src'));
+app.use('/node_modules', express.static('node_modules'));
+app.use(express.static('dist'));
 
-app.use(express.static('src'))
-app.use('/node_modules', express.static('node_modules'))
-app.use(express.static('dist'))
-
-app.get("/script", (req, res) => {
-  if (process.env.NODE_ENV == "development") {
-    res.redirect("http://localhost:8080/index.js")
+app.get('/script', (_req, res) => {
+  if (process.env.NODE_ENV === 'development') {
+    res.redirect('http://localhost:8080/index.js');
   } else {
-    res.redirect("/static/index.js")
+    res.redirect('/static/index.js');
   }
-})
+});
 
 /*********************
  * Check db
- * 
+ *
  * Determines the status of the database connection.
  * If connected, returns the name of the database.
  * If not connected, returns undefined
  */
-app.get("/check_db", (req, res) => {
-  // console.log("Check DB")
-  // if (dbs != null) {
-  //   // console.log(dbs.values())
-  //   console.log(req.session["dbId"])
-  //   var _db = dbs.get(req.session["dbId"])
-  //   console.log("Database: ", _db.odb.name)
-  // }
-  // if (db?.odb) {
-  //   res.send({data: db.odb.name})
-  // } else {
-  //   res.send({data: undefined})
-  // }
-
-  res.send({data: dbs?.get(req.session["dbId"])?.odb?.name})
-})
+app.get('/check_db', (req, res) => {
+  res.send({ data: dbs?.get((req.session as any).dbId)?.odb?.name });
+});
 
 app.use((req: Request, _res: Response, next: NextFunction) => {
+  // eslint-disable-next-line no-console
   console.log(`[${req.method}] - ${req.url}`);
 
   next();
-})
+});
 
-app.get('/', (req: Request, res: Response) => {
-  res.redirect('/index.html')
-})
+app.get('/', (_req: Request, res: Response) => {
+  res.redirect('/index.html');
+});
 
 /***********************************************
  * save
  * req.body
  *        name: string
  *        data: string
- * 
+ *
  * Save data in a cookie
  ***********************************************/
 app.post('/save', (req: Request, res: Response) => {
-  let name = req.body.name;
-  let data = req.body.data;
+  const name = req.body.name;
+  const data = req.body.data;
 
   req.session[name] = data;
 
-  console.log(`Saving cookie ${name}`)
+  // eslint-disable-next-line no-console
+  console.log(`Saving cookie ${name}`);
 
   res.status(200);
   res.end();
-})
+});
 
 /***********************************************
  * data
  * req.body
  *        name: string
- * 
+ *
  * Retrieve data from a cookie
  ***********************************************/
 app.get('/data', (req: Request, res: Response) => {
-  let name = req.query.name as string;
+  const name = req.query.name as string;
 
-  let data = req.session[name]
+  let data = req.session[name];
 
-  if (data === "undefined" || data === undefined) {
-    console.log(`Cookie ${name} not found`)
-    data = "{}"
+  if (data === 'undefined' || data === undefined) {
+    // eslint-disable-next-line no-console
+    console.log(`Cookie ${name} not found`);
+    data = '{}';
   }
 
   res.send(data);
-})
-
+});
 
 /**************************************************************
  * Database endpoints
- * 
+ *
  **************************************************************/
 
 /*************
  * Use db
- * 
- * Connects to a database with a configuration. 
+ *
+ * Connects to a database with a configuration.
  * If the db doesn't exist, a new database is created.
  */
-app.post("/use_db", async (req, res) => {
-  let config: IDatabaseConfigOptions = req.body.config;
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+app.post('/use_db', async (req, res) => {
+  const config: IDatabaseConfigOptions = req.body.config;
   if (config) {
     try {
-      // console.log("Session id: ", req.session["dbId"])
-      // db = new StigDB(config)
-      if (req.session["dbId"] == undefined) {
-        req.session["dbId"] = req.sessionID
-        // console.log("set session: ", req.session["dbId"])
-        req.session.save()
+      const dbId = (req.session as any).dbId;
+      if (dbId === undefined) {
+        (req.session as any).dbId = req.sessionID;
+        req.session.save();
       }
 
-      dbs.set(req.session["dbId"], new StigDB())
+      dbs.set(dbId, new StigDB());
       // console.log(dbs.values())
-      await dbs.get(req.session["dbId"]).configure(config)
-      let message = "Connected to database " + dbs.get(req.session["dbId"]).odb.name + " as user '" + config.username + "'"
-      console.log(message)
-      res.write(`{"message": "${message}"}`)
+      await dbs.get(dbId)?.configure(config);
+      const message = 'Connected to database ' + dbs.get(dbId)?.odb.name + " as user '" + config.username + "'";
+      res.write(`{"message": "${message}"}`);
     } catch (err) {
       // console.error(err)
-      if (err.code == "ECONNREFUSED") {
-        let message = "Unable to connect to OrientDB. Is it running?"
-        console.log(message)
-        res.write(`{"message": "${message}"}`)
-      } else if (err.code == 5) {
-        let message = "Unable to connect to OrientDB. Invalid username/password."
-        console.log(message)
-        res.write(`{"message": "${message}"}`)
-      } else if (err.message == "Unable to create database") {
-        let message = "Database does not exist, and user '" + config.username + "' does not have permission to create one."
-        console.log(message)
-        res.write(`{"message": "${message}"}`)
+      if (err.code === 'ECONNREFUSED') {
+        const message = 'Unable to connect to OrientDB. Is it running?';
+        res.write(`{"message": "${message}"}`);
+      } else if (err.code === 5) {
+        const message = 'Unable to connect to OrientDB. Invalid username/password.';
+        res.write(`{"message": "${message}"}`);
+      } else if (err.message === 'Unable to create database') {
+        const message = "Database does not exist, and user '" + config.username + "' does not have permission to create one.";
+        res.write(`{"message": "${message}"}`);
       } else {
-        let message = "Unknown error occurred"
-        console.log(message)
-        console.error(err)
-        res.write(`{"message": "${message}"}`)
+        const message = 'Unknown error occurred';
+        res.write(`{"message": "${message}"}`);
       }
-      res.status(500)
+      res.status(500);
     }
   } else {
-    res.status(400)
+    res.status(400);
   }
 
-  res.end()
-})
+  res.end();
+});
 
 /************
  * Commit
- * 
+ *
  * Commits the object to the database
  */
-app.post("/commit", async (req, res) => {
-  let data = req.body.data;
-  // console.log(data)
-  let message = ""
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+app.post('/commit', async (req, res) => {
+  const data = req.body.data;
+  let message = '';
   if (data) {
     try {
-      await dbs.get(req.session["dbId"]).updateDB(data)
+      await dbs.get((req.session as any).dbId)?.updateDB(data);
     } catch (err) {
-      if (err.toString().includes("does not have permission")) {
-        message = "Insufficient permissions."
+      if (err.toString().includes('does not have permission')) {
+        message = 'Insufficient permissions.';
       } else {
-        //message = "Error committing to DB."
-        message = "DB error here: " + err.toString()
+        message = 'DB error here: ' + err.toString();
       }
-      console.log(message)
-      // res.status(500)
     }
   } else {
-    res.status(400)
+    res.status(400);
   }
 
-  res.write(`{"message": "${message}"}`)
+  res.write(`{"message": "${message}"}`);
 
-  res.end()
-  
-})
+  res.end();
+});
 
 /*************
  * Delete
- * 
+ *
  * Deletes the object from the database
  */
-app.post("/delete", async (req, res) => {
-  let data = req.body.data;
-  console.log(data)
-  let message = ""
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+app.post('/delete', async (req, res) => {
+  const data = req.body.data;
+  let message = '';
   if (data) {
     try {
-      let db = await dbs.get(req.session["dbId"])
+      const db = dbs.get((req.session as any).dbId);
+      if (!db) {
+        res.status(500);
+        return;
+      }
       // Check if the STIX object is an edge
       if (data.type === 'relationship') {
         // Delete edge
-        await db.sroDestroyedUI(data)
+        await db.sroDestroyedUI(data);
       } else {
         // Delete node
-        await db.sdoDestroyedUI(data)
+        await db.sdoDestroyedUI(data);
       }
     } catch (err) {
-      if (err.toString().includes("does not have permission")) {
-        message = "Insufficient permissions."
+      if (err.toString().includes('does not have permission')) {
+        message = 'Insufficient permissions.';
       } else {
-        message = "Error deleting from db."
-        console.error(err)
+        message = 'Error deleting from db.';
       }
-      console.log(message)
-      // res.status(500)
     }
   } else {
-    res.status(400)
+    res.status(400);
   }
 
+  res.write(`{"message": "${message}"}`);
 
-  res.write(`{"message": "${message}"}`)
-
-  res.end()
-})
+  res.end();
+});
 
 /**************
  * Query Incoming
- * 
+ *
  * Finds the nodes with edges coming in to the passed node
  */
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
 app.post('/query_incoming', async (req, res) => {
-  let id = req.body.id
-  let message = ""
+  const id = req.body.id;
+  let message = '';
   if (id) {
     try {
-      let stix = await dbs.get(req.session["dbId"]).traverseNodeIn(id)
-      res.write(JSON.stringify({data: stix}))
+      const stix = await dbs.get((req.session as any).dbId)?.traverseNodeIn(id);
+      res.write(JSON.stringify({ data: stix }));
     } catch (err) {
-      if (err.toString().includes("does not have permission")) {
-        message = "Insufficient permissions."
+      if (err.toString().includes('does not have permission')) {
+        message = 'Insufficient permissions.';
       } else {
-        message = "Error executing query."
+        message = 'Error executing query.';
       }
-      console.log(message)
 
-      res.write(`{"message": "${message}"}`)
-      // res.status(500)
+      res.write(`{"message": "${message}"}`);
     }
   } else {
-    message = "Invalid request"
+    message = 'Invalid request';
 
-    res.write(`{"message": "${message}"}`)
-    res.status(400)
+    res.write(`{"message": "${message}"}`);
+    res.status(400);
   }
 
-  res.end()
-})
+  res.end();
+});
 
 /*************
  * Query Outgoing
- * 
+ *
  * Finds the nodes with edges coming out of the passed node
  */
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
 app.post('/query_outgoing', async (req, res) => {
-  let id = req.body.id
-  let message = ""
+  const id = req.body.id;
+  let message = '';
   if (id) {
     try {
-      let stix = await dbs.get(req.session["dbId"]).traverseNodeOut(id)
-      res.write(JSON.stringify({data: stix}))
+      const stix = await dbs.get((req.session as any).dbId)?.traverseNodeOut(id);
+      res.write(JSON.stringify({ data: stix }));
     } catch (err) {
-      if (err.toString().includes("does not have permission")) {
-        message = "Insufficient permissions."
+      if (err.toString().includes('does not have permission')) {
+        message = 'Insufficient permissions.';
       } else {
-        message = "Error executing query."
+        message = 'Error executing query.';
       }
-      console.log(message)
 
-      res.write(`{"message": "${message}"}`)
-      // res.status(500)
+      res.write(`{"message": "${message}"}`);
     }
   } else {
-    message = "Invalid request"
+    message = 'Invalid request';
 
-    res.write(`{"message": "${message}"}`)
-    res.status(400)
+    res.write(`{"message": "${message}"}`);
+    res.status(400);
   }
 
-
-  res.end()
-})
+  res.end();
+});
 
 /************
  * Query
- * 
+ *
  * Issues a query supplied by the client
  */
-app.post("/query", async (req, res) => {
-  let query = req.body.query
-  let message = ""
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+app.post('/query', async (req, res) => {
+  const query = req.body.query;
+  let message = '';
   if (query) {
-    let message = ""
+    let message = '';
     try {
-      let stix = await dbs.get(req.session["dbId"]).executeQuery(query)
-      res.write(JSON.stringify({data: stix}))
+      const stix = await dbs.get((req.session as any).dbId)?.executeQuery(query);
+      res.write(JSON.stringify({ data: stix }));
     } catch (err) {
-      if (err.toString().includes("does not have permission")) {
-        message = "Insufficient permissions."
+      if (err.toString().includes('does not have permission')) {
+        message = 'Insufficient permissions.';
       } else {
-        message = "Error executing query."
+        message = 'Error executing query.';
       }
 
-
-      res.write(`{"message": "${message}"}`)
-      console.log(message)
-      // res.status(500)
+      res.write(`{"message": "${message}"}`);
     }
   } else {
-    message = "Invalid request"
-    res.write(`{"message": "${message}"}`)
-    res.status(400)
+    message = 'Invalid request';
+    res.write(`{"message": "${message}"}`);
+    res.status(400);
   }
 
-  res.end()
-})
+  res.end();
+});
 
 /**************
  * Diff
- * 
+ *
  * Finds the difference between the passed node and what is in the database
  */
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
 app.post('/diff', async (req, res) => {
-  let node = req.body.data;
+  const node = req.body.data;
   if (node) {
     try {
-      const diff = await dbs.get(req.session["dbId"]).getDiff(node)
-      res.write(JSON.stringify({data: diff}))
+      const diff = await dbs.get((req.session as any).dbId)?.getDiff(node);
+      res.write(JSON.stringify({ data: diff }));
     } catch (e) {
-      res.status(500)
+      res.status(500);
     }
   } else {
-    res.status(400)
+    res.status(400);
   }
 
-  res.end()
-})
+  res.end();
+});
 
 /**************
  * Taxii
- * 
+ *
  * Runs python code
  */
-app.post('/taxii', async (req, res) => {
-  let tax: TaxiiParams = req.body.params;
+app.post('/taxii', (req, res) => {
+  const tax: TaxiiParams = req.body.params;
   if (tax) {
     try {
-      // const diff = await dbs.get(req.session["dbId"]).getDiff(node)
-      // res.write(JSON.stringify({data: diff}))
-      //console.log(params)
-
-      let pyArgs = 'python3 taxii-client.py'
-      //let test = ['taxii-client.py']
-      if (tax.url != "") {
-          pyArgs += ' -u ' + tax.url
+      let pyArgs = 'python3 taxii-client.py';
+      if (tax.url !== '') {
+        pyArgs += ' -u ' + tax.url;
       }
       if (tax.apiroot_name) {
-          pyArgs += ' -a ' + tax.apiroot_name
-      } 
+        pyArgs += ' -a ' + tax.apiroot_name;
+      }
       if (tax.collection_id) {
-          pyArgs += ' -c ' + tax.collection_id
+        pyArgs += ' -c ' + tax.collection_id;
       }
       if (tax.username) {
-          pyArgs += ' -n ' + tax.username
+        pyArgs += ' -n ' + tax.username;
       }
       if (tax.password) {
-          pyArgs += ' -p ' + tax.password
+        pyArgs += ' -p ' + tax.password;
       }
 
-      console.log(pyArgs)
-      //console.log("trying")
+      const taxiiBuf = execSync(pyArgs);
+      const taxiiStr = taxiiBuf.toString();
 
-      var taxiiBuf = execSync(pyArgs)
-      const taxiiStr = taxiiBuf.toString()
-
-      res.write(JSON.stringify({taxii: taxiiStr}))
-
+      res.write(JSON.stringify({ taxii: taxiiStr }));
     } catch (e) {
-      res.status(500)
+      res.status(500);
     }
   } else {
-    res.status(400)
+    res.status(400);
   }
 
-  res.end()
-})
-
-
+  res.end();
+});
 
 app.listen(PORT, () => {
-  console.log('server started at http://localhost:'+PORT);
+  // eslint-disable-next-line no-console
+  console.log('server started at http://localhost:' + PORT);
 });
