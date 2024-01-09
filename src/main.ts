@@ -114,29 +114,23 @@ export class main {
 
       // GRAPH
       $('#dd-copyElem').on('click', () => {
-        // console.log("Copy element")
         graph_copy();
       });
       $('#dd-cutElem').on('click', () => {
-        // console.log("Cut element")
         const selected = window.cycore.$(':selected');
         graph_copy();
         window.cycore.remove(selected);
       });
       $('#dd-pasteElem').on('click', () => {
-        // console.log("paste element")
         graph_paste();
       });
       $('#dd-commitElem').on('click', () => {
-        // console.log("Commit elements")
         void commit_all();
       });
       $('#dd-dbDelete').on('click', () => {
-        // console.log("Delete from db")
         delete_selected();
       });
       $('#dd-selectElem').on('click', () => {
-        // console.log("Select all elements")
         window.cycore.elements().select();
       });
       $('#dd-invertSelect').on('click', () => {
@@ -152,7 +146,6 @@ export class main {
         // get all current objects
         let nodes = window.cycore.$(':visible');
         nodes = nodes.union(nodes.connectedEdges());
-        // let new_rels = []
 
         // if an object has "object_refs" property, create relationships for all reference objects
         nodes.each((ele) => {
@@ -190,7 +183,6 @@ export class main {
 
       // EXPORT
       $('#dd-exportSelected').on('click', () => {
-        // console.log("Export selected")
         const bundle_id = 'bundle--' + uuid.v4();
         const bundle: BundleType = { type: 'bundle', id: bundle_id, objects: [] } as any;
 
@@ -208,7 +200,6 @@ export class main {
         openBundleExport(bundle);
       });
       $('#dd-exportGraph').on('click', () => {
-        // console.log("Export graph")
         const bundle_id = 'bundle--' + uuid.v4();
         const bundle: BundleType = { type: 'bundle', id: bundle_id, objects: [] } as any;
 
@@ -226,7 +217,6 @@ export class main {
         openBundleExport(bundle);
       });
       $('#dd-exportAll').on('click', () => {
-        // console.log("Export all")
         const bundle_id = 'bundle--' + uuid.v4();
         const bundle: BundleType = { type: 'bundle', id: bundle_id, objects: [] } as any;
         let nodes = window.cycore.$(':visible');
@@ -245,7 +235,6 @@ export class main {
         openBundleExport(bundle);
       });
       $('#dd-exportPos').on('click', () => {
-        // console.log("Export positions")
         const nodes = window.cycore.$(':visible');
 
         const jsonObj = JSON.stringify({ metadata: getNodeMetadata(nodes) }, null, 2);
@@ -465,7 +454,6 @@ export class main {
           searchparam = s[1];
         }
         let selected = cy.$(':selected');
-        // view_util.removeHighlights(selected);
         selected.unselect();
         const eles = search(prop, searchparam);
         selected = eles;
@@ -478,9 +466,7 @@ export class main {
             }
           });
           selected.select();
-          // view_util.highlight(selected);
-          // cy.center(selected);
-          // cy.fit(selected);
+
           $('.search-status').html(`Found ${selected.length} elements`);
           cy.animate({
             fit: {
@@ -509,8 +495,6 @@ export class main {
         e.stopPropagation();
         const key = e.which;
         if (key === 13) {
-          // e.preventDefault();
-          // e.stopPropagation();
           $('#btn-graph-search').trigger('click');
         }
       });
@@ -530,29 +514,14 @@ export class main {
           return;
         }
         storage.add(text);
-        // hist_dialog.addToHistoryDialog();
-        // const result = await db.doGraphQuery({
-        //     command: text,
-        //     mode: 'graph',
-        //     parameters: [],
-        // });
         const result = await query(text);
-        // if (result.graph === undefined || result.graph.vertices === undefined) {
-        //     $('#query-status').html('No results');
-        //     return;
-        // }
-
-        // console.log(result);
-
         const add_graph: GraphQueryResult = {
           graph: {
             vertices: [],
             edges: []
           }
         };
-        // let results: StixObject[] = [];
-        // results = results.concat(result.graph.edges, result.graph.vertices);
-        // results.concat(result.graph.vertices);
+
         loading = true;
         result.forEach((item: StixObject) => {
           if (cy.getElementById(item.id_!).length === 0) {
@@ -745,7 +714,6 @@ export class main {
 
       /**
        * Handles files added to UI via drag and drop or file selector
-       *
        * @param {FileList} files
        */
       function handleFiles (files: FileList) {
@@ -803,15 +771,15 @@ export class main {
       uploader.addEventListener('drop', handleFileDrop, false);
 
       /**
-             * Handler for Import Bundle button
-             */
+       * Handler for Import Bundle button
+       */
       $(document).on('change', '#btn-import-bundle', (e) => {
         handleFiles(e.target.files);
       });
 
       /**
-             * Handler for Export Bundle button
-             */
+       * Handler for Export Bundle button
+       */
       $(document).on('click', '#btn-export-bundle', () => {
         // Get raw data from all cy elements
         // Create bundle object
@@ -853,8 +821,6 @@ export class main {
       $('button.btn-commit').on('click', async (e: JQuery.Event) => {
         e.preventDefault();
         e.stopPropagation();
-        // let result: StixObject[];
-        // let ourres = '';
         try {
           const formdata: StixObject = editor.editor.getValue();
           if (await commit(formdata)) {
@@ -924,7 +890,6 @@ export class main {
        * @returns {Promise<boolean>}
        */
       function widget_bar_onclick<HTMLElement> (evt: JQuery.ClickEvent<HTMLElement, { name: string }>): boolean {
-        // alert(evt.data['name'] + " clicked");
         const my_node = event_add_node(evt.data.name);
         cy.add(my_node);
         return true;
@@ -959,10 +924,6 @@ export class main {
           opacity: 0.7,
           helper: 'clone',
           zIndex: 999,
-          // start(_, ui) {
-          //     // console.log('icon position:' + $(element).attr('position').x + $(element).attr('position').y)
-          //     console.log('drag start:' + ui.position.left.toString() + ' ' + ui.position.top.toString())
-          // },
           // handle widgets being dragged in from the widget bar
           // eslint-disable-next-line @typescript-eslint/no-misused-promises
           stop (_, ui) {

@@ -37,41 +37,23 @@ export interface TaxiiParams {
  */
 export class DatabaseConfigurationStorage {
   private static instance: DatabaseConfigurationStorage;
-  // private store: ElectronStore<IDatabaseConfigurationStorageStructure>;
   private store: IDatabaseConfigurationStorageStructure;
-  // private constructor() {
-  //     // this.store = new ElectronStore<IDatabaseConfigurationStorageStructure>({ name: "stig/db_config" });
-
-  //     fetch('/data', {
-  //         method: 'GET',
-  //         body: JSON.stringify({name: 'dbConfig'})
-  //     }).then(response => response.json())
-  //     .then(data => {
-  //         if (data) {
-  //             this.store = JSON.parse(data)
-  //         } else {
-  //             this.create_default();
-  //         }
-  //     })
-  // }
 
   public async getConfigs () {
     if (!this.store) {
-      const config = await fetch('/data?name=dbConfig', {
+      const response = await fetch('/data?name=dbConfig', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
         }
-      }).then(async response => await response.json());
-      // console.log(config.configs)
+      });
+      const config = await response.json();
       if (!config.configs) {
         this.create_default();
       } else {
         this.store = config;
       }
     }
-
-    // console.log("<database> store: ", JSON.stringify(this.store))
 
     return this.store;
   }
@@ -124,7 +106,6 @@ export class DatabaseConfigurationStorage {
   }
 
   public keys (): string[] {
-    // console.log("Database store: ", this.store)
     return Object.keys(this.store.configs);
   }
 
