@@ -469,8 +469,8 @@ export class main {
 
             // function to search elements inside the displayed graph
             function search(prop: string, searchterm: string | number): cytoscape.CollectionReturnValue {
-                let prop2: string = null;
-                let prop3: string = null;
+                let prop2: string | null = null;
+                let prop3: string | null= null;
                 searchterm = searchterm.toString().trim();
                 if (prop.indexOf('.') !== -1) {
                     const s = prop.split('.');
@@ -483,12 +483,12 @@ export class main {
                     if (ele.data('raw_data')) {
                         if (prop3 !== null) {
                             try {
-                                if (ele.data('raw_data')[prop2].length) {
-                                    ele.data('raw_data')[prop2].forEach((eleArr: { [x: string]: string; }) => {
-                                        ret = eleArr[prop3].trim() === searchterm;
+                                if (ele.data('raw_data')[prop2!].length) {
+                                    ele.data('raw_data')[prop2!].forEach((eleArr: { [x: string]: string; }) => {
+                                        ret = eleArr[prop3!].trim() === searchterm;
                                     });
                                 } else {
-                                    ret = ele.data('raw_data')[prop2][0][prop3].trim() === searchterm;
+                                    ret = ele.data('raw_data')[prop2!][0][prop3].trim() === searchterm;
                                 }
                             } catch (error) {
                                 // console.log('error here, value: ', prop, searchterm, error);
@@ -607,7 +607,7 @@ export class main {
                 // results.concat(result.graph.vertices);
                 loading = true;
                 result.forEach((item: StixObject) => {
-                    if (cy.getElementById(item.id_).length === 0) {
+                    if (cy.getElementById(item.id_!).length === 0) {
                         /((r|R)elationship)|((s|S)ighting)/.exec(item.type) ? add_graph.graph.edges.push(item as SRO) : add_graph.graph.vertices.push(item as SDO);
                     }
                 });
@@ -794,7 +794,7 @@ export class main {
                 // evt.stopPropagation();
                 evt.preventDefault();
 
-                handleFiles(evt.dataTransfer.files);
+                handleFiles(evt.dataTransfer!.files);
             }
 
             /**
@@ -804,7 +804,7 @@ export class main {
             function handleDragOver(evt: DragEvent) {
                 // evt.stopPropagation();
                 evt.preventDefault();
-                evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
+                evt.dataTransfer!.dropEffect = 'copy'; // Explicitly show this is a copy.
             }
 
             /**
