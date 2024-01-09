@@ -22,16 +22,6 @@ export interface QueryResultRecord {
   '@fieldTypes'?: string
 }
 
-// interface GraphResult {
-//     edges: QueryResultRecord[];
-//     vertices: QueryResultRecord[];
-// }
-
-// export interface QueryResult {
-//     result?: QueryResultRecord[];
-//     graph?: GraphResult;
-// }
-
 export interface GraphQueryResult {
   graph: {
     vertices: SDO[]

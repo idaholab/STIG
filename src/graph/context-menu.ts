@@ -39,11 +39,10 @@ export function setup_ctx_menu (cy: cytoscape.Core, view_util: any) {
 
           // TODO: ensure edges delete first.
           try {
-            // const resp = await db.sdoDestroyedUI(ele.data("raw_data"));
             const eleList = element.toArray();
             eleList.forEach((value) => {
               cy.remove(value);
-              db_delete(value.data('raw_data'));
+              void db_delete(value.data('raw_data'));
             });
           } catch (e) {
             // probably want to indicate that it wasnt deleted from db
@@ -61,14 +60,11 @@ export function setup_ctx_menu (cy: cytoscape.Core, view_util: any) {
             if (typeof data === 'string') {
               data = JSON.stringify(data);
             }
-            // console.log(data)
             const children = await query_incoming(data);
-            // console.log(JSON.stringify(children))
             const bundle: BundleType = { type: 'bundle', objects: [] };
             children.forEach((value) => {
               bundle.objects.push(value);
             });
-            // console.log(bundle.objects)
             await graph_utils.buildNodes(bundle, true);
             graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
           }
@@ -100,29 +96,20 @@ export function setup_ctx_menu (cy: cytoscape.Core, view_util: any) {
       },
       {
         content: 'Query Out',
-        // select: () => {}
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         async select (ele: cytoscape.CollectionElements) {
           // query the DB here
-          // const children = await db.traverseNodeOut(ele.data("raw_data").id);
-          // const bundle = await db.handleResponse(children);
-          // graph_utils.buildNodes(bundle, true);
-          // graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
-
           const elements = ele as unknown as cytoscape.CollectionArgument;
           for (const value of elements.toArray()) {
             let data = value.data('raw_data');
             if (typeof data === 'string') {
               data = JSON.stringify(data);
             }
-            // console.log(data)
             const children = await query_outgoing(data);
-            // console.log(JSON.stringify(children))
             const bundle: BundleType = { type: 'bundle', objects: [] };
             children.forEach((value) => {
               bundle.objects.push(value);
             });
-            // console.log(bundle.objects)
             await graph_utils.buildNodes(bundle, true);
             graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
           }
@@ -159,18 +146,16 @@ export function setup_ctx_menu (cy: cytoscape.Core, view_util: any) {
     },
     {
       content: 'DB Delete',
-      // select: () => {}
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       select (ele: cytoscape.CollectionElements) {
         const element = ele as unknown as cytoscape.CollectionArgument;
 
         // TODO: ensure edges delete first.
         try {
-          // const resp = await db.sdoDestroyedUI(ele.data("raw_data"));
           const eleList = element.toArray();
           eleList.forEach((value) => {
             cy.remove(value);
-            db_delete(value.data('raw_data'));
+            void db_delete(value.data('raw_data'));
           });
         } catch (e) {
           // probably want to indicate that it wasnt deleted from db
