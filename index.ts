@@ -1,7 +1,7 @@
 import express, { NextFunction, Request, Response } from 'express';
 import { IDatabaseConfigOptions, TaxiiParams } from './src/storage/database-configuration-storage';
 import session from 'express-session';
-import { StigDB } from './db';
+import { StigDB } from './src/db';
 import { execSync } from 'child_process';
 import bodyParser from 'body-parser';
 
@@ -43,7 +43,7 @@ app.get('/script', (_req, res) => {
  * If not connected, returns undefined
  */
 app.get('/check_db', (req, res) => {
-  res.send({ data: dbs?.get((req.session as any).dbId)?.odb?.name });
+  res.send({ data: dbs?.get((req.session as any).dbId)?.getName() });
 });
 
 app.use((req: Request, _res: Response, next: NextFunction) => {
@@ -121,13 +121,11 @@ app.post('/use_db', async (req, res) => {
         req.session.save();
       }
 
-      dbs.set(dbId, new StigDB());
-      // console.log(dbs.values())
-      await dbs.get(dbId)?.configure(config);
-      const message = 'Connected to database ' + dbs.get(dbId)?.odb.name + " as user '" + config.username + "'";
+      const db = await StigDB.getDB('orient', config);
+      dbs.set(dbId, db);
+      const message = 'Connected to database ' + db.getName() + " as user '" + config.username + "'";
       res.write(`{"message": "${message}"}`);
     } catch (err) {
-      // console.error(err)
       if (err.code === 'ECONNREFUSED') {
         const message = 'Unable to connect to OrientDB. Is it running?';
         res.write(`{"message": "${message}"}`);

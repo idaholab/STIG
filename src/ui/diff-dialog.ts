@@ -8,13 +8,13 @@ import * as diffpatch from 'jsondiffpatch';
 import { Identifier, StixObject } from '../stix';
 
 export interface ITrackedItem {
-  name: string
-  diff: diffpatch.Delta
-  original: any
+  name: string;
+  diff: diffpatch.Delta;
+  original: any;
 }
 
 export interface IDialogEventData {
-  self: any
+  self: any;
 }
 
 const html_style = `<style>

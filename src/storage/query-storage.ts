@@ -4,10 +4,8 @@ Copyright 2018 Southern California Edison Company
 ALL RIGHTS RESERVED
  */
 
-// import ElectronStore = require("electron-store");
-
 interface IQueryStore {
-  queries: string[]
+  queries: string[];
 }
 
 /**
@@ -18,20 +16,6 @@ interface IQueryStore {
 export class QueryStorageService {
   private static instance: QueryStorageService;
   private store: IQueryStore;
-
-  // private constructor() {
-
-  //     fetch('/data', {
-  //         method: 'GET'
-  //     }).then(response => response.json())
-  //     .then(data => {
-  //         if (data) {
-  //             this.store = data
-  //         } else {
-  //             this.store = {queries: []}
-  //         }
-  //     })
-  // }
 
   public async getQueryHistory () {
     if (!this.store) {
@@ -47,8 +31,6 @@ export class QueryStorageService {
         this.store = queries;
       }
     }
-
-    // console.log("<database> store: ", JSON.stringify(this.store))
 
     return this.store;
   }
@@ -71,21 +53,20 @@ export class QueryStorageService {
   }
 
   /**
-     * @description Returns all saved queries
-     * @returns {string[]}
-     * @memberof QueryStorageService
-     */
+   * @description Returns all saved queries
+   * @returns {string[]}
+   * @memberof QueryStorageService
+   */
   public getQueries (): string[] {
     return this.store.queries;
   }
 
   /**
-     * @description Add a query to the history
-     * @param {string} query
-     * @memberof QueryStorageService
-     */
+   * @description Add a query to the history
+   * @param {string} query
+   * @memberof QueryStorageService
+   */
   public add (query: string) {
-    // this.store.delete(query);
     const queries = this.store.queries;
     query = query.trim();
     const index = queries.indexOf(query);
@@ -98,10 +79,10 @@ export class QueryStorageService {
   }
 
   /**
-     * @description Removes the given query from the history
-     * @param {string} query
-     * @memberof QueryStorageService
-     */
+   * @description Removes the given query from the history
+   * @param {string} query
+   * @memberof QueryStorageService
+   */
   public remove (query: string) {
     const queries = this.store.queries;
     const index = queries.indexOf(query);

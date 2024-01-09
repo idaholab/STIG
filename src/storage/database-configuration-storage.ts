@@ -5,29 +5,29 @@ ALL RIGHTS RESERVED
 */
 
 export interface IDatabaseConfigOptions {
-  host: string
-  port: number
-  name: string
-  username: string
-  password: string
-  usetoken?: true
-  admin_user?: string
-  admin_password?: string
+  host: string;
+  port: number;
+  name: string;
+  username: string;
+  password: string;
+  usetoken?: true;
+  admin_user?: string;
+  admin_password?: string;
 }
 
 export type IDatabaseConfigMap = Record<string, IDatabaseConfigOptions>;
 
 export interface IDatabaseConfigurationStorageStructure {
-  current: string
-  configs: IDatabaseConfigMap
+  current: string;
+  configs: IDatabaseConfigMap;
 }
 
 export interface TaxiiParams {
-  url: string
-  apiroot_name: string
-  collection_id: string
-  username: string
-  password: string
+  url: string;
+  apiroot_name: string;
+  collection_id: string;
+  username: string;
+  password: string;
 }
 
 /**

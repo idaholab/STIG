@@ -1,4 +1,4 @@
-import { commit } from '../db/dbFunctions';
+import { commit } from './dbFunctions';
 import { BundleType, StixObject } from '../stix';
 
 export function openDatabaseUpload () {
@@ -30,9 +30,6 @@ class DatabaseUploadDialog {
 
         const r = new FileReader();
         r.onload = async (_e: Event) => {
-          // this.result
-          // addToGraph(JSON.parse(e.target.result))
-          // addToGraph(JSON.parse(r.result as string));
           const bundle: BundleType = JSON.parse(r.result as string);
           const objects: StixObject[] = bundle.objects as StixObject[];
           const relationships: StixObject[] = [];

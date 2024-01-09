@@ -7,7 +7,7 @@ import cytoscape from 'cytoscape';
 import { GraphUtils } from './graphFunctions';
 import { graph_copy } from '../ui/clipboard';
 import { StigSettings } from '../storage/stig-settings-storage';
-import { db_delete, query_incoming, query_outgoing } from '../db/dbFunctions';
+import { db_delete, query_incoming, query_outgoing } from '../ui/dbFunctions';
 import { BundleType } from '../stix';
 
 /**
@@ -27,10 +27,6 @@ export function setup_ctx_menu (cy: cytoscape.Core, view_util: any) {
         select: (ele: cytoscape.CollectionElements) => {
           cy.remove(ele as unknown as cytoscape.CollectionArgument);
         }
-        // select: async (ele : cytoscape.CollectionElements) => {
-        //     cy.remove(ele);
-        //     // TODO make a new icon for db_delete from graph right click, Tooltips seem to be hard with cy.ctxmenu
-        // },
       },
       {
         content: 'DB Delete',
@@ -72,7 +68,6 @@ export function setup_ctx_menu (cy: cytoscape.Core, view_util: any) {
       },
       {
         content: 'Select Incoming',
-        // select: () => {}
         select (ele: cytoscape.CollectionElements) {
           const elements = ele as unknown as cytoscape.CollectionArgument;
           elements.toArray().forEach((value) => {
@@ -84,7 +79,6 @@ export function setup_ctx_menu (cy: cytoscape.Core, view_util: any) {
       },
       {
         content: 'Select Out',
-        // select: () => {}
         select (ele: cytoscape.CollectionElements) {
           const elements = ele as unknown as cytoscape.CollectionArgument;
           elements.toArray().forEach((value) => {
@@ -117,12 +111,7 @@ export function setup_ctx_menu (cy: cytoscape.Core, view_util: any) {
       },
       {
         content: 'Select Neighbors',
-        // select: () => {}
         select (ele: cytoscape.CollectionElements) {
-          // ele.select();
-          // ele.closedNeighborhood().select();
-          // // view_util.highlightNeighbors(ele);
-
           const elements = ele as unknown as cytoscape.CollectionArgument;
           elements.toArray().forEach((value) => {
             if (value.isNode()) {
@@ -164,9 +153,7 @@ export function setup_ctx_menu (cy: cytoscape.Core, view_util: any) {
     },
     {
       content: 'Select Source',
-      // select: () => {}
       select (ele: cytoscape.CollectionElements) {
-        // ele.source().select();
         const elements = ele as unknown as cytoscape.CollectionArgument;
 
         elements.toArray().forEach((value) => {
@@ -178,9 +165,7 @@ export function setup_ctx_menu (cy: cytoscape.Core, view_util: any) {
     },
     {
       content: 'Select Target',
-      // select: () => {}
       select (ele: cytoscape.CollectionElements) {
-        // ele.source().select();
         const elements = ele as unknown as cytoscape.CollectionArgument;
 
         elements.toArray().forEach((value) => {

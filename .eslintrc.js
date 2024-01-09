@@ -11,7 +11,7 @@ module.exports = {
         'plugin:@typescript-eslint/recommended-type-checked',
     ],
     parser: '@typescript-eslint/parser',
-    plugins: ['@typescript-eslint', "@stylistic"],
+    plugins: ['@typescript-eslint', "@stylistic", "@stylistic/ts"],
     parserOptions: {
         ecmaVersion: "latest",
         sourceType: "script",
@@ -60,5 +60,7 @@ module.exports = {
         "@stylistic/max-len": "off", //["error", 120],
         "@typescript-eslint/comma-dangle": "off",
         "@stylistic/comma-dangle": ["error", "only-multiline"],
+        "@typescript-eslint/member-delimiter-style": "off",
+        "@stylistic/ts/member-delimiter-style": "error",
     },
 }

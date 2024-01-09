@@ -4,7 +4,7 @@ Copyright 2018 Southern California Edison Company
 ALL RIGHTS RESERVED
 */
 
-import { get_taxii, commit } from '../db/dbFunctions';
+import { get_taxii, commit } from './dbFunctions';
 import { DatabaseConfigurationStorage } from '../storage';
 import { TaxiiParams } from '../storage/database-configuration-storage';
 import { StixObject } from '../stix';
@@ -39,9 +39,8 @@ class NewTaxiiConnection {
   constructor (anchor: JQuery, key?: string) {
     this._storage = DatabaseConfigurationStorage.Instance;
     this._anchor = anchor;
-    this._footer = ''; // this._createDeleteButton();
-    // this.populateHistoryDialog();
-    key === undefined ? this.useConfig = this._storage.current : this.useConfig = key;
+    this._footer = '';
+    this.useConfig = key ?? this._storage.current;
   }
 
   public addToDialog () {
@@ -141,6 +140,5 @@ class NewTaxiiConnection {
       ]
     });
     this._anchor.dialog('open');
-    // this.loadData();
   }
 }

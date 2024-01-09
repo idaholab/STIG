@@ -10,29 +10,27 @@ import { Core, Identifier, StixType, Timestamp, Relationship, Sighting } from '.
 export type DataSourceType = 'DB' | 'GUI' | 'IGNORE';
 export const node_img: Record<string, string> = {};
 export interface StixNodeData extends cytoscape.NodeDataDefinition {
-  name?: string // the_data.name,
-  id: Identifier // the_data.id,
-  label?: string // the_data.label,
-  type: StixType // the_type,
-  level?: 1
+  name?: string; // the_data.name,
+  id: Identifier; // the_data.id,
+  label?: string; // the_data.label,
+  type: StixType; // the_type,
+  level?: 1;
   // version: the_data.version,
-  created: Timestamp // the_data.created,
-  modified?: Timestamp // the_data.modified,
-  description?: string // the_data.description,
+  created: Timestamp; // the_data.created,
+  modified?: Timestamp; // the_data.modified,
+  description?: string; // the_data.description,
   // typeGroup: the_data.typeGroup
-  raw_data?: Core // the_data
-  saved?: boolean
-  data_source?: DataSourceType
+  raw_data?: Core; // the_data
+  saved?: boolean;
+  data_source?: DataSourceType;
 }
 
 export interface IStixNode extends cytoscape.ElementDefinition {
-
-  data: StixNodeData
-  // style: StixNodeStyle
-  data_source?: DataSourceType
-  style?: CSSStyleDeclaration
-  saved?: boolean
-  classes?: string
+  data: StixNodeData;
+  data_source?: DataSourceType;
+  style?: CSSStyleDeclaration;
+  saved?: boolean;
+  classes?: string;
 }
 
 export class StixNode implements IStixNode {
@@ -43,23 +41,20 @@ export class StixNode implements IStixNode {
   public classes: string;
 
   /**
-     * Represents a stix node in the graph.  One of these is attached to each node on the canvas.
-     * The actual data is stored here for easy access.  stixNode.raw_data should hold the actual
-     * stix JSON
-     * @param {StixNodeData} the_data Object Thrown to Cytoscape Node
-     * @param {StixType} the_type - Object From Database
-     * @param {DataSourceType} d_source - Whether we are drag and drop or queried from DB.
-     */
+   * Represents a stix node in the graph.  One of these is attached to each node on the canvas.
+   * The actual data is stored here for easy access.  stixNode.raw_data should hold the actual
+   * stix JSON
+   * @param {StixNodeData} the_data Object Thrown to Cytoscape Node
+   * @param {StixType} the_type - Object From Database
+   * @param {DataSourceType} d_source - Whether we are drag and drop or queried from DB.
+   */
   constructor (the_data: StixNodeData, the_type: StixType, d_source: DataSourceType) {
-    // console.log("<stixnode> type: ", the_data.name, the_type)
     const labelorder = ['name', 'value', 'key', 'path', 'product', 'dst_port', 'command_line', 'type', 'id'];
-    let nodelabel;
-    nodelabel = undefined;
+    let nodelabel: string | undefined;
     if (the_type === 'marking-definition') {
       nodelabel = the_data.name;
     } else {
-      for (let index = 0; index < labelorder.length; index++) {
-        const element = labelorder[index];
+      for (const element of labelorder) {
         if (Object.prototype.hasOwnProperty.call(the_data, element)) {
           if (element === 'dst_port') {
             const { [element]: nodelabel1, src_port, protocols } = the_data;
@@ -85,7 +80,7 @@ export class StixNode implements IStixNode {
       raw_data: the_data,
       data_source: d_source
     };
-    if (nodelabel.length > 60) {
+    if (nodelabel && nodelabel.length > 60) {
       nodelabel = nodelabel.substring(0, 60).concat('...');
     }
     this.data.name = nodelabel;
@@ -108,18 +103,18 @@ export class StixNode implements IStixNode {
 }
 
 export interface StixRelationshipData extends cytoscape.EdgeDataDefinition {
-  raw_data: Relationship | Sighting
-  saved?: boolean
-  label: string
-  target: Identifier
-  source: Identifier
-  id: Identifier
-  data_source?: DataSourceType
+  raw_data: Relationship | Sighting;
+  saved?: boolean;
+  label: string;
+  target: Identifier;
+  source: Identifier;
+  id: Identifier;
+  data_source?: DataSourceType;
 }
 
 export interface IStixRelationship extends cytoscape.EdgeDefinition {
-  data: StixRelationshipData
-  saved?: boolean
+  data: StixRelationshipData;
+  saved?: boolean;
 }
 
 export class StixRelationship implements IStixRelationship {
@@ -139,14 +134,14 @@ export class StixRelationship implements IStixRelationship {
 }
 
 export interface VisualEdgeData extends cytoscape.EdgeDataDefinition {
-  raw_data: string
-  target: Identifier
-  source: Identifier
-  id: string
+  raw_data: string;
+  target: Identifier;
+  source: Identifier;
+  id: string;
 }
 
 export interface IVisualEdge extends cytoscape.EdgeDefinition {
-  data: VisualEdgeData
+  data: VisualEdgeData;
 }
 
 export class VisualEdge implements IVisualEdge {

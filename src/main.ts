@@ -14,7 +14,6 @@ import {
   Report,
   StixNode,
   BundleType,
-  SRO,
   SDO
 } from './stix';
 import * as stix from './stix';
@@ -45,9 +44,8 @@ import moment from 'moment';
 import { QueryStorageService, DatabaseConfigurationStorage, StigSettings } from './storage';
 import { graph_copy, graph_paste } from './ui/clipboard';
 import { openDatabaseConfiguration } from './ui/database-config-widget';
-import { check_db, commit, get_diff, query } from './db/dbFunctions';
+import { check_db, commit, get_diff, query } from './ui/dbFunctions';
 import { commit_all, delete_selected } from './ui/ipc-render-handlers';
-import { GraphQueryResult } from './db/db_types';
 import { QueryHistoryDialog } from './ui/queryHistoryWidget';
 import { DiffDialog } from './ui/diff-dialog';
 import { removeCompoundNodes, initDefenseGraph, initKillChainGraph } from './contextLayouts/contextLayouts';
@@ -59,11 +57,12 @@ import defense from './contextLayouts/defenseInDepthSchema.json';
 import { openDatabaseUpload } from './ui/database-upload-widget';
 import { openConnectTaxii } from './ui/connect-taxii-widget';
 import { openBundleExport } from './ui/export -bundle-widget';
+import { isSRO, SRO } from './stix/stix2';
 
 declare global {
   interface Window {
-    cycore: cytoscape.Core
-    layout: string
+    cycore: cytoscape.Core;
+    layout: string;
   }
 }
 
@@ -515,29 +514,24 @@ export class main {
         }
         storage.add(text);
         const result = await query(text);
-        const add_graph: GraphQueryResult = {
-          graph: {
-            vertices: [],
-            edges: []
-          }
-        };
+        const vertices: SDO[] = [];
+        const edges: SRO[] = [];
 
         loading = true;
-        result.forEach((item: StixObject) => {
+        for (const item of result) {
           if (cy.getElementById(item.id_!).length === 0) {
-            /((r|R)elationship)|((s|S)ighting)/.exec(item.type) ? add_graph.graph.edges.push(item as SRO) : add_graph.graph.vertices.push(item as SDO);
+            if (isSRO(item)) {
+              edges.push(item);
+            } else {
+              vertices.push(item as SDO);
+            }
           }
-        });
-        $('#query-status').html(`Returned ${add_graph.graph.vertices.length} nodes and ${add_graph.graph.edges.length} edges.`);
+        }
+        $('#query-status').html(`Returned ${vertices.length} nodes and ${edges.length} edges.`);
         try {
-          // const bundle = await db.handleResponse(add_graph);
           const bundle: BundleType = { type: 'bundle', objects: result };
           await graph_utils.buildNodes(bundle, true);
-          // const selected = cy.$(':selected');
-          // view_util.removeHighlights(selected);
-          // cy.elements().unselect();
           graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
-          // new_nodes.select();
           $('.message-status').html(`Added ${result.length} elements to graph`);
           loading = false;
         } catch (err) {
@@ -578,7 +572,6 @@ export class main {
         const input_data = ele.data('raw_data');
         if (input_data === undefined) { return true; }
         if (ele.isNode()) {
-          // console.log("<editor> search schema", schema)
           // load the form for this node
           try {
             editor.buildWidget(ele, ele.data('type'), input_data);
@@ -619,7 +612,6 @@ export class main {
       });
 
       $('#btn-export-single').on('click', (e: JQuery.Event) => {
-        // console.log(editor.root.getValue())
         e.preventDefault();
         e.stopPropagation();
         const form_data = editor.editor.getValue();
@@ -631,7 +623,6 @@ export class main {
 
       // Clear Stix form editor when node/edge is unselected
       cy.on('unselect', 'node, edge', (_evt: cytoscape.EventObject) => {
-        // editor.editor.destroy();
         $('#metawidget').empty();
         $('#current_node').empty();
         $('button.btn-commit').button('option', 'disabled', true);
@@ -826,7 +817,6 @@ export class main {
           if (await commit(formdata)) {
             // Find the node in the graph
             const node = cy.elements().filter((ele) => {
-              // console.log(JSON.stringify(ele.data('saved')))
               return ele?.data('id') === formdata.id;
             });
 
