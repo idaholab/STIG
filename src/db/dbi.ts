@@ -13,7 +13,7 @@ export abstract class StigDB {
   abstract traverseNodeIn (id: Identifier): Promise<StixObject[]>;
   abstract traverseNodeOut (id: Identifier): Promise<StixObject[]>;
   abstract getDiff (node: StixObject): Promise<diffpatch.Delta | undefined>;
-  abstract updateDB (formdata: StixObject): Promise<StixObject[] | string>;
+  abstract updateDB (formdata: StixObject): Promise<void>;
   abstract executeQuery (query: string): Promise<StixObject[]>;
 
   public static async getDB (backend: StigDBBackends, config: IDatabaseConfigOptions): Promise<StigDB> {

@@ -143,7 +143,7 @@ export class OrientStigDB implements StigDB {
    * @returns {Promise<string>}
    * @memberof StigDB
    */
-  private createVertex (stix_obj: StixObject): Promise<StixObject[]> {
+  private async createVertex (stix_obj: StixObject): Promise<void> {
     try {
       if (stix_obj.type.startsWith('relation')) {
         throw new Error('Attempt to create a relation, use createEdge instead!');
@@ -152,7 +152,7 @@ export class OrientStigDB implements StigDB {
       const q_class = '`' + stix_obj.type + '`';
       const q_action = 'Create VERTEX ';
       const query = q_action + q_class + ' CONTENT ' + JSON.stringify(transform_to_db(stix_obj));
-      return this.odb.command(query).all() as Promise<StixObject[]>;
+      await this.odb.command(query).all();
     } catch (e) {
       e.stack += (new Error()).stack;
       throw e;
@@ -167,7 +167,7 @@ export class OrientStigDB implements StigDB {
    * @returns {Promise<SRO[]>}
    * @memberof StigDB
    */
-  private createEdgeRID (from_RID: string, to_RID: string, data: StixObject): Promise<StixObject[]> {
+  private async createEdgeRID (from_RID: string, to_RID: string, data: StixObject): Promise<void> {
     try {
       const query = 'CREATE EDGE `' + data.type + '` FROM :from_rid to :to_rid CONTENT :content';
       const parameters = {
@@ -177,7 +177,7 @@ export class OrientStigDB implements StigDB {
           content: transform_to_db(data)
         }
       };
-      return this.odb.command(query, parameters).all() as Promise<StixObject[]>;
+      await this.odb.command(query, parameters).all();
     } catch (e) {
       e.stack += (new Error()).stack;
       throw e;
@@ -192,7 +192,7 @@ export class OrientStigDB implements StigDB {
    * @returns {Promise<SRO[]>}
    * @memberof StigDB
    */
-  private async createEdge (from_node: Identifier, to_node: Identifier, data: StixObject): Promise<StixObject[]> {
+  private async createEdge (from_node: Identifier, to_node: Identifier, data: StixObject): Promise<void> {
     try {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       const [from_RID, to_RID] = from_node.includes('--')
@@ -233,7 +233,7 @@ export class OrientStigDB implements StigDB {
    * @returns  Promise<string>
    * @memberof StigDB
    */
-  public async updateDB (formdata: StixObject): Promise<StixObject[] | string> {
+  public async updateDB (formdata: StixObject): Promise<void> {
     const db_obj = transform_to_db(formdata);
 
     // Check if the id already exists in the database
@@ -275,7 +275,7 @@ export class OrientStigDB implements StigDB {
    * @returns
    * @memberof StigDB
    */
-  private updateObject (object: StixObject, rid: string): Promise<string> {
+  private updateObject (object: StixObject, rid: string): Promise<void> {
     try {
       return this.odb.update(rid).set(transform_to_db(object)).one();
     } catch (e) {
