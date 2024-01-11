@@ -121,31 +121,18 @@ app.post('/use_db', async (req, res) => {
         req.session.save();
       }
 
-      /* TODO: Handle errors more generically from both databases */
-      const db = await StigDB.getDB('orient', config);
+      const db = await StigDB.getDB('neo4j', config);
       dbs.set(dbId, db);
       const message = 'Connected to database ' + db.getName() + " as user '" + config.username + "'";
       res.write(`{"message": "${message}"}`);
     } catch (err) {
-      if (err.code === 'ECONNREFUSED') {
-        const message = 'Unable to connect to database. Is it running?';
-        res.write(`{"message": "${message}"}`);
-      } else if (err.code === 5) {
-        const message = 'Unable to connect to. Invalid username/password.';
-        res.write(`{"message": "${message}"}`);
-      } else if (err.message === 'Unable to create database') {
-        const message = "Database does not exist, and user '" + config.username + "' does not have permission to create one.";
-        res.write(`{"message": "${message}"}`);
-      } else {
-        const message = 'Unknown error occurred';
-        res.write(`{"message": "${message}"}`);
-      }
-      res.status(500);
+      res.status(400);
+      res.write('{"message": "Unable to connect."}');
     }
   } else {
     res.status(400);
+    res.write('{"message": "Missing configuration."}');
   }
-
   res.end();
 });
 

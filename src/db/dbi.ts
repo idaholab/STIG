@@ -1,9 +1,9 @@
 import { Identifier, SDO, SRO, StixObject } from '../stix';
 import { IDatabaseConfigOptions } from '../storage/database-configuration-storage';
 import * as diffpatch from 'jsondiffpatch';
-import { OrientStigDB } from './orient';
+import { Neo4jStigDB } from './neo4j';
 
-export type StigDBBackends = 'orient';
+export type StigDBBackends = 'neo4j';
 
 export abstract class StigDB {
   abstract getName (): string;
@@ -16,16 +16,8 @@ export abstract class StigDB {
   abstract updateDB (formdata: StixObject): Promise<void>;
   abstract executeQuery (query: string): Promise<StixObject[]>;
 
-  public static async getDB (backend: StigDBBackends, config: IDatabaseConfigOptions): Promise<StigDB> {
-    let db: StigDB;
-    switch (backend) {
-      case 'orient':
-        db = new OrientStigDB();
-        break;
-      default:
-        throw new Error('Invalid Database Backend');
-    }
-
+  public static async getDB (_backend: StigDBBackends, config: IDatabaseConfigOptions): Promise<StigDB> {
+    const db = new Neo4jStigDB();
     await db.configure(config);
     return db;
   }
