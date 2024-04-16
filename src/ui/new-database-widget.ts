@@ -20,9 +20,9 @@ const body = `    <p id="label">Host:</p>
     <input type="text" id="port" value="2424">
     <p id="label">Database Name:</p>
     <input type="text" id="db_name" value="">
-    <p id="label">OrientDB Root User:</p>
+    <p id="label">Database Root User:</p>
     <input type="text" id="username" value="">
-    <p id="label">OrientDB Root Password:</p>
+    <p id="label">Database Root Password:</p>
     <input type="password" id="user_password" value="">
 </p>
 `;

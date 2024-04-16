@@ -26,25 +26,6 @@ Set Java_Home:
 * Enter the ``C:\Program Files\Java\jdk-11`` as the variable value.
 * Click **OK**
 
-OrientDB
-^^^^^^^^^^^
-
-Download the community edition of OrientDB from: https://s3.us-east-2.amazonaws.com/orientdb3/releases/3.0.32/orientdb-3.0.32.zip. 
-
-Some instructions after you download OrientDB:
-
-1) Move the un-zipped OrientDB directory to somewhere like C:/
-2) Start the server by executing the following in Command Prompt: ``{ORIENTDB_HOME}/bin/server.bat``
-3) Select the password you want to assign the "root" user. This is only needed the first time running OrientDB from the terminal.
-4) To Open Studio Web Tool, navigate a browser to the URL: http://localhost:2480.
-5) You could also use the console by executing ``{ORIENTDB_HOME}/bin/console.bat``.
-6) Create a database to use (default for the following installer scripts is currently stig2).
-7) Optional: Populating the Database... see Important Notes about Database Setup section below.
-
-Install OrientDB as a Service 
---------------------------------
-Follow the instructions `here <http://orientdb.com/docs/3.0.x/admin/Windows-Service.html>`_ to install OrientDB as a service.
-
 Node.js
 ^^^^^^^^^^
 Download and install the latest LTS version from: https://nodejs.org/en/download/.

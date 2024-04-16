@@ -7,7 +7,7 @@ Regardless of the operating system used, the following are required dependencies
 * Node.js
 * Yarn (node package manager)
 
-The following are required dependencies for OrientDB:
+The following are required dependencies for Neo4j:
 
 * Java Runtime Environment
 
