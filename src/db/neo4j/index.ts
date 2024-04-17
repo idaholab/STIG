@@ -6,47 +6,14 @@ import * as diffpatch from 'jsondiffpatch';
 import { isRelationship } from '../../stix/stix2';
 import { StigDB } from '../dbi';
 import moment from 'moment';
-
-function * iterNestedProperties (obj: object) {
-  for (const [k, v] of Object.entries(obj)) {
-    if (typeof v !== 'object') {
-      yield [k, v];
-    } else {
-      for (const [vk, vv] of iterNestedProperties(v)) {
-        yield [`${v}.${vk}`, vv];
-      }
-    }
-  }
-}
-
-function toNeo4j (obj: object) {
-  return Object.fromEntries(iterNestedProperties(obj));
-}
-
-function fromNeo4j (obj: object) {
-  const n: Record<string, unknown> = {};
-  for (const [k, v] of Object.entries(obj)) {
-    const path = k.split('.');
-    let l = n;
-    for (let i = 0; i < path.length - 1; i++) {
-      let nn = l[path[i]];
-      if (typeof nn !== 'object') {
-        nn = {};
-        l[path[i]] = nn;
-      }
-      l = nn as Record<string, unknown>;
-    }
-    l[path.pop()!] = v;
-  }
-  return n as unknown as StixObject;
-}
+import { fromNeo4j, toNeo4j } from './stix2neo';
 
 export class Neo4jStigDB implements StigDB {
   private driver: Driver;
 
-  public async configure (config: IDatabaseConfigOptions) {
+  public configure (config: IDatabaseConfigOptions) {
     this.driver = neo4j.driver(config.host, neo4j.auth.basic(config.username, config.password));
-    await this.driver.verifyConnectivity();
+    return Promise.resolve();
   }
 
   public getName (): string {
@@ -88,7 +55,7 @@ export class Neo4jStigDB implements StigDB {
   public sdoDestroyedUI ({ id }: SDO): Promise<void> {
     return this.wrapSession((s: Session) =>
       s.executeWrite((tx: ManagedTransaction) =>
-        tx.run('MATCH (n) WHERE n.id = $id DETACH DELETE n', { id })
+        tx.run('MATCH (n: stixnode) WHERE n.id = $id DETACH DELETE n', { id })
       )
     ) as Promise<unknown> as Promise<void>;
   }
@@ -98,7 +65,7 @@ export class Neo4jStigDB implements StigDB {
       const res = await s.executeRead((tx: ManagedTransaction) =>
         tx.run(query, { id })
       );
-      return res.records.flatMap(rec => rec.map(fromNeo4j));
+      return res.records.flatMap(rec => rec.map(fromNeo4j).flatMap(x => x));
     });
   }
 
@@ -153,9 +120,9 @@ export class Neo4jStigDB implements StigDB {
       if (isRelationship(formdata)) {
         if (formdata.source_ref && formdata.target_ref) {
           await s.executeWrite(async (tx: ManagedTransaction) => {
-            if (!moment(dbObj.created).isValid()) {
+            if (!moment(formdata.created).isValid()) {
               const res = await tx.run(`
-                MERGE ()-[r]->() WHERE r.id = $id RETURN r
+                MERGE ()-[r:${formdata.relationship_type}]->() WHERE r.id = $id RETURN r
               `, {
                 id: formdata.id,
               });
@@ -181,9 +148,9 @@ export class Neo4jStigDB implements StigDB {
         throw new Error('Missing source and/or target references for edge.');
       } else {
         await s.executeWrite(async (tx: ManagedTransaction) => {
-          if (!moment(dbObj.created).isValid()) {
+          if (!moment(formdata.created).isValid()) {
             const res = await tx.run(`
-              MERGE (n) WHERE n.id = $id RETURN n
+              MERGE (n:stixnode:${formdata.type}) WHERE n.id = $id RETURN n
             `, {
               id: formdata.id,
             });
@@ -213,7 +180,7 @@ export class Neo4jStigDB implements StigDB {
   public executeQuery (query: string): Promise<StixObject[]> {
     return this.wrapSession(async (s: Session) => {
       const res = await s.executeRead((tx: ManagedTransaction) => tx.run(query));
-      return res.records.flatMap(rec => rec.map(fromNeo4j));
+      return res.records.flatMap(rec => rec.map(fromNeo4j).flatMap(x => x));
     });
   }
 }

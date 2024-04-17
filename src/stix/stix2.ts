@@ -23,7 +23,7 @@ export function isSRO (item: StixObject): item is SRO {
   return relationshipsKeyRegex.exec(item.type) !== null;
 }
 
-export function isRelationship (item: StixObject): item is Relationship {
+export function isRelationship (item: Core): item is Relationship {
   return item.type.toLocaleLowerCase() === 'relationship';
 }
 
