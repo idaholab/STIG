@@ -13,44 +13,15 @@ export interface IStigSettingsOptions {
 
 export class StigSettings {
   private static instance: StigSettings;
-  private store: IStigSettingsOptions;
+  private readonly store: IStigSettingsOptions;
 
-  public async getSettings () {
-    if (!this.store) {
-      let settings = await fetch('/data?name=stigSettings', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => response.json());
-      // console.log(settings.layout)
-      if (!settings.layout) {
-        settings = { layout: 'grid' };
-        this.saveSettings();
-      }
+  private constructor () {
+    const settingsJson = localStorage.getItem('stigSettings');
+    this.store = settingsJson ? JSON.parse(settingsJson) : { layout: 'grid' };
+  }
 
-      this.store = settings;
-    }
-
-    // console.log("<settings> store: ", JSON.stringify(this.store))
-
+  public getSettings () {
     return this.store;
-  }
-
-  private saveSettings () {
-    // console.log("Saving settings: ", JSON.stringify(this.store))
-    void fetch('/save', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ name: 'stigSettings', data: this.store })
-    });
-  }
-
-  public setLayout (layout: string) {
-    this.store.layout = layout;
-    this.saveSettings();
   }
 
   static get Instance (): StigSettings {
@@ -62,10 +33,10 @@ export class StigSettings {
 
   public set layout (layout: string) {
     this.store.layout = layout;
-    this.saveSettings();
+    localStorage.setItem('stigSettings', JSON.stringify(this.store));
   }
 
   public get layout (): string {
-    return this.store?.layout;
+    return this.store.layout;
   }
 }

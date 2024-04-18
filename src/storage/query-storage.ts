@@ -15,34 +15,15 @@ interface IQueryStore {
  */
 export class QueryStorageService {
   private static instance: QueryStorageService;
-  private store: IQueryStore;
+  private readonly store: IQueryStore;
 
-  public async getQueryHistory () {
-    if (!this.store) {
-      const queries = await fetch('/data?name=queryStorage', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(async response => await response.json());
-      if (!queries.queries) {
-        this.store = { queries: [] };
-      } else {
-        this.store = queries;
-      }
-    }
-
-    return this.store;
+  private constructor () {
+    const settingsJson = localStorage.getItem('queryStorage');
+    this.store = settingsJson ? JSON.parse(settingsJson) : { queries: [] };
   }
 
   private saveQueries () {
-    void fetch('/save', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ name: 'queryStorage', data: this.store })
-    });
+    localStorage.setItem('queryStorage', JSON.stringify(this.store));
   }
 
   static get Instance (): QueryStorageService {
@@ -73,8 +54,7 @@ export class QueryStorageService {
     if (index >= 0) {
       queries.splice(index, 1);
     }
-    queries.unshift(query);
-    this.store.queries = queries;
+    queries.push(query);
     this.saveQueries();
   }
 
@@ -88,7 +68,6 @@ export class QueryStorageService {
     const index = queries.indexOf(query);
     if (index !== undefined) {
       queries.splice(index, 1);
-      this.store.queries = queries;
       this.saveQueries();
     }
   }
@@ -99,7 +78,6 @@ export class QueryStorageService {
       return;
     }
     queries.splice(index, 1);
-    this.store.queries = queries;
     this.saveQueries();
   }
 }

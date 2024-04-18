@@ -41,7 +41,7 @@ import Split from 'split.js';
 import cytoscape, { CytoscapeOptions } from 'cytoscape';
 import edgehandles from 'cytoscape-edgehandles';
 import moment from 'moment';
-import { QueryStorageService, DatabaseConfigurationStorage, StigSettings } from './storage';
+import { QueryStorageService, StigSettings } from './storage';
 import { graph_copy, graph_paste } from './ui/clipboard';
 import { openDatabaseConfiguration } from './ui/database-config-widget';
 import { check_db, commit, get_diff, query } from './ui/dbFunctions';
@@ -74,6 +74,17 @@ const getNodeMetadata = (nodes) => {
   }));
 };
 
+function layoutHandler (graph_utils: GraphUtils, settings: StigSettings, layout: string) {
+  return () => {
+    $('a').filter(function (_index: number, ele: HTMLElement) { return ele.id.includes('dd-layout'); }).prop('style', 'background-color: white');
+    $('#dd-layoutCose').prop('style', 'background-color: #0d6efd');
+
+    graph_utils.myLayout(layout);
+    settings.layout = layout;
+  };
+}
+
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export class main {
   constructor () { }
 
@@ -90,12 +101,7 @@ export class main {
 
     let loading: boolean = false;
 
-    document.addEventListener('DOMContentLoaded', async () => {
-      // load saved data
-      await DatabaseConfigurationStorage.Instance.getConfigs();
-      await StigSettings.Instance.getSettings();
-      await QueryStorageService.Instance.getQueryHistory();
-
+    document.addEventListener('DOMContentLoaded', () => {
       const cyto_options: CytoscapeOptions = {
         container: $('#cy')[0],
         style: [node_style, compound_style, edge_style, select_node_style, modified_select_style, modified_unselect_style, ...edgehandles_style],
@@ -234,10 +240,9 @@ export class main {
       });
 
       // EXPORT
-      $('#dd-exportSelected').on('click', () => {
-        // console.log("Export selected")
+      const exportCb = () => {
         const bundle_id = 'bundle--' + uuid.v4();
-        const bundle = { type: 'bundle', id: bundle_id, objects: [] } as BundleType;
+        const bundle: BundleType = { type: 'bundle', id: bundle_id, objects: [] } as any;
 
         const nodes = window.cycore.$(':selected');
         nodes.each((ele) => {
@@ -251,29 +256,13 @@ export class main {
         });
 
         openBundleExport(bundle);
-      });
-      $('#dd-exportGraph').on('click', () => {
-        // console.log("Export graph")
-        const bundle_id = 'bundle--' + uuid.v4();
-        const bundle = { type: 'bundle', id: bundle_id, objects: [] } as BundleType;
-
-        const nodes = window.cycore.$(':selected');
-        nodes.each((ele) => {
-          if (ele.length === 0) {
-            return;
-          }
-          // logic to remove null on json export
-          if (ele.data('raw_data') !== undefined) {
-            bundle.objects.push(ele.data('raw_data'));
-          }
-        });
-
-        openBundleExport(bundle);
-      });
+      };
+      $('#dd-exportSelected').on('click', exportCb);
+      $('#dd-exportGraph').on('click', exportCb);
       $('#dd-exportAll').on('click', () => {
         // console.log("Export all")
         const bundle_id = 'bundle--' + uuid.v4();
-        const bundle = { type: 'bundle', id: bundle_id, objects: [] } as BundleType;
+        const bundle: BundleType = { type: 'bundle', id: bundle_id, objects: [] } as any;
         let nodes = window.cycore.$(':visible');
         nodes = nodes.union(nodes.connectedEdges());
         nodes.each((ele) => {
@@ -300,83 +289,16 @@ export class main {
       });
 
       // LAYOUT
-      $('#dd-layoutCose').on('click', () => {
-        $('a').filter(function (_index: number, ele: HTMLElement) { return ele.id.includes('dd-layout'); }).prop('style', 'background-color: white');
-        $('#dd-layoutCose').prop('style', 'background-color: #0d6efd');
-
-        graph_utils.myLayout('cose');
-        settings.setLayout('cose');
-      });
-      $('#dd-layoutCola').on('click', () => {
-        $('a').filter(function (_index: number, ele: HTMLElement) { return ele.id.includes('dd-layout'); }).prop('style', 'background-color: white');
-        $('#dd-layoutCola').prop('style', 'background-color: #0d6efd');
-
-        graph_utils.myLayout('cola');
-        settings.setLayout('cola');
-      });
-      $('#dd-layoutCircle').on('click', () => {
-        $('a').filter(function (_index: number, ele: HTMLElement) { return ele.id.includes('dd-layout'); }).prop('style', 'background-color: white');
-        $('#dd-layoutCircle').prop('style', 'background-color: #0d6efd');
-
-        graph_utils.myLayout('circle');
-        settings.setLayout('circle');
-      });
-      $('#dd-layoutSpread').on('click', () => {
-        $('a').filter(function (_index: number, ele: HTMLElement) { return ele.id.includes('dd-layout'); }).prop('style', 'background-color: white');
-        $('#dd-layoutSpread').prop('style', 'background-color: #0d6efd');
-
-        graph_utils.myLayout('spread');
-        settings.setLayout('spread');
-      });
-      $('#dd-layoutCoseBilkent').on('click', () => {
-        $('a').filter(function (_index: number, ele: HTMLElement) { return ele.id.includes('dd-layout'); }).prop('style', 'background-color: white');
-        $('#dd-layoutCoseBilkent').prop('style', 'background-color: #0d6efd');
-
-        graph_utils.myLayout('cose_bilkent');
-        settings.setLayout('cose_bilkent');
-      });
-      $('#dd-layoutKlay').on('click', () => {
-        $('a').filter(function (_index: number, ele: HTMLElement) { return ele.id.includes('dd-layout'); }).prop('style', 'background-color: white');
-        $('#dd-layoutKlay').prop('style', 'background-color: #0d6efd');
-
-        graph_utils.myLayout('klay');
-        settings.setLayout('klay');
-      });
-      $('#dd-layoutDagre').on('click', () => {
-        $('a').filter(function (_index: number, ele: HTMLElement) { return ele.id.includes('dd-layout'); }).prop('style', 'background-color: white');
-        $('#dd-layoutDagre').prop('style', 'background-color: #0d6efd');
-
-        graph_utils.myLayout('dagre');
-        settings.setLayout('dagre');
-      });
-      $('#dd-layoutRandom').on('click', () => {
-        $('a').filter(function (_index: number, ele: HTMLElement) { return ele.id.includes('dd-layout'); }).prop('style', 'background-color: white');
-        $('#dd-layoutRandom').prop('style', 'background-color: #0d6efd');
-
-        graph_utils.myLayout('random');
-        settings.setLayout('random');
-      });
-      $('#dd-layoutConcentric').on('click', () => {
-        $('a').filter(function (_index: number, ele: HTMLElement) { return ele.id.includes('dd-layout'); }).prop('style', 'background-color: white');
-        $('#dd-layoutConcentric').prop('style', 'background-color: #0d6efd');
-
-        graph_utils.myLayout('concentric');
-        settings.setLayout('concentric');
-      });
-      $('#dd-layoutBreadthfirst').on('click', () => {
-        $('a').filter(function (_index: number, ele: HTMLElement) { return ele.id.includes('dd-layout'); }).prop('style', 'background-color: white');
-        $('#dd-layoutBreadthfirst').prop('style', 'background-color: #0d6efd');
-
-        graph_utils.myLayout('breadthfirst');
-        settings.setLayout('breadthfirst');
-      });
-      $('#dd-layoutGrid').on('click', () => {
-        $('a').filter(function (_index: number, ele: HTMLElement) { return ele.id.includes('dd-layout'); }).prop('style', 'background-color: white');
-        $('#dd-layoutGrid').prop('style', 'background-color: #0d6efd');
-
-        graph_utils.myLayout('grid');
-        settings.setLayout('grid');
-      });
+      $('#dd-layoutCose').on('click', layoutHandler(graph_utils, settings, 'cose'));
+      $('#dd-layoutCircle').on('click', layoutHandler(graph_utils, settings, 'circle'));
+      $('#dd-layoutSpread').on('click', layoutHandler(graph_utils, settings, 'spread'));
+      $('#dd-layoutCoseBilkent').on('click', layoutHandler(graph_utils, settings, 'cose_bilkent'));
+      $('#dd-layoutKlay').on('click', layoutHandler(graph_utils, settings, 'klay'));
+      $('#dd-layoutDagre').on('click', layoutHandler(graph_utils, settings, 'dagre'));
+      $('#dd-layoutRandom').on('click', layoutHandler(graph_utils, settings, 'random'));
+      $('#dd-layoutConcentric').on('click', layoutHandler(graph_utils, settings, 'concentric'));
+      $('#dd-layoutBreadthfirst').on('click', layoutHandler(graph_utils, settings, 'breadthfirst'));
+      $('#dd-layoutGrid').on('click', layoutHandler(graph_utils, settings, 'grid'));
 
       // CONTEXT LAYOUTS
       $('#dd-ctxLayoutNone').prop('style', 'background-color: #0d6efd');
@@ -445,8 +367,8 @@ export class main {
       // ngraph(cytoscape);
       spread(cytoscape);
 
-      // Get the layout from the cookie and set the graph layout
-      const layout = (await settings.getSettings()).layout;
+      // Get the layout from storage and set the graph layout
+      const layout = settings.layout;
       // console.log('layout: ', layout)
       if (layouts[layout]) {
         graph_utils.myLayout(layout);

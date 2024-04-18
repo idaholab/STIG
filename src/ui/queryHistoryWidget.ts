@@ -41,10 +41,10 @@ export class QueryHistoryDialog {
   public addToHistoryDialog (): void {
     const items = this._storage.getQueries();
     this._list = '';
-    let i = 0;
-    for (const k of items) {
-      this._list += `<div class="query-row" x-history-key="${i}"> ${i}. </div>`;
-      this._list += `<div id="query-id-${i}" class="query-item"> ${k} </div>`;
+    const imax = items.length - 1;
+    for (let i = imax; i >= 0; i--) {
+      this._list += `<div class="query-row" x-history-key="${i}"> ${imax - i + 1}. </div>`;
+      this._list += `<div id="query-id-${i}" class="query-item"> ${items[i]} </div>`;
       this._list += `<div class="btn-history">
         <button
           title="Remove Selected"
@@ -54,11 +54,10 @@ export class QueryHistoryDialog {
           x-history-key="${i}"
         ></button>
       </div>`;
-      i++;
     }
     this._anchor.empty();
     this._anchor.html(this._header + this._list + this._footer);
-    for (let j = 0; j < this._storage.getQueries().length; j++) {
+    for (let j = 0; j <= imax; j++) {
       const btn_item = $(`#btn-history-delete-${j}`);
       btn_item.button();
       btn_item.button('option', 'icon', 'ui-icon-close');

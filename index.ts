@@ -1,9 +1,7 @@
 import express, { NextFunction, Request, Response } from 'express';
 import { IDatabaseConfigOptions, TaxiiParams } from './src/storage/database-configuration-storage';
-import session from 'express-session';
 import { StigDB } from './src/db';
 import { execSync } from 'child_process';
-import bodyParser from 'body-parser';
 
 const app = express();
 
@@ -11,17 +9,10 @@ const dbs: Map<string, StigDB> = new Map<string, StigDB>();
 
 const {
   PORT = 3000,
-  COOKIE_SECRET = 'stig_cookie'
 } = process.env;
 
-app.use(session({
-  secret: COOKIE_SECRET,
-  resave: true,
-  saveUninitialized: false,
-  cookie: { maxAge: 9999999999, sameSite: 'strict' } // Set the session cookie to expire far in the future
-}));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static('src'));
 app.use('/node_modules', express.static('node_modules'));
@@ -43,7 +34,7 @@ app.get('/script', (_req, res) => {
  * If not connected, returns undefined
  */
 app.get('/check_db', (req, res) => {
-  res.send({ data: dbs?.get((req.session as any).dbId)?.getName() });
+  res.send({ data: dbs?.get((req.session as any)?.dbId)?.getName() });
 });
 
 app.use((req: Request, _res: Response, next: NextFunction) => {
@@ -55,48 +46,6 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
 
 app.get('/', (_req: Request, res: Response) => {
   res.redirect('/index.html');
-});
-
-/***********************************************
- * save
- * req.body
- *        name: string
- *        data: string
- *
- * Save data in a cookie
- ***********************************************/
-app.post('/save', (req: Request, res: Response) => {
-  const name = req.body.name;
-  const data = req.body.data;
-
-  req.session[name] = data;
-
-  // eslint-disable-next-line no-console
-  console.log(`Saving cookie ${name}`);
-
-  res.status(200);
-  res.end();
-});
-
-/***********************************************
- * data
- * req.body
- *        name: string
- *
- * Retrieve data from a cookie
- ***********************************************/
-app.get('/data', (req: Request, res: Response) => {
-  const name = req.query.name as string;
-
-  let data = req.session[name];
-
-  if (data === 'undefined' || data === undefined) {
-    // eslint-disable-next-line no-console
-    console.log(`Cookie ${name} not found`);
-    data = '{}';
-  }
-
-  res.send(data);
 });
 
 /**************************************************************

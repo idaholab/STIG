@@ -16,13 +16,13 @@ export function newDatabaseConfiguration (key?: string) {
 const body = `    <p id="label">Host:</p>
 <p>
     <input type="text" id="host" value="localhost">
-    <p id="label">Port:</p>
-    <input type="text" id="port" value="2424">
-    <p id="label">Database Name:</p>
-    <input type="text" id="db_name" value="">
-    <p id="label">Database Root User:</p>
+    <p id="label">DB Name:</p>
+    <input type="text" id="db" value="">
+    <p id="label">Profile Name:</p>
+    <input type="text" id="name" value="">
+    <p id="label">Username:</p>
     <input type="text" id="username" value="">
-    <p id="label">Database Root Password:</p>
+    <p id="label">Password:</p>
     <input type="password" id="user_password" value="">
 </p>
 `;
@@ -60,8 +60,8 @@ class NewDatabaseDialog {
   private loadData () {
     const params = this._storage.get(this.useConfig);
     $('#host').val(params.host);
-    $('#port').val(params.port);
-    $('#db_name').val(params.name);
+    $('#db').val(params.db ?? "");
+    $('#name').val(params.name);
     $('#username').val(params.username);
     $('#user_password').val(params.password);
     // $('#admin_user').val(params.admin_user);
@@ -71,13 +71,12 @@ class NewDatabaseDialog {
   private async saveData () {
     const options: IDatabaseConfigOptions = {
       host: $('#host').val() as string,
-      port: $('#port').val() as number,
-      name: $('#db_name').val() as string,
+      db: $('#db').val() as string,
+      name: $('#name').val() as string,
       username: $('#username').val() as string,
       password: $('#user_password').val() as string,
       // admin_user: $("#admin_user").val() as string,
       // admin_password: $("#admin_password").val() as string,
-      usetoken: true
     };
     DatabaseConfigurationStorage.Instance.save(options);
     await use_db(options);

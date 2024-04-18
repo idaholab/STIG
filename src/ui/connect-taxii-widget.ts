@@ -46,24 +46,10 @@ class NewTaxiiConnection {
   public addToDialog () {
     this._anchor.empty();
     this._anchor.html(this._header + body + this._footer);
-    this.setupEventHandlers();
-  }
-
-  public setupEventHandlers () {
-
   }
 
   public isOpen (): boolean {
     return this._anchor.dialog('isOpen');
-  }
-
-  private loadData () {
-    const params = this._storage.get(this.useConfig);
-    $('#host').val(params.host);
-    $('#port').val(params.port);
-    $('#db_name').val(params.name);
-    $('#username').val(params.username);
-    $('#user_password').val(params.password);
   }
 
   private async saveData () {

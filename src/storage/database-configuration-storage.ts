@@ -6,11 +6,10 @@ ALL RIGHTS RESERVED
 
 export interface IDatabaseConfigOptions {
   host: string;
-  port: number;
+  db?: string;
   name: string;
   username: string;
   password: string;
-  usetoken?: true;
   admin_user?: string;
   admin_password?: string;
 }
@@ -30,6 +29,18 @@ export interface TaxiiParams {
   password: string;
 }
 
+const defaultDbConfig: IDatabaseConfigurationStorageStructure = {
+  configs: {
+    stig: {
+      host: 'localhost',
+      name: 'stig',
+      username: 'admin',
+      password: 'admin',
+    }
+  },
+  current: 'stig'
+};
+
 /**
  * @description Stores database configuration
  * @export
@@ -37,51 +48,15 @@ export interface TaxiiParams {
  */
 export class DatabaseConfigurationStorage {
   private static instance: DatabaseConfigurationStorage;
-  private store: IDatabaseConfigurationStorageStructure;
+  private readonly store: IDatabaseConfigurationStorageStructure;
 
-  public async getConfigs () {
-    if (!this.store) {
-      const response = await fetch('/data?name=dbConfig', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      const config = await response.json();
-      if (!config.configs) {
-        this.create_default();
-      } else {
-        this.store = config;
-      }
-    }
-
-    return this.store;
+  private constructor () {
+    const settingsJson = localStorage.getItem('dbConfig');
+    this.store = settingsJson ? JSON.parse(settingsJson) : defaultDbConfig;
   }
 
   private saveConfigs () {
-    void fetch('/save', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ name: 'dbConfig', data: this.store })
-    });
-  }
-
-  public create_default () {
-    const initial: IDatabaseConfigOptions = {
-      host: 'localhost',
-      port: 2424,
-      name: 'stig',
-      username: 'admin',
-      password: 'admin',
-      usetoken: true
-    };
-    const configmap: IDatabaseConfigMap = {
-      [initial.name]: initial
-    };
-    this.store = { configs: configmap, current: 'stig' };
-    this.saveConfigs();
+    localStorage.setItem('dbConfig', JSON.stringify(this.store));
   }
 
   static get Instance (): DatabaseConfigurationStorage {
