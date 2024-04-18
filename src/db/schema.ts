@@ -4,7 +4,7 @@ Copyright 2018 Southern California Edison Company
 ALL RIGHTS RESERVED
 */
 
-export interface PropertyConfig {
+interface PropertyConfig {
   name: string;
   type: string;
   mandatory?: boolean;
@@ -19,7 +19,7 @@ export interface IJSONClassOptions {
   properties: PropertyConfig[];
 }
 
-export interface ISchemaFile {
+interface ISchemaFile {
   classes: IJSONClassOptions[];
 }
 

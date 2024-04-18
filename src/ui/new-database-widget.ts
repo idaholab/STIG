@@ -13,17 +13,13 @@ export function newDatabaseConfiguration (key?: string) {
   dbdialog.open();
 }
 
-const body = `    <p id="label">Host:</p>
+const body = `
 <p>
-    <input type="text" id="host" value="localhost">
-    <p id="label">DB Name:</p>
-    <input type="text" id="db" value="">
-    <p id="label">Profile Name:</p>
-    <input type="text" id="name" value="">
-    <p id="label">Username:</p>
-    <input type="text" id="username" value="">
-    <p id="label">Password:</p>
-    <input type="password" id="user_password" value="">
+  <label>Host: <input type="text" id="host" value="neo4j://localhost"></label><br/>
+  <label>DB Name: <input type="text" id="db" value=""></label><br/>
+  <label>Profile Name: <input type="text" id="name" value=""></label><br/>
+  <label>Username: <input type="text" id="username" value=""></label><br/>
+  <label>Password: <input type="password" id="user_password" value=""></label>
 </p>
 `;
 
@@ -46,11 +42,6 @@ class NewDatabaseDialog {
   public addToDialog () {
     this._anchor.empty();
     this._anchor.html(this._header + body + this._footer);
-    this.setupEventHandlers();
-  }
-
-  public setupEventHandlers () {
-
   }
 
   public isOpen (): boolean {

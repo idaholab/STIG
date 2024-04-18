@@ -32,7 +32,7 @@ export interface TaxiiParams {
 const defaultDbConfig: IDatabaseConfigurationStorageStructure = {
   configs: {
     stig: {
-      host: 'localhost',
+      host: 'neo4j://localhost',
       name: 'stig',
       username: 'admin',
       password: 'admin',

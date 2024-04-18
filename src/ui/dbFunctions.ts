@@ -2,83 +2,92 @@ import diffpatch from 'jsondiffpatch';
 import { StixObject } from '../stix';
 import { IDatabaseConfigOptions, TaxiiParams } from '../storage/database-configuration-storage';
 import { schema, IJSONClassOptions } from '../db/schema';
+import { StigDB } from '../db';
 
-async function req (path: string, body: unknown): Promise<any> {
-  const res = await fetch(path, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(body)
-  });
-  const data = await res.json();
-  if (data.message) {
-    $('.message-status').html(data.message);
-  }
-  return data;
-}
+let currentDB: StigDB;
 
-export async function use_db (config: IDatabaseConfigOptions) {
-  await req('/use_db', { config });
-  return check_db();
-}
-
-export async function commit (stix: StixObject) {
-  if (stix && checkProps(stix)) {
-    // Only commit if the object is valid
-    const response = await req('/commit', { data: stix });
-    return response.message === '';
+async function wrapVoid (stix: StixObject, cb: (stix: StixObject) => Promise<void>) {
+  if (stix && checkProps(stix) && currentDB) {
+    try {
+      await cb(stix);
+      return true;
+    } catch {
+      return false;
+    }
   }
   return false;
 }
 
-export function db_delete (stix: StixObject) {
-  return req('/delete', { data: stix });
-}
-
-export async function query_incoming (stix: StixObject): Promise<StixObject[]> {
-  const response = await req('/query_incoming', { id: stix.id });
-  return response.data ?? [];
-}
-
-export async function query_outgoing (stix: StixObject): Promise<StixObject[]> {
-  const response = await req('/query_outgoing', { id: stix.id });
-  return response.data ?? [];
-}
-
-export async function query (query: string): Promise<StixObject[]> {
-  const response = await req('/query', { query });
-  return response.data ?? [];
-}
-
-export async function get_diff (stix: StixObject): Promise<diffpatch.Delta | undefined> {
-  const response = await req('/diff', { data: stix });
-  return response.data;
-}
-
-export async function get_taxii (tax: TaxiiParams): Promise<StixObject[]> {
-  const response = await req('/taxii', { params: tax });
-  return response.taxii ? JSON.parse(response.taxii) : [];
-}
-
-export async function check_db () {
-  const response = await fetch('/check_db', {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json'
+async function wrapReturn<T, V extends string | StixObject> (
+  stix: V, def: T, cb: ((s: V) => Promise<T>)
+): Promise<T> {
+  if (stix && (typeof stix === 'string' || checkProps(stix)) && currentDB) {
+    try {
+      return cb(stix);
+    } catch {
+      return def;
     }
-  });
-  const json = await response.json();
-  const db: string = json.data;
+  }
+  return def;
+}
 
+export function check_db () {
   const db_el = document.getElementById('db-status')!;
-  if (db) {
-    db_el.innerHTML = db;
+  if (currentDB) {
+    db_el.innerHTML = currentDB.config.db ?? currentDB.config.name;
     db_el.className = 'db-status-green';
   } else {
     db_el.innerHTML = 'not connected';
     db_el.className = 'db-status-red';
   }
+}
+
+export async function use_db (config: IDatabaseConfigOptions) {
+  currentDB?.close();
+  try {
+    currentDB = await StigDB.getDB('neo4j', config);
+  } finally {
+    check_db();
+  }
+}
+
+export async function commit (stix: StixObject) {
+  return wrapVoid(stix, s => currentDB.updateDB(s));
+}
+
+export function db_delete (stix: StixObject) {
+  return wrapVoid(stix, s => currentDB.delete(s));
+}
+
+export async function query_incoming ({ id }: StixObject): Promise<StixObject[]> {
+  return wrapReturn(id, [], s => currentDB.traverseNodeIn(s));
+}
+
+export async function query_outgoing ({ id }: StixObject): Promise<StixObject[]> {
+  return wrapReturn(id, [], s => currentDB.traverseNodeOut(s));
+}
+
+export async function query (query: string): Promise<StixObject[]> {
+  return wrapReturn(query, [], q => currentDB.executeQuery(q));
+}
+
+export async function get_diff (stix: StixObject): Promise<diffpatch.Delta | undefined> {
+  return wrapReturn(stix, {}, s => currentDB.getDiff(s));
+}
+
+export async function get_taxii (tax: TaxiiParams): Promise<StixObject[]> {
+  const res = await fetch('/taxii', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ params: tax })
+  });
+  const data = await res.json();
+  if (data.message) {
+    $('.message-status').html(data.message);
+  }
+  return data.taxii ? JSON.parse(data.taxii) : [];
 }
 
 function getAllProps (schemaObject: IJSONClassOptions) {

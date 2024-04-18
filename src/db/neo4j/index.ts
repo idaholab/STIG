@@ -1,5 +1,5 @@
 import neo4j, { Driver, Session, ManagedTransaction } from 'neo4j-driver';
-import { Identifier, SDO, SRO, StixObject } from '../../stix';
+import { Identifier, StixObject } from '../../stix';
 import { IDatabaseConfigOptions } from '../../storage/database-configuration-storage';
 
 import * as diffpatch from 'jsondiffpatch';
@@ -9,19 +9,26 @@ import moment from 'moment';
 import { fromNeo4j, toNeo4j } from './stix2neo';
 
 export class Neo4jStigDB implements StigDB {
-  private driver: Driver;
+  private driver?: Driver;
+  public config: IDatabaseConfigOptions;
 
-  public configure (config: IDatabaseConfigOptions) {
-    this.driver = neo4j.driver(config.host, neo4j.auth.basic(config.username, config.password));
-    return Promise.resolve();
+  public async configure (config: IDatabaseConfigOptions) {
+    await this.close();
+    this.config = config;
+    const driver = neo4j.driver(config.host, neo4j.auth.basic(config.username, config.password));
+    await driver.getServerInfo();
+    this.driver = driver;
   }
 
   public getName (): string {
     return 'Neo4j';
   }
 
-  private async wrapSession<T> (cb: (s: Session) => Promise<T>) {
-    const session = this.driver.session();
+  private async wrapSession<T> (cb: (s: Session) => Promise<T>): Promise<T> {
+    if (!this.driver) {
+      return Promise.reject(new Error('DB driver is not initialized'));
+    }
+    const session = this.driver.session(this.config.db ? { database: this.config.db } : undefined);
     try {
       return cb(session);
     } catch (e) {
@@ -33,29 +40,18 @@ export class Neo4jStigDB implements StigDB {
   }
 
   /**
-   * @description User deleted an edge from the graph in the UI
-   * @param {SRO} sro
+   * @description User deleted a node or edge from the graph in the UI
+   * @param {StixObject} stix
    * @returns {Promise<void>}
    * @memberof StigDB
    */
-  public sroDestroyedUI ({ id }: SRO): Promise<void> {
+  public delete ({ id, type }: StixObject): Promise<void> {
     return this.wrapSession((s: Session) =>
       s.executeWrite((tx: ManagedTransaction) =>
-        tx.run('MATCH ()-[r]->() WHERE r.id = $id DELETE r', { id })
-      )
-    ) as Promise<unknown> as Promise<void>;
-  }
-
-  /**
-   * @descriptionUer User deleted a node from the graph in the UI
-   * @param {SDO} sdo
-   * @returns {Promise<void>}
-   * @memberof StigDB
-   */
-  public sdoDestroyedUI ({ id }: SDO): Promise<void> {
-    return this.wrapSession((s: Session) =>
-      s.executeWrite((tx: ManagedTransaction) =>
-        tx.run('MATCH (n: stixnode) WHERE n.id = $id DETACH DELETE n', { id })
+        tx.run((type === 'relationship')
+          ? 'MATCH ()-[r]->() WHERE r.id = $id DELETE r'
+          : 'MATCH (n: stixnode) WHERE n.id = $id DETACH DELETE n',
+        { id })
       )
     ) as Promise<unknown> as Promise<void>;
   }
@@ -182,5 +178,10 @@ export class Neo4jStigDB implements StigDB {
       const res = await s.executeRead((tx: ManagedTransaction) => tx.run(query));
       return res.records.flatMap(rec => rec.map(fromNeo4j).flatMap(x => x));
     });
+  }
+
+  public async close () {
+    await this.driver?.close();
+    this.driver = undefined;
   }
 }
