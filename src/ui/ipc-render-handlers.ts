@@ -4,9 +4,23 @@ Copyright 2018 Southern California Edison Company
 ALL RIGHTS RESERVED
 */
 
-import { CollectionReturnValue, EdgeCollection } from 'cytoscape';
-import { StixObject } from '../stix';
+import { CollectionReturnValue, EdgeCollection, SingularElementArgument } from 'cytoscape';
+import { StixObject, Relationship } from '../stix';
 import { commit, db_delete } from './dbFunctions';
+
+function cycore2stix (o: SingularElementArgument) {
+  // TODO: actually create STIX
+  const n = o.data('raw_data');
+  return n === undefined
+    ? n
+    : {
+        // The spec_version is mandatory, but sometimes it doesn't exist on the objects.
+        // This adds it if it isn't there already.
+        // TODO: It might be better to just add the spec_version when an object is created.
+        spec_version: '2.1',
+        ...n
+      };
+}
 
 /*************************************
  * Commit all
@@ -14,70 +28,31 @@ import { commit, db_delete } from './dbFunctions';
  * Takes each object from the graph and commits them to the database
  */
 export async function commit_all () {
-  const nodes: CollectionReturnValue = window.cycore.$('nodes');
-  const edges: CollectionReturnValue = window.cycore.$('edges');
+  const nodes = window.cycore.$('nodes');
+  const edges = window.cycore.$('edges');
+  const stix_nodes: StixObject[] = nodes.map(cycore2stix).filter(s => s !== undefined);
+  const stix_edges: Relationship[] = edges.map(cycore2stix).filter(s => s !== undefined);
 
   $('.message-status').html(`Committing ${nodes.length + edges.length} to the database...`);
-
-  let count = 0;
-  const invalid: string[] = [];
+  const [cnodes, cedges] = await commit(stix_nodes, stix_edges);
 
   for (let i = 0; i < nodes.length; i++) {
     const ele = nodes[i];
-
-    const stix_obj = ele.data('raw_data');
-
-    if (stix_obj !== undefined) {
-      // The spec_version is mandatory, but sometimes it doesn't exist on the objects.
-      // This adds it if it isn't there already.
-      // TODO: It might be better to just add the spec_version when an object is created.
-      if (!stix_obj.spec_version) {
-        stix_obj.spec_version = '2.1';
-      }
-
-      if (await commit(stix_obj)) {
-        count++;
-        ele.data('saved', true);
-      } else {
-        invalid.push(stix_obj.id);
-      }
+    const { id } = ele.data('raw_data');
+    if (cnodes.has(id)) {
+      ele.data('saved', true);
     }
-    const idx = count + invalid.length;
-    const total = nodes.length + edges.length;
-    $('.message-status').html(`Committing object ${idx} / ${total} to the database...`);
   }
 
   for (let i = 0; i < edges.length; i++) {
     const ele = edges[i];
-
-    const stix_obj = ele.data('raw_data');
-    // console.log(stix_obj);
-
-    if (stix_obj !== undefined) {
-      // The spec_version is mandatory, but sometimes it doesn't exist on the objects.
-      // This adds it if it isn't there already.
-      // TODO: It might be better to just add the spec_version when an object is created.
-      if (!stix_obj.spec_version) {
-        stix_obj.spec_version = '2.1';
-      }
-
-      // Don't commit edges connected to invalid nodes
-      if (!invalid.includes(stix_obj.source_ref) && !invalid.includes(stix_obj.target_ref)) {
-        if (await commit(stix_obj)) {
-          count++;
-          ele.data('saved', true);
-        } else {
-          invalid.push(stix_obj.id);
-        }
-      } else {
-        invalid.push(stix_obj);
-      }
+    const { id } = ele.data('raw_data');
+    if (cedges.has(id)) {
+      ele.data('saved', true);
     }
-    $('.message-status')
-      .html(`Committing object ${count + invalid.length} / ${nodes.length + edges.length} to the database...`);
   }
 
-  $('.message-status').html(`Committed ${count} objects to the database. ${invalid.length} objects were not commited.`);
+  $('.message-status').html(`Committed ${cnodes.size}/${stix_nodes.length} nodes and ${cedges.size}/${stix_edges.length} edges to the database.`);
 }
 
 // user selected delete selected from dropdown
@@ -86,22 +61,15 @@ export function delete_selected () {
   const selected: CollectionReturnValue = window.cycore.$(':selected');
   const vis: CollectionReturnValue = window.cycore.$(':visible');
   const edges: EdgeCollection = selected.edgesWith(vis);
-  const results: StixObject[] = [];
 
   // Delete incoming/outgoing edges first.
-  edges.forEach((ele) => {
-    const sro = ele.data('raw_data');
-    void db_delete(sro);
-
-    window.cycore.remove(ele);
-  });
+  edges.forEach((ele) => { window.cycore.remove(ele); });
 
   selected.forEach((ele) => {
-    const sdo = ele.data('raw_data');
-    void db_delete(sdo);
-
+    // deleting a node deletes the edges connected to it as well
+    void db_delete(ele.data('raw_data'));
     window.cycore.remove(ele);
   });
 
-  $('.message-status').html(`Deleted ${results.length} objects from the database.`);
+  $('.message-status').html(`Deleted ${selected.length + edges.length} objects from the database.`);
 }

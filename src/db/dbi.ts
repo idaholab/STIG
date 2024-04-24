@@ -1,4 +1,4 @@
-import { Identifier, StixObject } from '../stix';
+import { BundleType, Identifier, Relationship, StixObject } from '../stix';
 import { IDatabaseConfigOptions } from '../storage/database-configuration-storage';
 import * as diffpatch from 'jsondiffpatch';
 import { Neo4jStigDB } from './neo4j';
@@ -14,7 +14,8 @@ export abstract class StigDB {
   abstract traverseNodeIn (id: Identifier): Promise<StixObject[]>;
   abstract traverseNodeOut (id: Identifier): Promise<StixObject[]>;
   abstract getDiff (node: StixObject): Promise<diffpatch.Delta | undefined>;
-  abstract updateDB (formdata: StixObject): Promise<void>;
+  abstract uploadBundle (stix: BundleType): Promise<[Set<string>, Set<string>]>;
+  abstract updateDB (stix_nodes: StixObject[], stix_edges: Relationship[]): Promise<[Set<string>, Set<string>]>;
   abstract executeQuery (query: string): Promise<StixObject[]>;
   abstract close (): void;
 

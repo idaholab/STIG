@@ -1,4 +1,4 @@
-import { commit } from './dbFunctions';
+import { commitBundle } from './dbFunctions';
 import { BundleType, StixObject } from '../stix';
 
 export function openDatabaseUpload () {
@@ -32,29 +32,9 @@ class DatabaseUploadDialog {
         r.onload = async (_e: Event) => {
           const bundle: BundleType = JSON.parse(r.result as string);
           const objects: StixObject[] = bundle.objects as StixObject[];
-          const relationships: StixObject[] = [];
-          const commits: Array<Promise<boolean>> = [];
-          let i = 0;
-          $('.message-status').html(`Committing ${objects.length} to the database...`);
-          for (const obj of objects) {
-            $('.message-status').html(`Committing object ${i++}/${objects.length} ...`);
-            // Save relationships for later
-            if (obj.type === 'relationship' || obj.type === 'sighting') {
-              relationships.push(obj);
-            } else {
-              // Commit everything else
-              commits.push(commit(obj));
-            }
-          }
-          for (const rel of relationships) {
-            $('.message-status').html(`Committing object ${i++}/${objects.length} ...`);
-            commits.push(commit(rel));
-          }
-
-          const results = await Promise.all(commits);
-          const committed = results.reduce((n, b) => n + (+b), 0);
-          $('.message-status').html(`Successfully committed ${committed} out of ${objects.length} objects.`);
-
+          $('.message-status').html(`Committing ${bundle.objects.length} to the database...`);
+          const [nodes, edges] = await commitBundle(bundle);
+          $('.message-status').html(`Successfully committed ${nodes.size} nodes and ${edges.size} edges out of ${objects.length} objects.`);
           this.close();
         };
         r.readAsText(f);

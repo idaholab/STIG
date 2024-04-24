@@ -1,5 +1,5 @@
 import { isNode, isPath, isRelationship as isNeoRelationship } from 'neo4j-driver';
-import { Core, Relationship, SDO, StixObject, isRelationship } from '../../stix/stix2';
+import { Core, Relationship, SDO, StixObject } from '../../stix/stix2';
 
 export function makeDotNotation (parent: string, node: any, obj: Record<string, unknown>) {
   if (node instanceof Array) {
@@ -40,29 +40,13 @@ export function unmakeDotNotation (source: Record<string, unknown>): Record<stri
 }
 
 export function toNeo4j (stix: Core) {
-  if (isRelationship(stix)) {
-    const rel: Record<string, unknown> = { properties: stix };
-    for (const [key, val] of Object.entries(stix)) {
-      if (key === 'relationship_type') {
-        rel.rel_type = val;
-      } else if (key === 'source_ref' || key === 'target_ref') {
-        rel[key] = val;
-      }
+  const props: Record<string, string> = {};
+  for (const [key, val] of Object.entries(stix)) {
+    if (key !== 'type') {
+      makeDotNotation(key, val, props);
     }
-    return rel;
-  } else {
-    const obj: Record<string, unknown> = {};
-    const props = {};
-    for (const [key, val] of Object.entries(stix)) {
-      if (key === 'type') {
-        obj.type = ['stixnode', val];
-      } else {
-        makeDotNotation(key, val, props);
-      }
-    }
-    obj.properties = props;
-    return obj;
   }
+  return props;
 }
 
 export function fromNeo4j (obj: unknown): StixObject[] {

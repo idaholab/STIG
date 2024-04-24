@@ -3,10 +3,19 @@ import { Identifier, StixObject } from '../../stix';
 import { IDatabaseConfigOptions } from '../../storage/database-configuration-storage';
 
 import * as diffpatch from 'jsondiffpatch';
-import { isRelationship } from '../../stix/stix2';
+import { BundleType, Relationship, isRelationship } from '../../stix/stix2';
 import { StigDB } from '../dbi';
 import moment from 'moment';
 import { fromNeo4j, toNeo4j } from './stix2neo';
+
+function setProperties (tx: ManagedTransaction, stix: Record<string, unknown>, cmd: string) {
+  return tx.run(
+    cmd +
+    Object.keys(stix).map(k => 'SET n.`' + k + '` = $`' + k + '`').join('\n') +
+    '\nRETURN n',
+    stix,
+  );
+}
 
 export class Neo4jStigDB implements StigDB {
   private driver?: Driver;
@@ -30,7 +39,7 @@ export class Neo4jStigDB implements StigDB {
     }
     const session = this.driver.session(this.config.db ? { database: this.config.db } : undefined);
     try {
-      return cb(session);
+      return await cb(session);
     } catch (e) {
       e.stack += (new Error()).stack;
       throw e;
@@ -45,13 +54,13 @@ export class Neo4jStigDB implements StigDB {
    * @returns {Promise<void>}
    * @memberof StigDB
    */
-  public delete ({ id, type }: StixObject): Promise<void> {
+  public delete (stix: StixObject): Promise<void> {
     return this.wrapSession((s: Session) =>
       s.executeWrite((tx: ManagedTransaction) =>
-        tx.run((type === 'relationship')
+        tx.run(isRelationship(stix)
           ? 'MATCH ()-[r]->() WHERE r.id = $id DELETE r'
           : 'MATCH (n: stixnode) WHERE n.id = $id DETACH DELETE n',
-        { id })
+        { id: stix.id })
       )
     ) as Promise<unknown> as Promise<void>;
   }
@@ -105,67 +114,85 @@ export class Neo4jStigDB implements StigDB {
 
   /**
    * @description Updates the database from the editor form
-   * @param {StixObject} formdata
+   * @param {StixObject} stix
    * @returns  Promise<string>
    * @memberof StigDB
    */
-  public updateDB (formdata: StixObject): Promise<void> {
-    const dbObj = toNeo4j(formdata);
+  public uploadBundle (stix: BundleType): Promise<[Set<string>, Set<string>]> {
+    const nodes: StixObject[] = [];
+    const edges: Relationship[] = [];
+    for (const obj of stix.objects) {
+      (isRelationship(obj) ? edges : nodes).push(obj as any);
+    }
+    return this.updateDB(nodes, edges);
+  }
+
+  /**
+   * @description Updates the database from the editor form
+   * @param {StixObject} stix
+   * @returns  Promise<string>
+   * @memberof StigDB
+   */
+  public async updateDB (stix_nodes: StixObject[], stix_edges: Relationship[]): Promise<[Set<string>, Set<string>]> {
     const time = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
-    return this.wrapSession(async (s: Session) => {
-      if (isRelationship(formdata)) {
-        if (formdata.source_ref && formdata.target_ref) {
-          await s.executeWrite(async (tx: ManagedTransaction) => {
-            if (!moment(formdata.created).isValid()) {
-              const res = await tx.run(`
-                MERGE ()-[r:${formdata.relationship_type}]->() WHERE r.id = $id RETURN r
-              `, {
-                id: formdata.id,
-              });
-
-              if (res.records.length === 0) {
-                dbObj.created = time;
-              }
-            }
-            dbObj.modified = time;
-
-            return tx.run(`
-              MERGE (a)-[r]->(b)
-              WHERE a.id = $src AND b.id = $dst AND r.id = $id
-              SET r = $props
-            `, {
-              src: formdata.source_ref,
-              dst: formdata.target_ref,
-              id: formdata.id,
-              props: dbObj,
-            });
-          });
-        }
-        throw new Error('Missing source and/or target references for edge.');
-      } else {
-        await s.executeWrite(async (tx: ManagedTransaction) => {
-          if (!moment(formdata.created).isValid()) {
-            const res = await tx.run(`
-              MERGE (n:stixnode:${formdata.type}) WHERE n.id = $id RETURN n
-            `, {
-              id: formdata.id,
-            });
-
-            if (res.records.length === 0) {
-              dbObj.created = time;
-            }
+    return await this.wrapSession(async (s: Session) => {
+      const node_res = await s.executeWrite(async (tx: ManagedTransaction) =>
+        Promise.all(stix_nodes.map(async (stix) => {
+          stix.modified = time;
+          if (!moment(stix.created).isValid()) {
+            stix.created = time;
           }
-          dbObj.modified = time;
+          try {
+            const res = await tx.run('MATCH (n:stixnode {id:$id}) RETURN n', { id: stix.id });
+            const cmd = res.records.length === 0
+              ? 'MERGE (n:stixnode:`' + stix.type + '` {id:$id})\n'
+              : 'MATCH (n:stixnode {id:$id})\n';
 
-          return tx.run(`
-            MERGE (n) WHERE n.id = $id
-            SET n = $props
-          `, {
-            id: formdata.id,
-            props: dbObj,
-          });
-        });
-      }
+            await setProperties(tx, toNeo4j(stix), cmd);
+            return stix.id;
+          } catch (e) {
+            console.error(e); // eslint-disable-line no-console
+            return '';
+          }
+        }))
+      );
+
+      const cnodes = new Set(node_res.filter(s => s !== ''));
+
+      const edge_res = await s.executeWrite(async (tx: ManagedTransaction) =>
+        Promise.all(stix_edges.map(async (stix) => {
+          if (!cnodes.has(stix.source_ref!)) {
+            console.error(`Source ref ${stix.source_ref} has not been committed`); // eslint-disable-line no-console
+            return '';
+          }
+          if (!cnodes.has(stix.target_ref!)) {
+            console.error(`Target ref ${stix.source_ref} has not been committed`); // eslint-disable-line no-console
+            return '';
+          }
+
+          stix.modified = time;
+          if (!moment(stix.created).isValid()) {
+            stix.created = time;
+          }
+          try {
+            const res = await tx.run('MATCH ()-[n {id:$id}]->() RETURN n', { id: stix.id });
+            const cmd = res.records.length === 0
+              ? 'MATCH (a:stixnode {id:$source_ref}), (b:stixnode {id:$target_ref})\n' +
+                'MERGE (a)-[n:`' + stix.relationship_type + '` {id:$id}]->(b)\n'
+              : 'MATCH (n:stixnode {id:$id})\n';
+
+            await setProperties(tx, stix as any, cmd);
+            return stix.id;
+          } catch (e) {
+            console.error(e); // eslint-disable-line no-console
+            return '';
+          }
+        }))
+      );
+
+      const enodes = new Set(edge_res.filter(s => s !== ''));
+
+      return [cnodes, enodes];
     });
   }
 

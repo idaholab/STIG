@@ -4,10 +4,10 @@ Copyright 2018 Southern California Edison Company
 ALL RIGHTS RESERVED
 */
 
-import { get_taxii, commit } from './dbFunctions';
+import { get_taxii, commitBundle } from './dbFunctions';
 import { DatabaseConfigurationStorage } from '../storage';
 import { TaxiiParams } from '../storage/database-configuration-storage';
-import { StixObject } from '../stix';
+import { BundleType} from '../stix';
 
 export function openConnectTaxii (key?: string) {
   const dbdialog = new NewTaxiiConnection($('#connect-taxii-anchor'), key);
@@ -74,28 +74,8 @@ class NewTaxiiConnection {
     }
 
     // Commit taxii objects to database
-    const relationships: StixObject[] = [];
-    const commits: Array<Promise<boolean>> = [];
-    let i = 0;
-    $('.message-status').html(`Committing ${objects.length} to the database...`);
-    for (const obj of objects) {
-      $('.message-status').html(`Committing object ${i++}/${objects.length} ...`);
-      // Save relationships for later
-      if (obj.type === 'relationship' || obj.type === 'sighting') {
-        relationships.push(obj);
-      } else {
-        // Commit everything else
-        commits.push(commit(obj));
-      }
-    }
-    for (const rel of relationships) {
-      $('.message-status').html(`Committing object ${i++}/${objects.length} ...`);
-      commits.push(commit(rel));
-    }
-
-    const results = await Promise.all(commits);
-    const committed = results.reduce((n, b) => n + (+b), 0);
-    $('.message-status').html(`Successfully committed ${committed} out of ${objects.length} objects.`);
+    const [cnodes, cedges] = await commitBundle({ objects } as unknown as BundleType);
+    $('.message-status').html(`Successfully committed ${cnodes.size + cedges.size} out of ${objects.length} objects.`);
 
     this.close();
   }

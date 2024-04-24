@@ -833,7 +833,8 @@ export class main {
         // let ourres = '';
         try {
           const formdata: StixObject = editor.editor.getValue();
-          if (await commit(formdata)) {
+          const [cnodes] = await commit([formdata], []);
+          if (cnodes.size > 0) {
             // Find the node in the graph
             const node = cy.elements().filter((ele) => {
               // console.log(JSON.stringify(ele.data('saved')))
