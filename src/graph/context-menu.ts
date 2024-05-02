@@ -128,7 +128,6 @@ export function setup_ctx_menu (cy: cytoscape.Core, view_util: any) {
     selector: 'edge',
     commands: [{
       content: 'Remove from Graph',
-      // select: () => {}
       select (ele: cytoscape.CollectionElements) {
         cy.remove(ele as unknown as cytoscape.CollectionArgument);
       }
@@ -201,18 +200,11 @@ export function setup_ctx_menu (cy: cytoscape.Core, view_util: any) {
       {
         content: 'Show All',
         select: () => {
-          view_util.show(cy.$('.stix_node')); // .showEles();
+          view_util.show(cy.$('.stix_node'));
         }
       },
-      // {
-      //     content: 'remove highlights',
-      //     select: () => {
-      //         view_util.removeHighlights();
-      //     },
-      // },
       {
         content: 'Copy Selected',
-        // select: () => {}
         select: () => { graph_copy(); }
       },
       {

@@ -109,16 +109,14 @@ export class Main {
       const graph_utils = new GraphUtils(cy);
 
       // used by some events to make cytoscape respond
-      window.addEventListener('resize', () => { cy.resize(); }, false);
+      window.addEventListener('resize', () => cy.resize(), false);
 
       Split(['#cy', '#editpane'], {
         direction: 'horizontal',
         sizes: [75, 25],
         gutterSize: 8,
         cursor: 'col-resize',
-        onDragEnd: () => {
-          cy.resize();
-        },
+        onDragEnd: () => cy.resize(),
       });
 
       // Add event listeners to dropdown menu items

@@ -44,27 +44,27 @@ class DatabaseConfigDialog {
         {
           text: 'Cancel',
           id: 'close-btn',
-          click: () => { this.close(); }
+          click: this.close,
         },
         {
           text: 'Use',
           id: 'use-btn',
-          click: () => { this.useDatabase(); }
+          click: this.useDatabase,
         },
         {
           text: 'Delete',
           id: 'delete-btn',
-          click: () => { this.deleteSelected(); }
+          click: this.deleteSelected,
         },
         {
           text: 'Edit',
           id: 'edit-btn',
-          click: () => { this.editDatabase(); }
+          click: this.editDatabase,
         },
         {
           text: 'New',
           id: 'new-btn',
-          click: () => { this.newDatabase(); }
+          click: this.newDatabase,
         }
       ]
     });
