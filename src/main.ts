@@ -13,7 +13,8 @@ import {
   Report,
   StixNode,
   BundleType,
-  SDO
+  SDO,
+  SRO,
 } from './stix';
 import * as stix from './stix';
 import fileSaver from 'file-saver';
@@ -31,7 +32,6 @@ import cola from 'cytoscape-cola';
 import cosebilkent from 'cytoscape-cose-bilkent';
 import dagre from 'cytoscape-dagre';
 import euler from 'cytoscape-euler';
-// import ngraph from 'cytoscape-ngraph.forcelayout';
 import spread from 'cytoscape-spread';
 import { setup_edge_handles, edgehandles_style } from './graph/edge-handles';
 import { setup_ctx_menu } from './graph/context-menu';
@@ -57,7 +57,6 @@ import defense from './contextLayouts/defenseInDepthSchema.json';
 import { openDatabaseUpload } from './ui/database-upload-widget';
 import { openConnectTaxii } from './ui/connect-taxii-widget';
 import { openBundleExport } from './ui/export -bundle-widget';
-import { isSRO, SRO } from './stix/stix2';
 
 declare global {
   interface Window {
@@ -84,11 +83,8 @@ function layoutHandler (graph_utils: GraphUtils, settings: StigSettings, layout:
   };
 }
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
-export class main {
-  constructor () { }
-
-  public async run () {
+export class Main {
+  public run () {
     // Initialize tippy tooltips
     tippy('[data-tippy-content]', {
       theme: 'light',
@@ -106,7 +102,7 @@ export class main {
         container: $('#cy')[0],
         style: [node_style, compound_style, edge_style, select_node_style, modified_select_style, modified_unselect_style, ...edgehandles_style],
         wheelSensitivity: 0.25,
-      } as cytoscape.CytoscapeOptions;
+      };
 
       // set up cytoscape
       const cy = cytoscape(cyto_options);
@@ -115,50 +111,41 @@ export class main {
 
       // used by some events to make cytoscape respond
       window.addEventListener('resize', () => { cy.resize(); }, false);
-      const call_forceRender = () => {
-        cy.resize();
-      };
 
-      const split = Split(['#cy', '#editpane'], {
+      Split(['#cy', '#editpane'], {
         direction: 'horizontal',
         sizes: [75, 25],
         gutterSize: 8,
         cursor: 'col-resize',
-        onDragEnd: call_forceRender,
+        onDragEnd: () => {
+          cy.resize();
+        },
       });
 
       // Add event listeners to dropdown menu items
 
       // GRAPH
       $('#dd-copyElem').on('click', () => {
-        // console.log("Copy element")
         graph_copy();
       });
       $('#dd-cutElem').on('click', () => {
-        // console.log("Cut element")
         const selected = window.cycore.$(':selected');
         graph_copy();
         window.cycore.remove(selected);
       });
       $('#dd-pasteElem').on('click', () => {
-        // console.log("paste element")
         graph_paste();
       });
       $('#dd-commitElem').on('click', () => {
-        // console.log("Commit elements")
-        commit_all();
+        void commit_all();
       });
       $('#dd-dbDelete').on('click', () => {
-        // console.log("Delete from db")
         delete_selected();
       });
       $('#dd-selectElem').on('click', () => {
-        Blob;
-        // console.log("Select all elements")
         window.cycore.elements().select();
       });
       $('#dd-invertSelect').on('click', () => {
-        console.log('Invert');
         const unselected = window.cycore.$(':unselected');
         const selected = window.cycore.$(':selected');
         selected.unselect();
@@ -175,29 +162,11 @@ export class main {
 
         // if an object has "object_refs" property, create relationships for all reference objects
         nodes.each((ele) => {
-          console.log(ele);
           const current_object = ele.data('raw_data');
           if (current_object !== undefined && embedded_rel_types.includes(current_object.type) && current_object.object_refs) {
-            console.log(current_object.object_refs);
-            console.log(current_object.id);
             for (const ref_id of current_object.object_refs) {
-              console.log(ref_id);
-
               // Step 1.
               const rel_id = uuid.v4();
-              // let rel_created = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
-
-              // const raw_data: Relationship = {
-              //     // get source node
-              //     source_ref: current_object["id"],
-              //     // get target node
-              //     target_ref: ref_id,
-              //     type: 'relationship',
-              //     created: rel_created,
-              //     id: rel_id,
-              //     relationship_type: 'related-to',
-              // };
-
               const opts: stix.VisualEdgeData = {
                 raw_data: 'visual_edge',
                 id: rel_id,
@@ -205,27 +174,13 @@ export class main {
                 source: current_object.id
               };
 
-              // const opts: stix.StixRelationshipData = {
-              //     raw_data: raw_data,
-              //     type: 'relationship',
-              //     id: rel_id,
-              //     created: rel_created,
-              //     source: current_object["id"],
-              //     target: ref_id,
-              //     label: 'related-to'
-              // };
-
-              // console.log(opts)
-
               // Step 2.
               const rel_node = new stix.VisualEdge(opts);
 
               // Step 3.
               cy.add(rel_node);
-              // cy.add({data: {id: rel_id, source: current_object["id"], target: ref_id}});
             }
           }
-          // && ele.data('raw_data').object_refs
         });
       });
 
@@ -260,7 +215,6 @@ export class main {
       $('#dd-exportSelected').on('click', exportCb);
       $('#dd-exportGraph').on('click', exportCb);
       $('#dd-exportAll').on('click', () => {
-        // console.log("Export all")
         const bundle_id = 'bundle--' + uuid.v4();
         const bundle: BundleType = { type: 'bundle', id: bundle_id, objects: [] } as any;
         let nodes = window.cycore.$(':visible');
@@ -279,7 +233,6 @@ export class main {
         openBundleExport(bundle);
       });
       $('#dd-exportPos').on('click', () => {
-        // console.log("Export positions")
         const nodes = window.cycore.$(':visible');
 
         const jsonObj = JSON.stringify({ metadata: getNodeMetadata(nodes) }, null, 2);
@@ -325,7 +278,7 @@ export class main {
           $(`#dd-ctxLayout${kc.type}`).prop('style', 'background-color: #0d6efd');
 
           removeCompoundNodes();
-          initKillChainGraph(kc.type);
+          void initKillChainGraph(kc.type);
         });
       });
 
@@ -350,14 +303,18 @@ export class main {
       cy.on('mouseover', ':parent', _ => { eh.hide(); });
 
       // set up view utilities
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       const jquery = require('jquery');
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       const viewUtilities = require('cytoscape-view-utilities');
       viewUtilities(cytoscape, jquery);
       const view_util = cy.viewUtilities(view_utils_options);
       // context menus inside the graph
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       const cxtmenu = require('cytoscape-cxtmenu');
       cxtmenu(cytoscape);
       setup_ctx_menu(cy, view_util);
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       const klay = require('cytoscape-klay');
       klay(cytoscape);
       cola(cytoscape);
@@ -369,7 +326,6 @@ export class main {
 
       // Get the layout from storage and set the graph layout
       const layout = settings.layout;
-      // console.log('layout: ', layout)
       if (layouts[layout]) {
         graph_utils.myLayout(layout);
       }
@@ -393,16 +349,12 @@ export class main {
           let ret: boolean = false;
           if (ele.data('raw_data')) {
             if (prop3 !== null) {
-              try {
-                if (ele.data('raw_data')[prop2!].length) {
-                  ele.data('raw_data')[prop2!].forEach((eleArr: Record<string, string>) => {
-                    ret = eleArr[prop3 as any].trim() === searchterm;
-                  });
-                } else {
-                  ret = ele.data('raw_data')[prop2!][0][prop3].trim() === searchterm;
-                }
-              } catch (error) {
-                // console.log('error here, value: ', prop, searchterm, error);
+              if (ele.data('raw_data')[prop2!].length) {
+                ele.data('raw_data')[prop2!].forEach((eleArr: Record<string, string>) => {
+                  ret = eleArr[prop3 as any].trim() === searchterm;
+                });
+              } else {
+                ret = ele.data('raw_data')[prop2!][0][prop3].trim() === searchterm;
               }
             } else {
               ret = ele.data('raw_data')[prop] === searchterm;
@@ -428,7 +380,6 @@ export class main {
           searchparam = s[1];
         }
         let selected = cy.$(':selected');
-        // view_util.removeHighlights(selected);
         selected.unselect();
         const eles = search(prop, searchparam);
         selected = eles;
@@ -441,9 +392,6 @@ export class main {
             }
           });
           selected.select();
-          // view_util.highlight(selected);
-          // cy.center(selected);
-          // cy.fit(selected);
           $('.search-status').html(`Found ${selected.length} elements`);
           cy.animate({
             fit: {
@@ -472,8 +420,6 @@ export class main {
         e.stopPropagation();
         const key = e.which;
         if (key === 13) {
-          // e.preventDefault();
-          // e.stopPropagation();
           $('#btn-graph-search').trigger('click');
         }
       });
@@ -485,6 +431,7 @@ export class main {
       });
 
       // handler for DB search button click
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       $('#btn-db-search').on('click', async (e: JQuery.Event) => {
         e.preventDefault();
         e.stopPropagation();
@@ -493,29 +440,15 @@ export class main {
           return;
         }
         storage.add(text);
-        // hist_dialog.addToHistoryDialog();
-        // const result = await db.doGraphQuery({
-        //     command: text,
-        //     mode: 'graph',
-        //     parameters: [],
-        // });
+
         const result = await query(text);
-        // if (result.graph === undefined || result.graph.vertices === undefined) {
-        //     $('#query-status').html('No results');
-        //     return;
-        // }
-
-        // console.log(result);
-
         const add_graph: any = {
           graph: {
             vertices: [],
             edges: [],
           },
         };
-        // let results: StixObject[] = [];
-        // results = results.concat(result.graph.edges, result.graph.vertices);
-        // results.concat(result.graph.vertices);
+
         loading = true;
         result.forEach((item: StixObject) => {
           if (cy.getElementById(item.id_!).length === 0) {
@@ -524,14 +457,9 @@ export class main {
         });
         $('#query-status').html(`Returned ${add_graph.graph.vertices.length} nodes and ${add_graph.graph.edges.length} edges.`);
         try {
-          // const bundle = await db.handleResponse(add_graph);
           const bundle: BundleType = { type: 'bundle', objects: result };
           await graph_utils.buildNodes(bundle, true);
-          // const selected = cy.$(':selected');
-          // view_util.removeHighlights(selected);
-          // cy.elements().unselect();
           graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
-          // new_nodes.select();
           $('.message-status').html(`Added ${result.length} elements to graph`);
           loading = false;
         } catch (err) {
@@ -541,7 +469,7 @@ export class main {
       });
 
       // Handler to make DB search happen upon ctrl-enter
-      $('#dbSearch').on('keyup', async (e: JQuery.Event) => {
+      $('#dbSearch').on('keyup', (e: JQuery.Event) => {
         $('#query-status').html('');
         const key = e.which;
         if (key === 17) {
@@ -557,7 +485,6 @@ export class main {
         e.stopPropagation();
         cy.elements().remove();
         $('#metawidget').empty();
-        // db.diff_dialog.reset();
         cy.reset();
         $('#query-status').html('No Results');
       });
@@ -572,23 +499,12 @@ export class main {
         const input_data = ele.data('raw_data');
         if (input_data === undefined) { return true; }
         if (ele.isNode()) {
-          // console.log("<editor> search schema", schema)
           // load the form for this node
           try {
             editor.buildWidget(ele, ele.data('type'), input_data);
-          } catch (err) {
-            // console.log(err.message);
-            // if(err.message === "Cannot read property '$ref' of undefined"){
-            //     // added to handle sub directory 'observables'
-            //     editor.buildWidget(ele, 'observables/' + ele.data('type'), input_data);
-            // }
-            // else{
-            console.error(err);
-            // }
-          }
+          } catch (_) { }
         } else {
           // edge
-          // input_data.type
           let relationship_file = '';
 
           // objects that shouldn't be related to other objects or only require the fundamental relationship types
@@ -619,7 +535,6 @@ export class main {
       });
 
       $('#btn-export-single').on('click', (e: JQuery.Event) => {
-        // console.log(editor.root.getValue())
         e.preventDefault();
         e.stopPropagation();
         const form_data = editor.editor.getValue();
@@ -631,7 +546,6 @@ export class main {
 
       // Clear Stix form editor when node/edge is unselected
       cy.on('unselect', 'node, edge', (evt: cytoscape.EventObject) => {
-        // editor.editor.destroy();
         $('#metawidget').empty();
         $('#current_node').empty();
         $('button.btn-commit').button('option', 'disabled', true);
@@ -640,8 +554,6 @@ export class main {
 
       // Handler for when an edge is created via the graph editor
       cy.on('add', 'edge', (evt: cytoscape.EventObject) => {
-        console.log('in here');
-
         const my_map = new Map();
 
         my_map.set('attack-pattern', 'uses');
@@ -665,7 +577,6 @@ export class main {
 
         const input_data = ele.data('raw_data');
         if (input_data === undefined) {
-          console.log('in here as well');
           const src_obj_type = ele.source().data('raw_data').type;
           let default_relationship = '';
           if (my_map.has(src_obj_type)) {
@@ -695,32 +606,29 @@ export class main {
       const uploader: HTMLElement = document.getElementById('cy')!;
 
       /**
-             *  Event handler for when a file is dropped into the UI
-             *
-             * @param {DragEvent} evt
-             */
+       *  Event handler for when a file is dropped into the UI
+       *
+       * @param {DragEvent} evt
+       */
       function handleFileDrop (evt: DragEvent) {
-        // evt.stopPropagation();
         evt.preventDefault();
-
         handleFiles(evt.dataTransfer!.files);
       }
 
       /**
-             * @description Event handler for drag in progress
-             * @param {DragEvent} evt
-             */
+       * @description Event handler for drag in progress
+       * @param {DragEvent} evt
+       */
       function handleDragOver (evt: DragEvent) {
-        // evt.stopPropagation();
         evt.preventDefault();
         evt.dataTransfer!.dropEffect = 'copy'; // Explicitly show this is a copy.
       }
 
       /**
-             * Handles files added to UI via drag and drop or file selector
-             *
-             * @param {FileList} files
-             */
+       * Handles files added to UI via drag and drop or file selector
+       *
+       * @param {FileList} files
+       */
       function handleFiles (files: FileList) {
         for (const file of files) {
           document.getElementById('chosen-files')!.innerText += file.name + ' ';
@@ -734,12 +642,12 @@ export class main {
       }
 
       /**
-             * Adds a stix bundle to the current graph.
-             *
-             * @param {BundleType} pkg
-             */
+       * Adds a stix bundle to the current graph.
+       *
+       * @param {BundleType} pkg
+       */
       function addToGraph (pkg: BundleType) {
-        graph_utils.buildNodes(pkg, false).then((added) => {
+        void graph_utils.buildNodes(pkg, false).then((added) => {
           $('.message-status').html(`Added ${added.length} elements to graph.`);
           if (pkg.metadata) {
             // Position the nodes
@@ -783,13 +691,13 @@ export class main {
       });
 
       /**
-             * Handler for Export Bundle button
-             */
+       * Handler for Export Bundle button
+       */
       $(document).on('click', '#btn-export-bundle', () => {
         // Get raw data from all cy elements
         // Create bundle object
         const bundle_id = 'bundle--' + uuid.v4();
-        const bundle = { type: 'bundle', id: bundle_id, objects: [] } as BundleType;
+        const bundle: BundleType = { type: 'bundle', id: bundle_id, objects: [] } as any;
         let nodes = window.cycore.$(':visible');
         nodes = nodes.union(nodes.connectedEdges());
         nodes.each((ele) => {
@@ -801,15 +709,11 @@ export class main {
             bundle.objects.push(ele.data('raw_data'));
           }
         });
-        // cy.edges().each((ele) => {
-        //     // TODO FIXME: Do not save created_by edges, and other implicit edges
-        //     bundle.objects.push(ele.data('raw_data'));
-        // });
-
         // Open the export widget
         openBundleExport(bundle);
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       $(document).on('click', '#btn-diff', async () => {
         const node = editor.editor.getValue();
         const diff = await get_diff(node);
@@ -817,56 +721,47 @@ export class main {
           const diff_dialog = new DiffDialog($('#diff-anchor'));
           diff_dialog.addDiff(node.id, diff, node, node.name);
           diff_dialog.open();
-        } else {
-          console.log('Error: no diff');
         }
       });
 
-      /** *************************************** *
-            *        Save stix form to DB on click
-            *************************************** */
+      /** ************************************* *
+       *        Save stix form to DB on click
+       *************************************** */
       $('button').button();
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       $('button.btn-commit').on('click', async (e: JQuery.Event) => {
         e.preventDefault();
         e.stopPropagation();
-        // let result: StixObject[];
-        // let ourres = '';
-        try {
-          const formdata: StixObject = editor.editor.getValue();
-          const [cnodes] = await commit([formdata], []);
-          if (cnodes.size > 0) {
-            // Find the node in the graph
-            const node = cy.elements().filter((ele) => {
-              // console.log(JSON.stringify(ele.data('saved')))
-              return ele?.data('id') === formdata.id;
-            });
+        const formdata: StixObject = editor.editor.getValue();
+        const [cnodes] = await commit([formdata], []);
+        if (cnodes.size > 0) {
+          // Find the node in the graph
+          const node = cy.elements().filter((ele) => {
+            return ele?.data('id') === formdata.id;
+          });
 
-            // Set it as saved
-            if (node[0]) {
-              node[0].data('saved', true);
-            }
-
-            $('.message-status').html('Committed 1 object to the database.');
+          // Set it as saved
+          if (node[0]) {
+            node[0].data('saved', true);
           }
-        } catch (e) {
-          console.error('Error saving to database:');
-          console.error(e);
-          throw e;
+
+          $('.message-status').html('Committed 1 object to the database.');
         }
+
         $('button.btn-commit').button('option', 'disabled', true);
       });
 
       /***********************************************************************************
-            *
-            *  Widget Bar Code
-            *
-            ***********************************************************************************/
+       *
+       *  Widget Bar Code
+       *
+       ***********************************************************************************/
       /**
-             * @description Helper function to build a stixnode to insert into the graph
-             * @param {string} node_type
-             * @returns {Promise<StixNode>}
-             */
-      async function event_add_node (node_type: string): Promise<StixNode> {
+       * @description Helper function to build a stixnode to insert into the graph
+       * @param {string} node_type
+       * @returns {Promise<StixNode>}
+       */
+      function event_add_node (node_type: string): StixNode {
         const opts: stix.StixNodeData = {
           type: node_type,
           id: node_type + '--' + uuid.v4(),
@@ -891,24 +786,24 @@ export class main {
       }
 
       /**
-             * Event handler for when an icon in the top widget bar is clicked.
-             * It adds a node of that type to the canvas.
-             *
-             *
-             * @template HTMLElement
-             * @param {JQuery.ClickEvent<HTMLElement, { name: string; }>} evt
-             * @returns {Promise<boolean>}
-             */
-      async function widget_bar_onclick<HTMLElement> (evt: JQuery.ClickEvent<HTMLElement, { name: string }>): Promise<boolean> {
+       * Event handler for when an icon in the top widget bar is clicked.
+       * It adds a node of that type to the canvas.
+       *
+       *
+       * @template HTMLElement
+       * @param {JQuery.ClickEvent<HTMLElement, { name: string; }>} evt
+       * @returns {Promise<boolean>}
+       */
+      function widget_bar_onclick<HTMLElement> (evt: JQuery.ClickEvent<HTMLElement, { name: string }>): boolean {
         // alert(evt.data['name'] + " clicked");
-        const my_node = await event_add_node(evt.data.name);
+        const my_node = event_add_node(evt.data.name);
         cy.add(my_node);
         return true;
       }
 
       /**
-             * Load Widget Bar
-             */
+       * Load Widget Bar
+       */
       const node_img = stix.node_img;
       $('.loadlater').each((_index: number, element: HTMLElement) => {
         const ele = $(element);
@@ -935,13 +830,9 @@ export class main {
           opacity: 0.7,
           helper: 'clone',
           zIndex: 999,
-          // start(_, ui) {
-          //     // console.log('icon position:' + $(element).attr('position').x + $(element).attr('position').y)
-          //     console.log('drag start:' + ui.position.left.toString() + ' ' + ui.position.top.toString())
-          // },
           // handle widgets being dragged in from the widget bar
-          stop: async function (_, ui) {
-            const my_node = await event_add_node($(element).attr('name')!);
+          stop: function (_, ui) {
+            const my_node = event_add_node($(element).attr('name')!);
             const view_pos = cy._private.renderer.projectIntoViewport(ui.position.left, ui.position.top);
             my_node.position = {
               x: view_pos[0],
@@ -951,90 +842,7 @@ export class main {
           },
         });
       });
-
-      // // Save graph if the page refreshes
-      // // Note: Doesn't work on large graphs. Cookies have limited size.
-      // $(window).on('beforeunload', async () => {
-      //     let graph = []
-      //     window.cycore.elements().each(ele => {
-      //         if (ele.data('raw_data')) {
-      //             graph.push(ele.data('raw_data'))
-      //         }
-      //     })
-
-      //     document.cookie = `bundle=${JSON.stringify({type: 'bundle', objects: graph})}; sameSite=strict`
-      //     // fetch('/save', {
-      //     //     method: 'POST',
-      //     //     headers: {
-      //     //         'Content-Type': 'application/json'
-      //     //     },
-      //     //     body: JSON.stringify({name: 'graph', data: {type: 'bundle', objects: graph}})
-      //     // })
-      // })
-
-      // // Check if there is a saved graph in the cookies
-      // if (document.cookie.includes('bundle')) {
-      //     //let bundle = JSON.stringify(document.cookie)
-      //     let cookie = document.cookie;
-      //     let cookiePieces = cookie.split(';')
-      //     let bundleCookie = cookiePieces.find(piece => {return piece.includes('bundle=')})
-      //     console.log(bundleCookie)
-      //     let bundle = bundleCookie.split('=');
-      //     console.log(bundle[1])
-      //     let parsed = JSON.parse(bundle[1])
-      //     const test_stix = (i: any) => {
-      //         const ret = i instanceof Object && i.hasOwnProperty('type') && i.hasOwnProperty('created');
-      //         return ret;
-      //     };
-      //     parsed.objects.every(test_stix) ? parsed.objects : parsed.objects = [];
-
-      //     graph_utils.buildNodes(parsed).then(() => graph_utils.myLayout(settings.layout))
-
-      // }
-    },
-    );
-
-    /* document.addEventListener("DOMContentLoaded", function() {
-            var cy = (window.cy = cytoscape({
-              container: document.getElementsByClassName("icon-box"),
-              style: [{
-                  selector: "node",
-                  style: {
-                    content: "data(id)"
-                  }
-                }
-              ],
-            }));
-
-            function makePopper(ele) {
-              let ref = ele.popperRef(); // used only for positioning
-
-              ele.tippy = tippy(ref, { // tippy options:
-                content: () => {
-                  let content = document.createElement('div');
-
-                  content.innerHTML = ele.id();
-
-                  return content;
-                },
-                trigger: 'manual' // probably want manual mode
-              });
-            }
-
-            cy.ready(function() {
-              cy.elements().forEach(function(ele) {
-                makePopper(ele);
-              });
-            });
-
-            cy.elements().unbind('mouseover');
-            cy.elements().bind('mouseover', (event) => event.target.tippy.show());
-
-            cy.elements().unbind('mouseout');
-            cy.elements().bind('mouseout', (event) => event.target.tippy.hide());
-
-        });
-        // */
+    });
 
     setInterval(check_db, 10000);
   }

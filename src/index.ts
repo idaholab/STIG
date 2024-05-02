@@ -1,5 +1,5 @@
-import { main } from './main';
+import { Main } from './main';
 require('webpack-jquery-ui');
 require('webpack-jquery-ui/controlgroup');
 
-main.prototype.run();
+Main.prototype.run();
