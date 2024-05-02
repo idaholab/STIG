@@ -7,7 +7,7 @@ ALL RIGHTS RESERVED
 import {
   BundleType, Relationship, Sighting, Core, CreatedByRelationshipFactory,
   Identifier, ObjectMarkingRelationship, StixObject, Id, StixRelationshipData,
-  StixRelationship, DataSourceType, /* IStixNode, */ StixNode, SDO
+  StixRelationship, DataSourceType, StixNode, SDO,
 } from '../stix';
 import moment from 'moment';
 import { layouts, LayoutsType } from './graphOptions';
@@ -23,13 +23,11 @@ export class GraphUtils {
   }
 
   /**
-     *
-     *
-     * @param {Identifier} id
-     * @param {StixObject} [stixobj]
-     * @returns {Promise<cytoscape.CollectionReturnValue>}
-     * @memberof GraphUtils
-     */
+   * @param {Identifier} id
+   * @param {StixObject} [stixobj]
+   * @returns {Promise<cytoscape.CollectionReturnValue>}
+   * @memberof GraphUtils
+   */
   // eslint-disable-next-line @typescript-eslint/require-await
   public async handle_not_in_graph (id: Identifier): Promise<cytoscape.CollectionReturnValue | undefined> {
     return undefined;

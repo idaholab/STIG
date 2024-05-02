@@ -55,8 +55,7 @@ import { organizeOrphans } from './contextLayouts/graphLayoutFunctions';
 import killChain from './contextLayouts/killChainSchema.json';
 import defense from './contextLayouts/defenseInDepthSchema.json';
 import { openDatabaseUpload } from './ui/database-upload-widget';
-import { openConnectTaxii } from './ui/connect-taxii-widget';
-import { openBundleExport } from './ui/export -bundle-widget';
+import { openBundleExport } from './ui/export-bundle-widget';
 
 declare global {
   interface Window {
@@ -288,9 +287,6 @@ export class Main {
       });
       $('#databaseUpload').on('click', () => {
         openDatabaseUpload();
-      });
-      $('#connectTaxii').on('click', () => {
-        openConnectTaxii();
       });
 
       // Graph handling functions

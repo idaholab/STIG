@@ -1,6 +1,6 @@
 import diffpatch from 'jsondiffpatch';
 import { BundleType, Relationship, StixObject } from '../stix';
-import { IDatabaseConfigOptions, TaxiiParams } from '../storage/database-configuration-storage';
+import { IDatabaseConfigOptions } from '../storage/database-configuration-storage';
 import { schema, IJSONClassOptions } from '../db/schema';
 import { StigDB } from '../db';
 
@@ -81,21 +81,6 @@ export async function query (query: string): Promise<StixObject[]> {
 export async function get_diff (stix: StixObject): Promise<diffpatch.Delta | undefined> {
   if (!checkProps(stix)) throw new Error('Invalid stix');
   return wrapReturn(stix, () => ({}), s => currentDB.getDiff(s));
-}
-
-export async function get_taxii (tax: TaxiiParams): Promise<StixObject[]> {
-  const res = await fetch('/taxii', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ params: tax })
-  });
-  const data = await res.json();
-  if (data.message) {
-    $('.message-status').html(data.message);
-  }
-  return data.taxii ? JSON.parse(data.taxii) : [];
 }
 
 function getAllProps (schemaObject: IJSONClassOptions) {

@@ -21,14 +21,6 @@ export interface IDatabaseConfigurationStorageStructure {
   configs: IDatabaseConfigMap;
 }
 
-export interface TaxiiParams {
-  url: string;
-  apiroot_name: string;
-  collection_id: string;
-  username: string;
-  password: string;
-}
-
 const defaultDbConfig: IDatabaseConfigurationStorageStructure = {
   configs: {
     stig: {
