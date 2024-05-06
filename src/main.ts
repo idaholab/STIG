@@ -56,6 +56,7 @@ import killChain from './contextLayouts/killChainSchema.json';
 import defense from './contextLayouts/defenseInDepthSchema.json';
 import { openDatabaseUpload } from './ui/database-upload-widget';
 import { openBundleExport } from './ui/export-bundle-widget';
+import { isRelationship } from './stix/stix2';
 
 declare global {
   interface Window {
@@ -93,8 +94,6 @@ export class Main {
 
     // Initialize the settings object
     const settings = StigSettings.Instance;
-
-    let loading: boolean = false;
 
     document.addEventListener('DOMContentLoaded', () => {
       const cyto_options: CytoscapeOptions = {
@@ -436,30 +435,16 @@ export class Main {
         storage.add(text);
 
         const result = await query(text);
-        const add_graph: any = {
-          graph: {
-            vertices: [],
-            edges: [],
-          },
-        };
 
-        loading = true;
+        let vertices = 0;
+        let edges = 0;
         result.forEach((item: StixObject) => {
-          if (cy.getElementById(item.id_!).length === 0) {
-            /((r|R)elationship)|((s|S)ighting)/.exec(item.type) ? add_graph.graph.edges.push(item as SRO) : add_graph.graph.vertices.push(item as SDO);
-          }
+          if (cy.getElementById(item.id_!).length !== 0) { return; }
+          if (isRelationship(item)) { edges++; }
+          else { vertices++; }
         });
-        $('#query-status').html(`Returned ${add_graph.graph.vertices.length} nodes and ${add_graph.graph.edges.length} edges.`);
-        try {
-          const bundle: BundleType = { type: 'bundle', objects: result };
-          await graph_utils.buildNodes(bundle, true);
-          graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
-          $('.message-status').html(`Added ${result.length} elements to graph`);
-          loading = false;
-        } catch (err) {
-          loading = false;
-          throw err;
-        }
+        $('#query-status').html(`Returned ${vertices} nodes and ${edges} edges.`);
+        addToGraph({ type: 'bundle', objects: result }, 'DB');
       });
 
       // Handler to make DB search happen upon ctrl-enter
@@ -487,7 +472,7 @@ export class Main {
       cy.on('click', 'node, edge', (evt: cytoscape.EventObject) => {
         const ele: cytoscape.CollectionReturnValue = evt.target;
         cy.$(':selected').unselect();
-        if (ele.empty() || ele.length > 1 || loading) {
+        if (ele.empty() || ele.length > 1) {
           return true;
         }
         const input_data = ele.data('raw_data');
@@ -629,7 +614,7 @@ export class Main {
 
           const r = new FileReader();
           r.onload = (_e: Event) => {
-            addToGraph(JSON.parse(r.result as string));
+            addToGraph(JSON.parse(r.result as string), 'GUI');
           };
           r.readAsText(file);
         }
@@ -640,8 +625,8 @@ export class Main {
        *
        * @param {BundleType} pkg
        */
-      function addToGraph (pkg: BundleType) {
-        void graph_utils.buildNodes(pkg, false).then((added) => {
+      function addToGraph (pkg: BundleType, data_source: stix.DataSourceType) {
+        void graph_utils.buildNodes(pkg.objects, data_source).then((added) => {
           $('.message-status').html(`Added ${added.length} elements to graph.`);
           if (pkg.metadata) {
             // Position the nodes

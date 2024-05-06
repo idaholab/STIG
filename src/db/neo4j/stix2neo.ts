@@ -33,7 +33,7 @@ export function unmakeDotNotation (source: Record<string, unknown>): Record<stri
     if (value instanceof Array) {
       value = value.map(s => JSON.parse(s));
     }
-    target[plen - 1] = value;
+    target[path[plen - 1]] = value;
   }
 
   return node;

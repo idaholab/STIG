@@ -5,9 +5,9 @@ ALL RIGHTS RESERVED
  */
 
 import {
-  BundleType, Relationship, Sighting, Core, CreatedByRelationshipFactory,
-  Identifier, ObjectMarkingRelationship, StixObject, Id, StixRelationshipData,
-  StixRelationship, DataSourceType, StixNode, SDO,
+  Relationship, Sighting, Core, CreatedByRelationshipFactory,
+  Identifier, ObjectMarkingRelationship, Id, StixRelationshipData,
+  StixRelationship, DataSourceType, StixNode,
 } from '../stix';
 import moment from 'moment';
 import { layouts, LayoutsType } from './graphOptions';
@@ -33,7 +33,7 @@ export class GraphUtils {
     return undefined;
   }
 
-  private _addVertices (sdos: StixObject[], from_db: boolean = false): [cytoscape.CollectionReturnValue, Relationship[], Sighting[]] {
+  private _addVertices (sdos: Core[], data_source: DataSourceType): [cytoscape.CollectionReturnValue, Relationship[], Sighting[]] {
     const in_graph = new Set<Id>();
     const to_add: cytoscape.ElementDefinition[] = [];
     const relationships: Relationship[] = [];
@@ -52,7 +52,7 @@ export class GraphUtils {
         if (this.cy.getElementById(sdo.id).length > 0) { continue; }
 
         if (!isSRO(sdo)) {
-          const st_node = new StixNode(sdo as Core, sdo.type, from_db ? 'DB' : 'GUI');
+          const st_node = new StixNode(sdo, sdo.type, data_source);
           if (!in_graph.has(st_node.data.id)) {
             to_add.push(JSON.parse(JSON.stringify(st_node)) as cytoscape.ElementDefinition);
             in_graph.add(st_node.data.id);
@@ -101,14 +101,8 @@ export class GraphUtils {
    * @returns {Promise<cytoscape.CollectionElements>}
    * @memberof GraphUtils
    */
-  public async buildNodes (pkg: BundleType, from_db: boolean = false): Promise<cytoscape.CollectionReturnValue> {
-    const sdos = pkg.objects;
-
-    if (sdos === undefined) {
-      return this.cy.elements('#nothing');
-    }
-    const data_source = from_db ? 'DB' : 'GUI';
-    const [nodes_added, relationships, sightings] = this._addVertices(sdos as SDO[], from_db);
+  public async buildNodes (objects: Core[], data_source: DataSourceType): Promise<cytoscape.CollectionReturnValue> {
+    const [nodes_added, relationships, sightings] = this._addVertices(objects, data_source);
     const to_add: cytoscape.ElementDefinition[] = [];
     // Add relationships to graph
     for (const r of relationships) {

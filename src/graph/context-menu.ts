@@ -8,7 +8,6 @@ import { GraphUtils } from './graphFunctions';
 import { graph_copy } from '../ui/clipboard';
 import { StigSettings } from '../storage/stig-settings-storage';
 import { db_delete, query_incoming, query_outgoing } from '../ui/dbFunctions';
-import { BundleType } from '../stix';
 
 /**
  * @description
@@ -56,12 +55,7 @@ export function setup_ctx_menu (cy: cytoscape.Core, view_util: any) {
             if (typeof data === 'string') {
               data = JSON.stringify(data);
             }
-            const children = await query_incoming(data);
-            const bundle: BundleType = { type: 'bundle', objects: [] };
-            children.forEach((value) => {
-              bundle.objects.push(value);
-            });
-            await graph_utils.buildNodes(bundle, true);
+            await graph_utils.buildNodes(await query_incoming(data), 'DB');
             graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
           }
         }
@@ -99,12 +93,7 @@ export function setup_ctx_menu (cy: cytoscape.Core, view_util: any) {
             if (typeof data === 'string') {
               data = JSON.stringify(data);
             }
-            const children = await query_outgoing(data);
-            const bundle: BundleType = { type: 'bundle', objects: [] };
-            children.forEach((value) => {
-              bundle.objects.push(value);
-            });
-            await graph_utils.buildNodes(bundle, true);
+            await graph_utils.buildNodes(await query_outgoing(data), 'DB');
             graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
           }
         }

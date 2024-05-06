@@ -19,7 +19,7 @@ export type SRO = Relationship | Sighting;
 export type StixObject = SDO | SRO;
 
 const relationshipsKeyRegex = /((r|R)elationship)|((s|S)ighting)/;
-export function isSRO (item: StixObject): item is SRO {
+export function isSRO (item: Core): item is SRO {
   return relationshipsKeyRegex.exec(item.type) !== null;
 }
 

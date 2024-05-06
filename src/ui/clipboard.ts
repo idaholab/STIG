@@ -4,7 +4,7 @@ Copyright 2018 Southern California Edison Company
 ALL RIGHTS RESERVED
  */
 
-import { BundleType, StixObject } from '../stix';
+import { Core } from '../stix';
 import { GraphUtils } from '../graph/graphFunctions';
 import { StigSettings } from '../storage/stig-settings-storage';
 import { JSONValue } from '../types/globals';
@@ -26,31 +26,20 @@ export function graph_copy (): void {
 
 export function graph_paste (): void {
   try {
-    const parsed: StixObject | StixObject[] | BundleType = JSON.parse(clipboard.readText());
-    const bundle: BundleType = {
-      type: 'bundle',
-      objects: []
-    };
-    const test_stix = (i: any) => {
-      const ret = i instanceof Object && Object.prototype.hasOwnProperty.call(i, 'type') && Object.prototype.hasOwnProperty.call(i, 'created');
-      return ret;
-    };
+    const parsed = JSON.parse(clipboard.readText());
+    let objects: Core[];
+    const test_stix = (i: any) => (i instanceof Object && Object.hasOwn(i, 'type') && Object.hasOwn(i, 'created'));
     if (Array.isArray(parsed)) {
-      parsed.every(test_stix) ? bundle.objects = parsed : bundle.objects = [];
-    } else if (Object.prototype.hasOwnProperty.call(parsed, 'type') && parsed.type !== 'bundle') {
-      test_stix(parsed) ? bundle.objects = [parsed] as StixObject[] : bundle.objects = [];
+      objects = parsed.every(test_stix) ? parsed : [];
+    } else if (Object.hasOwn(parsed, 'type') && parsed.type !== 'bundle') {
+      objects = test_stix(parsed) ? [parsed] as Core[] : [];
+    } else {
+      objects = [];
     }
-    // const db = new StigDB(DatabaseConfigurationStorage.Instance.current);
     const graph = new GraphUtils(window.cycore);//, db);
-    void graph.buildNodes(bundle);
+    void graph.buildNodes(objects, 'GUI');
     graph.myLayout(StigSettings.Instance.layout);
   } catch {
 
   }
 }
-
-// ipcRenderer.on("cut_selected", () => {
-//     const selected = window.cycore.$(':selected');
-//     graph_copy();
-//     window.cycore.remove(selected);
-// });
