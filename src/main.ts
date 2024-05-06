@@ -626,45 +626,44 @@ export class Main {
        * @param {BundleType} pkg
        */
       function addToGraph (pkg: BundleType, data_source: stix.DataSourceType) {
-        void graph_utils.buildNodes(pkg.objects, data_source).then((added) => {
-          $('.message-status').html(`Added ${added.length} elements to graph.`);
-          if (pkg.metadata) {
-            // Position the nodes
-            for (const node of pkg.metadata) {
-              // Find the element on the graph
-              cy.$id(node.id).animate({ position: node.position, duration: 1000, complete: () => cy.fit() });
-            }
-          } else {
-            let canLayout = true;
-
-            // Check if defense in depth is on
-            if (cy.nodes(`#${defense.name.replaceAll(' ', '_')}`).length > 0) {
-              canLayout = false;
-              $('#dd-ctxLayoutDefInDepth').trigger('click');
-            }
-
-            // Check if a kill chain is on
-            killChain['kill-chain'].forEach(kc => {
-              // `#ctxLayout${kc.type}`
-              if (cy.nodes(`#${kc.type}`).length > 0) {
-                canLayout = false;
-                $(`#ctxLayout${kc.type}`).trigger('click');
-              }
-            });
-
-            // Only do this if there aren't any defense in depth or kill chain layouts open
-            if (canLayout) {
-              graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
-            }
+        const added = graph_utils.buildNodes(pkg.objects, data_source);
+        $('.message-status').html(`Added ${added.length} elements to graph.`);
+        if (pkg.metadata) {
+          // Position the nodes
+          for (const node of pkg.metadata) {
+            // Find the element on the graph
+            cy.$id(node.id).animate({ position: node.position, duration: 1000, complete: () => cy.fit() });
           }
-        });
+        } else {
+          let canLayout = true;
+
+          // Check if defense in depth is on
+          if (cy.nodes(`#${defense.name.replaceAll(' ', '_')}`).length > 0) {
+            canLayout = false;
+            $('#dd-ctxLayoutDefInDepth').trigger('click');
+          }
+
+          // Check if a kill chain is on
+          killChain['kill-chain'].forEach(kc => {
+            // `#ctxLayout${kc.type}`
+            if (cy.nodes(`#${kc.type}`).length > 0) {
+              canLayout = false;
+              $(`#ctxLayout${kc.type}`).trigger('click');
+            }
+          });
+
+          // Only do this if there aren't any defense in depth or kill chain layouts open
+          if (canLayout) {
+            graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
+          }
+        }
       }
       uploader.addEventListener('dragover', handleDragOver, false);
       uploader.addEventListener('drop', handleFileDrop, false);
 
       /**
-             * Handler for Import Bundle button
-             */
+       * Handler for Import Bundle button
+       */
       $(document).on('change', '#btn-import-bundle', (e) => {
         handleFiles(e.target.files);
       });

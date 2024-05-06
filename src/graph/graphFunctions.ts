@@ -6,7 +6,7 @@ ALL RIGHTS RESERVED
 
 import {
   Relationship, Sighting, Core, CreatedByRelationshipFactory,
-  Identifier, ObjectMarkingRelationship, Id, StixRelationshipData,
+  ObjectMarkingRelationship, Id, StixRelationshipData,
   StixRelationship, DataSourceType, StixNode,
 } from '../stix';
 import moment from 'moment';
@@ -20,17 +20,6 @@ export class GraphUtils {
 
   constructor (cy: cytoscape.Core) {
     this.cy = cy;
-  }
-
-  /**
-   * @param {Identifier} id
-   * @param {StixObject} [stixobj]
-   * @returns {Promise<cytoscape.CollectionReturnValue>}
-   * @memberof GraphUtils
-   */
-  // eslint-disable-next-line @typescript-eslint/require-await
-  public async handle_not_in_graph (id: Identifier): Promise<cytoscape.CollectionReturnValue | undefined> {
-    return undefined;
   }
 
   private _addVertices (sdos: Core[], data_source: DataSourceType): [cytoscape.CollectionReturnValue, Relationship[], Sighting[]] {
@@ -94,28 +83,14 @@ export class GraphUtils {
     }
   }
 
-  /**
-   * pkg should be a JSON object complying to the Stix2.1 bundle schema
-   *
-   * @param {BundleType} pkg
-   * @returns {Promise<cytoscape.CollectionElements>}
-   * @memberof GraphUtils
-   */
-  public async buildNodes (objects: Core[], data_source: DataSourceType): Promise<cytoscape.CollectionReturnValue> {
+  public buildNodes (objects: Core[], data_source: DataSourceType): cytoscape.CollectionReturnValue {
     const [nodes_added, relationships, sightings] = this._addVertices(objects, data_source);
     const to_add: cytoscape.ElementDefinition[] = [];
     // Add relationships to graph
     for (const r of relationships) {
-      let to_node: cytoscape.CollectionReturnValue | undefined = this.cy.getElementById(r.target_ref!);
-      let from_node: cytoscape.CollectionReturnValue | undefined = this.cy.getElementById(r.source_ref!);
-      if (from_node.length === 0) {
-        from_node = await this.handle_not_in_graph(r.source_ref!);
-      }
-      if (to_node.length === 0) {
-        to_node = await this.handle_not_in_graph(r.target_ref!);
-      }
-
-      if (from_node === undefined || to_node === undefined) {
+      const to_node: cytoscape.CollectionReturnValue | undefined = this.cy.getElementById(r.target_ref!);
+      const from_node: cytoscape.CollectionReturnValue | undefined = this.cy.getElementById(r.source_ref!);
+      if (from_node.length === 0 || to_node.length === 0) {
         continue;
       }
 
