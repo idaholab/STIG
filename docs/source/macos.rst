@@ -5,25 +5,6 @@ This section was tested on macOS Catalina.
 
 Everything here can be installed manually or through Homebrew: https://brew.sh/
 
-OrientDB
-^^^^^^^^^^^
-
-Install the latest openjdk version:
-
-.. code-block:: bash
-
-    brew install openjdk
-
-Download the community edition of OrientDB from http://www.orientdb.com. Install according to the instructions. Version 3.0.31 is known to work.
-
-If using Homebrew:
-
-.. code-block:: bash
-
-    brew install orientdb
-
-    brew services start orientdb
-
 Node.js
 ^^^^^^^^^^^^^^^
 Download the latest LTS version for macOS

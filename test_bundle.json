@@ -1,0 +1,305 @@
+{
+    "type": "bundle",
+    "id": "bundle--86e93a0b-9502-453b-8ddb-a6cacaa137b8",
+    "objects": [
+        {
+            "created": "2024-01-19T16:15:26.171Z",
+            "description": "CATCH Collection Profile",
+            "id": "infrastructure--69e0f045-aa2d-45d9-8af9-3b33328b7043",
+            "modified": "2024-01-19T16:15:26.171Z",
+            "name": "linx.yaml",
+            "revoked": false,
+            "spec_version": "2.1",
+            "type": "infrastructure"
+        },
+        {
+            "defanged": false,
+            "id": "ipv4-addr--5fb18452-254b-5e07-b784-e4e82da820f1",
+            "resolves_to_refs": [
+                "infrastructure--69e0f045-aa2d-45d9-8af9-3b33328b7043"
+            ],
+            "spec_version": "2.1",
+            "type": "ipv4-addr",
+            "value": "127.0.0.1"
+        },
+        {
+            "account_type": "unix",
+            "can_escalate_privs": false,
+            "defanged": false,
+            "extensions": {
+                "unix-account-ext": {
+                    "home_dir": "/home/branwr",
+                    "shell": "/bin/bash"
+                }
+            },
+            "id": "user-account--85b10751-663f-5b44-911a-c5be56fd0344",
+            "is_disabled": false,
+            "is_privileged": false,
+            "is_service_account": false,
+            "spec_version": "2.1",
+            "type": "user-account",
+            "user_id": "branwr"
+        },
+        {
+            "created": "2024-01-19T16:15:26.171Z",
+            "id": "relationship--d2aa72e5-66c6-423c-a9f9-f7154affe57a",
+            "modified": "2024-01-19T16:15:26.171Z",
+            "relationship_type": "consists-of",
+            "revoked": false,
+            "source_ref": "infrastructure--69e0f045-aa2d-45d9-8af9-3b33328b7043",
+            "spec_version": "2.1",
+            "target_ref": "ipv4-addr--5fb18452-254b-5e07-b784-e4e82da820f1",
+            "type": "relationship"
+        },
+        {
+            "created": "2024-01-19T16:15:26.171Z",
+            "id": "relationship--60641100-4c84-4531-92f4-d470a5a5aaeb",
+            "modified": "2024-01-19T16:15:26.171Z",
+            "relationship_type": "consists-of",
+            "revoked": false,
+            "source_ref": "infrastructure--69e0f045-aa2d-45d9-8af9-3b33328b7043",
+            "spec_version": "2.1",
+            "target_ref": "user-account--85b10751-663f-5b44-911a-c5be56fd0344",
+            "type": "relationship"
+        },
+        {
+            "command_line": "python3 script.py ",
+            "defanged": false,
+            "id": "process--894f713a-fd2c-41c8-9ba0-1bcd13e75f58",
+            "is_hidden": false,
+            "spec_version": "2.1",
+            "type": "process"
+        },
+        {
+            "command_line": "chmod 500 WinLog_4657_Output_STIX.json ",
+            "defanged": false,
+            "id": "process--21b2744f-9d2c-46d1-9c7f-976111885418",
+            "is_hidden": false,
+            "spec_version": "2.1",
+            "type": "process"
+        },
+        {
+            "command_line": "chown root:root WinLog_4657_Output_STIX.json ",
+            "defanged": false,
+            "id": "process--411f1e43-a3f8-47fc-9727-92153a6231ab",
+            "is_hidden": false,
+            "spec_version": "2.1",
+            "type": "process"
+        },
+        {
+            "command_line": "sudo chown root:root WinLog_4657_Output_STIX.json ",
+            "defanged": false,
+            "id": "process--eed68e2b-9785-4dee-958e-469501642b75",
+            "is_hidden": false,
+            "spec_version": "2.1",
+            "type": "process"
+        },
+        {
+            "command_line": "chmod 444 WinLog_4657_Output_STIX.json ",
+            "defanged": false,
+            "id": "process--f9e8f648-44f7-47e8-9491-73c80cd187c7",
+            "is_hidden": false,
+            "spec_version": "2.1",
+            "type": "process"
+        },
+        {
+            "command_line": "sudo chmod 444 WinLog_4657_Output_STIX.json ",
+            "defanged": false,
+            "id": "process--0836c6be-0cb0-4404-98f3-b1094cc3fa25",
+            "is_hidden": false,
+            "spec_version": "2.1",
+            "type": "process"
+        },
+        {
+            "command_line": "chown branwr:branwr WinLog_4657_Output_STIX.json ",
+            "defanged": false,
+            "id": "process--5bc7a386-8be3-4f27-afd4-4be79f0dd0f3",
+            "is_hidden": false,
+            "spec_version": "2.1",
+            "type": "process"
+        },
+        {
+            "command_line": "sudo chown branwr:branwr WinLog_4657_Output_STIX.json ",
+            "defanged": false,
+            "id": "process--b3ba90b7-df04-4440-915f-199f09a9bf27",
+            "is_hidden": false,
+            "spec_version": "2.1",
+            "type": "process"
+        },
+        {
+            "command_line": "chmod 660 catch-cli ",
+            "defanged": false,
+            "id": "process--8ab2a8d8-8e69-44aa-9ae4-4cd8711361a1",
+            "is_hidden": false,
+            "spec_version": "2.1",
+            "type": "process"
+        },
+        {
+            "command_line": "arp -v",
+            "defanged": false,
+            "id": "process--c565fe3a-a353-4a62-bbc6-8c8506bf39cb",
+            "is_hidden": false,
+            "spec_version": "2.1",
+            "type": "process"
+        },
+        {
+            "command_line": "/bin/bash script.sh ",
+            "defanged": false,
+            "id": "process--e814339e-603f-4145-8825-75e3227d514f",
+            "is_hidden": false,
+            "spec_version": "2.1",
+            "type": "process"
+        },
+        {
+            "command_line": "sudo chmod +x ../.git/hooks/pre-commit",
+            "defanged": false,
+            "id": "process--ae966d58-c984-4444-a84e-a7584f26e33e",
+            "is_hidden": false,
+            "spec_version": "2.1",
+            "type": "process"
+        },
+        {
+            "command_line": "sudo chmod +x ../.git/hooks/pre-push",
+            "defanged": false,
+            "id": "process--c85cc320-3d41-40e8-9370-6d043d167618",
+            "is_hidden": false,
+            "spec_version": "2.1",
+            "type": "process"
+        },
+        {
+            "command_line": "chmod 500 catch-cli ",
+            "defanged": false,
+            "id": "process--06d58b5e-6b36-4e4f-be51-8ff4a07ec95d",
+            "is_hidden": false,
+            "spec_version": "2.1",
+            "type": "process"
+        },
+        {
+            "command_line": "chmod 664 catch-cli ",
+            "defanged": false,
+            "id": "process--f3001802-e0fc-4b8e-bb3c-13c2707acd12",
+            "is_hidden": false,
+            "spec_version": "2.1",
+            "type": "process"
+        },
+        {
+            "command_line": "sudo chmod 664 WinLog_4657_Output_STIX.json ",
+            "defanged": false,
+            "id": "process--0ab60664-d4cd-4ca1-8c64-a634b3b07ea2",
+            "is_hidden": false,
+            "spec_version": "2.1",
+            "type": "process"
+        },
+        {
+            "created": "2024-01-19T16:15:26.171Z",
+            "first_observed": "2024-01-19T16:15:26.171Z",
+            "id": "observed-data--1f10e1f5-0b2b-4b6b-a540-425bd430ad37",
+            "labels": [
+                "python"
+            ],
+            "last_observed": "2024-01-19T16:15:26.171Z",
+            "modified": "2024-01-19T16:15:26.171Z",
+            "number_observed": 1,
+            "object_refs": [
+                "infrastructure--69e0f045-aa2d-45d9-8af9-3b33328b7043",
+                "ipv4-addr--5fb18452-254b-5e07-b784-e4e82da820f1",
+                "user-account--85b10751-663f-5b44-911a-c5be56fd0344",
+                "process--894f713a-fd2c-41c8-9ba0-1bcd13e75f58"
+            ],
+            "revoked": false,
+            "spec_version": "2.1",
+            "type": "observed-data"
+        },
+        {
+            "created": "2024-01-19T16:15:26.171Z",
+            "first_observed": "2024-01-19T16:15:26.171Z",
+            "id": "observed-data--97320dce-99f4-4979-86b6-e05bf9da043c",
+            "labels": [
+                "arp"
+            ],
+            "last_observed": "2024-01-19T16:15:26.171Z",
+            "modified": "2024-01-19T16:15:26.171Z",
+            "number_observed": 1,
+            "object_refs": [
+                "infrastructure--69e0f045-aa2d-45d9-8af9-3b33328b7043",
+                "ipv4-addr--5fb18452-254b-5e07-b784-e4e82da820f1",
+                "user-account--85b10751-663f-5b44-911a-c5be56fd0344",
+                "process--c565fe3a-a353-4a62-bbc6-8c8506bf39cb"
+            ],
+            "revoked": false,
+            "spec_version": "2.1",
+            "type": "observed-data"
+        },
+        {
+            "created": "2024-01-19T16:15:26.171Z",
+            "first_observed": "2024-01-19T16:15:26.171Z",
+            "id": "observed-data--8117fd77-780b-43a7-9116-504019a786f3",
+            "labels": [
+                "chmod"
+            ],
+            "last_observed": "2024-01-19T16:15:26.171Z",
+            "modified": "2024-01-19T16:15:26.171Z",
+            "number_observed": 1,
+            "object_refs": [
+                "infrastructure--69e0f045-aa2d-45d9-8af9-3b33328b7043",
+                "ipv4-addr--5fb18452-254b-5e07-b784-e4e82da820f1",
+                "user-account--85b10751-663f-5b44-911a-c5be56fd0344",
+                "process--21b2744f-9d2c-46d1-9c7f-976111885418",
+                "process--f9e8f648-44f7-47e8-9491-73c80cd187c7",
+                "process--0836c6be-0cb0-4404-98f3-b1094cc3fa25",
+                "process--8ab2a8d8-8e69-44aa-9ae4-4cd8711361a1",
+                "process--ae966d58-c984-4444-a84e-a7584f26e33e",
+                "process--c85cc320-3d41-40e8-9370-6d043d167618",
+                "process--06d58b5e-6b36-4e4f-be51-8ff4a07ec95d",
+                "process--f3001802-e0fc-4b8e-bb3c-13c2707acd12",
+                "process--0ab60664-d4cd-4ca1-8c64-a634b3b07ea2"
+            ],
+            "revoked": false,
+            "spec_version": "2.1",
+            "type": "observed-data"
+        },
+        {
+            "created": "2024-01-19T16:15:26.171Z",
+            "first_observed": "2024-01-19T16:15:26.171Z",
+            "id": "observed-data--8330af86-b9c6-49c2-a06b-b1c7417c4f62",
+            "labels": [
+                "chown"
+            ],
+            "last_observed": "2024-01-19T16:15:26.171Z",
+            "modified": "2024-01-19T16:15:26.171Z",
+            "number_observed": 1,
+            "object_refs": [
+                "infrastructure--69e0f045-aa2d-45d9-8af9-3b33328b7043",
+                "ipv4-addr--5fb18452-254b-5e07-b784-e4e82da820f1",
+                "user-account--85b10751-663f-5b44-911a-c5be56fd0344",
+                "process--411f1e43-a3f8-47fc-9727-92153a6231ab",
+                "process--eed68e2b-9785-4dee-958e-469501642b75",
+                "process--5bc7a386-8be3-4f27-afd4-4be79f0dd0f3",
+                "process--b3ba90b7-df04-4440-915f-199f09a9bf27"
+            ],
+            "revoked": false,
+            "spec_version": "2.1",
+            "type": "observed-data"
+        },
+        {
+            "created": "2024-01-19T16:15:26.171Z",
+            "first_observed": "2024-01-19T16:15:26.171Z",
+            "id": "observed-data--c4ee46ed-5899-4609-bc35-76a18114b723",
+            "labels": [
+                "/bin/bash"
+            ],
+            "last_observed": "2024-01-19T16:15:26.171Z",
+            "modified": "2024-01-19T16:15:26.171Z",
+            "number_observed": 1,
+            "object_refs": [
+                "infrastructure--69e0f045-aa2d-45d9-8af9-3b33328b7043",
+                "ipv4-addr--5fb18452-254b-5e07-b784-e4e82da820f1",
+                "user-account--85b10751-663f-5b44-911a-c5be56fd0344",
+                "process--e814339e-603f-4145-8825-75e3227d514f"
+            ],
+            "revoked": false,
+            "spec_version": "2.1",
+            "type": "observed-data"
+        }
+    ]
+}

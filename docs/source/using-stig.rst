@@ -9,9 +9,9 @@ Connecting to a Database
 
 .. image:: db-gif.gif
 
-The recommended method for creating a database is to use STIG. The default configuration looks for a database called "stig" being served off of localhost. If you have never used the application before, this database is not correctly configured.
+The recommended method for creating a database is to use STIG. The default configuration looks for a database being served off of localhost. If you have never used the application before, this database is not correctly configured.
 
-.. note: Make sure OrientDB is running before attempting to connect STIG to the database.
+.. note: Make sure Neo4j is running before attempting to connect STIG to the database.
 
 Navigate to **Edit** / **Configure** / **Database Connection**.
 
@@ -23,17 +23,16 @@ Navigate to **Edit** / **Configure** / **Database Connection**.
 
 Select **New** to create a new database (:red:`* required`)
 
-* **Host**: the IP address of the OrientDB server (localhost) :red:`*` 
-* **Port**: 2424 (API port for OrientDB) :red:`*` 
+* **Host**: the IP address of the Neo4j server (localhost) :red:`*` 
+* **Port**: the API port for Neo4j :red:`*` 
 * **Database Name**: Enter a name for the database :red:`*` 
 * **Database User**: Set a username for the database
 * **Database User Password**: Set a password for the database
-* **Database Admin**: This is the root user for OrientDB install ("root") :red:`*` 
-* **Database Admin Password**: This is the root password you setup for OrientDB :red:`*` 
+* **Database Admin**: This is the root user for the Neo4j install ("root") :red:`*` 
+* **Database Admin Password**: This is the root password you setup for Neo4j :red:`*` 
 
 
-Click **Save**. Navigate in your browser to `<IP address for OrientDB server>:2480` to view the database in OrientDB Studio. (i.e. `localhost:2480`)
-
+Click **Save**.
 On the next dialog you will be able to select the radio button for the database you wish to use, and click the "Use" button to enable that database configuration. This configuration will be remembered the next time you use the application. If done correctly, the application will create and load all necessary classes and allow you to use the application.
 
 Adding Content to STIG 
@@ -54,8 +53,6 @@ Copy / Paste
 Creating Relationships 
 ----------------------
 - Create relationships by hovering over an object in the graph, then dragging from the small red box to the other object.  When the target object's border turns purple release the mouse to complete the relationship.
-
-- OrientDB's Web app, SQL console interface, or available API's can be used to do bulk inserts.
 
 Diff 
 ----------

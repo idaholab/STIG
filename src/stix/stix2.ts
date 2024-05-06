@@ -4,13 +4,12 @@ Copyright 2018 Southern California Edison Company
 ALL RIGHTS RESERVED
  */
 
-import { PositionDimension } from 'cytoscape';
 import * as uuid from 'uuid';
 
 export interface BundleType {
   type: 'bundle' | 'Bundle';
   objects: Core[];
-  metadata?: {id: string, position: {x: number, y: number}}[];
+  metadata?: Array<{ id: string; position: { x: number; y: number } }>;
 }
 
 export type SDO = Asset | AttackPattern | Campaign | CourseOfAction | Identity | Indicator | IntrusionSet | Malware | ObservedData | Report | ThreatActor | Tool | Vulnerability;
@@ -18,6 +17,15 @@ export type SDO = Asset | AttackPattern | Campaign | CourseOfAction | Identity |
 export type SRO = Relationship | Sighting;
 
 export type StixObject = SDO | SRO;
+
+const relationshipsKeyRegex = /((r|R)elationship)|((s|S)ighting)/;
+export function isSRO (item: Core): item is SRO {
+  return relationshipsKeyRegex.exec(item.type) !== null;
+}
+
+export function isRelationship (item: Core): item is Relationship {
+  return item.type.toLocaleLowerCase() === 'relationship';
+}
 
 /**
  * Common properties and behavior across all STIX Domain Objects and STIX Relationship Objects.
@@ -74,9 +82,7 @@ export type ExternalReference = ({
    */
   external_id: string;
   [k: string]: any;
-} | {
-    [k: string]: any;
-  });
+} | Record<string, any>);
 
 export type Id = string;
 
@@ -85,9 +91,7 @@ export interface GranularMarking {
    * A list of selectors for content contained within the STIX object in which this property appears.
    */
   selectors: string[];
-  marking_ref: (Identifier & {
-    [k: string]: any;
-  });
+  marking_ref: (Identifier & Record<string, any>);
   [k: string]: any;
 }
 
@@ -116,7 +120,7 @@ export type Identifier = string;
 export type Timestamp = string;
 
 export type Asset = (Core & {
-  type: "asset";
+  type: 'asset';
   id: Id;
   name: string;
   description?: string;
@@ -125,7 +129,7 @@ export type Asset = (Core & {
   category_ext: string[];
   compromised?: boolean;
   owner_aware?: boolean;
-  technical_characteristics?: Array<{ field: string, data: string }>;
+  technical_characteristics?: Array<{ field: string; data: string }>;
 });
 
 /**
@@ -135,7 +139,7 @@ export type AttackPattern = (Core & {
   /**
  * The type of this object, which MUST be the literal `attack-pattern`.
  */
-  type?: "attack-pattern";
+  type?: 'attack-pattern';
   id?: Id;
   /**
  * The name used to identify the Attack Pattern.
@@ -159,7 +163,7 @@ export type Campaign = (Core & {
   /**
  * The type of this object, which MUST be the literal `campaign`.
  */
-  type?: "campaign";
+  type?: 'campaign';
   id?: Id;
   /**
  * The name used to identify the Campaign.
@@ -189,7 +193,7 @@ export type CourseOfAction = (Core & {
   /**
  * The type of this object, which MUST be the literal `course-of-action`.
  */
-  type?: "course-of-action";
+  type?: 'course-of-action';
   id?: Id;
   /**
  * The name used to identify the Course of Action.
@@ -209,7 +213,7 @@ export type Identity = (Core & {
   /**
  * The type of this object, which MUST be the literal `identity`.
  */
-  type?: "identity";
+  type?: 'identity';
   id?: Id;
   /**
  * The list of roles that this Identity performs (e.g., CEO, Domain Administrators, Doctors, Hospital, or Retailer). No open vocabulary is yet defined for this property.
@@ -245,7 +249,7 @@ export type Indicator = (Core & {
   /**
  * The type of this object, which MUST be the literal `indicator`.
  */
-  type?: "indicator";
+  type?: 'indicator';
   id?: Id;
   /**
  * This field is an Open Vocabulary that specifies the type of indicator. Open vocab - indicator-label-ov
@@ -279,7 +283,7 @@ export type IntrusionSet = (Core & {
   /**
  * The type of this object, which MUST be the literal `intrusion-set`.
  */
-  type?: "intrusion-set";
+  type?: 'intrusion-set';
   id?: Id;
   /**
  * The name used to identify the Intrusion Set.
@@ -321,7 +325,7 @@ export type Malware = (Core & {
   /**
  * The type of this object, which MUST be the literal `malware`.
  */
-  type?: "malware";
+  type?: 'malware';
   id?: Id;
   /**
  * The type of malware being described. Open Vocab - malware-label-ov
@@ -346,7 +350,7 @@ export type ObservedData = (Core & {
   /**
  * The type of this object, which MUST be the literal `observed-data`.
  */
-  type?: "observed-data";
+  type?: 'observed-data';
   id?: Id;
   first_observed?: Timestamp;
   last_observed?: Timestamp;
@@ -357,9 +361,7 @@ export type ObservedData = (Core & {
   /**
  * A dictionary of Cyber Observable Objects that describes the single 'fact' that was observed.
  */
-  objects?: {
-    [k: string]: any;
-  };
+  objects?: Record<string, any>;
   [k: string]: any;
 });
 
@@ -370,7 +372,7 @@ export type Report = (Core & {
   /**
  * The type of this object, which MUST be the literal `report`.
  */
-  type?: "report";
+  type?: 'report';
   id?: Id;
   /**
  * This field is an Open Vocabulary that specifies the primary subject of this report. The suggested values for this field are in report-label-ov.
@@ -399,7 +401,7 @@ export type ThreatActor = (Core & {
   /**
  * The type of this object, which MUST be the literal `threat-actor`.
  */
-  type?: "threat-actor";
+  type?: 'threat-actor';
   id?: Id;
   /**
  * This field specifies the type of threat actor. Open Vocab - threat-actor-label-ov
@@ -452,7 +454,7 @@ export type Tool = (Core & {
   /**
  * The type of this object, which MUST be the literal `tool`.
  */
-  type?: "tool";
+  type?: 'tool';
   id?: Id;
   /**
  * The kind(s) of tool(s) being described. Open Vocab - tool-label-ov
@@ -484,7 +486,7 @@ export type Vulnerability = (Core & {
   /**
  * The type of this object, which MUST be the literal `vulnerability`.
  */
-  type?: "vulnerability";
+  type?: 'vulnerability';
   id?: Id;
   /**
  * The name used to identify the Vulnerability.
@@ -504,7 +506,7 @@ export type Relationship = (Core & {
   /**
  * The type of this object, which MUST be the literal `relationship`.
  */
-  type?: "relationship";
+  type?: 'relationship';
   id?: Id;
   /**
  * The name used to identify the type of relationship.
@@ -531,7 +533,7 @@ export type Sighting = (Core & {
   /**
  * The type of this object, which MUST be the literal `sighting`.
  */
-  type?: "sighting";
+  type?: 'sighting';
   id?: Id;
   first_seen?: Timestamp;
   last_seen?: Timestamp;
@@ -572,9 +574,7 @@ export interface CyberObservableCore {
 /**
  * Specifies any extensions of the object, as a dictionary.
  */
-export interface Dictionary {
-  [key: string]: any;
-}
+export type Dictionary = Record<string, any>;
 
 /**
  * The Artifact Object permits capturing an array of bytes (8-bits), as a base64-encoded string string, or linking to a file-like payload.
@@ -583,7 +583,7 @@ export type Artifact = (CyberObservableCore & {
   /**
  * The value of this property MUST be `artifact`.
  */
-  type?: "artifact";
+  type?: 'artifact';
   /**
  * The value of this property MUST be a valid MIME type as specified in the IANA Media Types registry.
  */
@@ -602,7 +602,7 @@ export type AutonomousSystem = (CyberObservableCore & {
   /**
  * The value of this property MUST be `autonomous-system`.
  */
-  type?: "autonomous-system";
+  type?: 'autonomous-system';
   /**
  * Specifies the number assigned to the AS. Such assignments are typically performed by a Regional Internet Registries (RIR).
  */
@@ -625,7 +625,7 @@ export type Directory = (CyberObservableCore & {
   /**
  * The value of this property MUST be `directory`.
  */
-  type?: "directory";
+  type?: 'directory';
   /**
  * Specifies the path, as originally observed, to the directory on the file system.
  */
@@ -651,7 +651,7 @@ export type DomainName = (CyberObservableCore & {
   /**
  * The value of this property MUST be `domain-name`.
  */
-  type?: "domain-name";
+  type?: 'domain-name';
   /**
  * Specifies the value of the domain name.
  */
@@ -670,7 +670,7 @@ export type EmailAddr = (CyberObservableCore & {
   /**
  * The value of this property MUST be `email-addr`.
  */
-  type?: "email-addr";
+  type?: 'email-addr';
   /**
  * Specifies a single email address. This MUST not include the display name.
  */
@@ -693,7 +693,7 @@ export type EmailMessage = (CyberObservableCore & {
   /**
  * The value of this property MUST be `email-message`.
  */
-  type?: "email-message";
+  type?: 'email-message';
   date?: Timestamp;
   /**
  * Specifies the value of the 'Content-Type' header of the email message.
@@ -730,9 +730,7 @@ export type EmailMessage = (CyberObservableCore & {
   /**
  * Specifies any other header fields found in the email message, as a dictionary.
  */
-  additional_header_fields?: {
-    [k: string]: any;
-  };
+  additional_header_fields?: Record<string, any>;
   /**
  * Specifies the raw binary contents of the email message, including both the headers and body, as a reference to an Artifact Object.
  */
@@ -747,13 +745,11 @@ export type File = (CyberObservableCore & {
   /**
  * The value of this property MUST be `file`.
  */
-  type?: "file";
+  type?: 'file';
   /**
  * The File Object defines the following extensions. In addition to these, producers MAY create their own. Extensions: ntfs-ext, raster-image-ext, pdf-ext, archive-ext, windows-pebinary-ext
  */
-  extensions?: {
-    [k: string]: Dictionary;
-  };
+  extensions?: Record<string, Dictionary>;
   hashes?: Dictionary;
   /**
  * Specifies the size of the file, in bytes, as a non-negative integer.
@@ -802,7 +798,7 @@ export type Ipv4Addr = (CyberObservableCore & {
   /**
  * The value of this property MUST be `ipv4-addr`.
  */
-  type?: "ipv4-addr";
+  type?: 'ipv4-addr';
   /**
  * Specifies one or more IPv4 addresses expressed using CIDR notation.
  */
@@ -825,7 +821,7 @@ export type Ipv6Addr = (CyberObservableCore & {
   /**
  * The value of this property MUST be `ipv6-addr`.
  */
-  type?: "ipv6-addr";
+  type?: 'ipv6-addr';
   /**
  * Specifies one or more IPv6 addresses expressed using CIDR notation.
  */
@@ -842,18 +838,18 @@ export type Ipv6Addr = (CyberObservableCore & {
 });
 
 export interface MarkingDefinition {
-  type: "marking definition";
+  type: 'marking definition';
   id: Identifier;
   created_by_ref?: Identifier;
   created: Timestamp;
-  definition_type: "statement";
+  definition_type: 'statement';
   definition: {
-      statement: string;
+    statement: string;
   };
 }
 
 export interface ObjectMarkingRelationship extends Relationship {
-  type: "relationship";
+  type: 'relationship';
   relationship_type: 'applies-to';
   id: Identifier;
   source_ref: Identifier;
@@ -864,7 +860,7 @@ export interface ObjectMarkingRelationship extends Relationship {
 }
 
 export class ObjectMarkingRelationship implements ObjectMarkingRelationship {
-  public type: "relationship";
+  public type: 'relationship';
   public relationship_type: 'applies-to';
   public id: Identifier;
   public source_ref: Identifier;
@@ -873,19 +869,19 @@ export class ObjectMarkingRelationship implements ObjectMarkingRelationship {
   public modified: Timestamp;
   public description: string;
 
-  constructor(source_ref: Identifier, target_ref: Identifier, created: Timestamp, modified: Timestamp) {
+  constructor (source_ref: Identifier, target_ref: Identifier, created: Timestamp, modified: Timestamp) {
     this.source_ref = source_ref;
     this.target_ref = target_ref;
     this.created = created;
     this.modified = modified;
     this.id = 'applies-to--' + uuid.v4();
-    this.type = "relationship";
-    this.relationship_type = "applies-to";
+    this.type = 'relationship';
+    this.relationship_type = 'applies-to';
   }
 }
 
 export interface CreatedByRelationship extends Relationship {
-  type: "relationship";
+  type: 'relationship';
   relationship_type: 'created-by';
   source_ref: Id;
   target_ref: Id;
@@ -895,16 +891,16 @@ export interface CreatedByRelationship extends Relationship {
   modified: Timestamp;
 }
 
-export function CreatedByRelationshipFactory(src_ref: Identifier, tgt_ref: Identifier, ceate_time: Timestamp, mod_time: Timestamp): CreatedByRelationship {
+export function CreatedByRelationshipFactory (src_ref: Identifier, tgt_ref: Identifier, ceate_time: Timestamp, mod_time: Timestamp): CreatedByRelationship {
   const ret = {
-    type: "relationship",
+    type: 'relationship',
     relationship_type: 'created-by',
     source_ref: src_ref,
     target_ref: tgt_ref,
     id: 'created-by--' + uuid.v4(),
     description: '',
     created: ceate_time,
-    modified: mod_time,
+    modified: mod_time
   };
   return ret as CreatedByRelationship;
 }
