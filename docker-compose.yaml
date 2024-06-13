@@ -1,29 +1,37 @@
-version: "3.3"
+version: '3.3'
 services:
-  npm:
-    build: 
-      context: .
-      dockerfile: Dockerfile
+  neo4j:
+    image: neo4j:latest
+    hostname: neo4j
+    container_name: neo4j
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - ./neo4jdata/data:/data 
+      - ./neo4jdata/logs:/logs 
+      - ./neo4jdata/conf:/conf/
+      - ./neo4jdata/import:/var/lib/neo4j/import 
+      - ./neo4jdata/plugins:/plugins 
+    environment:
+      - NEO4J_AUTH=neo4j/toor
+      - NEO4J_db_import_csv_buffer__size=14680064
+      - NEO4J_PLUGINS=["apoc"] #to install the APOC plugin, allowing for user defined functions
+      - NEO4J_dbms_security_procedures_unrestricted="apoc.*"
+      - NEO4J_dbms_security_auth__minimum__password__length=3
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      # NEO4J_dbms_logs_debug_level: DEBUG
+
+  stig:
+    image: idaholab/stig:latest
+    container_name: stig
     ports:
       - '3000:3000'
-    volumes:
-      - ./src:/stig/src
-  orientdb:
-    image: orientdb:3.0.42
-    ports:
-      - '2424:2424'
-      - '2480:2480'
-    volumes:
-      - config:/orientdb/config
-      - databases:/orientdb/databases
-      - backup:/orientdb/backup
-    environment:
-      ORIENTDB_ROOT_PASSWORD: 'toor'
-volumes:
-  config:
-  databases:
-  backup:
-  
-    
-      
-    
+
+
+
+
+
+
+
