@@ -73,7 +73,7 @@ const getNodeMetadata = (nodes) => {
   }));
 };
 
-function layoutHandler (graph_utils: GraphUtils, settings: StigSettings, layout: string) {
+function layoutHandler(graph_utils: GraphUtils, settings: StigSettings, layout: string) {
   return () => {
     $('a').filter(function (_index: number, ele: HTMLElement) { return ele.id.includes('dd-layout'); }).prop('style', 'background-color: white');
     $('#dd-layoutCose').prop('style', 'background-color: #0d6efd');
@@ -84,7 +84,7 @@ function layoutHandler (graph_utils: GraphUtils, settings: StigSettings, layout:
 }
 
 export class Main {
-  public run () {
+  public run() {
     // Initialize tippy tooltips
     tippy('[data-tippy-content]', {
       theme: 'light',
@@ -328,7 +328,7 @@ export class Main {
       // #endregion
 
       // function to search elements inside the displayed graph
-      function search (prop: string, searchterm: string | number): cytoscape.CollectionReturnValue {
+      function search(prop: string, searchterm: string | number): cytoscape.CollectionReturnValue {
         let prop2: string | null = null;
         let prop3: string | null = null;
         searchterm = searchterm.toString().trim();
@@ -589,7 +589,7 @@ export class Main {
        *
        * @param {DragEvent} evt
        */
-      function handleFileDrop (evt: DragEvent) {
+      function handleFileDrop(evt: DragEvent) {
         evt.preventDefault();
         handleFiles(evt.dataTransfer!.files);
       }
@@ -598,7 +598,7 @@ export class Main {
        * @description Event handler for drag in progress
        * @param {DragEvent} evt
        */
-      function handleDragOver (evt: DragEvent) {
+      function handleDragOver(evt: DragEvent) {
         evt.preventDefault();
         evt.dataTransfer!.dropEffect = 'copy'; // Explicitly show this is a copy.
       }
@@ -608,7 +608,7 @@ export class Main {
        *
        * @param {FileList} files
        */
-      function handleFiles (files: FileList) {
+      function handleFiles(files: FileList) {
         for (const file of files) {
           document.getElementById('chosen-files')!.innerText += file.name + ' ';
 
@@ -625,7 +625,7 @@ export class Main {
        *
        * @param {BundleType} pkg
        */
-      function addToGraph (pkg: BundleType, data_source: stix.DataSourceType) {
+      function addToGraph(pkg: BundleType, data_source: stix.DataSourceType) {
         const added = graph_utils.buildNodes(pkg.objects, data_source);
         $('.message-status').html(`Added ${added.length} elements to graph.`);
         if (pkg.metadata) {
@@ -675,18 +675,26 @@ export class Main {
         // Get raw data from all cy elements
         // Create bundle object
         const bundle_id = 'bundle--' + uuid.v4();
-        const bundle: BundleType = { type: 'bundle', id: bundle_id, objects: [] } as any;
+        let bundle: BundleType = { type: 'bundle', id: bundle_id, objects: [] } as any;
         let nodes = window.cycore.$(':visible');
         nodes = nodes.union(nodes.connectedEdges());
+        
+        //ATTN: the following logic may actually do nothing at all. If that is the case, this problem can be solved by doing the filter like on the visual edges
+        // logic to remove null on json export
         nodes.each((ele) => {
           if (ele.length === 0) {
             return;
           }
-          // logic to remove null on json export
           if (ele.data('raw_data') !== undefined) {
             bundle.objects.push(ele.data('raw_data'));
           }
         });
+
+        //filter out embedded relationship visual edges
+        bundle.objects = bundle.objects.filter((bundleObj: any) => {
+          return bundleObj !== "visual_edge";
+        })
+
         // Open the export widget
         openBundleExport(bundle);
       });
@@ -739,7 +747,7 @@ export class Main {
        * @param {string} node_type
        * @returns {Promise<StixNode>}
        */
-      function event_add_node (node_type: string): StixNode {
+      function event_add_node(node_type: string): StixNode {
         const opts: stix.StixNodeData = {
           type: node_type,
           id: node_type + '--' + uuid.v4(),
@@ -772,7 +780,7 @@ export class Main {
        * @param {JQuery.ClickEvent<HTMLElement, { name: string; }>} evt
        * @returns {Promise<boolean>}
        */
-      function widget_bar_onclick<HTMLElement> (evt: JQuery.ClickEvent<HTMLElement, { name: string }>): boolean {
+      function widget_bar_onclick<HTMLElement>(evt: JQuery.ClickEvent<HTMLElement, { name: string }>): boolean {
         // alert(evt.data['name'] + " clicked");
         const my_node = event_add_node(evt.data.name);
         cy.add(my_node);
