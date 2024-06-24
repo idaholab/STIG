@@ -14,12 +14,12 @@
 2) Remove or comment out the following code from STIG-Old\docker-compose.yaml (currently lines 26-32): 
 ```   
 26  stig:
-27  build:
-28    context: .
-29    dockerfile: Dockerfile
-30    container_name: stig
-31  ports:
-32    - '3000:3000'
+27    build:
+28      context: .
+29      dockerfile: Dockerfile
+30      container_name: stig
+31    ports:
+32      - '3000:3000'
 ```
 3) cd into STIG-Old
 4) Run `docker-compose up -d`
