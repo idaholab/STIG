@@ -33,12 +33,8 @@ The collection of files here provide a quick and easy way to populate Neo4j with
     go build
 This will generate an executable file.
 
-Run the Program: You can now run the program. If you are using an external STIX JSON file, provide it as a command-line argument using the -stix-file flag. Replace /path/to/100testNodes.json with the actual path to your STIX file.
+Run the Program: You can now run the program. Once it starts running you will be prompted to input how many nodes you would like to populate into Neo4j. THe command is down below.
 
-
-    go run neo4jData.go -stix-file="/file/path/to/100testNodes.json"
-
-If you want to use the embedded STIX data in the code, simply run the program without any flags:
 
 
     go run neo4jData.go
