@@ -43,3 +43,7 @@ Check the Output: If the program runs successfully, it will upload the STIX data
 
 ## Deleting nodes inside of neo4J
 - match(anyVariable) detach delete anyVariable inside the query box in the Neo4j browser!
+
+
+## Deleting nodes inside of neo4J
+- match(anyVariable) detach delete anyVariable inside the query box in the Neo4j browser!
