@@ -25,7 +25,7 @@ The collection of files here provide a quick and easy way to populate Neo4j with
 
 - Save the Go program code in a file with a .go extension, for example, upload_stix.go.
 
-- Provide STIX JSON File (Optional): If you want to upload STIX data from an external file rather than the embedded data in the code, ensure you have the STIX JSON file ready and know its file path.
+- STIX JSON Files (Optional): These files have valid STIX in a JSON format that can be used to upload to NEO4J directly
 
 - Compile the Program: Navigate to the directory containing your .go file in the terminal and compile the Go program by running:
 
