@@ -42,4 +42,4 @@ Run the Program: You can now run the program. Once it starts running you will be
 Check the Output: If the program runs successfully, it will upload the STIX data to the Neo4j database and print a success message. If there are errors, they will be logged to the terminal. Then just refreshed the window where your database is and the nodes should be populated
 
 ## Deleting nodes inside of neo4J
-- match(anyVariable) detach delete anyVariable
+- match(anyVariable) detach delete anyVariable inside the query box in the Neo4j browser!
