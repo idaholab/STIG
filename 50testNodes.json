@@ -1,0 +1,404 @@
+{
+  "threat_actors": [
+    {
+      "id": "threat-actor-1",
+      "name": "APT1",
+      "description": "Advanced Persistent Threat Group 1",
+      "aliases": ["Red APT", "Unit 61398"],
+      "targets": ["Organizations in finance sector"],
+      "country": "China"
+    },
+    {
+      "id": "threat-actor-2",
+      "name": "Cozy Bear",
+      "description": "APT29",
+      "aliases": ["APT29", "Cozy Duke"],
+      "targets": ["Government organizations"],
+      "country": "Russia"
+    },
+    {
+      "id": "threat-actor-3",
+      "name": "Fancy Bear",
+      "description": "APT28",
+      "aliases": ["Sofacy", "Sednit"],
+      "targets": ["Political entities"],
+      "country": "Russia"
+    },
+    {
+      "id": "threat-actor-4",
+      "name": "DarkHydrus",
+      "description": "APT-C-35",
+      "aliases": ["Hydsej", "Neptun", "RANCOR"],
+      "targets": ["Government organizations"],
+      "country": "Iran"
+    },
+    {
+      "id": "threat-actor-5",
+      "name": "Lazarus Group",
+      "description": "APT38",
+      "aliases": ["Hidden Cobra", "Guardians of Peace"],
+      "targets": ["Financial institutions"],
+      "country": "North Korea"
+    },
+    {
+      "id": "threat-actor-6",
+      "name": "Charming Kitten",
+      "description": "APT35",
+      "aliases": ["NewsBeef", "Newscaster"],
+      "targets": ["Journalists and activists"],
+      "country": "Iran"
+    },
+    {
+      "id": "threat-actor-7",
+      "name": "Sandworm Team",
+      "description": "APT28",
+      "aliases": ["Voodoo Bear", "BlackEnergy"],
+      "targets": ["Energy sector"],
+      "country": "Russia"
+    },
+    {
+      "id": "threat-actor-8",
+      "name": "Axiom Group",
+      "description": "APT17",
+      "aliases": ["Dynamite Panda", "Numbered Panda"],
+      "targets": ["Technology companies"],
+      "country": "China"
+    },
+    {
+      "id": "threat-actor-9",
+      "name": "MuddyWater",
+      "description": "APT33",
+      "aliases": ["Static Kitten", "TEMP.Zagros"],
+      "targets": ["Middle Eastern governments"],
+      "country": "Iran"
+    },
+    {
+      "id": "threat-actor-10",
+      "name": "Machete",
+      "description": "APT-C-35",
+      "aliases": ["Sowbug", "SpiceFish"],
+      "targets": ["Government agencies"],
+      "country": "Brazil"
+    },
+    {
+      "id": "threat-actor-11",
+      "name": "Cobalt Group",
+      "description": "APT-C-36",
+      "aliases": ["Cobalt Strike", "Carbanak"],
+      "targets": ["Financial institutions"],
+      "country": "Russia"
+    },
+    {
+      "id": "threat-actor-12",
+      "name": "OceanLotus",
+      "description": "APT32",
+      "aliases": ["APT-C-00", "SeaLotus"],
+      "targets": ["Vietnamese dissidents"],
+      "country": "Vietnam"
+    },
+    {
+      "id": "threat-actor-13",
+      "name": "APT41",
+      "description": "Winnti Group",
+      "aliases": ["Barium", "Blackfly"],
+      "targets": ["Video game industry"],
+      "country": "China"
+    },
+    {
+      "id": "threat-actor-14",
+      "name": "Equation Group",
+      "description": "APT-C-00",
+      "aliases": ["The Equation", "Equation"],
+      "targets": ["Global intelligence agencies"],
+      "country": "United States"
+    },
+    {
+      "id": "threat-actor-15",
+      "name": "Naikon",
+      "description": "APT30",
+      "aliases": ["APT-C-02", "Hellsing"],
+      "targets": ["Southeast Asian governments"],
+      "country": "China"
+    },
+    {
+      "id": "threat-actor-16",
+      "name": "APT40",
+      "description": "Temp.Periscope",
+      "aliases": ["MuddyWater", "Static Kitten"],
+      "targets": ["Telecommunications sector"],
+      "country": "Iran"
+    },
+    {
+      "id": "threat-actor-17",
+      "name": "DarkHotel",
+      "description": "APT-C-14",
+      "aliases": ["APT-C-06", "APT28"],
+      "targets": ["Business executives"],
+      "country": "South Korea"
+    },
+    {
+      "id": "threat-actor-18",
+      "name": "FIN7",
+      "description": "Carbanak Group",
+      "aliases": ["Anunak", "Cobalt Spider"],
+      "targets": ["Retail sector"],
+      "country": "Russia"
+    },
+    {
+      "id": "threat-actor-19",
+      "name": "APT29",
+      "description": "Cozy Bear",
+      "aliases": ["The Dukes", "Office Monkeys"],
+      "targets": ["Government networks"],
+      "country": "Russia"
+    },
+    {
+      "id": "threat-actor-20",
+      "name": "APT30",
+      "description": "Naikon",
+      "aliases": ["Hellsing", "APT-C-02"],
+      "targets": ["Southeast Asian governments"],
+      "country": "China"
+    },
+    {
+      "id": "threat-actor-21",
+      "name": "APT32",
+      "description": "OceanLotus",
+      "aliases": ["SeaLotus", "APT-C-00"],
+      "targets": ["Vietnamese dissidents"],
+      "country": "Vietnam"
+    },
+    {
+      "id": "threat-actor-22",
+      "name": "APT17",
+      "description": "Axiom Group",
+      "aliases": ["Dynamite Panda", "Numbered Panda"],
+      "targets": ["Technology companies"],
+      "country": "China"
+    },
+    {
+      "id": "threat-actor-23",
+      "name": "APT33",
+      "description": "MuddyWater",
+      "aliases": ["TEMP.Zagros", "Static Kitten"],
+      "targets": ["Middle Eastern governments"],
+      "country": "Iran"
+    },
+    {
+      "id": "threat-actor-24",
+      "name": "APT-C-35",
+      "description": "Machete",
+      "aliases": ["Sowbug", "SpiceFish"],
+      "targets": ["Government agencies"],
+      "country": "Brazil"
+    },
+    {
+      "id": "threat-actor-25",
+      "name": "APT-C-36",
+      "description": "Cobalt Group",
+      "aliases": ["Cobalt Strike", "Carbanak"],
+      "targets": ["Financial institutions"],
+      "country": "Russia"
+    },
+    {
+      "id": "threat-actor-26",
+      "name": "APT28",
+      "description": "Sandworm Team",
+      "aliases": ["Voodoo Bear", "BlackEnergy"],
+      "targets": ["Energy sector"],
+      "country": "Russia"
+    },
+    {
+      "id": "threat-actor-27",
+      "name": "APT17",
+      "description": "Dynamite Panda",
+      "aliases": ["Numbered Panda", "APT27"],
+      "targets": ["Technology companies"],
+      "country": "China"
+    },
+    {
+      "id": "threat-actor-28",
+      "name": "APT33",
+      "description": "Static Kitten",
+      "aliases": ["TEMP.Zagros", "MuddyWater"],
+      "targets": ["Middle Eastern governments"],
+      "country": "Iran"
+    },
+    {
+      "id": "threat-actor-29",
+      "name": "APT-C-35",
+      "description": "SpiceFish",
+      "aliases": ["Sowbug", "Machete"],
+      "targets": ["Government agencies"],
+      "country": "Brazil"
+    },
+    {
+      "id": "threat-actor-30",
+      "name": "APT-C-36",
+      "description": "Carbanak",
+      "aliases": ["Cobalt Strike", "Cobalt Group"],
+      "targets": ["Financial institutions"],
+      "country": "Russia"
+    },
+    {
+      "id": "threat-actor-31",
+      "name": "APT-C-00",
+      "description": "OceanLotus",
+      "aliases": ["SeaLotus", "APT32"],
+      "targets": ["Vietnamese dissidents"],
+      "country": "Vietnam"
+    },
+    {
+      "id": "threat-actor-32",
+      "name": "Barium",
+      "description": "APT41",
+      "aliases": ["Blackfly", "Winnti Group"],
+      "targets": ["Video game industry"],
+      "country": "China"
+    },
+    {
+      "id": "threat-actor-33",
+      "name": "The Equation",
+      "description": "Equation Group",
+      "aliases": ["Equation", "APT-C-00"],
+      "targets": ["Global intelligence agencies"],
+      "country": "United States"
+    },
+    {
+      "id": "threat-actor-34",
+      "name": "APT-C-02",
+      "description": "Naikon",
+      "aliases": ["Hellsing", "APT30"],
+      "targets": ["Southeast Asian governments"],
+      "country": "China"
+    },
+    {
+      "id": "threat-actor-35",
+      "name": "APT40",
+      "description": "Temp.Periscope",
+      "aliases": ["MuddyWater", "Static Kitten"],
+      "targets": ["Telecommunications sector"],
+      "country": "Iran"
+    },
+    {
+      "id": "threat-actor-36",
+      "name": "APT-C-14",
+      "description": "DarkHotel",
+      "aliases": ["APT-C-06", "APT28"],
+      "targets": ["Business executives"],
+      "country": "South Korea"
+    },
+    {
+      "id": "threat-actor-37",
+      "name": "Carbanak Group",
+      "description": "FIN7",
+      "aliases": ["Anunak", "Cobalt Spider"],
+      "targets": ["Retail sector"],
+      "country": "Russia"
+    },
+    {
+      "id": "threat-actor-38",
+      "name": "Cozy Bear",
+      "description": "APT29",
+      "aliases": ["The Dukes", "Office Monkeys"],
+      "targets": ["Government networks"],
+      "country": "Russia"
+    },
+    {
+      "id": "threat-actor-39",
+      "name": "APT30",
+      "description": "Naikon",
+      "aliases": ["Hellsing", "APT-C-02"],
+      "targets": ["Southeast Asian governments"],
+      "country": "China"
+    },
+    {
+      "id": "threat-actor-40",
+      "name": "OceanLotus",
+      "description": "APT32",
+      "aliases": ["SeaLotus", "APT-C-00"],
+      "targets": ["Vietnamese dissidents"],
+      "country": "Vietnam"
+    },
+    {
+      "id": "threat-actor-41",
+      "name": "Axiom Group",
+      "description": "APT17",
+      "aliases": ["Dynamite Panda", "Numbered Panda"],
+      "targets": ["Technology companies"],
+      "country": "China"
+    },
+    {
+      "id": "threat-actor-42",
+      "name": "MuddyWater",
+      "description": "APT33",
+      "aliases": ["TEMP.Zagros", "Static Kitten"],
+      "targets": ["Middle Eastern governments"],
+      "country": "Iran"
+    },
+    {
+      "id": "threat-actor-43",
+      "name": "Machete",
+      "description": "APT-C-35",
+      "aliases": ["Sowbug", "SpiceFish"],
+      "targets": ["Government agencies"],
+      "country": "Brazil"
+    },
+    {
+      "id": "threat-actor-44",
+      "name": "Cobalt Group",
+      "description": "APT-C-36",
+      "aliases": ["Cobalt Strike", "Carbanak"],
+      "targets": ["Financial institutions"],
+      "country": "Russia"
+    },
+    {
+      "id": "threat-actor-45",
+      "name": "Sandworm Team",
+      "description": "APT28",
+      "aliases": ["Voodoo Bear", "BlackEnergy"],
+      "targets": ["Energy sector"],
+      "country": "Russia"
+    },
+    {
+      "id": "threat-actor-46",
+      "name": "Dynamite Panda",
+      "description": "APT17",
+      "aliases": ["Numbered Panda", "APT27"],
+      "targets": ["Technology companies"],
+      "country": "China"
+    },
+    {
+      "id": "threat-actor-47",
+      "name": "Static Kitten",
+      "description": "APT33",
+      "aliases": ["TEMP.Zagros", "MuddyWater"],
+      "targets": ["Middle Eastern governments"],
+      "country": "Iran"
+    },
+    {
+      "id": "threat-actor-48",
+      "name": "SpiceFish",
+      "description": "APT-C-35",
+      "aliases": ["Sowbug", "Machete"],
+      "targets": ["Government agencies"],
+      "country": "Brazil"
+    },
+    {
+      "id": "threat-actor-49",
+      "name": "Carbanak",
+      "description": "APT-C-36",
+      "aliases": ["Cobalt Strike", "Cobalt Group"],
+      "targets": ["Financial institutions"],
+      "country": "Russia"
+    },
+    {
+      "id": "threat-actor-50",
+      "name": "APT-C-00",
+      "description": "OceanLotus",
+      "aliases": ["SeaLotus", "APT32"],
+      "targets": ["Vietnamese dissidents"],
+      "country": "Vietnam"
+    }
+  ]
+}
