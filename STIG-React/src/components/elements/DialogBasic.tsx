@@ -98,11 +98,11 @@ export const DialogBasic: React.FC<Props> = ({
         open={open}
       >
         <div className={`modal-box max-w-[1000px] min-w-none p-12 shadow-md-gray-light
-          ${theme === 'dark' ? 'bg-gray-800 text-gray-100' : 'bg-gray-200 text-gray-900'}`}
+          ${theme === 'dark' ? 'bg-gray-700 text-gray-100' : 'bg-gray-200 text-gray-900'}`}
           ref={modalRef}>
           <div className='flex justify-between items-center'>
-            <h2 className="text-2xl mb-0 align-middle">{title}</h2>
-            <div className="-mr-4">
+            <h2 className="text-2xl mb-8 align-middle">{title}</h2>
+            <div className="-mr-4 mb-8">
               <ButtonIcon buttonSize={'btn-sm'} label={'Close'} buttonIcon={'close'} color={'btn-ghost'} onClick={handleCloseDialog} />
             </div>
           </div>
