@@ -4,6 +4,7 @@ import FormElementTextInput from './formElements/FormElementTextInput';
 import FormElementPasswordInput from './formElements/FormElementPasswordInput';
 import ButtonBasic from '../elements/ButtonBasic';
 import FormElementSelect from './formElements/FormElementSelect';
+import ButtonIcon from '../elements/ButtonIcon';
 
 const FormDatabaseConnect: React.FC = () => {
   // todo: Remove
@@ -110,6 +111,18 @@ const FormDatabaseConnect: React.FC = () => {
                 onClick={() => {setSelectedProfile(profile)}}
               >
                 {profile.ProfileName}
+                {selectedProfile?.Id === profile.Id ?
+                  <div className="flex justify-end">
+                    <ButtonIcon 
+                      label={"Delete Database Connection"} 
+                      color={"btn-ghost"} 
+                      onClick={() => {}} 
+                      buttonIcon={"delete"} 
+                      buttonSize={"btn-xs"} 
+                    />
+                  </div>
+                  : null
+                }
               </a>
             </li>
           );
