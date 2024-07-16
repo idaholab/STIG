@@ -83,21 +83,20 @@ const FormDatabaseConnect: React.FC = () => {
   ];
 
   const [selectedProfile, setSelectedProfile] = useState<DBProfile | undefined>();
-  const [profileName, setProfileName] = useState<string | undefined>();
-  const [databaseType, setDatabaseType] = useState<string | undefined>();
-  const [host, setHost] = useState<string | undefined>();
-  const [databaseName, setDatabaseName] = useState<string | undefined>();
-  const [username, setUsername] = useState<string | undefined>();
-  const [password, setPassword] = useState<string | undefined>();
+  const [profileName, setProfileName] = useState<string>("");
+  const [databaseType, setDatabaseType] = useState<string>("");
+  const [host, setHost] = useState<string>("");
+  const [databaseName, setDatabaseName] = useState<string>("");
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
 
   useEffect(() => {
-    console.log("In useEffect");
-    setProfileName(selectedProfile?.ProfileName ?? undefined);
-    setDatabaseType(selectedProfile?.DatabaseType ?? undefined);
-    setHost(selectedProfile?.Host ?? undefined);
-    setDatabaseName(selectedProfile?.DatabaseName ?? undefined);
-    setUsername(selectedProfile?.Username ?? undefined);
-    setPassword(selectedProfile?.Password ?? undefined);
+    setProfileName(selectedProfile?.ProfileName ?? "");
+    setDatabaseType(selectedProfile?.DatabaseType ?? "");
+    setHost(selectedProfile?.Host ?? "");
+    setDatabaseName(selectedProfile?.DatabaseName ?? "");
+    setUsername(selectedProfile?.Username ?? "");
+    setPassword(selectedProfile?.Password ?? "");
   }, [selectedProfile]);
 
   return (
