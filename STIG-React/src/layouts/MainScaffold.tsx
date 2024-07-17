@@ -16,7 +16,7 @@ const MainScaffold: React.FC<Props> = ({ children }) => {
           <Header />
 
           <div className="flex flex-1 h-full pb-8 relative">
-            {/* <Drawer /> */}
+            { <Drawer /> }
 
             <main className="mb-8 flex-1 transition-all ml-18 h-full">
               {children}
