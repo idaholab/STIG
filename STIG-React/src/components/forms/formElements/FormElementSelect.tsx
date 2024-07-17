@@ -7,6 +7,7 @@ type Props = {
   options: string[];
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   className?: string;
+  disabled?: boolean;
 };
 
 const FormElementSelect: React.FC<Props> = ({
@@ -14,7 +15,8 @@ const FormElementSelect: React.FC<Props> = ({
   value,
   options,
   onChange,
-  className
+  className,
+  disabled
 }) => {
   return (
     <div className={`flex items-center ${className}`}>
@@ -31,6 +33,7 @@ const FormElementSelect: React.FC<Props> = ({
           bg-gray-300
           dark:bg-gray-600
         "
+        disabled={disabled}
       >
         {options.map((option, i) => {
           return (

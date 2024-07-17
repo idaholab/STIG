@@ -6,13 +6,15 @@ type Props = {
   value?: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   className?: string;
+  disabled?: boolean;
 };
 
 const FormElementPasswordInput: React.FC<Props> = ({
   placeholder,
   value,
   onChange,
-  className
+  className,
+  disabled
 }) => {
   return (
     <div className={`flex items-center ${className}`}>
@@ -30,6 +32,7 @@ const FormElementPasswordInput: React.FC<Props> = ({
           bg-gray-300
           dark:bg-gray-600
         "
+        disabled={disabled}
       />
     </div>
   );

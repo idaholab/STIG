@@ -57,24 +57,6 @@ export const DialogBasic: React.FC<Props> = ({
   const modalRef = React.useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
-        handleCloseDialog();
-      }
-    };
-
-    if (open) {
-      document.addEventListener('click', handleClickOutside);
-    } else {
-      document.removeEventListener('click', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-    };
-  }, [open]);
-
-  useEffect(() => {
     if (isOpen) {
       setOpen(true);
     }
