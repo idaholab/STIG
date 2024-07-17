@@ -1,50 +1,57 @@
 {
     "kill-chain": [
         {
-            "type": "lockheed-martin",
+            "type": "lockheed-martin-cyber-kill-chain",
             "id": 1,
             "phases": [
                 {
-                    "name": "Reconnaissance",
+                    "name": "reconnaissance",
                     "aliases": [
+                        "Reconnaissance",
                         "Recon"
                     ]
                 },
                 {
-                    "name": "Weaponization",
+                    "name": "weaponization",
                     "aliases": [
+                        "Weaponization",
                         "Weaponize"
                     ]
                 },
                 {
-                    "name": "Delivery",
+                    "name": "delivery",
                     "aliases": [
+                        "Delivery",
                         "Deliver"
                     ]
                 },
                 {
-                    "name": "Exploitation",
+                    "name": "exploitation",
                     "aliases": [
+                        "Exploitation",
                         "Exploit"
                     ]
                 },
                 {
-                    "name": "Installation",
+                    "name": "installation",
                     "aliases": [
+                        "Installation",
                         "Install"
                     ]
                 },
                 {
-                    "name": "Command and Control",
+                    "name": "command-and-control",
                     "aliases": [
+                        "Command and Control",
                         "Command & Control",
                         "C2",
                         "Callback"
                     ]
                 },
                 {
-                    "name": "Actions on Objectives",
+                    "name": "actions-on-objectives",
                     "aliases": [
+                        "Actions on Objectives",
                         "Exfiltration",
                         "Actions",
                         "Act on Objectives",
