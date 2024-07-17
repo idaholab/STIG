@@ -7,6 +7,10 @@ import { DBProfile } from '@/interfaces/DBProfile';
 import FormDatabaseConnect from '../components/forms/FormDatabaseConnect';
 
 const DBProfileModal: React.FC = () => {
+  const [dbProfiles, setDBProfiles] = useState(readDBConfigStorage());
+  if(!dbProfiles.length) {
+    initializeDBConfigStorage();
+  }
   const [selectedProfile, setSelectedProfile] = useState<DBProfile | undefined>();
   const [isFormComplete, setIsFormComplete] = useState(true);
   const [inDBDeleteProcess, setInDBDeleteProcess] = useState(false);
@@ -19,12 +23,14 @@ const DBProfileModal: React.FC = () => {
           selectedProfile={selectedProfile}
           setSelectedProfile={setSelectedProfile}
           setInDBDeleteProcess={setInDBDeleteProcess}
+          setDBProfiles={setDBProfiles}
         />
         : null
       }
       <div className='grid grid-rows-8 grid-flow-col'>
         {/* Database Profile Selector: */}
         <DBProfileSelector
+          dbProfiles={dbProfiles}
           inDBDeleteProcess={inDBDeleteProcess}
           setInDBDeleteProcess={setInDBDeleteProcess}
           selectedProfile={selectedProfile}
@@ -34,19 +40,24 @@ const DBProfileModal: React.FC = () => {
         {/* Database Profile Form: */}
         <FormDatabaseConnect
           selectedProfile={selectedProfile}
+          setSelectedProfile={setSelectedProfile}
           inDBDeleteProcess={inDBDeleteProcess}
           isFormComplete={isFormComplete}
           setIsFormComplete={setIsFormComplete}
+          setDBProfiles={setDBProfiles}
         />
       </div>
     </>
   );
 };
 
-function DBDeleteConfirmationDialog({selectedProfile, setSelectedProfile, setInDBDeleteProcess}: 
+function DBDeleteConfirmationDialog({selectedProfile, setSelectedProfile, setInDBDeleteProcess, 
+    setDBProfiles
+  }: 
   { selectedProfile: DBProfile | undefined,
-    setSelectedProfile: (value: React.SetStateAction<DBProfile | undefined>) => void
-    setInDBDeleteProcess: (value: React.SetStateAction<boolean>) => void,
+    setSelectedProfile: React.Dispatch<React.SetStateAction<DBProfile | undefined>>,
+    setInDBDeleteProcess: React.Dispatch<React.SetStateAction<boolean>>,
+    setDBProfiles: React.Dispatch<React.SetStateAction<DBProfile[]>>
   }) {
   return(
     <div role="alert" className="alert mb-8 w-6/12">
@@ -70,7 +81,8 @@ function DBDeleteConfirmationDialog({selectedProfile, setSelectedProfile, setInD
           if(selectedProfile) {
             removeDBConfig(selectedProfile.Id);
             setInDBDeleteProcess(false);
-            setSelectedProfile(undefined)
+            setSelectedProfile(undefined);
+            setDBProfiles(readDBConfigStorage());
           }
         }}
       >
@@ -88,20 +100,17 @@ function DBDeleteConfirmationDialog({selectedProfile, setSelectedProfile, setInD
   );
 }
 
-function DBProfileSelector({inDBDeleteProcess, setInDBDeleteProcess, selectedProfile, 
+function DBProfileSelector({dbProfiles, inDBDeleteProcess, setInDBDeleteProcess, selectedProfile, 
   setSelectedProfile, setIsFormComplete }:
   {
+    dbProfiles: DBProfile[],
     inDBDeleteProcess: boolean,
-    setInDBDeleteProcess: (value: React.SetStateAction<boolean>) => void,
+    setInDBDeleteProcess: React.Dispatch<React.SetStateAction<boolean>>,
     selectedProfile: DBProfile | undefined,
-    setSelectedProfile: (value: React.SetStateAction<DBProfile | undefined>) => void
-    setIsFormComplete: (value: React.SetStateAction<boolean>) => void
+    setSelectedProfile: React.Dispatch<React.SetStateAction<DBProfile | undefined>>,
+    setIsFormComplete: React.Dispatch<React.SetStateAction<boolean>>,
   }
   ) {
-  let dbProfiles = readDBConfigStorage();
-  if(!dbProfiles.length) {
-    initializeDBConfigStorage();
-  }
 
   return(
     <ul className="overflow-y-scroll row-span-8 menu bg-gray-800 rounded-box w-56 h-252">

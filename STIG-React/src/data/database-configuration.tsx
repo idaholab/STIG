@@ -9,21 +9,21 @@ export function initializeDBConfigStorage() {
 
 export function addDBConfig(newConfig: DBProfile) {
     const dbConfigs = localStorage.getItem('dbConfig');
-    const dbConfigsJSON:DBProfile[] = dbConfigs ? JSON.parse(dbConfigs) : [];
-    dbConfigsJSON.push(newConfig);
-    localStorage.setItem('dbConfig', JSON.stringify(dbConfigsJSON));
+    const dbConfigsParsed:DBProfile[] = dbConfigs ? JSON.parse(dbConfigs) : [];
+    dbConfigsParsed.push(newConfig);
+    localStorage.setItem('dbConfig', JSON.stringify(dbConfigsParsed));
 }
 
 export function removeDBConfig(configToDeleteId: string) {
     const dbConfigs = localStorage.getItem('dbConfig');
-    const dbConfigsJSON:DBProfile[] = dbConfigs ? JSON.parse(dbConfigs) : [];
-    let newDBConfigsJSON:DBProfile[] = [];
-    dbConfigsJSON.map(dbConfig => {
+    const dbConfigsParsed:DBProfile[] = dbConfigs ? JSON.parse(dbConfigs) : [];
+    let newDBConfigsParsed:DBProfile[] = [];
+    dbConfigsParsed.map(dbConfig => {
         if(dbConfig.Id !== configToDeleteId) {
-            newDBConfigsJSON.push(dbConfig);
+            newDBConfigsParsed.push(dbConfig);
         }
     });
-    localStorage.setItem('dbConfig', JSON.stringify(newDBConfigsJSON));
+    localStorage.setItem('dbConfig', JSON.stringify(newDBConfigsParsed));
 }
 
 export function editDBConfig(editedConfig: DBProfile) {
@@ -33,5 +33,10 @@ export function editDBConfig(editedConfig: DBProfile) {
 
 export function readDBConfigStorage(): DBProfile[] {
     const dbConfigs = localStorage.getItem('dbConfig');
-    return dbConfigs ? JSON.parse(dbConfigs) : [];
+    const dbConfigsParsed = dbConfigs ? JSON.parse(dbConfigs) : [];
+    // Order DBConfigs by ProfileName
+    dbConfigsParsed.sort((a:DBProfile, b:DBProfile) => {
+        return a.ProfileName.localeCompare(b.ProfileName);
+    })
+    return dbConfigsParsed;
 }

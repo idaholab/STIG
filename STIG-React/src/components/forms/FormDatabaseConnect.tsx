@@ -5,15 +5,17 @@ import FormElementTextInput from './formElements/FormElementTextInput';
 import FormElementPasswordInput from './formElements/FormElementPasswordInput';
 import ButtonBasic from '../elements/ButtonBasic';
 import FormElementSelect from './formElements/FormElementSelect';
-import { addDBConfig, editDBConfig } from '../../data/database-configuration';
+import { addDBConfig, editDBConfig, readDBConfigStorage } from '../../data/database-configuration';
 import { DBProfile } from '@/interfaces/DBProfile';
 
-export default function FormDatabaseConnect ({selectedProfile, inDBDeleteProcess, 
-  isFormComplete, setIsFormComplete}: 
+export default function FormDatabaseConnect ({selectedProfile, setSelectedProfile, inDBDeleteProcess, 
+  isFormComplete, setIsFormComplete, setDBProfiles}: 
   { selectedProfile: DBProfile | undefined,
+    setSelectedProfile: React.Dispatch<React.SetStateAction<DBProfile | undefined>>
     inDBDeleteProcess: boolean,
     isFormComplete: boolean,
-    setIsFormComplete: React.Dispatch<React.SetStateAction<boolean>>
+    setIsFormComplete: React.Dispatch<React.SetStateAction<boolean>>,
+    setDBProfiles: React.Dispatch<React.SetStateAction<DBProfile[]>>
   }) {
   const dbTypeOptions = [
     "Neo4j"
@@ -111,7 +113,7 @@ export default function FormDatabaseConnect ({selectedProfile, inDBDeleteProcess
               });
             } else {
               // Create a new database profile
-              addDBConfig({
+              const newDBProfile = {
                 Id: uuidv4(),
                 ProfileName: profileName,
                 DatabaseType: databaseType,
@@ -119,8 +121,11 @@ export default function FormDatabaseConnect ({selectedProfile, inDBDeleteProcess
                 DatabaseName: databaseName,
                 Username: username,
                 Password: password
-              });
+              };
+              addDBConfig(newDBProfile);
+              setSelectedProfile(newDBProfile);
             }
+            setDBProfiles(readDBConfigStorage());
           }}
         />
       </div>
