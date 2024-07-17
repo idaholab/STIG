@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { DialogBasic } from '../components/elements/DialogBasic';
-import FormDatabaseConnect from '../components/forms/FormDatabaseConnect';
+import DBProfileModal from './DBProfileModal';
 
 const LayoutMainLanding: React.FC = () => {
   return (
@@ -16,7 +16,7 @@ const LayoutMainLanding: React.FC = () => {
           buttonSize="btn-xs"
           showFormButtons={false}
         >
-          <FormDatabaseConnect/>
+          <DBProfileModal/>
         </DialogBasic>
       </div>  
     </div>
