@@ -1,4 +1,4 @@
-interface DBProfile {
+export interface DBProfile {
     Id: string,
     ProfileName: string,
     DatabaseType: string,

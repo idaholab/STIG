@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import { DialogBasic } from '../components/elements/DialogBasic';
 import FormDatabaseConnect from '../components/forms/FormDatabaseConnect';
@@ -13,7 +13,7 @@ const LayoutMainLanding: React.FC = () => {
           buttonType="icon"
           buttonIcon="add"
           buttonColor='btn-secondary'
-          buttonSize="btn-sm"
+          buttonSize="btn-xs"
           showFormButtons={false}
         >
           <FormDatabaseConnect/>

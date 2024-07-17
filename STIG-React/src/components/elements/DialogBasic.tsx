@@ -11,7 +11,7 @@ type Props = {
   buttonType?: 'text' | 'icon'; // Optional button type
   buttonLabel?: string; // Optional button label for text button
   buttonIcon?: string; // Optional icon from https://fonts.google.com/icons
-  buttonSize?: 'btn-sm';
+  buttonSize?: 'btn-sm' | 'btn-xs';
   isOpen?: boolean; // Control the open state from outside
   onSave?: (data: { sourceName: string; file?: File; url?: string }) => void; // Save handler
   onClose?: () => void; // Close handler
@@ -103,7 +103,7 @@ export const DialogBasic: React.FC<Props> = ({
           <div className='flex justify-between items-center'>
             <h2 className="text-2xl mb-8 align-middle">{title}</h2>
             <div className="-mr-4 mb-8">
-              <ButtonIcon buttonSize={'btn-sm'} label={'Close'} buttonIcon={'close'} color={'btn-ghost'} onClick={handleCloseDialog} />
+              <ButtonIcon buttonSize={buttonSize} label={'Close'} buttonIcon={'close'} color={'btn-ghost'} onClick={handleCloseDialog} />
             </div>
           </div>
 
