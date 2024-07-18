@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 
 import ButtonBasic from '../components/elements/ButtonBasic';
 import ButtonIcon from '../components/elements/ButtonIcon';
 import { initializeDBConfigStorage, readDBConfigStorage, removeDBConfig } from '../data/database-configuration';
 import { DBProfile } from '@/interfaces/DBProfile';
 import FormDatabaseConnect from '../components/forms/FormDatabaseConnect';
+import ConnectedDBContext, { ConnectedDBContextType } from '../contexts/ConnectedDBContext';
 
 const DBProfileModal: React.FC = () => {
   const [dbProfiles, setDBProfiles] = useState(readDBConfigStorage());
@@ -111,9 +112,10 @@ function DBProfileSelector({dbProfiles, inDBDeleteProcess, setInDBDeleteProcess,
     setIsFormComplete: React.Dispatch<React.SetStateAction<boolean>>,
   }
   ) {
+  const { connectedDBProfile } = useContext(ConnectedDBContext) as ConnectedDBContextType;
 
   return(
-    <ul className="overflow-y-scroll row-span-8 menu bg-gray-800 rounded-box w-56 h-252">
+    <ul className="overflow-y-scroll row-span-8 menu bg-gray-800 rounded-box w-56">
       {dbProfiles.map((profile) => {
         return(
           <li key={profile.Id} className={inDBDeleteProcess ? "disabled" : ""}>
@@ -127,8 +129,22 @@ function DBProfileSelector({dbProfiles, inDBDeleteProcess, setInDBDeleteProcess,
                 }
               }}
             >
-              {profile.ProfileName}
-              {selectedProfile?.Id === profile.Id ?
+              {/* Display a start for the connected DB */}
+              {connectedDBProfile?.Id === profile.Id ?
+                <div className="">
+                  <span className="material-icons">
+                    star
+                  </span>
+                </div>
+                : null
+              }
+              <div className={connectedDBProfile?.Id !== profile.Id ? "ml-8" : ""}>
+                {profile.ProfileName}
+              </div>
+              {/* Display a trashcan for the selected DB
+              as long as the selected DB is not connected */}
+              {selectedProfile?.Id === profile.Id  &&
+                connectedDBProfile?.Id !== profile.Id ?
                 <div className="flex justify-end">
                   <ButtonIcon 
                     label={"Delete Database Connection"} 
@@ -149,7 +165,7 @@ function DBProfileSelector({dbProfiles, inDBDeleteProcess, setInDBDeleteProcess,
       <li className="absolute bottom-12">
         <ButtonBasic
           label="+ NEW"
-          additionalClasses={"btn-sm" + (inDBDeleteProcess ? " btn-disabled" : "")}
+          additionalClasses={"btn-sm mb-3" + (inDBDeleteProcess ? " btn-disabled" : "")}
           onClick={() => {setSelectedProfile(undefined)}}
         />
       </li>

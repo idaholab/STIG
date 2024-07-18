@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import FormElementTextInput from './formElements/FormElementTextInput';
@@ -7,6 +7,8 @@ import ButtonBasic from '../elements/ButtonBasic';
 import FormElementSelect from './formElements/FormElementSelect';
 import { addDBConfig, editDBConfig, readDBConfigStorage } from '../../data/database-configuration';
 import { DBProfile } from '@/interfaces/DBProfile';
+import ConnectedDBContext, { ConnectedDBContextType } from '../../contexts/ConnectedDBContext';
+import ButtonAdvanced from '../elements/ButtonAdvanced';
 
 export default function FormDatabaseConnect ({selectedProfile, setSelectedProfile, inDBDeleteProcess, 
   isFormComplete, setIsFormComplete, setDBProfiles}: 
@@ -21,6 +23,8 @@ export default function FormDatabaseConnect ({selectedProfile, setSelectedProfil
     "Neo4j"
   ];
 
+  const { connectedDBProfile, setConnectedDBProfile } = useContext(ConnectedDBContext) as ConnectedDBContextType;
+
   // DB Profile form fields
   const [profileName, setProfileName] = useState<string>("");
   const [databaseType, setDatabaseType] = useState<string>(dbTypeOptions[0]);
@@ -28,6 +32,8 @@ export default function FormDatabaseConnect ({selectedProfile, setSelectedProfil
   const [databaseName, setDatabaseName] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+
+  const [isFormSubmitting, setIsFormSubmitting] = useState(false);
 
   useEffect(() => {
     setProfileName(selectedProfile?.ProfileName ?? "");
@@ -45,7 +51,9 @@ export default function FormDatabaseConnect ({selectedProfile, setSelectedProfil
         value={profileName}
         onChange={(event) => {setProfileName(event.target.value)}}
         className='mb-1'
-        disabled={inDBDeleteProcess}
+        disabled={inDBDeleteProcess || 
+          (selectedProfile && selectedProfile.Id === connectedDBProfile?.Id)
+        }
       />
       <FormElementSelect
         placeholder="Database Type"
@@ -53,48 +61,91 @@ export default function FormDatabaseConnect ({selectedProfile, setSelectedProfil
         options={dbTypeOptions}
         onChange={(event) => {setDatabaseType(event.target.value)}}
         className='mb-1'
-        disabled={inDBDeleteProcess}
+        disabled={inDBDeleteProcess || 
+          (selectedProfile && selectedProfile.Id === connectedDBProfile?.Id)
+        }
       />
       <FormElementTextInput
         placeholder="Host"
         value={host}
         onChange={(event) => {setHost(event.target.value)}}
         className='mb-1'
-        disabled={inDBDeleteProcess}
+        disabled={inDBDeleteProcess || 
+          (selectedProfile && selectedProfile.Id === connectedDBProfile?.Id)
+        }
       />
       <FormElementTextInput
         placeholder="Database Name"
         value={databaseName}
         onChange={(event) => {setDatabaseName(event.target.value)}}
         className='mb-1'
-        disabled={inDBDeleteProcess}
+        disabled={inDBDeleteProcess || 
+          (selectedProfile && selectedProfile.Id === connectedDBProfile?.Id)
+        }
       />
       <FormElementTextInput
         placeholder="Username"
         value={username}
         onChange={(event) => {setUsername(event.target.value)}}
         className='mb-1'
-        disabled={inDBDeleteProcess}
+        disabled={inDBDeleteProcess || 
+          (selectedProfile && selectedProfile.Id === connectedDBProfile?.Id)
+        }
       />
       <FormElementPasswordInput
         placeholder="Password"
         value={password}
         onChange={(event) => {setPassword(event.target.value)}}
         className='mb-1'
-        disabled={inDBDeleteProcess}
+        disabled={inDBDeleteProcess || 
+          (selectedProfile && selectedProfile.Id === connectedDBProfile?.Id)
+        }
       />
       <div className="flex justify-end">
+        <ButtonAdvanced 
+          label={<>
+            {selectedProfile && selectedProfile.Id === connectedDBProfile?.Id ? "Disconnect" : "Connect"}
+            {isFormSubmitting ?
+              <span className="loading loading-spinner loading-xs"></span>
+              : null
+            }
+          </>}
+          color="btn-secondary"
+          additionalClasses={"btn-sm mt-2 mr-2" + 
+            (inDBDeleteProcess || !selectedProfile || isFormSubmitting ? 
+              " btn-disabled" : ""
+            )
+          }
+          onClick={() => {
+            setIsFormSubmitting(true);
+            if(selectedProfile?.Id === connectedDBProfile?.Id) {
+              // Disconnect
+              setConnectedDBProfile(undefined);
+            } else {
+              // Connect
+              setConnectedDBProfile(selectedProfile);
+            }
+            setIsFormSubmitting(false);
+          }}
+        />
         <ButtonBasic 
           label="Save" 
           color="btn-primary"
-          additionalClasses={"btn-sm" + (inDBDeleteProcess ? " btn-disabled" : "")}
+          additionalClasses={"btn-sm mt-2" + 
+            (inDBDeleteProcess || (selectedProfile && selectedProfile.Id === connectedDBProfile?.Id)  || 
+              isFormSubmitting ? 
+              " btn-disabled" : ""
+            )
+          }
           onClick={() => {
+            setIsFormSubmitting(true);
             // Validate form data
             if(profileName === "" || databaseType === "" ||
               host === "" || databaseName === "" ||
               username === "" || password === ""
             ) {
               setIsFormComplete(false);
+              setIsFormSubmitting(false);
               return;
             } else {
               setIsFormComplete(true);
@@ -126,6 +177,7 @@ export default function FormDatabaseConnect ({selectedProfile, setSelectedProfil
               setSelectedProfile(newDBProfile);
             }
             setDBProfiles(readDBConfigStorage());
+            setIsFormSubmitting(false);
           }}
         />
       </div>
