@@ -5,30 +5,36 @@ import FormElementTextInput from './formElements/FormElementTextInput';
 import FormElementPasswordInput from './formElements/FormElementPasswordInput';
 import ButtonBasic from '../elements/ButtonBasic';
 import FormElementSelect from './formElements/FormElementSelect';
-import { addDBConfig, editDBConfig, readDBConfigStorage } from '../../data/database-configuration';
+import { addDBConfig, editDBConfig, readDBConfigStorage } from '../../data/db-profile-storage';
 import { DBProfile } from '@/interfaces/DBProfile';
 import ConnectedDBContext, { ConnectedDBContextType } from '../../contexts/ConnectedDBContext';
 import ButtonAdvanced from '../elements/ButtonAdvanced';
+import { connectToNeo4jDB, disconnectFromNeo4jDB } from '../../data/neo4j-connection';
 
 export default function FormDatabaseConnect ({selectedProfile, setSelectedProfile, inDBDeleteProcess, 
-  isFormComplete, setIsFormComplete, setDBProfiles}: 
+  isFormComplete, setIsFormComplete, setDBProfiles, dbOperationSuccessful, setDBOperationSuccessful}: 
   { selectedProfile: DBProfile | undefined,
     setSelectedProfile: React.Dispatch<React.SetStateAction<DBProfile | undefined>>
     inDBDeleteProcess: boolean,
     isFormComplete: boolean,
     setIsFormComplete: React.Dispatch<React.SetStateAction<boolean>>,
-    setDBProfiles: React.Dispatch<React.SetStateAction<DBProfile[]>>
+    setDBProfiles: React.Dispatch<React.SetStateAction<DBProfile[]>>,
+    dbOperationSuccessful: boolean,
+    setDBOperationSuccessful: React.Dispatch<React.SetStateAction<boolean>>
   }) {
   const dbTypeOptions = [
     "Neo4j"
   ];
 
-  const { connectedDBProfile, setConnectedDBProfile } = useContext(ConnectedDBContext) as ConnectedDBContextType;
+  const { connectedDBProfile, setConnectedDBProfile,
+    connectedDBDriver, setConnectedDBDriver
+  } = useContext(ConnectedDBContext) as ConnectedDBContextType;
 
   // DB Profile form fields
   const [profileName, setProfileName] = useState<string>("");
   const [databaseType, setDatabaseType] = useState<string>(dbTypeOptions[0]);
   const [host, setHost] = useState<string>("");
+  // todo: Is Database Name the same as Database Type
   const [databaseName, setDatabaseName] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -109,6 +115,14 @@ export default function FormDatabaseConnect ({selectedProfile, setSelectedProfil
               <span className="loading loading-spinner loading-xs"></span>
               : null
             }
+            {!dbOperationSuccessful ?
+              <div className="tooltip tooltip-bottom tooltip-error" data-tip="ERROR: Unable to Connect">
+                <span className="material-icons text-red-700">
+                  error_outline
+                </span>
+              </div>
+              : null
+            }
           </>}
           color="btn-secondary"
           additionalClasses={"btn-sm mt-2 mr-2" + 
@@ -116,14 +130,32 @@ export default function FormDatabaseConnect ({selectedProfile, setSelectedProfil
               " btn-disabled" : ""
             )
           }
-          onClick={() => {
+          onClick={async () => {
             setIsFormSubmitting(true);
             if(selectedProfile?.Id === connectedDBProfile?.Id) {
               // Disconnect
-              setConnectedDBProfile(undefined);
+              const successfulDisconnect = await disconnectFromNeo4jDB(connectedDBDriver);
+              if(successfulDisconnect) {
+                setConnectedDBProfile(undefined);
+                setConnectedDBDriver(undefined);
+                setDBOperationSuccessful(true);
+              } else {
+                setDBOperationSuccessful(false);
+              }
             } else {
               // Connect
-              setConnectedDBProfile(selectedProfile);
+              if(selectedProfile) {
+                const [newDriver, successfulConnection] = await connectToNeo4jDB(connectedDBDriver, selectedProfile)
+                if(successfulConnection) {
+                  setConnectedDBDriver(newDriver);
+                  setConnectedDBProfile(selectedProfile);
+                  setDBOperationSuccessful(true);
+                } else {
+                  // todo: Need to investigate incorrect credentials
+                  // not giving an error
+                  setDBOperationSuccessful(false);
+                }
+              }
             }
             setIsFormSubmitting(false);
           }}
@@ -182,7 +214,7 @@ export default function FormDatabaseConnect ({selectedProfile, setSelectedProfil
         />
       </div>
       {!isFormComplete ?
-        <p className="flex justify-end text-red-600">
+        <p className="flex justify-end text-red-700">
           Please double check that all fields above have been completed.
         </p>
         : null

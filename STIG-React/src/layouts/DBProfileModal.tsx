@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 
 import ButtonBasic from '../components/elements/ButtonBasic';
 import ButtonIcon from '../components/elements/ButtonIcon';
-import { initializeDBConfigStorage, readDBConfigStorage, removeDBConfig } from '../data/database-configuration';
+import { initializeDBConfigStorage, readDBConfigStorage, removeDBConfig } from '../data/db-profile-storage';
 import { DBProfile } from '@/interfaces/DBProfile';
 import FormDatabaseConnect from '../components/forms/FormDatabaseConnect';
 import ConnectedDBContext, { ConnectedDBContextType } from '../contexts/ConnectedDBContext';
@@ -15,6 +15,7 @@ const DBProfileModal: React.FC = () => {
   const [selectedProfile, setSelectedProfile] = useState<DBProfile | undefined>();
   const [isFormComplete, setIsFormComplete] = useState(true);
   const [inDBDeleteProcess, setInDBDeleteProcess] = useState(false);
+  const [dbOperationSuccessful, setDBOperationSuccessful] = useState(true);
 
   return (
     <>
@@ -37,6 +38,7 @@ const DBProfileModal: React.FC = () => {
           selectedProfile={selectedProfile}
           setSelectedProfile={setSelectedProfile}
           setIsFormComplete={setIsFormComplete}
+          setDBOperationSuccessful={setDBOperationSuccessful}
         />
         {/* Database Profile Form: */}
         <FormDatabaseConnect
@@ -46,6 +48,8 @@ const DBProfileModal: React.FC = () => {
           isFormComplete={isFormComplete}
           setIsFormComplete={setIsFormComplete}
           setDBProfiles={setDBProfiles}
+          dbOperationSuccessful={dbOperationSuccessful}
+          setDBOperationSuccessful={setDBOperationSuccessful}
         />
       </div>
     </>
@@ -102,7 +106,7 @@ function DBDeleteConfirmationDialog({selectedProfile, setSelectedProfile, setInD
 }
 
 function DBProfileSelector({dbProfiles, inDBDeleteProcess, setInDBDeleteProcess, selectedProfile, 
-  setSelectedProfile, setIsFormComplete }:
+  setSelectedProfile, setIsFormComplete, setDBOperationSuccessful }:
   {
     dbProfiles: DBProfile[],
     inDBDeleteProcess: boolean,
@@ -110,6 +114,7 @@ function DBProfileSelector({dbProfiles, inDBDeleteProcess, setInDBDeleteProcess,
     selectedProfile: DBProfile | undefined,
     setSelectedProfile: React.Dispatch<React.SetStateAction<DBProfile | undefined>>,
     setIsFormComplete: React.Dispatch<React.SetStateAction<boolean>>,
+    setDBOperationSuccessful: React.Dispatch<React.SetStateAction<boolean>>
   }
   ) {
   const { connectedDBProfile } = useContext(ConnectedDBContext) as ConnectedDBContextType;
@@ -126,16 +131,15 @@ function DBProfileSelector({dbProfiles, inDBDeleteProcess, setInDBDeleteProcess,
                 if(!inDBDeleteProcess) {
                   setSelectedProfile(profile);
                   setIsFormComplete(true);
+                  setDBOperationSuccessful(true);
                 }
               }}
             >
               {/* Display a start for the connected DB */}
               {connectedDBProfile?.Id === profile.Id ?
-                <div className="">
-                  <span className="material-icons">
-                    star
-                  </span>
-                </div>
+                <span className="material-icons">
+                  star
+                </span>
                 : null
               }
               <div className={connectedDBProfile?.Id !== profile.Id ? "ml-8" : ""}>
@@ -148,7 +152,7 @@ function DBProfileSelector({dbProfiles, inDBDeleteProcess, setInDBDeleteProcess,
                 <div className="flex justify-end">
                   <ButtonIcon 
                     label={"Delete Database Connection"} 
-                    color={"btn-ghost"} 
+                    color={"text-red-700"} 
                     onClick={() => {
                       setInDBDeleteProcess(true);
                     }} 

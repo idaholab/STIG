@@ -1,7 +1,7 @@
-import { DBProfile } from "@/interfaces/DBProfile";
-
 // This file contains the functions to store information about 
 // DB Profiles in the user's browser's local storage
+
+import { DBProfile } from "@/interfaces/DBProfile";
 
 export function initializeDBConfigStorage() {
     localStorage.setItem('dbConfig', JSON.stringify([]));
