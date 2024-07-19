@@ -17,7 +17,7 @@ export function addDBConfig(newConfig: DBProfile) {
 export function removeDBConfig(configToDeleteId: string) {
     const dbConfigs = localStorage.getItem('dbConfig');
     const dbConfigsParsed:DBProfile[] = dbConfigs ? JSON.parse(dbConfigs) : [];
-    let newDBConfigsParsed:DBProfile[] = [];
+    const newDBConfigsParsed:DBProfile[] = [];
     dbConfigsParsed.map(dbConfig => {
         if(dbConfig.Id !== configToDeleteId) {
             newDBConfigsParsed.push(dbConfig);

@@ -15,6 +15,6 @@ function SCODropdown() {
   return (
     <DropdownWrapper title="SCOs" items={scoItems} onSelect={handleSelect} />
   );
-};
+}
 
 export default SCODropdown;
