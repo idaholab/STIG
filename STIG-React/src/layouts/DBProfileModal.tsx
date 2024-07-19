@@ -29,7 +29,7 @@ const DBProfileModal: React.FC = () => {
         />
         : null
       }
-      <div className='grid grid-rows-8 grid-flow-col'>
+      <div className='grid'>
         {/* Database Profile Selector: */}
         <DBProfileSelector
           dbProfiles={dbProfiles}
@@ -120,56 +120,61 @@ function DBProfileSelector({dbProfiles, inDBDeleteProcess, setInDBDeleteProcess,
   const { connectedDBProfile } = useContext(ConnectedDBContext) as ConnectedDBContextType;
 
   return(
-    <ul className="overflow-y-scroll row-span-8 menu rounded-box w-56 bg-gray-300 dark:bg-gray-800">
-      {dbProfiles.map((profile) => {
-        return(
-          <li key={profile.Id} className={inDBDeleteProcess ? "disabled" : ""}>
-            <a
-              className={!inDBDeleteProcess && selectedProfile?.Id === profile.Id ? 
-                "bg-primary text-white hover:text-black dark:hover:text-white" : ""}
-              onClick={() => {
-                if(!inDBDeleteProcess) {
-                  setSelectedProfile(profile);
-                  setIsFormComplete(true);
-                  setDBOperationSuccessful(true);
+    <ul 
+      className="menu rounded-box w-56 h-72 bg-gray-300 dark:bg-gray-800
+        row-span-8 grid"
+    >
+      <div className={"overflow-auto grid" + (dbProfiles.length < 7 ? " grid-rows-6" : "")}>
+        {dbProfiles.map((profile) => {
+          return(
+            <li key={profile.Id} className={inDBDeleteProcess ? "disabled" : ""}>
+              <a
+                className={!inDBDeleteProcess && selectedProfile?.Id === profile.Id ? 
+                  "bg-primary text-white hover:text-black dark:hover:text-white" : ""}
+                onClick={() => {
+                  if(!inDBDeleteProcess) {
+                    setSelectedProfile(profile);
+                    setIsFormComplete(true);
+                    setDBOperationSuccessful(true);
+                  }
+                }}
+              >
+                {/* Display a start for the connected DB */}
+                {connectedDBProfile?.Id === profile.Id ?
+                  <span className="material-icons">
+                    star
+                  </span>
+                  : null
                 }
-              }}
-            >
-              {/* Display a start for the connected DB */}
-              {connectedDBProfile?.Id === profile.Id ?
-                <span className="material-icons">
-                  star
-                </span>
-                : null
-              }
-              <div className={connectedDBProfile?.Id !== profile.Id ? "ml-8" : ""}>
-                {profile.ProfileName}
-              </div>
-              {/* Display a trashcan for the selected DB
-              as long as the selected DB is not connected */}
-              {selectedProfile?.Id === profile.Id  &&
-                connectedDBProfile?.Id !== profile.Id ?
-                <div className="flex justify-end">
-                  <ButtonIcon 
-                    label={"Delete Database Connection"} 
-                    color={"text-red-700"} 
-                    onClick={() => {
-                      setInDBDeleteProcess(true);
-                    }} 
-                    buttonIcon={"delete"} 
-                    buttonSize={"btn-xs"} 
-                  />
+                <div className={"truncate" + (connectedDBProfile?.Id !== profile.Id ? " ml-8" : "")}>
+                  {profile.ProfileName}
                 </div>
-                : null
-              }
-            </a>
-          </li>
-        );
-      })}
-      <li className="absolute bottom-12">
+                {/* Display a trashcan for the selected DB
+                as long as the selected DB is not connected */}
+                {selectedProfile?.Id === profile.Id  &&
+                  connectedDBProfile?.Id !== profile.Id ?
+                  <div className="flex justify-end">
+                    <ButtonIcon 
+                      label={"Delete Database Connection"} 
+                      color={"text-red-700"} 
+                      onClick={() => {
+                        setInDBDeleteProcess(true);
+                      }} 
+                      buttonIcon={"delete"} 
+                      buttonSize={"btn-xs"} 
+                    />
+                  </div>
+                  : null
+                }
+              </a>
+            </li>
+          );
+        })}
+      </div>
+      <li className="justify-self-start self-end">
         <ButtonBasic
           label="+ NEW"
-          additionalClasses={"btn-sm mb-3" + (inDBDeleteProcess ? " btn-disabled" : "")}
+          additionalClasses={"btn-sm mt-2" + (inDBDeleteProcess ? " btn-disabled" : "")}
           onClick={() => {setSelectedProfile(undefined)}}
         />
       </li>
