@@ -141,9 +141,11 @@ function DBProfileSelector({dbProfiles, inDBDeleteProcess, setInDBDeleteProcess,
               >
                 {/* Display a start for the connected DB */}
                 {connectedDBProfile?.Id === profile.Id ?
-                  <span className="material-icons">
-                    star
-                  </span>
+                  <div className={`tooltip tooltip-right`} data-tip={"Connected"}>
+                    <span className="material-icons">
+                        star
+                      </span>
+                  </div>
                   : null
                 }
                 <div className={"truncate" + (connectedDBProfile?.Id !== profile.Id ? " ml-8" : "")}>
