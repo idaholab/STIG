@@ -139,7 +139,7 @@ function DBProfileSelector({dbProfiles, inDBDeleteProcess, setInDBDeleteProcess,
                   }
                 }}
               >
-                {/* Display a start for the connected DB */}
+                {/* Display a star for the connected DB */}
                 {connectedDBProfile?.Id === profile.Id ?
                   <div className={`tooltip tooltip-right`} data-tip={"Connected"}>
                     <span className="material-icons">

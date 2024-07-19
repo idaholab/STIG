@@ -11,7 +11,7 @@ const LayoutMainLanding: React.FC = () => {
         <p>Main Page!</p>
         <ConnectedDBProvider>
           <DialogBasic
-            title="Neo4j Database Settings"
+            title="Database Settings"
             buttonType="icon"
             buttonIcon="add"
             buttonColor='btn-secondary'

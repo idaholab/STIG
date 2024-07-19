@@ -205,32 +205,24 @@ export default function FormDatabaseConnect ({selectedProfile, setSelectedProfil
             } else {
               setIsFormComplete(true);
             }
+            const newDBProfile = {
+              Id: selectedProfile ? selectedProfile.Id : uuidv4(),
+              ProfileName: profileName,
+              DatabaseType: databaseType,
+              Host: host,
+              DatabaseName: databaseName,
+              Username: username,
+              Password: password
+            };
             // Save form data
             if(selectedProfile) {
               // Edit selected database profile
-              editDBConfig({
-                Id: selectedProfile.Id,
-                ProfileName: profileName,
-                DatabaseType: databaseType,
-                Host: host,
-                DatabaseName: databaseName,
-                Username: username,
-                Password: password
-              });
+              editDBConfig(newDBProfile);
             } else {
               // Create a new database profile
-              const newDBProfile = {
-                Id: uuidv4(),
-                ProfileName: profileName,
-                DatabaseType: databaseType,
-                Host: host,
-                DatabaseName: databaseName,
-                Username: username,
-                Password: password
-              };
               addDBConfig(newDBProfile);
-              setSelectedProfile(newDBProfile);
             }
+            setSelectedProfile(newDBProfile);
             setDBProfiles(readDBConfigStorage());
             setIsFormSubmitting(false);
           }}
