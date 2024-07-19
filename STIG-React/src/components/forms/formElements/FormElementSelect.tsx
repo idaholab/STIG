@@ -8,6 +8,9 @@ type Props = {
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   className?: string;
   disabled?: boolean;
+  includeInfo?: boolean;
+  infoText?: string;
+  additionalInfoClasses?: string;
 };
 
 const FormElementSelect: React.FC<Props> = ({
@@ -16,7 +19,10 @@ const FormElementSelect: React.FC<Props> = ({
   options,
   onChange,
   className,
-  disabled
+  disabled,
+  includeInfo,
+  infoText,
+  additionalInfoClasses
 }) => {
   return (
     <div className={`flex items-center ${className}`}>
@@ -41,6 +47,14 @@ const FormElementSelect: React.FC<Props> = ({
           )
         })}
       </select>
+      {includeInfo ?
+        <div className={`tooltip ${additionalInfoClasses}`} data-tip={infoText}>
+          <span className="ml-1 material-icons">
+            info_outline
+          </span>
+        </div>
+        : null
+      }
     </div>
   );
 }

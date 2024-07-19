@@ -3,24 +3,32 @@ import React from 'react';
 
 type Props = {
   placeholder: string;
+  type: "text" | "password";
   value?: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   className?: string;
   disabled?: boolean;
+  includeInfo?: boolean;
+  infoText?: string;
+  additionalInfoClasses?: string;
 };
 
 const FormElementTextInput: React.FC<Props> = ({
   placeholder,
+  type,
   value,
   onChange,
   className,
-  disabled
+  disabled,
+  includeInfo,
+  infoText,
+  additionalInfoClasses
 }) => {
   return (
     <div className={`flex items-center ${className}`}>
       <span className="mr-5 w-56">{placeholder}</span>
       <input
-        type="text"
+        type={type}
         // placeholder={placeholder}
         value={value}
         onChange={onChange}
@@ -34,6 +42,14 @@ const FormElementTextInput: React.FC<Props> = ({
         "
         disabled={disabled}
       />
+      {includeInfo ?
+        <div className={`tooltip ${additionalInfoClasses}`} data-tip={infoText}>
+          <span className="ml-1 material-icons">
+            info_outline
+          </span>
+        </div>
+        : null
+      }
     </div>
   );
 }

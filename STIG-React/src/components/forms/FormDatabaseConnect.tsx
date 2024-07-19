@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import FormElementTextInput from './formElements/FormElementTextInput';
-import FormElementPasswordInput from './formElements/FormElementPasswordInput';
 import ButtonBasic from '../elements/ButtonBasic';
 import FormElementSelect from './formElements/FormElementSelect';
 import { addDBConfig, editDBConfig, readDBConfigStorage } from '../../data/db-profile-storage';
@@ -54,12 +53,16 @@ export default function FormDatabaseConnect ({selectedProfile, setSelectedProfil
     <>
       <FormElementTextInput
         placeholder="Profile Name"
+        type="text"
         value={profileName}
         onChange={(event) => {setProfileName(event.target.value)}}
         className='mb-1'
         disabled={inDBDeleteProcess || 
           (selectedProfile && selectedProfile.Id === connectedDBProfile?.Id)
         }
+        includeInfo={true}
+        infoText='Friendly name to label this database profile.'
+        additionalInfoClasses='tooltip-left'
       />
       <FormElementSelect
         placeholder="Database Type"
@@ -70,42 +73,62 @@ export default function FormDatabaseConnect ({selectedProfile, setSelectedProfil
         disabled={inDBDeleteProcess || 
           (selectedProfile && selectedProfile.Id === connectedDBProfile?.Id)
         }
+        includeInfo={true}
+        infoText='Type of database. Only currently supported type is Neo4j.'
+        additionalInfoClasses='tooltip-left'
       />
       <FormElementTextInput
         placeholder="Host"
+        type="text"
         value={host}
         onChange={(event) => {setHost(event.target.value)}}
         className='mb-1'
         disabled={inDBDeleteProcess || 
           (selectedProfile && selectedProfile.Id === connectedDBProfile?.Id)
         }
+        includeInfo={true}
+        infoText='Connection url. Ex: neo4j://localhost:7687'
+        additionalInfoClasses='tooltip-left'
       />
       <FormElementTextInput
         placeholder="Database Name"
+        type="text"
         value={databaseName}
         onChange={(event) => {setDatabaseName(event.target.value)}}
         className='mb-1'
         disabled={inDBDeleteProcess || 
           (selectedProfile && selectedProfile.Id === connectedDBProfile?.Id)
         }
+        includeInfo={true}
+        // todo: Figure out what this does...
+        infoText='Addie needs to figure out what this does...'
+        additionalInfoClasses='tooltip-left'
       />
       <FormElementTextInput
         placeholder="Username"
+        type="text"
         value={username}
         onChange={(event) => {setUsername(event.target.value)}}
         className='mb-1'
         disabled={inDBDeleteProcess || 
           (selectedProfile && selectedProfile.Id === connectedDBProfile?.Id)
         }
+        includeInfo={true}
+        infoText='Database username. Ex: neo4j'
+        additionalInfoClasses='tooltip-left'
       />
-      <FormElementPasswordInput
+      <FormElementTextInput
         placeholder="Password"
+        type="password"
         value={password}
         onChange={(event) => {setPassword(event.target.value)}}
         className='mb-1'
         disabled={inDBDeleteProcess || 
           (selectedProfile && selectedProfile.Id === connectedDBProfile?.Id)
         }
+        includeInfo={true}
+        infoText='Database password.'
+        additionalInfoClasses='tooltip-left'
       />
       <div className="flex justify-end">
         <ButtonAdvanced 

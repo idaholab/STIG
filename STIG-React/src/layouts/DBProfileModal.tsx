@@ -120,13 +120,13 @@ function DBProfileSelector({dbProfiles, inDBDeleteProcess, setInDBDeleteProcess,
   const { connectedDBProfile } = useContext(ConnectedDBContext) as ConnectedDBContextType;
 
   return(
-    <ul className="overflow-y-scroll row-span-8 menu bg-gray-800 rounded-box w-56">
+    <ul className="overflow-y-scroll row-span-8 menu rounded-box w-56 bg-gray-300 dark:bg-gray-800">
       {dbProfiles.map((profile) => {
         return(
           <li key={profile.Id} className={inDBDeleteProcess ? "disabled" : ""}>
             <a
               className={!inDBDeleteProcess && selectedProfile?.Id === profile.Id ? 
-                "bg-primary" : ""}
+                "bg-primary text-white hover:text-black dark:hover:text-white" : ""}
               onClick={() => {
                 if(!inDBDeleteProcess) {
                   setSelectedProfile(profile);
