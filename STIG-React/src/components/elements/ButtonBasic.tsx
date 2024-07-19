@@ -5,7 +5,6 @@ interface ButtonProps {
   /**
    * Button contents
    */
-  // TODO: Take out this standardized component edit?
   label: string | React.JSX.Element;
   /**
    * What is the background color? Use classes.
