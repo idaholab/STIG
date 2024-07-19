@@ -7,7 +7,6 @@ import FormElementSelect from './formElements/FormElementSelect';
 import { addDBConfig, editDBConfig, readDBConfigStorage } from '../../data/db-profile-storage';
 import { DBProfile } from '@/interfaces/DBProfile';
 import ConnectedDBContext, { ConnectedDBContextType } from '../../contexts/ConnectedDBContext';
-import ButtonAdvanced from '../elements/ButtonAdvanced';
 import { connectToNeo4jDB, disconnectFromNeo4jDB } from '../../data/neo4j-connection';
 
 export default function FormDatabaseConnect ({selectedProfile, setSelectedProfile, inDBDeleteProcess, 
@@ -33,7 +32,6 @@ export default function FormDatabaseConnect ({selectedProfile, setSelectedProfil
   const [profileName, setProfileName] = useState<string>("");
   const [databaseType, setDatabaseType] = useState<string>(dbTypeOptions[0]);
   const [host, setHost] = useState<string>("");
-  // todo: Is Database Name the same as Database Type
   const [databaseName, setDatabaseName] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -61,7 +59,7 @@ export default function FormDatabaseConnect ({selectedProfile, setSelectedProfil
           (selectedProfile && selectedProfile.Id === connectedDBProfile?.Id)
         }
         includeInfo={true}
-        infoText='Friendly name to label this database profile.'
+        infoText='Friendly label for this database profile'
         additionalInfoClasses='tooltip-left'
       />
       <FormElementSelect
@@ -74,7 +72,7 @@ export default function FormDatabaseConnect ({selectedProfile, setSelectedProfil
           (selectedProfile && selectedProfile.Id === connectedDBProfile?.Id)
         }
         includeInfo={true}
-        infoText='Type of database. Only currently supported type is Neo4j.'
+        infoText='Type of database. Only currently supported type is Neo4j'
         additionalInfoClasses='tooltip-left'
       />
       <FormElementTextInput
@@ -100,8 +98,7 @@ export default function FormDatabaseConnect ({selectedProfile, setSelectedProfil
           (selectedProfile && selectedProfile.Id === connectedDBProfile?.Id)
         }
         includeInfo={true}
-        // todo: Figure out what this does...
-        infoText='Addie needs to figure out what this does...'
+        infoText='Database name to operate on. Ex: neo4j'
         additionalInfoClasses='tooltip-left'
       />
       <FormElementTextInput
@@ -127,11 +124,11 @@ export default function FormDatabaseConnect ({selectedProfile, setSelectedProfil
           (selectedProfile && selectedProfile.Id === connectedDBProfile?.Id)
         }
         includeInfo={true}
-        infoText='Database password.'
+        infoText='Database password'
         additionalInfoClasses='tooltip-left'
       />
       <div className="flex justify-end col-start-2">
-        <ButtonAdvanced 
+        <ButtonBasic
           label={<>
             {selectedProfile && selectedProfile.Id === connectedDBProfile?.Id ? "Disconnect" : "Connect"}
             {isFormSubmitting ?
@@ -174,8 +171,6 @@ export default function FormDatabaseConnect ({selectedProfile, setSelectedProfil
                   setConnectedDBProfile(selectedProfile);
                   setDBOperationSuccessful(true);
                 } else {
-                  // todo: Need to investigate incorrect credentials
-                  // not giving an error
                   setDBOperationSuccessful(false);
                 }
               }

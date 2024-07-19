@@ -17,7 +17,7 @@ interface ButtonProps {
   /**
    * What is the background color? Use classes.
    */
-  // todo: Take out this standardized component edit?
+  // TODO: Take out this standardized component edit?
   color: 'btn-primary' | 'btn-secondary' | 'btn-neutral' | 'btn-ghost' | string;
   /**
    * Optional link
