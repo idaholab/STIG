@@ -5,7 +5,7 @@ interface ButtonProps {
   /**
    * Button contents
    */
-  label: string;
+  label: string | React.JSX.Element;
   /**
    * What is the background color? Use classes.
    */

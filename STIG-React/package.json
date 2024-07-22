@@ -13,14 +13,17 @@
     "@fontsource/source-sans-pro": "^5.0.8",
     "@reduxjs/toolkit": "^2.2.5",
     "@tailwindcss/typography": "^0.5.10",
+    "@types/uuid": "^10.0.0",
     "daisyui": "^4.12.10",
     "material-icons": "^1.13.8",
     "material-symbols": "^0.12.0",
+    "neo4j-driver": "^5.22.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^9.1.2",
     "react-router-dom": "^6.22.3",
-    "redux": "^5.0.1"
+    "redux": "^5.0.1",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@types/node": "^20.14.2",

@@ -17,7 +17,7 @@ interface ButtonProps {
   /**
    * What is the background color? Use classes.
    */
-  color: 'btn-primary' | 'btn-secondary' | 'btn-neutral' | 'btn-ghost';
+  color: 'btn-primary' | 'btn-secondary' | 'btn-neutral' | 'btn-ghost' | string;
   /**
    * Optional link
    */
