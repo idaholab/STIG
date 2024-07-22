@@ -1,3 +1,5 @@
+
+import Graph from '@/components/Graphs/CytoGraph';
 import React from 'react';
 
 import { DialogBasic } from '../components/elements/DialogBasic';
@@ -6,24 +8,25 @@ import { ConnectedDBProvider } from '../contexts/ConnectedDBContext';
 
 const LayoutMainLanding: React.FC = () => {
   return (
-    <div className="w-full h-full">
-      <div className="p-10">
-        <p>Main Page!</p>
-        <ConnectedDBProvider>
-          <DialogBasic
-            title="Database Settings"
-            buttonType="icon"
-            buttonIcon="add"
-            buttonColor='btn-secondary'
-            buttonSize="btn-xs"
-            showFormButtons={false}
-          >
-            <DBProfileModal/>
-          </DialogBasic>
-        </ConnectedDBProvider>
-      </div>  
+    <div id="graph" className="relative h-full w-full">
+      <ConnectedDBProvider>
+        <DialogBasic
+          title="Database Settings"
+          buttonType="icon"
+          buttonIcon="add"
+          buttonColor='btn-secondary'
+          buttonSize="btn-xs"
+          showFormButtons={false}
+        >
+          <DBProfileModal />
+        </DialogBasic>
+      </ConnectedDBProvider>
+      <div id="graph" className="h-full">
+        <Graph />
+      </div>
     </div>
   );
 };
 
 export default LayoutMainLanding;
+

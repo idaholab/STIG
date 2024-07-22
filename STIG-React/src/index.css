@@ -173,31 +173,41 @@ body,
   min-height: unset !important;
 }
 
-/* width */
-::-webkit-scrollbar {
+
+
+
+
+.scrollbar {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Uncertain why scrollbar customization isn't working??!!... */
+.scrollbar ::-webkit-scrollbar {
   width: 10px;
 }
   
 /* Track */
-::-webkit-scrollbar-track {
+.scrollbar ::-webkit-scrollbar-track {
   background: rgb(var(--color-accent-800) / 1);
 }
 
-.dark ::-webkit-scrollbar-track {
+.scrollbar .dark ::-webkit-scrollbar-track {
   background: rgb(var(--color-scrollbar-track-dark) / 1);
 }
   
 /* Handle */
-::-webkit-scrollbar-thumb {
-  /* rgb(44, 122, 186); */
+.scrollbar ::-webkit-scrollbar-thumb {
   background: rgb(var(--color-accent-800) / 1); 
-
 }
   
 /* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
+.scrollbar ::-webkit-scrollbar-thumb:hover {
   background: rgb(var(--color-accent-900) / 1);
 }
+
+
+
 
 .page-component {
   max-height: calc(100vh - 48px);
@@ -428,3 +438,11 @@ svg {
 }
 /* *********************************************************************** */
 
+html,
+body,
+#root,
+.App {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
