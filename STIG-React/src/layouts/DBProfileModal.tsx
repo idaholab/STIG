@@ -124,7 +124,7 @@ function DBProfileSelector({dbProfiles, inDBDeleteProcess, setInDBDeleteProcess,
       className="menu rounded-box w-56 h-72 bg-gray-300 dark:bg-gray-800
         row-span-8 grid"
     >
-      <div className={"overflow-auto grid" + (dbProfiles.length < 7 ? " grid-rows-6" : "")}>
+      <div className={"overflow-auto grid scrollbar" + (dbProfiles.length < 7 ? " grid-rows-6" : "")}>
         {dbProfiles.map((profile) => {
           return(
             <li key={profile.Id} className={inDBDeleteProcess ? "disabled" : ""}>

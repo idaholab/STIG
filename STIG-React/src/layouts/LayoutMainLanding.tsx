@@ -8,7 +8,7 @@ import { ConnectedDBProvider } from '../contexts/ConnectedDBContext';
 
 const LayoutMainLanding: React.FC = () => {
   return (
-    <div id="graph" className="relative h-full w-full">
+    <div id="graph" className="relative h-full w-full scrollbar">
       <ConnectedDBProvider>
         <DialogBasic
           title="Database Settings"

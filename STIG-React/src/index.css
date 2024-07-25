@@ -173,20 +173,31 @@ body,
   min-height: unset !important;
 }
 
-
-
-
-
 .scrollbar {
   overflow-y: auto;
   overflow-x: hidden;
+  scrollbar-color: rgb(var(--color-accent-rgb-600) / 1) var(--color-scrollbar-track-light);
 }
+
+.dark .scrollbar {
+  scrollbar-color: rgb(var(--color-accent-rgb-600) / 1) var(--color-scrollbar-track-dark);
+}
+
+/* These hover effects apply when the div containing the scrollbar is hovered, not when the scrollbar
+itself is hovered */
+/* .scrollbar:hover {
+  scrollbar-color: rgb(var(--color-accent-rgb-900) / 1) var(--color-scrollbar-track-light);
+}
+
+.dark .scrollbar:hover {
+  scrollbar-color: rgb(var(--color-accent-rgb-900) / 1) var(--color-scrollbar-track-dark);
+} */
 
 /* Uncertain why scrollbar customization isn't working??!!... */
 .scrollbar ::-webkit-scrollbar {
   width: 10px;
 }
-  
+
 /* Track */
 .scrollbar ::-webkit-scrollbar-track {
   background: rgb(var(--color-accent-800) / 1);
@@ -205,9 +216,6 @@ body,
 .scrollbar ::-webkit-scrollbar-thumb:hover {
   background: rgb(var(--color-accent-900) / 1);
 }
-
-
-
 
 .page-component {
   max-height: calc(100vh - 48px);
