@@ -1,5 +1,5 @@
 import React from 'react';
-import DropdownWrapper from './dropdown';
+import DropdownWrapper from './Dropdown';
 
 function SCODropdown() {
   const scoItems = [

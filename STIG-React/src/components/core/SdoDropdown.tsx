@@ -1,5 +1,5 @@
 import React from 'react';
-import DropdownWrapper from './dropdown';
+import DropdownWrapper from './Dropdown';
 
 const SDODropdown: React.FC = () => {
   const sdoItems = [
