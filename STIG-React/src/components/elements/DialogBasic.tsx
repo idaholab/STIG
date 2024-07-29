@@ -11,7 +11,7 @@ type Props = {
   buttonType?: 'text' | 'icon'; // Optional button type
   buttonLabel?: string; // Optional button label for text button
   buttonIcon?: string; // Optional icon from https://fonts.google.com/icons
-  buttonSize?: 'btn-sm';
+  buttonSize?: 'btn-sm' | 'btn-xs';
   isOpen?: boolean; // Control the open state from outside
   onSave?: (data: { sourceName: string; file?: File; url?: string }) => void; // Save handler
   onClose?: () => void; // Close handler
@@ -57,24 +57,6 @@ export const DialogBasic: React.FC<Props> = ({
   const modalRef = React.useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
-        handleCloseDialog();
-      }
-    };
-
-    if (open) {
-      document.addEventListener('click', handleClickOutside);
-    } else {
-      document.removeEventListener('click', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-    };
-  }, [open]);
-
-  useEffect(() => {
     if (isOpen) {
       setOpen(true);
     }
@@ -98,12 +80,12 @@ export const DialogBasic: React.FC<Props> = ({
         open={open}
       >
         <div className={`modal-box max-w-[1000px] min-w-none p-12 shadow-md-gray-light
-          ${theme === 'dark' ? 'bg-gray-800 text-gray-100' : 'bg-gray-200 text-gray-900'}`}
+          ${theme === 'dark' ? 'bg-gray-700 text-gray-100' : 'bg-gray-200 text-gray-900'}`}
           ref={modalRef}>
           <div className='flex justify-between items-center'>
-            <h2 className="text-2xl mb-0 align-middle">{title}</h2>
-            <div className="-mr-4">
-              <ButtonIcon buttonSize={'btn-sm'} label={'Close'} buttonIcon={'close'} color={'btn-ghost'} onClick={handleCloseDialog} />
+            <h2 className="text-2xl mb-8 align-middle">{title}</h2>
+            <div className="-mr-4 mb-8">
+              <ButtonIcon buttonSize={buttonSize} label={'Close'} buttonIcon={'close'} color={'btn-ghost'} onClick={handleCloseDialog} />
             </div>
           </div>
 

@@ -1,13 +1,34 @@
-import React, { useState } from 'react';
+import Graph from '@/components/Graphs/CytoGraph';
+import React from 'react';
+
+import { DialogBasic } from '../components/elements/DialogBasic';
+import DBProfileModal from './DBProfileModal';
+import { ConnectedDBProvider } from '../contexts/ConnectedDBContext';
 import Menu from '@/components/core/Menu';
+
 const LayoutMainLanding: React.FC = () => {
   return (
-    <div className="w-full h-full z-50">
+    <div id="graph" className="relative h-full w-full scrollbar">
       <Menu>
-
       </Menu>
+      <ConnectedDBProvider>
+        <DialogBasic
+          title="Database Settings"
+          buttonType="icon"
+          buttonIcon="add"
+          buttonColor='btn-secondary'
+          buttonSize="btn-xs"
+          showFormButtons={false}
+        >
+          <DBProfileModal />
+        </DialogBasic>
+      </ConnectedDBProvider>
+      <div id="graph" className="h-full">
+        <Graph />
+      </div>
     </div>
   );
 };
 
 export default LayoutMainLanding;
+

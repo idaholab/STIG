@@ -1,14 +1,17 @@
 import React from 'react';
 import MainScaffold from '../src/layouts/MainScaffold'
+import { EventProvider } from './contexts/EventContext';
 
 type Props = {
   children: any;
 }
 
-const App: React.FC<Props> = ({children}) => {
+const App: React.FC<Props> = ({ children }) => {
   return (
     <div className="App h-screen">
-      <MainScaffold>{children}</MainScaffold>
+      <EventProvider>
+        <MainScaffold>{children}</MainScaffold>
+      </EventProvider>
     </div>
   );
 }

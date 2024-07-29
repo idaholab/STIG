@@ -68,6 +68,7 @@ module.exports = {
           "neutral-focus": "",
           "neutral-content": "#ffffff",
           "base-content": "#333",
+          "error": '#b91c1c'
         },
       },
       {
@@ -84,6 +85,7 @@ module.exports = {
           "neutral-focus": "",
           "neutral-content": "#ffffff",
           "base-content": "#ddd",
+          "error": '#b91c1c'
         },
       },
     ],

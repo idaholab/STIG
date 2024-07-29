@@ -16,10 +16,10 @@ const MainScaffold: React.FC<Props> = ({ children }) => {
         <div className="flex flex-col h-screen overflow-hidden">
           <Header />
 
-          <div className="flex flex-1 h-full pb-8 relative">
+          <div className="flex flex-1 h-full pb-8 relative overflow-hidden">
             {<Drawer />}
 
-            <main className="mb-8 flex-1 transition-all ml-18 h-full">
+            <main className="mb-8 flex-1 transition-all ml-18 h-full overflow-hidden">
               {children}
             </main>
             <StixPropsPanel>
