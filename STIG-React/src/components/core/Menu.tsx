@@ -22,7 +22,7 @@ const Menu: React.FC = () => {
   }
 
   return (
-    <div className="join dark:bg-gray-900 ml-4 mt-4 border dark:border-transparent z-9000 relative">
+    <div className="join dark:bg-gray-900 ml-4 mt-4 border border-black dark:border-transparent z-9000 relative">
       <div className="flex dark:bg-transparent relative z-10">
         <main className="flex-1 z-50">
           {dropdownItems.map(({ title, items }) => (
