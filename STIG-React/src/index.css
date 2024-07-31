@@ -111,12 +111,12 @@
     --color-orange-hex-900: #7c2d12;
     --color-orange-hex-950: #431407;
 
-    --color-graph-hex-blue: var(--color-accent-hex-800);
-    --color-graph-hex-green: var(--color-green-hex-500);
-    --color-graph-hex-red: var(--color-red-hex-500);
-    --color-graph-hex-orange: var(--color-orange-hex-600);
-    --color-graph-hex-light-orange: var(--color-orange-hex-200);
-    --color-graph-hex-light-blue: var(--color-accent-hex-200);
+    --edge-dark-color:var(--color-primary-dark-hex-400);
+    --edge-light-color: var(--color-primary-dark-hex-600);
+    --arrow-dark-color: var(--color-primary-dark-hex-400);
+    --arrow-light-color: var(--color-primary-dark-hex-600);
+    --selected-node-border-color:var(--color-orange-hex-300);
+
 
     --color-graph-blue: blue;
     --color-graph-green: green;
@@ -125,11 +125,6 @@
     /* 44 122 186; */
     --color-scrollbar-track-light: var(--color-primary-dark-hex-300);
     --color-scrollbar-track-dark: var(--color-primary-dark-hex-800);
-
-    --skeleton-base-color: rgb(var(--color-primary-dark-rgb-600) / 1);
-    --skeleton-highlight-color: rgb(var(--color-primary-dark-rgb-500) / 1);
-    --skeleton-base-color-light: rgb(var(--color-primary-dark-rgb-400) / 1);
-    --skeleton-highlight-color-light: rgb(var(--color-primary-dark-rgb-300) / 1);
 
     color-scheme: light dark;
     font-synthesis: none;

@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "email-addr",
+  "description": "The Email Address Object represents a single email address.",
+  "type": "object",
+  "$ref": "static/jsedit/common/cyber-observable-core.json",
+  "properties": {
+    "type": {
+      "type": "string",
+      "description": "The value of this property MUST be `email-addr`.",
+      "default": "email-addr",
+      "readonly": "true"
+    },
+    "id": {
+      "title": "id",
+      "pattern": "^email-addr--",
+      "readonly": "true"
+    },
+    "value": {
+      "type": "string",
+      "format": "email",
+      "description": "Specifies a single email address. This MUST not include the display name."
+    },
+    "display_name": {
+      "type": "string",
+      "description": "Specifies a single email display name, i.e., the name that is displayed to the human user of a mail application."
+    },
+    "belongs_to_ref": {
+      "description": "Specifies the user account that the email address belongs to, as a reference to a User Account Object.",
+      "type": "string"
+    }
+  },
+  "required": [
+    "type",
+    "id",
+    "value"
+  ]
+}

@@ -1,0 +1,55 @@
+{
+     "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "title": "asset",
+    "$ref": "static/jsedit/core.json",
+    "properties": {
+        "id": {
+            "type": "string",
+            "default": "asset--UUID",
+            "readonly": "true"
+        },
+        "type": {
+            "type": "string",
+            "default": "asset",
+            "readonly": "true"
+        },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "title": {
+            "type": "string",
+            "description": "A human readable title"
+        },
+        "category": {
+            "type": "string"
+        },
+        "kind_of_asset": {
+            "type": "string"
+        },
+        "category_ext": {
+            "type": "array",
+            "description": "Alternate value for category",
+            "format": "table",
+            "items": {
+                "type": "string"
+            }
+        },
+        "compromised": { "type": "boolean", "default": false },
+        "owner_aware": { "type": "boolean", "default": false },
+        "technical_characteristics": {
+            "type": "array",
+            "format": "table",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "field": { "type": "string" },
+                    "data": { "type": "string" }
+                }
+            },
+            "description": "Cybox characterization of technical characterisitics goes here. Fields like: serial number property number host name domain name operating system (including revision level and what else??) network services, and related details, which do not merit their own asset tag"
+        }
+    },
+    "required": [
+        "name"
+    ]
+}

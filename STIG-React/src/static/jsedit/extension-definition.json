@@ -1,0 +1,73 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "extension-definition",
+    "description": "The extension-definition object represents a specific extension.",
+    "type": "object",
+    "$ref": "static/jsedit/core.json",
+    "properties": {
+        "id": {
+            "title": "id",
+            "pattern": "^extension-definition--",
+            "default": "extension-definition--",
+            "type": "string",
+            "readonly": "true"
+        },
+        "type": {
+            "type": "string",
+            "description": "The type of this object, which MUST be the literal `extension-definition`.",
+            "default": "extension-definition",
+            "readonly": "true"
+        },
+        "name" : {
+            "type" : "string",
+            "description": "A name used for display purposes during execution, development, or debugging."
+        },
+        "description": {
+            "type": "string",
+            "format": "textarea",
+            "description": "A detailed explanation of what data the extension conveys and how it is intended to be used."
+        },
+        "schema" : {
+            "type" : "string",
+            "description": "The normative definition of the extension, either as a URL or as plain text explaining the definition. A URL SHOULD point to a JSON schema or a location that contains information about the schema."
+        },
+        "version" : {
+            "type" : "string",
+            "description": "The version of this extension. Producers of STIX extensions are encouraged to follow standard semantic versioning procedures where the version number follows the pattern, MAJOR.MINOR.PATCH. This will allow consumers to distinguish between the three different levels of compatibility typically identified by such versioning strings."
+        },
+        "extension_types": {
+            "type": "array",
+            "description": "This property specifies one or more extension types contained within this extension.",
+            "items": {
+                "type": "string",
+                "$ref": "#/definitions/extension-type-enum"
+            },
+            "minItems": 1
+        },
+        "extension_properties": {
+            "type": "array",
+            "description": "This property contains the list of new property names that are added to an object by an extension.",
+            "items": {
+                "type": "string"
+            },
+            "minItems": 1
+        }
+    },
+    "required": [
+        "schema",
+        "version",
+        "extension_types"
+    ],
+    "definitions": {
+        "extension-type-enum": {
+            "type": "string",
+            "enum": [
+                "new-sdo",
+                "new-sco",
+                "new-sro",
+                "property-extension",
+                "toplevel-property-extension"
+            ]
+        }
+    }
+}

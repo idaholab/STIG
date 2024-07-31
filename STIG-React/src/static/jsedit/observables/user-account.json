@@ -1,0 +1,91 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "user-account",
+  "description": "The User Account Object represents an instance of any type of user account, including but not limited to operating system, device, messaging service, and social media platform accounts.",
+  "type": "object",
+  "$ref": "static/jsedit/common/cyber-observable-core.json",
+  "properties": {
+    "type": {
+      "type": "string",
+      "description": "The value of this property MUST be `user-account`.",
+      "default": "user-account",
+      "readonly": "true"
+    },
+    "user_id": {
+      "type": "string",
+      "description": "Specifies the identifier of the account."
+    },
+    "account_login": {
+      "type": "string",
+      "description": "Specifies the account login string, used in cases where the user_id property specifies something other than what a user would type when they login."
+    },
+    "account_type": {
+      "type": "string",
+      "description": "Specifies the type of the account. This is an open vocabulary and values SHOULD come from the account-type-ov vocabulary."
+    },
+    "display_name": {
+      "type": "string",
+      "description": "Specifies the display name of the account, to be shown in user interfaces, if applicable."
+    },
+    "is_service_account": {
+      "type": "boolean",
+      "description": "Indicates that the account is associated with a network service or system process (daemon), not a specific individual.",
+      "$ref": "#/definitions/account-type-ov"
+    },
+    "is_privileged": {
+      "type": "boolean",
+      "description": "Specifies that the account has elevated privileges (i.e., in the case of root on Unix or the Windows Administrator account)."
+    },
+    "can_escalate_privs": {
+      "type": "boolean",
+      "description": "Specifies that the account has the ability to escalate privileges (i.e., in the case of sudo on Unix or a Windows Domain Admin account)."
+    },
+    "is_disabled": {
+      "type": "boolean",
+      "description": "Specifies if the account is disabled."
+    },
+    "account_created": {
+      "type": "string",
+      "description": "Specifies when the account was created."
+    },
+    "account_expires": {
+      "type": "string",
+      "description": "Specifies the expiration date of the account."
+    },
+    "password_last_changed": {
+      "type": "string",
+      "description": "Specifies when the account password was last changed."
+    },
+    "account_first_login": {
+      "type": "string",
+      "description": "Specifies when the account was first accessed."
+    },
+    "account_last_login": {
+      "type": "string",
+      "description": "Specifies when the account was last accessed."
+    }
+  },
+  "required": [
+    "type",
+    "id"
+  ],
+  "definitions": {
+    "account-type-ov": {
+      "type": "string",
+      "enum": [
+        "unix",
+        "windows local",
+        "windows domain",
+        "ldap",
+        "tacacs",
+        "radius",
+        "nis",
+        "openid",
+        "facebook",
+        "skype",
+        "twitter",
+        "kavi"
+      ]
+    }
+  }
+}
