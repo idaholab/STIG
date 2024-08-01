@@ -60,6 +60,7 @@ export default function FormDatabaseConnect ({selectedProfile, setSelectedProfil
         }
         includeInfo={true}
         infoText='Friendly label for this database profile'
+        additionalInputClasses='input-sm'
         additionalInfoClasses='tooltip-left'
       />
       <FormElementSelect
@@ -86,6 +87,7 @@ export default function FormDatabaseConnect ({selectedProfile, setSelectedProfil
         }
         includeInfo={true}
         infoText='Connection url. Ex: neo4j://localhost:7687'
+        additionalInputClasses='input-sm'
         additionalInfoClasses='tooltip-left'
       />
       <FormElementTextInput
@@ -99,6 +101,7 @@ export default function FormDatabaseConnect ({selectedProfile, setSelectedProfil
         }
         includeInfo={true}
         infoText='Database name to operate on. Ex: neo4j'
+        additionalInputClasses='input-sm'
         additionalInfoClasses='tooltip-left'
       />
       <FormElementTextInput
@@ -112,6 +115,7 @@ export default function FormDatabaseConnect ({selectedProfile, setSelectedProfil
         }
         includeInfo={true}
         infoText='Database username. Ex: neo4j'
+        additionalInputClasses='input-sm'
         additionalInfoClasses='tooltip-left'
       />
       <FormElementTextInput
@@ -125,6 +129,7 @@ export default function FormDatabaseConnect ({selectedProfile, setSelectedProfil
         }
         includeInfo={true}
         infoText='Database password'
+        additionalInputClasses='input-sm'
         additionalInfoClasses='tooltip-left'
       />
       <div className="flex justify-end col-start-2">
