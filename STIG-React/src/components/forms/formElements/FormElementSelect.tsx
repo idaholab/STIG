@@ -36,8 +36,10 @@ const FormElementSelect: React.FC<Props> = ({
           select-bordered
           select-sm
           w-full
-          bg-gray-300
+          bg-gray-100
           dark:bg-gray-600
+          placeholder-gray-500
+          dark:placeholder-gray-300 
         "
         disabled={disabled}
       >

@@ -4,10 +4,14 @@ import { stencilItems } from '../elements/StencilItems';
 type StencilLibraryProps = {
     type: string;
     onAddNode: (name: string, imageUrl: string) => void;
+    searchText?: string;
 };
 
-const StencilLibrary: React.FC<StencilLibraryProps> = ({ type, onAddNode }) => {
-    const filteredItems = stencilItems.filter(item => item.type === type);
+const StencilLibrary: React.FC<StencilLibraryProps> = ({ type, onAddNode, searchText }) => {
+    let filteredItems = stencilItems.filter(item => item.type === type);
+    if(searchText) {
+        filteredItems = filteredItems.filter(item => item.alt.toLowerCase().includes(searchText?.toLowerCase()));
+    }
 
     const handleDragStart = (event: React.DragEvent, name: string, imageUrl: string) => {
         event.dataTransfer.setData('text', name);
@@ -19,20 +23,26 @@ const StencilLibrary: React.FC<StencilLibraryProps> = ({ type, onAddNode }) => {
     };
 
     return (
-        <div className="stencil px-4 flex flex-col flex-grow">
-            {filteredItems.map(item => (
-                <div
-                    key={item.id}
-                    className="stencil-item mb-4 cursor-pointer flex items-center"
-                    draggable
-                    onMouseUp={() => handleClickAddNode(item.alt, item.imageUrl)}
-                    onDragStart={(event) => handleDragStart(event, item.alt, item.imageUrl)}
-                >
-                    <img src={item.imageUrl} alt={item.alt} className="w-8 h-8" />
-                    <span className="ml-4">{item.alt}</span>
-                </div>
-            ))}
-        </div>
+        <ul className='pl-0'>
+            <div className="stencil px-4 pl-0 flex flex-col flex-grow">
+                {filteredItems.length ?
+                    filteredItems.map(item => (
+                        <li key={item.id}>
+                            <div
+                                className="stencil-item cursor-pointer flex items-center"
+                                draggable
+                                onMouseUp={() => handleClickAddNode(item.alt, item.imageUrl)}
+                                onDragStart={(event) => handleDragStart(event, item.alt, item.imageUrl)}
+                            >
+                                <img src={item.imageUrl} alt={item.alt} className="w-8 h-8" />
+                                <span className="ml-4">{item.alt}</span>
+                            </div>
+                        </li>
+                    ))
+                : <p>No {type.toUpperCase()}s match the filter text.</p>
+                }
+            </div>
+        </ul>
     );
 };
 
