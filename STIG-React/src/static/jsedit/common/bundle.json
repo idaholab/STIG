@@ -1,0 +1,132 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "bundle",
+  "description": "A Bundle is a collection of arbitrary STIX Objects and Marking Definitions grouped together in a single container.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "allOf": [
+        {
+          "$ref": "identifier.json",
+          "description": "An identifier for this bundle. The id field for the Bundle is designed to help tools that may need it for processing, but tools are not required to store or track it. "
+        },
+        {
+          "title": "id",
+          "pattern": "^bundle--"
+        }
+      ]
+    },
+    "type": {
+      "type": "string",
+      "description": "The type of this object, which MUST be the literal `bundle`.",
+      "enum": [
+        "bundle"
+      ]
+    },
+    "spec_version": {
+      "type": "string",
+      "enum": [
+        "2.0",
+        "2.1"
+      ],
+      "description": "The version of the STIX specification used to represent the content in this bundle."
+    },
+    "objects": {
+      "type": "array",
+      "description": "Specifies a set of one or more STIX Objects.",
+      "items": {
+        "anyOf": [
+          {
+            "oneOf": [
+              {
+                "$ref": "../sdos/attack-pattern.json"
+              },
+              {
+                "$ref": "../sdos/campaign.json"
+              },
+              {
+                "$ref": "../sdos/course-of-action.json"
+              },
+              {
+                "$ref": "../sdos/identity.json"
+              },
+              {
+                "$ref": "../sdos/indicator.json"
+              },
+              {
+                "$ref": "../sdos/intrusion-set.json"
+              },
+              {
+                "$ref": "../sdos/malware.json"
+              },
+              {
+                "$ref": "marking-definition.json"
+              },
+              {
+                "$ref": "../sdos/observed-data.json"
+              },
+              {
+                "$ref": "../sros/relationship.json"
+              },
+              {
+                "$ref": "../sdos/report.json"
+              },
+              {
+                "$ref": "../sros/sighting.json"
+              },
+              {
+                "$ref": "../sdos/threat-actor.json"
+              },
+              {
+                "$ref": "../sdos/tool.json"
+              },
+              {
+                "$ref": "../sdos/vulnerability.json"
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "static/jsedit/common/core.json"
+              },
+              {
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "The type of this object, which for custom objects cannot be one of those defined in the specification.",
+                    "not": {
+                      "enum": [
+                        "attack-pattern",
+                        "campaign",
+                        "course-of-action",
+                        "identity",
+                        "indicator",
+                        "intrusion-set",
+                        "malware",
+                        "marking-definition",
+                        "observed-data",
+                        "relationship",
+                        "report",
+                        "sighting",
+                        "threat-actor",
+                        "tool",
+                        "vulnerability"
+                      ]
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "minItems": 1
+    }
+  },
+  "required": [
+    "type",
+    "id",
+    "spec_version"
+  ]
+}
