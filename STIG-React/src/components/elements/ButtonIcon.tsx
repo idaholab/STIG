@@ -5,7 +5,7 @@ interface ButtonProps {
   /**
    * Button contents
    */
-  label: string;
+  label?: string;
   /**
    * What is the icon?
    */
