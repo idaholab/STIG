@@ -4,6 +4,7 @@ import ThemeContextComponent from '../contexts/ThemeContextComponent';
 // Custom Components
 import Header from '../components/core/Header';
 import Drawer from '../components/core/Drawer';
+import StixPropsPanel from '@/components/core/StixPropsPanel';
 
 type Props = { children: any };
 
@@ -21,6 +22,9 @@ const MainScaffold: React.FC<Props> = ({ children }) => {
             <main className="mb-8 flex-1 transition-all ml-18 h-full overflow-hidden">
               {children}
             </main>
+            <StixPropsPanel>
+
+            </StixPropsPanel>
           </div>
         </div>
       </ThemeContextComponent>
