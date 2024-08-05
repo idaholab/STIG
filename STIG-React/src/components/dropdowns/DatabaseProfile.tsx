@@ -50,7 +50,7 @@ const DatabaseProfile: React.FC = () => {
               return(
                 <li key={dbProfile.Id} className='grid hover:bg-primary hover:text-white group h-[40px]'>
                   <a
-                    className='py-1 pr-1 self-center hover:bg-primary'
+                    className='py-1 pr-1 self-center hover:bg-transparent'
                     onClick={() => {
                       setSelectedProfile(dbProfile);
                       const dialogElement = document.getElementById("DBProfileModal") as HTMLDialogElement;

@@ -13,6 +13,8 @@
     "@fontsource/source-sans-pro": "^5.0.8",
     "@reduxjs/toolkit": "^2.2.5",
     "@tailwindcss/typography": "^0.5.10",
+    "@types/cytoscape-dagre": "^2.3.3",
+    "@types/cytoscape-klay": "^3.1.4",
     "@types/uuid": "^10.0.0",
     "cytoscape": "^3.29.2",
     "cytoscape-cola": "^2.5.1",

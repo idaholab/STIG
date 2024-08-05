@@ -1,7 +1,7 @@
 import React from 'react';
 import Graph from '../dropdowns/Graph';
 import Edit from '../dropdowns/Edit';
-import COREIITimeline from '../dropdowns/COREIITimeline';
+import GraphLayouts from '../dropdowns/GraphLayouts';
 import ContextLayouts from '../dropdowns/ContextLayouts';
 import Import from '../dropdowns/Import';
 import Export from '../dropdowns/Export';
@@ -13,7 +13,7 @@ const Menu: React.FC = () => {
       <main>
         <Graph />
         <Edit />
-        <COREIITimeline />
+        <GraphLayouts />
         <ContextLayouts />
         <Import />
         <Export />

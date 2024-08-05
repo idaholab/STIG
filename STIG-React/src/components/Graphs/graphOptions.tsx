@@ -7,6 +7,8 @@ ALL RIGHTS RESERVED
 import cytoscape, { LayoutOptions, RandomLayoutOptions } from 'cytoscape';
 import { IColaLayoutOptions } from './colaLayoutOptions';
 import { useTheme } from '@/contexts/useTheme';
+import { KlayOptions } from '@/types/LayoutTypes/KlayOptions';
+import { SpreadLayoutOptions } from '@/types/LayoutTypes/SpreadLayoutOptions';
 
 export const node_style: cytoscape.Stylesheet = {
   selector: 'node',
@@ -282,7 +284,7 @@ export const cose_bilkent_options = {
   initialEnergyOnIncremental: 0.8
 };
 
-export const klay_options: cytoscape.KlayOptions = {
+export const klay_options: KlayOptions = {
   name: 'klay',
   nodeDimensionsIncludeLabels: true, // Boolean which changes whether label dimensions are included when calculating node dimensions
   fit: true, // fit viewport to graph
@@ -340,7 +342,7 @@ export const klay_options: cytoscape.KlayOptions = {
   }
 };
 
-export const spread_options: cytoscape.SpreadLayoutOptions = {
+export const spread_options: SpreadLayoutOptions = {
   name: 'spread',
   animate: true, // whether to show the layout as it's running
   ready: undefined, // Callback on layoutready
@@ -434,11 +436,11 @@ export const concentric_options: cytoscape.ConcentricLayoutOptions = {
   width: undefined, // width of layout area (overrides container width)
   spacingFactor: undefined, // Applies a multiplicative factor (>0) to expand or compress the overall area that the nodes take up
   concentric: (node) => { // returns numeric value for each node, placing higher nodes in levels towards the centre
-    return node.degree(false);
+    return node.degree();
   },
   levelWidth: (nodes) => { // the letiation of concentric values in each level
     // return nodes.maxDegree() / 6;
-    return nodes.maxDegree(false) / 8;
+    return nodes.maxDegree() / 8;
   },
   animate: true, // whether to transition the node positions
   animationDuration: 2000, // duration of animation in ms if enabled
