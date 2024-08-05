@@ -3,6 +3,7 @@ import React from 'react';
 
 import { ConnectedDBProvider } from '../contexts/ConnectedDBContext';
 import Menu from '@/components/core/Menu';
+import ButtonClearGraph from '@/components/core/ButtonClearGraph';
 
 const LayoutMainLanding: React.FC = () => {
   return (
@@ -10,6 +11,7 @@ const LayoutMainLanding: React.FC = () => {
       <ConnectedDBProvider>
         <Menu/>
       </ConnectedDBProvider>
+      <ButtonClearGraph />
       <div id="graph" className="h-full">
         <Graph />
       </div>

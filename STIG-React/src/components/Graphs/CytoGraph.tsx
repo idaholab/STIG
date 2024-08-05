@@ -77,8 +77,15 @@ const Graph: React.FC = () => {
 
         addEventListener('stencilMouseUpEvent', handleCustomEvent);
 
+        const handleClearGraphClickEvent = () => {
+            const clearGraphEvent = new CustomEvent('clearGraph');
+            cyRef.current?.dispatchEvent(clearGraphEvent);
+        }
+        addEventListener('clearGraphClickEvent', handleClearGraphClickEvent);
+
         return () => {
             removeEventListener('stencilMouseUpEvent', handleCustomEvent);
+            removeEventListener('clearGraphClickEvent', handleClearGraphClickEvent);
         };
     }, [addEventListener, removeEventListener]);
 
@@ -133,11 +140,18 @@ const Graph: React.FC = () => {
                 //cyInstance.layout({ name: 'grid' }).run(); // TODO: Change to selected layout...
             };
 
+            const handleClearGraph = () => {
+                cyInstance.elements().remove();
+                cyInstance.reset();
+            }
+
             const graphElement = cyRef.current;
             graphElement.addEventListener('addNode', handleAddNode as EventListener);
+            graphElement.addEventListener('clearGraph', handleClearGraph);
 
             return () => {
                 graphElement.removeEventListener('addNode', handleAddNode as EventListener);
+                graphElement.removeEventListener('clearGraph', handleClearGraph);
             };
         }
     }, []);
