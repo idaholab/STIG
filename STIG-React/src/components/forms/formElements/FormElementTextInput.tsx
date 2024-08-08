@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 
 type Props = {
   placeholder: string;
@@ -15,9 +15,10 @@ type Props = {
   additionalInputClasses?: string;
   additionalInfoClasses?: string;
   additionalXClasses?: string;
+  prefix?: string;
 };
 
-const FormElementTextInput: React.FC<Props> = ({
+const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
   placeholder,
   placeholderInInput,
   type,
@@ -31,50 +32,56 @@ const FormElementTextInput: React.FC<Props> = ({
   onX,
   additionalInputClasses,
   additionalInfoClasses,
-  additionalXClasses
-}) => {
+  additionalXClasses,
+  prefix,
+}, ref) => {
   return (
-    <div className={`flex items-center ${className}`}>
-      {!placeholderInInput ?
-        <span className="mr-5 w-56">{placeholder}</span>
-        : null
-      }
+    <div className={`relative flex items-center ${className}`}>
+      {prefix && (
+        <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 dark:text-gray-400">
+          <span className="material-icons">{prefix}</span>
+        </span>
+      )}
       <input
         type={type}
         placeholder={placeholderInInput ? placeholder : undefined}
         value={value}
         onChange={onChange}
         className={`
-          input
-          input-bordered
           w-full
+          pl-${prefix ? 12 : 4} pr-${includeX ? 12 : 4}
+          py-2
+          rounded-lg
+          border
+          border-gray-300
           bg-gray-100
           dark:bg-gray-600
           placeholder-gray-500
-          dark:placeholder-gray-300 
+          dark:placeholder-gray-300
           ${additionalInputClasses}
         `}
         disabled={disabled}
+        ref={ref}  // Attach ref for focus here
       />
       {includeX && value && (
         <button
           type="button"
           className={`text-gray-800 dark:text-gray-200 ${additionalXClasses}`}
-          onClick={onX}
-        >
+          onClick={onX}>
           ✕
         </button>
       )}
-      {includeInfo ?
+      {includeInfo && (
         <div className={`tooltip ${additionalInfoClasses}`} data-tip={infoText}>
           <span className="ml-1 material-icons">
-            info_outline
+            filter_list
           </span>
         </div>
-        : null
-      }
+      )}
     </div>
   );
-}
+});
+
+FormElementTextInput.displayName = 'FormElementTextInput'; //relates to ref somehow
 
 export default FormElementTextInput;

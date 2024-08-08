@@ -5,11 +5,12 @@ type StencilLibraryProps = {
     type: string;
     onAddNode: (name: string, imageUrl: string) => void;
     searchText?: string;
+    isOpen: boolean;
 };
 
-const StencilLibrary: React.FC<StencilLibraryProps> = ({ type, onAddNode, searchText }) => {
+const StencilLibrary: React.FC<StencilLibraryProps> = ({ type, onAddNode, searchText, isOpen }) => {
     let filteredItems = stencilItems.filter(item => item.type === type);
-    if(searchText) {
+    if (searchText) {
         filteredItems = filteredItems.filter(item => item.alt.toLowerCase().includes(searchText?.toLowerCase()));
     }
 
@@ -29,17 +30,21 @@ const StencilLibrary: React.FC<StencilLibraryProps> = ({ type, onAddNode, search
                     filteredItems.map(item => (
                         <li key={item.id}>
                             <div
-                                className="stencil-item cursor-pointer flex items-center"
+                                className={`stencil-item ${!isOpen ? 'px-0' : ''} cursor-pointer flex items-center`}
                                 draggable
                                 onMouseUp={() => handleClickAddNode(item.alt, item.imageUrl)}
                                 onDragStart={(event) => handleDragStart(event, item.alt, item.imageUrl)}
                             >
                                 <img src={item.imageUrl} alt={item.alt} className="w-8 h-8" />
-                                <span className="ml-4">{item.alt}</span>
+                                {isOpen ?
+                                    <span className="ml-4">{item.alt}</span>
+                                    :
+                                    null
+                                }
                             </div>
                         </li>
                     ))
-                : <p>No {type.toUpperCase()}s match the filter text.</p>
+                    : <p>No {type.toUpperCase()}s match the filter text.</p>
                 }
             </div>
         </ul>
