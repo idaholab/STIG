@@ -5,28 +5,24 @@ import FormElementTextInput from './formElements/FormElementTextInput';
 import ButtonBasic from '../elements/ButtonBasic';
 import FormElementSelect from './formElements/FormElementSelect';
 import { addDBConfig, editDBConfig, readDBConfigStorage } from '../../data/db-profile-storage';
-import { DBProfile } from '@/interfaces/DBProfile';
+import { DBProfile } from '@/types/DBProfile';
 import ConnectedDBContext, { ConnectedDBContextType } from '../../contexts/ConnectedDBContext';
-import { connectToNeo4jDB, disconnectFromNeo4jDB } from '../../data/neo4j-connection';
+import ButtonDBConnect from '../elements/ButtonDBConnect';
 
-export default function FormDatabaseConnect ({selectedProfile, setSelectedProfile, inDBDeleteProcess, 
-  isFormComplete, setIsFormComplete, setDBProfiles, dbOperationSuccessful, setDBOperationSuccessful}: 
+export default function FormDatabaseConnect ({ selectedProfile, setSelectedProfile, inDBDeleteProcess, 
+  isFormComplete, setIsFormComplete, setDBProfiles }: 
   { selectedProfile: DBProfile | undefined,
     setSelectedProfile: React.Dispatch<React.SetStateAction<DBProfile | undefined>>
     inDBDeleteProcess: boolean,
     isFormComplete: boolean,
     setIsFormComplete: React.Dispatch<React.SetStateAction<boolean>>,
-    setDBProfiles: React.Dispatch<React.SetStateAction<DBProfile[]>>,
-    dbOperationSuccessful: boolean,
-    setDBOperationSuccessful: React.Dispatch<React.SetStateAction<boolean>>
+    setDBProfiles: React.Dispatch<React.SetStateAction<DBProfile[]>>
   }) {
   const dbTypeOptions = [
     "Neo4j"
   ];
 
-  const { connectedDBProfile, setConnectedDBProfile,
-    connectedDBDriver, setConnectedDBDriver
-  } = useContext(ConnectedDBContext) as ConnectedDBContextType;
+  const { connectedDBProfile } = useContext(ConnectedDBContext) as ConnectedDBContextType;
 
   // DB Profile form fields
   const [profileName, setProfileName] = useState<string>("");
@@ -133,55 +129,12 @@ export default function FormDatabaseConnect ({selectedProfile, setSelectedProfil
         additionalInfoClasses='tooltip-left'
       />
       <div className="flex justify-end col-start-2">
-        <ButtonBasic
-          label={<>
-            {selectedProfile && selectedProfile.Id === connectedDBProfile?.Id ? "Disconnect" : "Connect"}
-            {isFormSubmitting ?
-              <span className="loading loading-spinner loading-xs"></span>
-              : null
-            }
-            {!dbOperationSuccessful ?
-              <div className="tooltip tooltip-bottom tooltip-error" data-tip="ERROR: Unable to Connect">
-                <span className="material-icons text-red-700">
-                  error_outline
-                </span>
-              </div>
-              : null
-            }
-          </>}
-          color="btn-secondary"
-          additionalClasses={"btn-sm mt-2 mr-2" + 
-            (inDBDeleteProcess || !selectedProfile || isFormSubmitting ? 
-              " btn-disabled" : ""
-            )
-          }
-          onClick={async () => {
-            setIsFormSubmitting(true);
-            if(selectedProfile?.Id === connectedDBProfile?.Id) {
-              // Disconnect
-              const successfulDisconnect = await disconnectFromNeo4jDB(connectedDBDriver);
-              if(successfulDisconnect) {
-                setConnectedDBProfile(undefined);
-                setConnectedDBDriver(undefined);
-                setDBOperationSuccessful(true);
-              } else {
-                setDBOperationSuccessful(false);
-              }
-            } else {
-              // Connect
-              if(selectedProfile) {
-                const [newDriver, successfulConnection] = await connectToNeo4jDB(connectedDBDriver, selectedProfile)
-                if(successfulConnection) {
-                  setConnectedDBDriver(newDriver);
-                  setConnectedDBProfile(selectedProfile);
-                  setDBOperationSuccessful(true);
-                } else {
-                  setDBOperationSuccessful(false);
-                }
-              }
-            }
-            setIsFormSubmitting(false);
-          }}
+        <ButtonDBConnect
+          dbProfile={selectedProfile}
+          additionalButtonClasses='btn-sm mt-2 mr-2'
+          isConnectProcessing={isFormSubmitting}
+          setIsConnectProcessing={setIsFormSubmitting}
+          inDBDeleteProcess={inDBDeleteProcess}
         />
         <ButtonBasic 
           label="Save" 
@@ -212,7 +165,8 @@ export default function FormDatabaseConnect ({selectedProfile, setSelectedProfil
               Host: host,
               DatabaseName: databaseName,
               Username: username,
-              Password: password
+              Password: password,
+              LastDBOperationSuccessful: true
             };
             // Save form data
             if(selectedProfile) {

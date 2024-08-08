@@ -2,20 +2,18 @@ import React, { useContext, useState } from 'react';
 
 import ButtonBasic from '../components/elements/ButtonBasic';
 import ButtonIcon from '../components/elements/ButtonIcon';
-import { initializeDBConfigStorage, readDBConfigStorage, removeDBConfig } from '../data/db-profile-storage';
-import { DBProfile } from '@/interfaces/DBProfile';
+import { editDBConfig, readDBConfigStorage, removeDBConfig } from '../data/db-profile-storage';
+import { DBProfile } from '@/types/DBProfile';
 import FormDatabaseConnect from '../components/forms/FormDatabaseConnect';
 import ConnectedDBContext, { ConnectedDBContextType } from '../contexts/ConnectedDBContext';
 
 const DBProfileModal: React.FC = () => {
-  const [dbProfiles, setDBProfiles] = useState(readDBConfigStorage());
-  if(!dbProfiles.length) {
-    initializeDBConfigStorage();
-  }
-  const [selectedProfile, setSelectedProfile] = useState<DBProfile | undefined>();
+  const { 
+    savedDBProfiles, setSavedDBProfiles, selectedProfile, setSelectedProfile 
+  } = useContext(ConnectedDBContext) as ConnectedDBContextType;
+
   const [isFormComplete, setIsFormComplete] = useState(true);
   const [inDBDeleteProcess, setInDBDeleteProcess] = useState(false);
-  const [dbOperationSuccessful, setDBOperationSuccessful] = useState(true);
 
   return (
     <>
@@ -25,20 +23,19 @@ const DBProfileModal: React.FC = () => {
           selectedProfile={selectedProfile}
           setSelectedProfile={setSelectedProfile}
           setInDBDeleteProcess={setInDBDeleteProcess}
-          setDBProfiles={setDBProfiles}
+          setDBProfiles={setSavedDBProfiles}
         />
         : null
       }
       <div className='grid'>
         {/* Database Profile Selector: */}
         <DBProfileSelector
-          dbProfiles={dbProfiles}
+          dbProfiles={savedDBProfiles}
           inDBDeleteProcess={inDBDeleteProcess}
           setInDBDeleteProcess={setInDBDeleteProcess}
           selectedProfile={selectedProfile}
           setSelectedProfile={setSelectedProfile}
           setIsFormComplete={setIsFormComplete}
-          setDBOperationSuccessful={setDBOperationSuccessful}
         />
         {/* Database Profile Form: */}
         <FormDatabaseConnect
@@ -47,9 +44,7 @@ const DBProfileModal: React.FC = () => {
           inDBDeleteProcess={inDBDeleteProcess}
           isFormComplete={isFormComplete}
           setIsFormComplete={setIsFormComplete}
-          setDBProfiles={setDBProfiles}
-          dbOperationSuccessful={dbOperationSuccessful}
-          setDBOperationSuccessful={setDBOperationSuccessful}
+          setDBProfiles={setSavedDBProfiles}
         />
       </div>
     </>
@@ -106,15 +101,14 @@ function DBDeleteConfirmationDialog({selectedProfile, setSelectedProfile, setInD
 }
 
 function DBProfileSelector({dbProfiles, inDBDeleteProcess, setInDBDeleteProcess, selectedProfile, 
-  setSelectedProfile, setIsFormComplete, setDBOperationSuccessful }:
+  setSelectedProfile, setIsFormComplete }:
   {
     dbProfiles: DBProfile[],
     inDBDeleteProcess: boolean,
     setInDBDeleteProcess: React.Dispatch<React.SetStateAction<boolean>>,
     selectedProfile: DBProfile | undefined,
     setSelectedProfile: React.Dispatch<React.SetStateAction<DBProfile | undefined>>,
-    setIsFormComplete: React.Dispatch<React.SetStateAction<boolean>>,
-    setDBOperationSuccessful: React.Dispatch<React.SetStateAction<boolean>>
+    setIsFormComplete: React.Dispatch<React.SetStateAction<boolean>>
   }
   ) {
   const { connectedDBProfile } = useContext(ConnectedDBContext) as ConnectedDBContextType;
@@ -135,7 +129,8 @@ function DBProfileSelector({dbProfiles, inDBDeleteProcess, setInDBDeleteProcess,
                   if(!inDBDeleteProcess) {
                     setSelectedProfile(profile);
                     setIsFormComplete(true);
-                    setDBOperationSuccessful(true);
+                    profile.LastDBOperationSuccessful = true;
+                    editDBConfig(profile);
                   }
                 }}
               >
@@ -143,8 +138,8 @@ function DBProfileSelector({dbProfiles, inDBDeleteProcess, setInDBDeleteProcess,
                 {connectedDBProfile?.Id === profile.Id ?
                   <div className={`tooltip tooltip-right`} data-tip={"Connected"}>
                     <span className="material-icons">
-                        star
-                      </span>
+                      star
+                    </span>
                   </div>
                   : null
                 }

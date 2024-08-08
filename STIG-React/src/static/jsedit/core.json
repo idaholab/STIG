@@ -1,0 +1,169 @@
+{
+    "title": "Stix Object",
+    "type": "object",
+    "properties": {
+        "name": {"type": "string"},
+        "id": {
+            "type": "string"
+        },
+        "spec_version": {
+            "type": "string",
+            "enum": [
+                "2.1",
+                "2.0"
+            ],
+            "description": "The version of the STIX specification used to represent this object."
+        },
+        "created_by_ref": {
+            "type": "string",
+            "default": ""
+        },
+        "created": {
+            "type": "string",
+            "format": "datetime-local",
+            "options": {
+                "flatpickr": {
+                    "inlineHideInput": true,
+                    "wrap": true,
+                    "allowInput": true,
+                    "dateFormat": "Z"
+                }
+            }
+        },
+        "modified": {
+            "type": "string",
+            "format": "datetime-local",
+            "options": {
+                "flatpickr": {
+                    "wrap": true,
+                    "time_24hr": true,
+                    "allowInput": true,
+                    "dateFormat": "Z"
+                }
+            }
+        },
+        "revoked": {
+            "type": "boolean",
+            "default": false
+        },
+        "labels": {
+            "type": "array",
+            "uniqueItems": true,
+            "format": "table",
+            "items": {
+                "type": "string"
+            },
+            "options": {
+                "collapsed": true
+            }
+        },
+        "lang": {
+            "type": "string",
+            "description": "The lang property identifies the language of the text identified by this marking. The value of the lang property, if present, MUST be an [RFC5646] language code."
+        },
+        "confidence": {
+            "type": "integer",
+            "description": "The confidence property identifies the confidence that the creator has in the correctness of their data. The confidence value MUST be a number in the range of 0-100."
+        },
+        "external_references": {
+            "type": "array",
+            "format": "tabs",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "source_name": {
+                        "type": "string",
+                        "description": "The source within which the external-reference is defined (system, registry, organization, etc.)"
+                    },
+                    "external_id": {
+                        "type": "string",
+                        "description": "An identifier for the external reference content."
+                    },
+                    "url": {
+                        "type": "string",
+                        "title": "url",
+                        "pattern": "^(?:(?:https?|ftp)://)(?:\\S+(?::\\S*)?@)?(?:(?!(?:10|127)(?:\\.\\d{1,3}){3})(?!(?:169\\.254|192\\.168)(?:\\.\\d{1,3}){2})(?!172\\.(?:1[6-9]|2\\d|3[0-1])(?:\\.\\d{1,3}){2})(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}(?:\\.(?:[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\\.(?:[a-z\u00a1-\uffff]{2,}))\\.?)(?::\\d{2,5})?(?:[/?#]\\S*)?$",
+                        "description": "Matches the elements of a URL using a regular expression. Uses Diego Perini's regex from https://gist.github.com/dperini/729294."
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "A human readable description"
+                    }
+                }
+            }
+        },
+        "object_marking_refs": {
+            "type": "array",
+            "format": "table",
+            "uniqueItems": true,
+            "items": {
+                "type": "string"
+            },
+            "description": "The list of marking-definition objects to be applied to this object."
+        },
+        "granular_markings": {
+            "type": "array",
+            "format": "tabs",
+            "items": {
+                "title": "granular-marking",
+                "description": "The granular-marking type defines how the list of marking-definition objects referenced by the marking_refs property to apply to a set of content identified by the list of selectors in the selectors property.",
+                "type": "object",
+                "properties": {
+                    "marking_ref": {
+                        "type": "string",
+                        "title": "identifier",
+                        "pattern": "^[a-z][a-z-]+[a-z]--[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+                        "description": "Represents identifiers across the CTI specifications. The format consists of the name of the top-level object being identified, followed by two dashes (--), followed by a UUIDv4."
+                    },
+                    "selectors": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "minItems": 1
+                        },
+                        "description": "A list of selectors for content contained within the STIX object in which this property appears."
+                    }
+                },
+                "required": [
+                    "selectors",
+                    "marking_ref"
+                ]
+            }
+        },
+        "extensions": {
+            "title": "extensions",
+            "type": "object",
+            "patternProperties": {
+              "^[a-zA-Z0-9_-]{3,256}$": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "minItems": 1
+                  },
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "object"
+                  }]
+                }
+            }
+        }
+    },
+    "required": [
+        "type",
+        "id",
+        "created",
+        "modified",
+        "spec_version"
+    ]
+}

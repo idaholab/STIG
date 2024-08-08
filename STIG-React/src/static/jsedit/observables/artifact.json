@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "artifact",
+  "description": "The Artifact Object permits capturing an array of bytes (8-bits), as a base64-encoded string string, or linking to a file-like payload.",
+  "$ref": "static/jsedit/common/cyber-observable-core.json",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "description": "The value of this property MUST be `artifact`.",
+      "default": "artifact",
+      "readonly": "true"
+    },
+    "id": {
+      "title": "id",
+      "pattern": "^artifact--",
+      "default": "artifact--",
+      "readonly": "true"
+    },
+    "mime_type": {
+      "type": "string",
+      "pattern": "^(application|audio|font|image|message|model|multipart|text|video)/[a-zA-Z0-9.+_-]+",
+      "description": "The value of this property MUST be a valid MIME type as specified in the IANA Media Types registry."
+    },
+    "payload_bin": {
+      "type": "string",
+      "media": {
+        "binaryEncoding": "base64"
+      },
+      "description": "Specifies the binary data contained in the artifact as a base64-encoded string."
+    },
+    "url": {
+      "$ref": "static/jsedit/common/url-regex.json",
+      "description": "The value of this property MUST be a valid URL that resolves to the unencoded content."
+    },
+    "hashes": {
+      "$ref": "static/jsedit/common/hashes-type.json",
+      "description": "Specifies a dictionary of hashes for the contents of the url or the payload_bin.  This MUST be provided when the url property is present."
+    },
+    "encryption_algorithm": {
+      "$ref": "#/definitions/encryption-algorithm-enum",
+      "description": "If the artifact is encrypted, specifies the type of encryption algorithm the binary data  (either via payload_bin or url) is encoded in."
+    },
+    "decryption_key": {
+      "type": "string",
+      "description": "Specifies the decryption key for the encrypted binary data (either via payload_bin or url)."
+    }
+  },
+  "definitions": {
+    "encryption-algorithm-enum": {
+      "type": "string",
+      "enum": [
+        "AES-256-GCM",
+        "ChaCha20-Poly1305",
+        "mime-type-indicated"
+      ]
+    }
+  }
+}

@@ -1,7 +1,7 @@
 // This file contains the functions to manage Neo4j DB 
 // connections
 
-import { DBProfile } from "@/interfaces/DBProfile";
+import { DBProfile } from "@/types/DBProfile";
 import neo4j, { Driver } from 'neo4j-driver';
 
 export async function connectToNeo4jDB(oldDB: Driver | undefined, newDB: DBProfile): 

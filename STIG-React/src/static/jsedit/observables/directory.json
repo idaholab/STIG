@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "directory",
+  "description": "The Directory Object represents the properties common to a file system directory.",
+  "type": "object",
+  "$ref": "static/jsedit/common/cyber-observable-core.json",
+  "properties": {
+    "type": {
+      "type": "string",
+      "description": "The value of this property MUST be `directory`.",
+      "default": "directory",
+      "readonly": "true"
+    },
+    "id": {
+      "title": "id",
+      "pattern": "^directory--",
+      "readonly": "true"
+    },
+    "path": {
+      "type": "string",
+      "description": "Specifies the path, as originally observed, to the directory on the file system."
+    },
+    "path_enc": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9/\\.+_:-]{2,250}$",
+      "description": "Specifies the observed encoding for the path."
+    },
+    "ctime": {
+      "title": "ctime",
+      "$ref": "static/jsedit/common/timestamp.json",
+      "description": "Specifies the date/time the directory was created."
+    },
+    "mtime": {
+      "title": "mtime",
+      "$ref": "static/jsedit/common/timestamp.json",
+      "description": "Specifies the date/time the directory was last written to/modified."
+    },
+    "atime": {
+      "title": "atime",
+      "$ref": "static/jsedit/common/timestamp.json",
+      "description": "Specifies the date/time the directory was last accessed."
+    },
+    "contains_refs": {
+      "type": "array",
+      "description": "Specifies a list of references to other File and/or Directory Objects contained within the directory.",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    }
+  },
+  "required": [
+    "type",
+    "id",
+    "path"
+  ]
+}

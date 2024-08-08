@@ -1,0 +1,7 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "url-regex",
+  "description": "Matches a URI according to RFC 3986.",
+  "type": "string",
+  "format": "uri"
+}
