@@ -12,8 +12,17 @@ import { Indicator } from '@/types/Indicator';
 import { ObservedData } from '@/types/ObservedData';
 import { Report } from "@/types/Report";
 import { DataSourceType, StixType } from '@/types/Core';
+import { layouts } from './graphOptions';
+import cosebilkent from 'cytoscape-cose-bilkent';
+import dagre from 'cytoscape-dagre';
+import klay from 'cytoscape-klay';
+import spread from 'cytoscape-spread';
 
 cytoscape.use(edgehandles);
+cosebilkent(cytoscape);
+dagre(cytoscape);
+klay(cytoscape);
+spread(cytoscape);
 
 const Graph: React.FC = () => {
     const cyRef = useRef<HTMLDivElement>(null);
@@ -55,7 +64,7 @@ const Graph: React.FC = () => {
                 })
                 .update();
         }
-    }, [theme, cy]);
+    }, [theme, cy, edgeColorDark, edgeColorLight]);
 
     useEffect(() => {
         const handleCustomEvent = (payload: any) => {
@@ -75,8 +84,27 @@ const Graph: React.FC = () => {
 
         addEventListener('stencilMouseUpEvent', handleCustomEvent);
 
+        const handleClearGraphClickEvent = () => {
+            const clearGraphEvent = new CustomEvent('clearGraph');
+            cyRef.current?.dispatchEvent(clearGraphEvent);
+        }
+        addEventListener('clearGraphClickEvent', handleClearGraphClickEvent);
+
+        const handleLayoutChangeEvent = (payload: any) => {
+            const layout = payload.data.detail.layout;
+            const layoutChangeEvent = new CustomEvent('changeLayout', {
+                detail: {
+                    layout
+                }
+            });
+            cyRef.current?.dispatchEvent(layoutChangeEvent);
+        };
+        addEventListener('layoutSelect', handleLayoutChangeEvent);
+
         return () => {
             removeEventListener('stencilMouseUpEvent', handleCustomEvent);
+            removeEventListener('clearGraphClickEvent', handleClearGraphClickEvent);
+            removeEventListener('layoutSelect', handleLayoutChangeEvent);
         };
     }, [addEventListener, removeEventListener]);
 
@@ -133,11 +161,27 @@ const Graph: React.FC = () => {
                 //cyInstance.layout({ name: 'grid' }).run(); // TODO: Change to selected layout...
             };
 
+            const handleClearGraph = () => {
+                cyInstance.elements().remove();
+                cyInstance.reset();
+            }
+            const handleLayoutChangeEvent = (event: CustomEvent) => {
+                const { layout } = event.detail;
+                // Select all nodes with no parents or children
+                const orphans = cyInstance.$(':orphan').filter(':childless');
+                const cyLayout = orphans.layout(layouts[layout]);
+                cyLayout.run();
+            }
+
             const graphElement = cyRef.current;
             graphElement.addEventListener('addNode', handleAddNode as EventListener);
+            graphElement.addEventListener('clearGraph', handleClearGraph);
+            graphElement.addEventListener('changeLayout', handleLayoutChangeEvent as EventListener);
 
             return () => {
                 graphElement.removeEventListener('addNode', handleAddNode as EventListener);
+                graphElement.removeEventListener('clearGraph', handleClearGraph);
+                graphElement.removeEventListener('changeLayout', handleLayoutChangeEvent as EventListener);
             };
         }
     }, []);

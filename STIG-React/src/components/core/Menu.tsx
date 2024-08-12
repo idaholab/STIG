@@ -1,40 +1,24 @@
 import React from 'react';
-import Dropdown from './Dropdown.tsx';
-
-const dropdownItems = [
-  {
-    title: 'Dropdown Title', items: [
-      { label: 'Option 1', value: '1' },
-      { label: "Option 2", value: '2' },
-    ]
-  },
-  { title: 'Edit', items: [] },
-  { title: 'COREII Timeline', items: [] },
-  { title: 'Context Layouts', items: [] },
-  { title: 'Import', items: [] },
-  { title: 'Export', items: [] },
-  { title: 'Database Profile', items: [] }
-];
+import Graph from '../dropdowns/Graph';
+import Edit from '../dropdowns/Edit';
+import GraphLayouts from '../dropdowns/GraphLayouts';
+import ContextLayouts from '../dropdowns/ContextLayouts';
+import Import from '../dropdowns/Import';
+import Export from '../dropdowns/Export';
+import DatabaseProfile from '../dropdowns/DatabaseProfile';
 
 const Menu: React.FC = () => {
-  function handleDropdownSelect(value: string): void {
-    console.log(`Selected value: ${value}`);
-  }
-
   return (
-    <div className="join dark:bg-gray-900 ml-4 mt-4 border border-black dark:border-transparent z-9000 relative">
-      <div className="flex dark:bg-transparent relative z-10">
-        <main className="flex-1 z-50">
-          {dropdownItems.map(({ title, items }) => (
-            <Dropdown
-              key={title}
-              title={title}
-              items={items}
-              onSelect={handleDropdownSelect}
-            />
-          ))}
-        </main>
-      </div>
+    <div className="join dark:bg-gray-900 ml-4 mt-4 border border-black dark:border-transparent">
+      <main>
+        <Graph />
+        <Edit />
+        <GraphLayouts />
+        <ContextLayouts />
+        <Import />
+        <Export />
+        <DatabaseProfile/>
+      </main>
     </div>
   );
 };
