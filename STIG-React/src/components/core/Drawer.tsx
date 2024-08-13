@@ -69,9 +69,6 @@ const Drawer = () => {
     };
   }, []);
 
-
-
-
   return (
     <aside className={`flex bg-gray-300 dark:bg-gray-950 text-base-content transition-all max-w-[281px]`} style={{ height: accordionContainerHeight }}>
       <div className="flex flex-col justify-between  w-full h-full overflow-hidden relative">
@@ -86,27 +83,23 @@ const Drawer = () => {
             </span>
           </button>
         </div>
-
-        {/* {isPanelOpen && (
-          <span className="text-lg mx-4 font-semibold">Stencils</span>
-        )} */}
-
         <div className="flex items-center justify-center my-5">
           {isPanelOpen ? (
             <FormElementTextInput
               placeholder='FILTER STENCILS'
-              placeholderInInput
               value={stencilFilterText}
               type="text"
               onChange={(event) => setStencilFilterText(event.target.value)}
               includeX
               onX={() => setStencilFilterText('')}
-              additionalXClasses={`hover:dark:text-white `}
+              additionalXClasses={`hover:dark:text-white`}
+              additionalInputClasses={`h-9`}
               includeInfo={false}
               infoText={'Filter the stencils'}
               className="w-full mx-4"
               prefix='filter_alt'
               ref={inputRef}  // Attach ref here for filter bar focus
+              badgeText={stencilFilterText?.length > 0 ? 'Stencils are Filtered!' : undefined}
             />
           ) : (
             <button onClick={handleFilterIconClick} className="flex items-center justify-center w-10 h-10 rounded-lg hover:text-gray-100 dark:text-gray-300 dark:hover:text-gray-800 hover:bg-black dark:hover:bg-white transition" aria-label="Expand drawer">

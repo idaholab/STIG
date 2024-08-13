@@ -1,8 +1,8 @@
 import React, { forwardRef } from 'react';
 
 type Props = {
-  placeholder: string;
-  placeholderInInput?: boolean;
+  label?: string;
+  placeholder?: string;
   type: "text" | "password";
   value?: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -10,17 +10,19 @@ type Props = {
   disabled?: boolean;
   includeInfo?: boolean;
   infoText?: string;
+  infoIcon?: string,
   includeX?: boolean;
   onX?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   additionalInputClasses?: string;
   additionalInfoClasses?: string;
   additionalXClasses?: string;
   prefix?: string;
+  badgeText?: string
 };
 
 const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
   placeholder,
-  placeholderInInput,
+  label,
   type,
   value,
   onChange,
@@ -28,18 +30,20 @@ const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
   disabled,
   includeInfo,
   infoText,
+  infoIcon,
   includeX,
   onX,
   additionalInputClasses,
   additionalInfoClasses,
   additionalXClasses,
   prefix,
+  badgeText
 }, ref) => {
 
   return (
     <div className={`flex flex-col items-start ${className}`}>
-      <div className={`relative flex items-center w-full `}
-        title={includeInfo ? infoText : ''}>
+      <div className={`relative flex items-center w-full`}>
+        {label && <span className="mr-5 w-48">{label}</span>}
         {prefix && (
           <span className="absolute inset-y-0 left-1 flex items-center text-gray-400 dark:text-gray-400">
             <span className="material-icons">{prefix}</span>
@@ -48,17 +52,16 @@ const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
         <input
           ref={ref}
           type={type}
-          placeholder={placeholderInInput ? placeholder : undefined}
+          placeholder={placeholder ? placeholder : undefined}
           value={value}
           onChange={onChange}
           className={`
           flex
-          pl-8
+          ${prefix && 'pl-8'}
           w-full
-          py-2
           rounded-lg
           border
-          border-gray-300
+          border-gray-500
           bg-gray-100
           dark:bg-gray-600
           placeholder-gray-500
@@ -72,15 +75,23 @@ const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
             type="button"
             className={`material-icons absolute right-2 dark:text-gray-300 text-gray-500 hover:text-black ${additionalXClasses}`}
             onClick={onX}
-            title='Clear filter text'>
+            title='Clear'>
             close
           </button>
         )}
-      </div>
-      {value && value?.length > 0 &&
-        <div className="mt-2 badge dark:bg-orange-600 dark:text-orange-50 bg-orange-200 text-orange-900">Stencils are Filtered!</div>
-      }
 
+        {includeInfo && (
+          <div className={`flex tooltip ${additionalInfoClasses}`} data-tip={infoText}>
+            <span className="ml-1 material-icons">
+              {infoIcon}
+            </span>
+          </div>
+        )}
+      </div>
+
+      {badgeText && badgeText?.length > 0 &&
+        <div className="mt-2 badge dark:bg-orange-600 dark:text-orange-50 bg-orange-200 text-orange-900">{badgeText}</div>
+      }
     </div>
   );
 });

@@ -9,7 +9,7 @@ import DatabaseProfile from '../dropdowns/DatabaseProfile';
 
 const Menu: React.FC = () => {
   return (
-    <div className="join dark:bg-gray-950 ml-4 mt-4 border border-black dark:border-transparent">
+    <div className="join dark:bg-gray-950 border border-black dark:border-transparent">
       <main>
         <Graph />
         <Edit />

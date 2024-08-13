@@ -9,9 +9,10 @@ import { DBProfile } from '@/types/DBProfile';
 import ConnectedDBContext, { ConnectedDBContextType } from '../../contexts/ConnectedDBContext';
 import ButtonDBConnect from '../elements/ButtonDBConnect';
 
-export default function FormDatabaseConnect ({ selectedProfile, setSelectedProfile, inDBDeleteProcess, 
-  isFormComplete, setIsFormComplete, setDBProfiles }: 
-  { selectedProfile: DBProfile | undefined,
+export default function FormDatabaseConnect({ selectedProfile, setSelectedProfile, inDBDeleteProcess,
+  isFormComplete, setIsFormComplete, setDBProfiles }:
+  {
+    selectedProfile: DBProfile | undefined,
     setSelectedProfile: React.Dispatch<React.SetStateAction<DBProfile | undefined>>
     inDBDeleteProcess: boolean,
     isFormComplete: boolean,
@@ -44,28 +45,29 @@ export default function FormDatabaseConnect ({ selectedProfile, setSelectedProfi
   }, [selectedProfile]);
 
   return (
-    <>
+    <div className='flex basis-3/6 flex-col'>
       <FormElementTextInput
-        placeholder="Profile Name"
+        label="Profile Name"
         type="text"
         value={profileName}
-        onChange={(event) => {setProfileName(event.target.value)}}
-        className='mb-1 col-start-2'
-        disabled={inDBDeleteProcess || 
+        onChange={(event) => { setProfileName(event.target.value) }}
+        className='mb-1'
+        disabled={inDBDeleteProcess ||
           (selectedProfile && selectedProfile.Id === connectedDBProfile?.Id)
         }
         includeInfo={true}
         infoText='Friendly label for this database profile'
+        infoIcon='info_outline'
         additionalInputClasses='input-sm'
         additionalInfoClasses='tooltip-left'
       />
       <FormElementSelect
-        placeholder="Database Type"
+        label="Database Type"
         value={databaseType}
         options={dbTypeOptions}
-        onChange={(event) => {setDatabaseType(event.target.value)}}
-        className='mb-1 col-start-2'
-        disabled={inDBDeleteProcess || 
+        onChange={(event) => { setDatabaseType(event.target.value) }}
+        className='mb-1'
+        disabled={inDBDeleteProcess ||
           (selectedProfile && selectedProfile.Id === connectedDBProfile?.Id)
         }
         includeInfo={true}
@@ -73,62 +75,66 @@ export default function FormDatabaseConnect ({ selectedProfile, setSelectedProfi
         additionalInfoClasses='tooltip-left'
       />
       <FormElementTextInput
-        placeholder="Host"
+        label="Host"
         type="text"
         value={host}
-        onChange={(event) => {setHost(event.target.value)}}
-        className='mb-1 col-start-2'
-        disabled={inDBDeleteProcess || 
+        onChange={(event) => { setHost(event.target.value) }}
+        className='mb-1'
+        disabled={inDBDeleteProcess ||
           (selectedProfile && selectedProfile.Id === connectedDBProfile?.Id)
         }
         includeInfo={true}
         infoText='Connection url. Ex: neo4j://localhost:7687'
+        infoIcon='info_outline'
         additionalInputClasses='input-sm'
         additionalInfoClasses='tooltip-left'
       />
       <FormElementTextInput
-        placeholder="Database Name"
+        label="Database Name"
         type="text"
         value={databaseName}
-        onChange={(event) => {setDatabaseName(event.target.value)}}
-        className='mb-1 col-start-2'
-        disabled={inDBDeleteProcess || 
+        onChange={(event) => { setDatabaseName(event.target.value) }}
+        className='mb-1'
+        disabled={inDBDeleteProcess ||
           (selectedProfile && selectedProfile.Id === connectedDBProfile?.Id)
         }
         includeInfo={true}
         infoText='Database name to operate on. Ex: neo4j'
+        infoIcon='info_outline'
         additionalInputClasses='input-sm'
         additionalInfoClasses='tooltip-left'
       />
       <FormElementTextInput
-        placeholder="Username"
+        label="Username"
         type="text"
         value={username}
-        onChange={(event) => {setUsername(event.target.value)}}
-        className='mb-1 col-start-2'
-        disabled={inDBDeleteProcess || 
+        onChange={(event) => { setUsername(event.target.value) }}
+        className='mb-1'
+        disabled={inDBDeleteProcess ||
           (selectedProfile && selectedProfile.Id === connectedDBProfile?.Id)
         }
         includeInfo={true}
         infoText='Database username. Ex: neo4j'
+        infoIcon='info_outline'
         additionalInputClasses='input-sm'
         additionalInfoClasses='tooltip-left'
       />
       <FormElementTextInput
-        placeholder="Password"
+        label="Password"
         type="password"
         value={password}
-        onChange={(event) => {setPassword(event.target.value)}}
-        className='mb-1 col-start-2'
-        disabled={inDBDeleteProcess || 
+        onChange={(event) => { setPassword(event.target.value) }}
+        className='mb-1'
+        disabled={inDBDeleteProcess ||
           (selectedProfile && selectedProfile.Id === connectedDBProfile?.Id)
         }
         includeInfo={true}
         infoText='Database password'
+        infoIcon='info_outline'
         additionalInputClasses='input-sm'
         additionalInfoClasses='tooltip-left'
       />
-      <div className="flex justify-end col-start-2">
+      <div className="flex justify-end ">
         <ButtonDBConnect
           dbProfile={selectedProfile}
           additionalButtonClasses='btn-sm mt-2 mr-2'
@@ -136,19 +142,19 @@ export default function FormDatabaseConnect ({ selectedProfile, setSelectedProfi
           setIsConnectProcessing={setIsFormSubmitting}
           inDBDeleteProcess={inDBDeleteProcess}
         />
-        <ButtonBasic 
-          label="Save" 
+        <ButtonBasic
+          label="Save"
           color="btn-primary"
-          additionalClasses={"btn-sm mt-2" + 
-            (inDBDeleteProcess || (selectedProfile && selectedProfile.Id === connectedDBProfile?.Id)  || 
-              isFormSubmitting ? 
+          additionalClasses={"btn-sm mt-2" +
+            (inDBDeleteProcess || (selectedProfile && selectedProfile.Id === connectedDBProfile?.Id) ||
+              isFormSubmitting ?
               " btn-disabled" : ""
             )
           }
           onClick={() => {
             setIsFormSubmitting(true);
             // Validate form data
-            if(profileName === "" || databaseType === "" ||
+            if (profileName === "" || databaseType === "" ||
               host === "" || databaseName === "" ||
               username === "" || password === ""
             ) {
@@ -169,7 +175,7 @@ export default function FormDatabaseConnect ({ selectedProfile, setSelectedProfi
               LastDBOperationSuccessful: true
             };
             // Save form data
-            if(selectedProfile) {
+            if (selectedProfile) {
               // Edit selected database profile
               editDBConfig(newDBProfile);
             } else {
@@ -183,11 +189,11 @@ export default function FormDatabaseConnect ({ selectedProfile, setSelectedProfi
         />
       </div>
       {!isFormComplete ?
-        <p className="flex justify-end text-red-700">
+        <p className="flex justify-end dark:text-red-300 text-red-700">
           Please double check that all fields above have been completed.
         </p>
         : null
       }
-    </>
+    </div>
   );
 }

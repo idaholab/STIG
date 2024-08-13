@@ -25,7 +25,7 @@ const Header: React.FC<Props> = () => {
       <div className="ml-auto flex items-center">
         <ThemeToggle />
         <ButtonIcon
-          label=""
+          title="Show/Hide Graph Properties"
           buttonIcon="more_vert"
           color="btn-primary"
           onClick={toggleDrawer}
