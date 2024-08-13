@@ -19,7 +19,7 @@ const Dropdown: React.FC<DropdownProps> = ({ title, children }) => {
         <span className="material-icons">arrow_drop_down</span>
       </div>
       {isOpen && (
-        <ul tabIndex={0} className="dark:bg-gray-900 border border-black dark:border-none dropdown-content menu bg-base-100 rounded-[4px] z-[1] p-2 shadow" style={{ outline: 'none' }}>
+        <ul tabIndex={0} className="dark:bg-gray-950 border border-black dark:border-none dropdown-content menu bg-gray-100 rounded-[4px] z-[1] p-2 shadow" style={{ outline: 'none' }}>
           {children}
         </ul>
       )}

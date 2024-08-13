@@ -14,6 +14,23 @@ module.exports = {
         "gray-75": "#f6f7f8",
         "gray-150": "#ecedf0",
         "gray-925": "#0d162b",
+        // gray: {
+        //   75: 'var(--color-primary-dark-hex-75)',
+        //   150: 'var(--color-primary-dark-hex-150)',
+        //   925: 'var(--color-primary-dark-hex-925)'
+        // },
+        // orange: {
+        //   50: 'var(--color-orange-hex-50)',
+        //   100: 'var(--color-orange-hex-100)',
+        //   200: 'var(--color-orange-hex-200)',
+        //   300: 'var(--color-orange-hex-300)',
+        //   400: 'var(--color-orange-hex-400)',
+        //   500: 'var(--color-orange-hex-500)',
+        //   600: 'var(--color-orange-hex-600)',
+        //   700: 'var(--color-orange-hex-700)',
+        //   800: 'var(--color-orange-hex-800)',
+        //   900: 'var(--color-orange-hex-900)',
+        // },
       },
     },
     // colors: {

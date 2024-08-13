@@ -13,7 +13,7 @@ const __dirname = path.dirname(__filename);
 
 export default defineConfig({
 
-  base: '/stig-react',
+  base: '/stig',
   plugins: [
     react(),
   ],

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 
 type Props = {
   placeholder: string;
@@ -15,9 +15,10 @@ type Props = {
   additionalInputClasses?: string;
   additionalInfoClasses?: string;
   additionalXClasses?: string;
+  prefix?: string;
 };
 
-const FormElementTextInput: React.FC<Props> = ({
+const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
   placeholder,
   placeholderInInput,
   type,
@@ -31,50 +32,59 @@ const FormElementTextInput: React.FC<Props> = ({
   onX,
   additionalInputClasses,
   additionalInfoClasses,
-  additionalXClasses
-}) => {
+  additionalXClasses,
+  prefix,
+}, ref) => {
+
   return (
-    <div className={`flex items-center ${className}`}>
-      {!placeholderInInput ?
-        <span className="mr-5 w-56">{placeholder}</span>
-        : null
-      }
-      <input
-        type={type}
-        placeholder={placeholderInInput ? placeholder : undefined}
-        value={value}
-        onChange={onChange}
-        className={`
-          input
-          input-bordered
+    <div className={`flex flex-col items-start ${className}`}>
+      <div className={`relative flex items-center w-full `}
+        title={includeInfo ? infoText : ''}>
+        {prefix && (
+          <span className="absolute inset-y-0 left-1 flex items-center text-gray-400 dark:text-gray-400">
+            <span className="material-icons">{prefix}</span>
+          </span>
+        )}
+        <input
+          ref={ref}
+          type={type}
+          placeholder={placeholderInInput ? placeholder : undefined}
+          value={value}
+          onChange={onChange}
+          className={`
+          flex
+          pl-8
           w-full
+          py-2
+          rounded-lg
+          border
+          border-gray-300
           bg-gray-100
           dark:bg-gray-600
           placeholder-gray-500
-          dark:placeholder-gray-300 
+          dark:placeholder-gray-300
           ${additionalInputClasses}
         `}
-        disabled={disabled}
-      />
-      {includeX && value && (
-        <button
-          type="button"
-          className={`text-gray-800 dark:text-gray-200 ${additionalXClasses}`}
-          onClick={onX}
-        >
-          ✕
-        </button>
-      )}
-      {includeInfo ?
-        <div className={`tooltip ${additionalInfoClasses}`} data-tip={infoText}>
-          <span className="ml-1 material-icons">
-            info_outline
-          </span>
-        </div>
-        : null
+          disabled={disabled}
+        />
+        {includeX && value && (
+          <button
+            type="button"
+            className={`material-icons absolute right-2 dark:text-gray-300 text-gray-500 hover:text-black ${additionalXClasses}`}
+            onClick={onX}
+            title='Clear filter text'>
+            close
+          </button>
+        )}
+      </div>
+      {value && value?.length > 0 &&
+        <div className="mt-2 badge dark:bg-orange-600 dark:text-orange-50 bg-orange-200 text-orange-900">Stencils are Filtered!</div>
       }
+
     </div>
   );
-}
+});
+
+FormElementTextInput.displayName = 'FormElementTextInput'; //relates to ref somehow
 
 export default FormElementTextInput;
