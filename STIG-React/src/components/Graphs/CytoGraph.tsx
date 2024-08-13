@@ -42,7 +42,8 @@ const Graph: React.FC = () => {
                 .selector('node')
                 .style({
                     'color': theme === 'dark' ? nodeTextLightColor : nodeTextDarkColor,
-                    //'text-outline-color': theme === 'light' ? '#fff' : '#000'
+                    //'text-outline-color': theme === 'dark' ? '#fff' : '#000',
+                    'text-background-opacity': 0,
                     'target-arrow-color': theme === 'dark' ? edgeColorDark : edgeColorLight,
                     'line-color': theme === 'dark' ? edgeColorDark : edgeColorLight,
                 })
