@@ -172,6 +172,7 @@ body,
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-color: rgb(var(--color-accent-rgb-600) / 1) rgba(0,0,0,0);
+  scrollbar-width: thin;
 }
 
 .dark .scrollbar {
@@ -216,6 +217,12 @@ itself is hovered */
   max-height: calc(100vh - 48px);
   overflow-y: auto;
   /* padding-bottom: 100px!important; */
+}
+
+/* NOTE: This is overriding some unwanted Tailwind/Daisy styles for stencil-list */
+ul .stencil-list::before {
+  width: 0px!important;
+  background-color: transparent;
 }
 
 code {
@@ -448,4 +455,50 @@ body,
   height: 100%;
   margin: 0;
   padding: 0;
+}
+
+
+
+
+@media (min-width: 500px) and (max-width: 511px) {
+  .button-clear-graph {
+    top: 20rem;
+    right: 1rem;
+  }
+}
+@media (min-width: 512px) and (max-width: 570px) {
+  .button-clear-graph {
+    top: 17rem;
+    right: 1rem;
+  }
+}
+@media (min-width: 571px) and (max-width: 644px) {
+  .button-clear-graph {
+    top: 14rem;
+    right: 1rem;
+  }
+}
+@media (min-width: 645px) and (max-width: 810px) {
+  .button-clear-graph {
+    top: 11rem;
+    right: 1rem;
+  }
+}
+@media (min-width: 810px) and (max-width: 1185px) {
+  .button-clear-graph {
+    top: 8rem;
+    right: 1rem;
+  }
+}
+@media (min-width: 1185px) and (max-width: 1320px) {
+  .button-clear-graph {
+    top: 5rem;
+    right: 1rem;
+  }
+}
+@media (min-width: 1320px) {
+  .button-clear-graph {
+    top: 1rem;
+    right: 1rem;
+  }
 }

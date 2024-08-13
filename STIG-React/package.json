@@ -13,7 +13,6 @@
     "@fontsource/source-sans-pro": "^5.0.8",
     "@reduxjs/toolkit": "^2.2.5",
     "@tailwindcss/typography": "^0.5.10",
-    "@types/cytoscape-dagre": "^2.3.3",
     "@types/cytoscape-klay": "^3.1.4",
     "@types/uuid": "^10.0.0",
     "cytoscape": "^3.29.2",
@@ -42,6 +41,7 @@
   },
   "devDependencies": {
     "@types/cytoscape": "^3.21.0",
+    "@types/cytoscape-dagre": "^2.3.3",
     "@types/cytoscape-edgehandles": "^4.0.4",
     "@types/node": "^20.14.2",
     "@types/react": "^18.2.66",

@@ -19,7 +19,7 @@ const Header: React.FC<Props> = () => {
       </Link>
 
       <Link to="/" className="btn btn-ghost px-2 mx-1 normal-case btn-sm text-xl text-white">
-        STIG React
+        STIG
       </Link>
 
       <div className="ml-auto flex items-center">

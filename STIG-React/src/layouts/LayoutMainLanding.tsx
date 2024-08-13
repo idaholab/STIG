@@ -7,9 +7,9 @@ import ButtonClearGraph from '@/components/core/ButtonClearGraph';
 
 const LayoutMainLanding: React.FC = () => {
   return (
-    <div id="graph" className="relative h-full w-full overflow-hidden">
+    <div id="graphContainer" className="relative h-full w-full overflow-hidden">
       <ConnectedDBProvider>
-        <Menu/>
+        <Menu />
       </ConnectedDBProvider>
       <ButtonClearGraph />
       <div id="graph" className="h-full">

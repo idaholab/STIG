@@ -35,21 +35,26 @@ const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
   additionalXClasses,
   prefix,
 }, ref) => {
+
   return (
-    <div className={`relative flex items-center ${className}`}>
-      {prefix && (
-        <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 dark:text-gray-400">
-          <span className="material-icons">{prefix}</span>
-        </span>
-      )}
-      <input
-        type={type}
-        placeholder={placeholderInInput ? placeholder : undefined}
-        value={value}
-        onChange={onChange}
-        className={`
+    <div className={`flex flex-col items-start ${className}`}>
+      <div className={`relative flex items-center w-full `}
+        title={includeInfo ? infoText : ''}>
+        {prefix && (
+          <span className="absolute inset-y-0 left-1 flex items-center text-gray-400 dark:text-gray-400">
+            <span className="material-icons">{prefix}</span>
+          </span>
+        )}
+        <input
+          ref={ref}
+          type={type}
+          placeholder={placeholderInInput ? placeholder : undefined}
+          value={value}
+          onChange={onChange}
+          className={`
+          flex
+          pl-8
           w-full
-          pl-${prefix ? 12 : 4} pr-${includeX ? 12 : 4}
           py-2
           rounded-lg
           border
@@ -60,24 +65,22 @@ const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
           dark:placeholder-gray-300
           ${additionalInputClasses}
         `}
-        disabled={disabled}
-        ref={ref}  // Attach ref for focus here
-      />
-      {includeX && value && (
-        <button
-          type="button"
-          className={`text-gray-800 dark:text-gray-200 ${additionalXClasses}`}
-          onClick={onX}>
-          ✕
-        </button>
-      )}
-      {includeInfo && (
-        <div className={`tooltip ${additionalInfoClasses}`} data-tip={infoText}>
-          <span className="ml-1 material-icons">
-            filter_list
-          </span>
-        </div>
-      )}
+          disabled={disabled}
+        />
+        {includeX && value && (
+          <button
+            type="button"
+            className={`material-icons absolute right-2 dark:text-gray-300 text-gray-500 hover:text-black ${additionalXClasses}`}
+            onClick={onX}
+            title='Clear filter text'>
+            close
+          </button>
+        )}
+      </div>
+      {value && value?.length > 0 &&
+        <div className="mt-2 badge dark:bg-orange-600 dark:text-orange-50 bg-orange-200 text-orange-900">Stencils are Filtered!</div>
+      }
+
     </div>
   );
 });

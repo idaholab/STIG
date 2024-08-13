@@ -19,7 +19,7 @@ const StixPropsPanel: React.FC = () => {
           <p className="p-4">Sidebar Title 1</p>
 
           <button
-            className="btn border-none pr-5 col-start-2 justify-self-end text-4xl text-gray-900 dark:text-gray-100"
+            className="btn border-none pr-5 col-start-2 justify-self-end text-4xl text-gray-900 dark:text-gray-100 shadow-none"
             onClick={toggleDrawer}
           >
             &times;

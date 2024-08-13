@@ -22,11 +22,11 @@ import { DrawerContextProvider } from './contexts/StixPropsContext';
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <Provider store={store}>
-      <BrowserRouter basename="/stig-react">
+      <BrowserRouter basename="/stig">
         <DrawerContextProvider>
           <App>
             <Routes>
-              <Route path="/" element={<PageMainLanding />}/>
+              <Route path="/" element={<PageMainLanding />} />
             </Routes>
           </App>
         </DrawerContextProvider>

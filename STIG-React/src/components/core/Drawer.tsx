@@ -1,6 +1,4 @@
-import React, { useState, useContext, useRef } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../../../app/hooks/reduxTypescriptHooks';
+import React, { useState, useContext, useRef, useEffect } from 'react';
 import { EventContext } from '@/contexts/EventContext';
 import FormElementTextInput from '../forms/formElements/FormElementTextInput';
 import AccordionSection from './AccordionSection';
@@ -8,25 +6,12 @@ import StencilLibrary from '../Graphs/StencilLibrary';
 
 const Drawer = () => {
   const [stencilFilterText, setStencilFilterText] = useState("");
-  const [isOpen, setIsOpen] = useState(true);
-
-  const inputRef = useRef<HTMLInputElement>(null); // Create a ref for focus
-
-  const dispatch = useAppDispatch();
-  const location = useLocation();
-  const navigate = useNavigate();
-  const storeReportsSharedList = useAppSelector((state: any) => state.appState.reportsSharedList);
-  const storeCommonLinksList = useAppSelector((state: any) => state.appState.commonLinksList);
-  const selectedReportIndex = useAppSelector((state: any) => state.appState.selectedReportIndex);
-
-  const [openSections, setOpenSections] = useState<{ [key: string]: boolean }>({ sdo: true, sco: true });
-
-  const toggleAccordion = (section: string) => {
-    setOpenSections(prevState => ({ ...prevState, [section]: !prevState[section] }));
-  };
+  const [isPanelOpen, setIsPanelOpen] = useState(true);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [openAccordionSections, setOpenAccordionSections] = useState<{ [key: string]: boolean }>({ sdo: true, sco: true });
 
   const toggleDrawer = (shouldOpen: boolean) => {
-    setIsOpen(shouldOpen);
+    setIsPanelOpen(shouldOpen);
   };
 
   const { dispatchEvent } = useContext(EventContext);
@@ -41,83 +26,119 @@ const Drawer = () => {
     dispatchEvent('stencilMouseUpEvent', { data: customEvent });
   };
 
-  const handleIconClick = () => {
-    if (!isOpen) {
+  const handleFilterIconClick = () => {
+    if (!isPanelOpen) {
       toggleDrawer(true);
-    }
-    // Focus on the input
-    if (inputRef.current) {
-      inputRef.current.focus();
     }
   };
 
+  useEffect(() => {
+    if (isPanelOpen && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isPanelOpen]);
+
+
+  // Define an array of sections
+  const accordionSections = [
+    {
+      key: 'sdo',
+      title: isPanelOpen ? "STIX Domain Objects (SDO)" : "SDO",
+      type: 'sdo',
+    },
+    {
+      key: 'sco',
+      title: isPanelOpen ? "STIX Cyber-Observable Objects (SCO)" : "SCO",
+      type: 'sco',
+    },
+  ];
+
+  const [accordionContainerHeight, setAccordionContainerHeight] = useState<string>('0px');
+
+  useEffect(() => {
+    const calculateHeight = () => {
+      const calculatedHeight = window.innerHeight - 64;
+      setAccordionContainerHeight(`${calculatedHeight}px`);
+    };
+
+    calculateHeight();
+    window.addEventListener('resize', calculateHeight);
+
+    return () => {
+      window.removeEventListener('resize', calculateHeight);
+    };
+  }, []);
+
+
+
+
   return (
-    <aside className={`flex flex-col bg-gray-300 dark:bg-gray-950 text-base-content ${isOpen ? 'w-80' : 'w-20'} transition-all`} style={{ height: 'calc(100vh - 64px)' }}>
-      <div className="flex flex-col justify-between h-full overflow-hidden">
-        <div className={`p-2 flex items-center ${isOpen ? 'justify-end' : 'justify-center'}`}>
+    <aside className={`flex bg-gray-300 dark:bg-gray-950 text-base-content transition-all max-w-[281px]`} style={{ height: accordionContainerHeight }}>
+      <div className="flex flex-col justify-between  w-full h-full overflow-hidden relative">
+        <div className={`mt-4 flex items-center ${isPanelOpen ? 'justify-end' : 'justify-center'}`}>
           <button
-            onClick={() => toggleDrawer(!isOpen)}
+            onClick={() => toggleDrawer(!isPanelOpen)}
             className="flex items-center justify-center w-12 h-12 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition"
-            aria-label={isOpen ? "Collapse drawer" : "Expand drawer"}
+            aria-label={isPanelOpen ? "Collapse drawer" : "Expand drawer"}
           >
             <span className="material-icons text-xl">
-              {isOpen ? 'menu_open' : 'menu'}
+              {isPanelOpen ? 'menu_open' : 'menu'}
             </span>
           </button>
         </div>
 
-        {isOpen ? (
-          <ul className="m-4">
-            <li className="mb-2 relative">
-              <FormElementTextInput
-                placeholder='FILTER'
-                placeholderInInput
-                value={stencilFilterText}
-                type="text"
-                onChange={(event) => setStencilFilterText(event.target.value)}
-                includeX
-                onX={() => setStencilFilterText("")}
-                additionalXClasses='absolute left-[260px]'
-                className="w-full"
-                prefix='filter_alt'
-                ref={inputRef}  // Attach ref here for filter bar focus
-              />
-            </li>
-          </ul>
-        ) : (
-          <div className="flex items-center justify-center p-2">
-            <button onClick={handleIconClick} className="flex items-center justify-center w-12 h-12 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition" aria-label="Expand drawer">
+        {/* {isPanelOpen && (
+          <span className="text-lg mx-4 font-semibold">Stencils</span>
+        )} */}
+
+        <div className="flex items-center justify-center my-5">
+          {isPanelOpen ? (
+            <FormElementTextInput
+              placeholder='FILTER STENCILS'
+              placeholderInInput
+              value={stencilFilterText}
+              type="text"
+              onChange={(event) => setStencilFilterText(event.target.value)}
+              includeX
+              onX={() => setStencilFilterText('')}
+              additionalXClasses={`hover:dark:text-white `}
+              includeInfo={false}
+              infoText={'Filter the stencils'}
+              className="w-full mx-4"
+              prefix='filter_alt'
+              ref={inputRef}  // Attach ref here for filter bar focus
+            />
+          ) : (
+            <button onClick={handleFilterIconClick} className="flex items-center justify-center w-10 h-10 rounded-lg hover:text-gray-100 dark:text-gray-300 dark:hover:text-gray-800 hover:bg-black dark:hover:bg-white transition" aria-label="Expand drawer">
               <span className="material-icons text-xl">filter_alt</span>
             </button>
-          </div>
-        )}
+          )}
+        </div>
 
-        <div className="flex-grow overflow-y-auto scrollbar">
-          <ul className="menu text-gray-800 dark:text-gray-200">
-            <li>
-              <AccordionSection title={isOpen ? "STIX Domain Objects (SDO)" : "SDO"} isOpen={openSections['sdo']}>
-                <div className={`transition-all ${isOpen ? 'hidden' : 'flex justify-center'}`}>
-                  <StencilLibrary type="sdo" onAddNode={handleAddStencilNode} searchText={stencilFilterText} isOpen={isOpen} />
-                </div>
-              </AccordionSection>
-            </li>
-            <li>
-              <AccordionSection title={isOpen ? "STIX Cyber-Observable Objects (SCO)" : "SCO"} isOpen={openSections['sco']}>
-                <div className={`transition-all ${isOpen ? 'block' : 'hidden'}`}>
-                  <StencilLibrary type="sco" onAddNode={handleAddStencilNode} searchText={stencilFilterText} isOpen={isOpen} />
-                </div>
-                <div className={`transition-all ${isOpen ? 'hidden' : 'flex justify-center'}`}>
-                  <div className="icon-container">
-                    <StencilLibrary type="sco" onAddNode={handleAddStencilNode} searchText={stencilFilterText} isOpen={isOpen} />
-                  </div>
-                </div>
-              </AccordionSection>
-            </li>
+
+        <div className="flex flex-col flex-grow h-full scrollbar" >
+          <ul className={`menu p-0 flex flex-col justify-start `}>
+            {accordionSections.map(section => (
+              <li className="flex" key={section.key}>
+                <AccordionSection
+                  title={section.title}
+                  isOpen={openAccordionSections[section.key]}
+                >
+                  <StencilLibrary
+                    type={section.type}
+                    onAddNode={handleAddStencilNode}
+                    searchText={stencilFilterText}
+                    isAccordionOpen={openAccordionSections[section.key]}
+                    isPanelOpen={isPanelOpen}
+                  />
+                </AccordionSection>
+              </li>
+            ))}
           </ul>
         </div>
 
-        {isOpen && (
-          <div className="m-4">
+        {isPanelOpen && (
+          <div className="flex justify-center w-full py-2 absolute z-50 bottom-0 dark:bg-gray-950 bg-gray-300">
             <span className="copyright-box">©{new Date().getFullYear()} Idaho National Laboratory</span>
           </div>
         )}
@@ -125,5 +146,4 @@ const Drawer = () => {
     </aside>
   );
 };
-
 export default Drawer;
