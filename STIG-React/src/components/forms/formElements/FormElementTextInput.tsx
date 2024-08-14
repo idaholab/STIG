@@ -1,3 +1,4 @@
+import ButtonIcon from '@/components/elements/ButtonIcon';
 import React, { forwardRef } from 'react';
 
 type Props = {
@@ -81,10 +82,12 @@ const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
         )}
 
         {includeInfo && (
-          <div className={`flex tooltip ${additionalInfoClasses}`} data-tip={infoText}>
-            <span className="ml-1 material-icons">
-              {infoIcon}
-            </span>
+          <div className={`flex cursor-pointer tooltip ${additionalInfoClasses}`} data-tip={infoText}>
+            <ButtonIcon
+              color={'btn-ghost'}
+              buttonIcon={infoIcon ? infoIcon : ''}
+              buttonSize={'btn-sm'}
+            />
           </div>
         )}
       </div>

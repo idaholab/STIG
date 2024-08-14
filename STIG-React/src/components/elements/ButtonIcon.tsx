@@ -35,11 +35,11 @@ const ButtonIcon: React.FC<ButtonProps> = ({ label, buttonIcon, buttonSize, colo
 
   // Define conditional light mode classes
   const lightModeClasses = color === 'btn-secondary' ? 'border border-solid !border-primary text-primary hover:text-primary' : '';
-  const btnGhostLightModeClasses = color === 'btn-ghost' ? 'text-primary hover:text-primary ' : '';
+  const btnGhostLightModeClasses = color === 'btn-ghost' ? 'text-gray-600 hover:text-black ' : '';
 
   // Define conditional dark mode classes
   const darkModeClasses = color === 'btn-secondary' ? 'dark:border dark:border-solid dark:!border-gray-400 dark:text-gray-300 dark:hover:text-white' : '';
-  const btnGhostDarkModeClasses = color === 'btn-ghost' ? 'dark:text-gray-300 dark:hover:text-primary' : '';
+  const btnGhostDarkModeClasses = color === 'btn-ghost' ? 'dark:text-gray-300 dark:hover:text-white' : '';
 
   // Combine base classes and conditional classes
   const btnClass = `${baseClasses} ${lightModeClasses} ${darkModeClasses} ${btnGhostLightModeClasses} ${btnGhostDarkModeClasses}`;

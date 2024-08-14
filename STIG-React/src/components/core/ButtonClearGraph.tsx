@@ -6,14 +6,13 @@ const ButtonClearGraph: React.FC = () => {
   const { dispatchEvent } = useContext(EventContext);
 
   return (
-    // xs: top-[200px] sm: top - [200px] md: top - [200px] lg: top - [120px] xl: top - 4
     <ButtonBasic
       label="Clear Graph"
       onClick={() => {
         const clearGraphEvent = new CustomEvent('clearGraph');
         dispatchEvent('clearGraphClickEvent', { data: clearGraphEvent });
       }}
-      additionalClasses='text-primary dark:text-gray-300'
+      color='btn-secondary'
     />
   );
 };

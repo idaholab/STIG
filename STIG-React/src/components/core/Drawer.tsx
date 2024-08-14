@@ -83,7 +83,7 @@ const Drawer = () => {
             </span>
           </button>
         </div>
-        <div className="flex items-center justify-center my-5">
+        <div className="flex items-center justify-center mt-3 mb-6">
           {isPanelOpen ? (
             <FormElementTextInput
               placeholder='FILTER STENCILS'
@@ -102,7 +102,7 @@ const Drawer = () => {
               badgeText={stencilFilterText?.length > 0 ? 'Stencils are Filtered!' : undefined}
             />
           ) : (
-            <button onClick={handleFilterIconClick} className="flex items-center justify-center w-10 h-10 rounded-lg hover:text-gray-100 dark:text-gray-300 dark:hover:text-gray-800 hover:bg-black dark:hover:bg-white transition" aria-label="Expand drawer">
+            <button onClick={handleFilterIconClick} className="flex items-center justify-center w-12 h-12 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition" aria-label="Expand drawer">
               <span className="material-icons text-xl">filter_alt</span>
             </button>
           )}
