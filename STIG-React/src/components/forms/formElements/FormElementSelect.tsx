@@ -1,8 +1,10 @@
 // React
+import ButtonIcon from '@/components/elements/ButtonIcon';
 import React from 'react';
 
 type Props = {
-  placeholder: string;
+  label?: string;
+  placeholder?: string;
   value?: string;
   options: string[];
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
@@ -14,6 +16,7 @@ type Props = {
 };
 
 const FormElementSelect: React.FC<Props> = ({
+  label,
   placeholder,
   value,
   options,
@@ -26,12 +29,13 @@ const FormElementSelect: React.FC<Props> = ({
 }) => {
   return (
     <div className={`flex items-center ${className}`}>
-      <span className="mr-5 w-56">{placeholder}</span>
+      {label && <span className="mr-5 w-[195px]">{label}</span>}
       <select
         // placeholder={placeholder}
         value={value}
         onChange={onChange}
         className="
+        flex
           select
           select-bordered
           select-sm
@@ -40,6 +44,9 @@ const FormElementSelect: React.FC<Props> = ({
           dark:bg-gray-600
           placeholder-gray-500
           dark:placeholder-gray-300 
+          border
+          border-gray-500
+          bg-gray-100
         "
         disabled={disabled}
       >
@@ -50,10 +57,12 @@ const FormElementSelect: React.FC<Props> = ({
         })}
       </select>
       {includeInfo ?
-        <div className={`tooltip ${additionalInfoClasses}`} data-tip={infoText}>
-          <span className="ml-1 material-icons">
-            info_outline
-          </span>
+        <div className={`flex cursor-pointer tooltip ${additionalInfoClasses}`} data-tip={infoText}>
+          <ButtonIcon
+            color={'btn-ghost'}
+            buttonIcon={'info_outline'}
+            buttonSize={'btn-sm'}
+          />
         </div>
         : null
       }

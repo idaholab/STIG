@@ -7,12 +7,15 @@ import ButtonClearGraph from '@/components/core/ButtonClearGraph';
 
 const LayoutMainLanding: React.FC = () => {
   return (
-    <div id="graph" className="relative h-full w-full overflow-hidden">
-      <ConnectedDBProvider>
-        <Menu/>
-      </ConnectedDBProvider>
-      <ButtonClearGraph />
-      <div id="graph" className="h-full">
+    <div id="graphContainer" className="relative h-full w-full overflow-hidden">
+      <div className='m-4 flex flex-wrap items-start justify-between'>
+        <ConnectedDBProvider>
+          <Menu />
+        </ConnectedDBProvider>
+        <ButtonClearGraph />
+      </div>
+
+      <div id="graph" className="h-full w-full">
         <Graph />
       </div>
     </div>

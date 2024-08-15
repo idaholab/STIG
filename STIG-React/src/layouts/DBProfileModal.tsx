@@ -8,8 +8,8 @@ import FormDatabaseConnect from '../components/forms/FormDatabaseConnect';
 import ConnectedDBContext, { ConnectedDBContextType } from '../contexts/ConnectedDBContext';
 
 const DBProfileModal: React.FC = () => {
-  const { 
-    savedDBProfiles, setSavedDBProfiles, selectedProfile, setSelectedProfile 
+  const {
+    savedDBProfiles, setSavedDBProfiles, selectedProfile, setSelectedProfile
   } = useContext(ConnectedDBContext) as ConnectedDBContextType;
 
   const [isFormComplete, setIsFormComplete] = useState(true);
@@ -27,7 +27,7 @@ const DBProfileModal: React.FC = () => {
         />
         : null
       }
-      <div className='grid'>
+      <div className='flex justify-between'>
         {/* Database Profile Selector: */}
         <DBProfileSelector
           dbProfiles={savedDBProfiles}
@@ -51,16 +51,17 @@ const DBProfileModal: React.FC = () => {
   );
 };
 
-function DBDeleteConfirmationDialog({selectedProfile, setSelectedProfile, setInDBDeleteProcess, 
-    setDBProfiles
-  }: 
-  { selectedProfile: DBProfile | undefined,
+function DBDeleteConfirmationDialog({ selectedProfile, setSelectedProfile, setInDBDeleteProcess,
+  setDBProfiles
+}:
+  {
+    selectedProfile: DBProfile | undefined,
     setSelectedProfile: React.Dispatch<React.SetStateAction<DBProfile | undefined>>,
     setInDBDeleteProcess: React.Dispatch<React.SetStateAction<boolean>>,
     setDBProfiles: React.Dispatch<React.SetStateAction<DBProfile[]>>
   }) {
-  return(
-    <div role="alert" className="alert mb-8 w-6/12">
+  return (
+    <div role="alert" className="alert mb-8 w-1/2">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -75,10 +76,10 @@ function DBDeleteConfirmationDialog({selectedProfile, setSelectedProfile, setInD
         />
       </svg>
       <span>Are you sure you wish to delete {selectedProfile?.ProfileName}?</span>
-      <button 
+      <button
         className="btn btn-sm btn-primary"
         onClick={() => {
-          if(selectedProfile) {
+          if (selectedProfile) {
             removeDBConfig(selectedProfile.Id);
             setInDBDeleteProcess(false);
             setSelectedProfile(undefined);
@@ -88,7 +89,7 @@ function DBDeleteConfirmationDialog({selectedProfile, setSelectedProfile, setInD
       >
         Delete
       </button>
-      <button 
+      <button
         className="btn btn-sm"
         onClick={() => {
           setInDBDeleteProcess(false);
@@ -100,7 +101,7 @@ function DBDeleteConfirmationDialog({selectedProfile, setSelectedProfile, setInD
   );
 }
 
-function DBProfileSelector({dbProfiles, inDBDeleteProcess, setInDBDeleteProcess, selectedProfile, 
+function DBProfileSelector({ dbProfiles, inDBDeleteProcess, setInDBDeleteProcess, selectedProfile,
   setSelectedProfile, setIsFormComplete }:
   {
     dbProfiles: DBProfile[],
@@ -110,23 +111,23 @@ function DBProfileSelector({dbProfiles, inDBDeleteProcess, setInDBDeleteProcess,
     setSelectedProfile: React.Dispatch<React.SetStateAction<DBProfile | undefined>>,
     setIsFormComplete: React.Dispatch<React.SetStateAction<boolean>>
   }
-  ) {
+) {
   const { connectedDBProfile } = useContext(ConnectedDBContext) as ConnectedDBContextType;
 
-  return(
-    <ul 
-      className="menu rounded-box w-56 h-72 bg-gray-300 dark:bg-gray-800
-        row-span-8 grid"
+  return (
+    <ul
+      className="rounded-box h-full bg-gray-300 dark:bg-gray-800
+        flex flex-col p-2 basis-2/5 max-h-60"
     >
-      <div className={"overflow-auto grid scrollbar" + (dbProfiles.length < 7 ? " grid-rows-6" : "")}>
+      <div className={"scrollbar"}>
         {dbProfiles.map((profile) => {
-          return(
+          return (
             <li key={profile.Id} className={inDBDeleteProcess ? "disabled" : ""}>
               <a
-                className={!inDBDeleteProcess && selectedProfile?.Id === profile.Id ? 
+                className={!inDBDeleteProcess && selectedProfile?.Id === profile.Id ?
                   "bg-primary text-white hover:text-black dark:hover:text-white" : ""}
                 onClick={() => {
-                  if(!inDBDeleteProcess) {
+                  if (!inDBDeleteProcess) {
                     setSelectedProfile(profile);
                     setIsFormComplete(true);
                     profile.LastDBOperationSuccessful = true;
@@ -148,17 +149,17 @@ function DBProfileSelector({dbProfiles, inDBDeleteProcess, setInDBDeleteProcess,
                 </div>
                 {/* Display a trashcan for the selected DB
                 as long as the selected DB is not connected */}
-                {selectedProfile?.Id === profile.Id  &&
+                {selectedProfile?.Id === profile.Id &&
                   connectedDBProfile?.Id !== profile.Id ?
                   <div className="flex justify-end">
-                    <ButtonIcon 
-                      label={"Delete Database Connection"} 
-                      color={"text-red-700"} 
+                    <ButtonIcon
+                      label={"Delete Database Connection"}
+                      color={"text-red-600"}
                       onClick={() => {
                         setInDBDeleteProcess(true);
-                      }} 
-                      buttonIcon={"delete"} 
-                      buttonSize={"btn-xs"} 
+                      }}
+                      buttonIcon={"delete"}
+                      buttonSize={"btn-xs"}
                     />
                   </div>
                   : null
@@ -168,11 +169,11 @@ function DBProfileSelector({dbProfiles, inDBDeleteProcess, setInDBDeleteProcess,
           );
         })}
       </div>
-      <li className="justify-self-start self-end">
+      <li className="flex justify-start w-max">
         <ButtonBasic
           label="+ NEW"
           additionalClasses={"btn-sm mt-2" + (inDBDeleteProcess ? " btn-disabled" : "")}
-          onClick={() => {setSelectedProfile(undefined)}}
+          onClick={() => { setSelectedProfile(undefined) }}
         />
       </li>
     </ul>

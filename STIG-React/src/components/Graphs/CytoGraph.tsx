@@ -11,7 +11,7 @@ import moment from 'moment';
 import { Indicator } from '@/types/Indicator';
 import { ObservedData } from '@/types/ObservedData';
 import { Report } from "@/types/Report";
-import { StixType } from '@/types/Core';
+import { DataSourceType, StixType } from '@/types/Core';
 import { layouts } from './graphOptions';
 import cosebilkent from 'cytoscape-cose-bilkent';
 import dagre from 'cytoscape-dagre';
@@ -42,7 +42,8 @@ const Graph: React.FC = () => {
                 .selector('node')
                 .style({
                     'color': theme === 'dark' ? nodeTextLightColor : nodeTextDarkColor,
-                    //'text-outline-color': theme === 'light' ? '#fff' : '#000'
+                    //'text-outline-color': theme === 'dark' ? '#fff' : '#000',
+                    'text-background-opacity': 0,
                     'target-arrow-color': theme === 'dark' ? edgeColorDark : edgeColorLight,
                     'line-color': theme === 'dark' ? edgeColorDark : edgeColorLight,
                 })
@@ -64,18 +65,16 @@ const Graph: React.FC = () => {
                 })
                 .update();
         }
-    }, [theme, cy]);
+    }, [theme, cy, edgeColorDark, edgeColorLight]);
 
     useEffect(() => {
         const handleCustomEvent = (payload: any) => {
             //const id = payload.data.detail.id;
-            const id = uuidv4();
             const label = payload.data.detail.label;
             const imageUrl = payload.data.detail.imageUrl;
             const position = payload.data.detail.position;
             const customEvent = new CustomEvent('addNode', {
                 detail: {
-                    id,
                     label,
                     imageUrl,
                     position: position,
@@ -146,18 +145,20 @@ const Graph: React.FC = () => {
             });
 
 
-
             const handleAddNode = (event: CustomEvent) => {
-                const { id, label, imageUrl, position } = event.detail;
+                const { label, imageUrl, position } = event.detail;
 
                 // TODO: Create stix object
-                //let node = handleAddStixNode(label);
+                const node = handleAddStixNode(label, imageUrl, position, 'GUI');
+                node.group = 'nodes';
 
-                cyInstance.add({
-                    group: 'nodes',
-                    data: { id, label, image: imageUrl },
-                    position: position,
-                });
+                cyInstance.add(node);
+
+                // cyInstance.add({
+                //     group: 'nodes',
+                //     data: { id, label, image: imageUrl },
+                //     position: position,
+                // });
                 //cyInstance.layout({ name: 'grid' }).run(); // TODO: Change to selected layout...
             };
 
@@ -197,6 +198,9 @@ const Graph: React.FC = () => {
         const x = event.clientX - position.x;
         const y = event.clientY - position.y;
 
+        // TODO: Create/Add Stix Node!!!
+        handleAddStixNode
+
         const customEvent = new CustomEvent('addNode', {
             detail: {
                 id,
@@ -214,14 +218,12 @@ const Graph: React.FC = () => {
     };
 
 
-
-
-    function handleAddStixNode(nodeType: StixType): StixNode | undefined {
-
+    function handleAddStixNode(nodeType: StixType, imgUrl: string, position: any, dSource: DataSourceType): StixNode {
         const opts: StixNodeData = {
             type: nodeType,
             id: nodeType + '--' + uuidv4(),
             created: moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+            level: 1,
         };
         if (nodeType === 'indicator') {
             (opts as Indicator).valid_from = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
@@ -237,61 +239,35 @@ const Graph: React.FC = () => {
             opts.modified = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
         }
 
-        // let rtnNode: StixNode = { data: {} };
-        // rtnNode.data = opts;
+        const style: CSSStyleDeclaration = { backgroundImage: imgUrl } as unknown as CSSStyleDeclaration; //node_img[nodeType]
+        let rtnNode: StixNode = { data: opts, style: style, position: position, classes: 'stix_node' };
 
-
-        // const labelorder = ['name', 'value', 'key', 'path', 'product', 'dst_port', 'command_line', 'type', 'id'];
-        // let nodelabel: string | undefined;
-        // if (nodeType === 'marking-definition') {
-        //     nodelabel = rtnNode.data.name;
-        // } else {
-        //     for (const element of labelorder) {
-        //         if (Object.prototype.hasOwnProperty.call(rtnNode.data, element)) {
-        //             if (element === 'dst_port') {
-        //                 const { [element]: nodelabel1, src_port, protocols } = rtnNode.data;
-        //                 nodelabel = src_port.toString().concat(' -> ', nodelabel1.toString(), '/', protocols.toString());
-        //             } else {
-        //                 const { [element]: nodelabel1 } = rtnNode.data;
-        //                 nodelabel = nodelabel1;
-        //             }
-        //             break;
-        //         }
-        //     }
-        // }
-
-        // this.data = {
-        //     id: rtnNode.data.id,
-        //     label: nodelabel,
-        //     type: nodeType,
-        //     level: 1,
-        //     created: rtnNode.data.created,
-        //     description: rtnNode.data.description,
-        //     saved: false,
-        //     raw_data: rtnNode.data,
-        //     data_source: d_source
-        // };
-        // if (nodelabel && nodelabel.length > 60) {
-        //     nodelabel = nodelabel.substring(0, 60).concat('...');
-        // }
-        // this.data.name = nodelabel;
-        // this.data.modified = rtnNode.data.modified;
-
-        // this.position = {
-        //     x: 100,
-        //     y: 100
-        // };
-        // const style: CSSStyleDeclaration = { backgroundImage: node_img[nodeType] } as unknown as CSSStyleDeclaration;
-        // this.style = style;
-        // if (this.data.data_source === 'DB' || this.data.data_source === 'IGNORE') {
-        //     this.saved = true;
-        // } else {
-        //     this.saved = false;
-        // }
-        // this.data.saved = this.saved;
-        // this.classes = 'stix_node';
-
-        return undefined;//rtnNode
+        const labelorder = ['name', 'value', 'key', 'path', 'product', 'dst_port', 'command_line', 'type', 'id'];
+        let nodelabel: string | undefined;
+        if (nodeType === 'marking-definition') {
+            nodelabel = rtnNode.data.name;
+        } else {
+            for (const element of labelorder) {
+                if (Object.prototype.hasOwnProperty.call(rtnNode.data, element)) {
+                    if (element === 'dst_port') {
+                        const { [element]: nodelabel1, src_port, protocols } = rtnNode.data;
+                        nodelabel = src_port.toString().concat(' -> ', nodelabel1.toString(), '/', protocols.toString());
+                    } else {
+                        const { [element]: nodelabel1 } = rtnNode.data;
+                        nodelabel = nodelabel1;
+                    }
+                    break;
+                }
+            }
+        }
+        rtnNode.data.label = nodelabel;
+        nodelabel = (nodelabel && nodelabel.length > 60) ? nodelabel.substring(0, 60).concat('...') : nodelabel;
+        rtnNode.data.name = nodelabel;
+        rtnNode.data.data_source = dSource;
+        rtnNode.data.raw_data = rtnNode.data;
+        rtnNode.data.description = '??'; // TODO: Must be when adding a node from database... ?? Will need to track this down...
+        rtnNode.data.saved = (dSource === 'DB' || dSource === 'IGNORE');
+        return rtnNode
     };
 
     return <div ref={cyRef}

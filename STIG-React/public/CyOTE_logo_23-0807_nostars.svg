@@ -5,14 +5,14 @@
 <style type="text/css">
 	.st0{display:none;}
 	.st1{display:inline;}
-	.st2{fill:#FFFFFF;stroke:#FFFFFF;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
-	.st3{fill:#FFFFFF;stroke:#CADB3D;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+	.st2{fill:#FFFFFF;stroke:#FFFFFF;strokeWidth:3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+	.st3{fill:#FFFFFF;stroke:#CADB3D;strokeWidth:3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
 	.st4{fill:#FFFFFF;stroke:#CADB3D;stroke-miterlimit:10;}
 	.st5{fill:#FFFFFF;}
 	.st6{fill:#172944;}
-	.st7{fill:#328CB4;stroke:#328CB4;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
-	.st8{fill:#CF1E4C;stroke:#CF1E4C;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
-	.st9{fill:none;stroke:#659DD4;stroke-width:1.5;stroke-miterlimit:10;stroke-dasharray:8.0417,8.0417;}
+	.st7{fill:#328CB4;stroke:#328CB4;strokeWidth:3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+	.st8{fill:#CF1E4C;stroke:#CF1E4C;strokeWidth:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+	.st9{fill:none;stroke:#659DD4;strokeWidth:1.5;stroke-miterlimit:10;stroke-dasharray:8.0417,8.0417;}
 </style>
 <g id="Base">
 </g>

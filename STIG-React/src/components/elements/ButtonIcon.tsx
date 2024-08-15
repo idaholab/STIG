@@ -22,23 +22,24 @@ interface ButtonProps {
    * Optional link
    */
   link?: string;
+  title?: string;
   /**
    * Optional click handler
    */
   onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 }
 
-const ButtonIcon: React.FC<ButtonProps> = ({ label, buttonIcon, buttonSize, color, link, onClick }) => {
+const ButtonIcon: React.FC<ButtonProps> = ({ label, buttonIcon, buttonSize, color, link, title, onClick }) => {
   // Define base classes
   const baseClasses = `btn btn-circle ${color} ${buttonSize} uppercase hover:opacity-100 border-transparent`;
 
   // Define conditional light mode classes
   const lightModeClasses = color === 'btn-secondary' ? 'border border-solid !border-primary text-primary hover:text-primary' : '';
-  const btnGhostLightModeClasses = color === 'btn-ghost' ? 'text-primary hover:text-primary ' : '';
+  const btnGhostLightModeClasses = color === 'btn-ghost' ? 'text-gray-600 hover:text-black ' : '';
 
   // Define conditional dark mode classes
   const darkModeClasses = color === 'btn-secondary' ? 'dark:border dark:border-solid dark:!border-gray-400 dark:text-gray-300 dark:hover:text-white' : '';
-  const btnGhostDarkModeClasses = color === 'btn-ghost' ? 'dark:text-gray-300 dark:hover:text-primary' : '';
+  const btnGhostDarkModeClasses = color === 'btn-ghost' ? 'dark:text-gray-300 dark:hover:text-white' : '';
 
   // Combine base classes and conditional classes
   const btnClass = `${baseClasses} ${lightModeClasses} ${darkModeClasses} ${btnGhostLightModeClasses} ${btnGhostDarkModeClasses}`;
@@ -46,13 +47,13 @@ const ButtonIcon: React.FC<ButtonProps> = ({ label, buttonIcon, buttonSize, colo
   return (
     <>
       {link ? (
-        <Link className={btnClass} to={link}>
+        <Link className={btnClass} to={link} title={title}>
           <span className="material-icons">
             {buttonIcon}
           </span>
         </Link>
       ) : (
-        <button className={btnClass} onClick={onClick}>
+        <button className={btnClass} onClick={onClick} title={title}>
           <span className="material-icons">
             {buttonIcon}
           </span>
