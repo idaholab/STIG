@@ -261,11 +261,7 @@ export const schema: ISchemaFile = {
       properties: [
         { name: 'name', type: 'String', mandatory: true, notNull: true, collate: 'default' },
         { name: 'description', type: 'String', collate: 'default' },
-        { name: 'action', type: 'String' }, // This is no longer in spec
-        { name: 'action_type', type: 'String', collate: 'default' }, // How can we enforce open-vocab by SDO/SCO
-        { name: 'os_execution_envs', type: 'EmbeddedList', collate: 'default' },
-        { name: 'action_bin', type: 'Binary', collate: 'default' },
-        { name: 'action_reference', type: 'String', collate: 'default' }// How can we enforce certain rules and create custom TYPES for orientdb
+        { name: 'action', type: 'String' }, //ATTN: This is reserved, but not currently implemented in the spec
       ]
     },
     {
@@ -359,6 +355,7 @@ export const schema: ISchemaFile = {
       superClasses: ['core'],
       properties: [
         { name: 'name', type: 'String', collate: 'default' },
+        { name: 'description', type: 'String', collate: 'default' },
         { name: 'schema', type: 'String', mandatory: true, notNull: true, collate: 'default' },
         { name: 'version', type: 'String', mandatory: true, notNull: true, collate: 'default' },
         { name: 'extension_types', type: 'EmbeddedList', mandatory: true, notNull: true, collate: 'default' },
@@ -412,8 +409,8 @@ export const schema: ISchemaFile = {
         { name: 'name', type: 'String', mandatory: true, notNull: true, collate: 'default' },
         { name: 'description', type: 'String', collate: 'default' },
         { name: 'roles', type: 'EmbeddedList', collate: 'default' },
-        { name: 'identity_class', type: 'String', mandatory: true, notNull: true, collate: 'default' },
-        { name: 'sectors', type: 'EmbeddedList', collate: 'default' },
+        { name: 'identity_class', type: 'String', collate: 'default' },
+        { name: 'sectors', type: 'EmbeddedList', collate: 'default' }, //TODO: enforce open-vocab industry-sector-ov
         { name: 'contact_information', type: 'String', collate: 'default' }
       ]
     },
@@ -450,7 +447,7 @@ export const schema: ISchemaFile = {
       properties: [
         { name: 'name', type: 'String', mandatory: true, notNull: true, collate: 'default' },
         { name: 'description', type: 'String', collate: 'default' },
-        { name: 'infrastructure_types', type: 'EmbeddedList', notNull: true, collate: 'default' },
+        { name: 'infrastructure_types', type: 'EmbeddedList', collate: 'default' },
         { name: 'aliases', type: 'EmbeddedList', collate: 'default' },
         { name: 'kill_chain_phases', type: 'EmbeddedList', collate: 'default' },
         { name: 'first_seen', type: 'DateTime', collate: 'default' },
@@ -535,7 +532,7 @@ export const schema: ISchemaFile = {
       properties: [
         { name: 'name', type: 'String', collate: 'default' },
         { name: 'description', type: 'String', collate: 'default' },
-        { name: 'malware_types', type: 'EmbeddedList', notNull: true, mandatory: true, collate: 'default' },
+        { name: 'malware_types', type: 'EmbeddedList', collate: 'default' },
         { name: 'is_family', type: 'Boolean', notNull: true, mandatory: true, collate: 'default' },
         { name: 'aliases', type: 'EmbeddedList', collate: 'default' },
         { name: 'kill_chain_phases', type: 'EmbeddedList', collate: 'default' },
@@ -565,10 +562,10 @@ export const schema: ISchemaFile = {
         { name: 'analysis_started', type: 'DateTime', collate: 'default' },
         { name: 'analysis_ended', type: 'DateTime', collate: 'default' },
         { name: 'av_result', type: 'String', collate: 'default' },
-        // {name: "result_name", type: "String", collate: "default"},
-        // {name: "result", type: "String", collate: "default"},
-        { name: 'analysis_sco_refs', type: 'EmbeddedList', collate: 'default' }
-        // {name: "sample_ref", type: "String", collate: "default"},
+        {name: "result_name", type: "String", collate: "default"},
+        {name: "result", type: "String", collate: "default"}, //TODO: enforce open-vocab malware-result-ov
+        { name: 'analysis_sco_refs', type: 'EmbeddedList', collate: 'default' },
+        {name: "sample_ref", type: "String", collate: "default"},
       ]
     },
     {
@@ -576,8 +573,8 @@ export const schema: ISchemaFile = {
       superClasses: ['markingmetacore'],
       properties: [
         { name: 'name', type: 'String', collate: 'default' },
-        { name: 'definition_type', type: 'String', mandatory: true, notNull: true, collate: 'default' },
-        { name: 'definition', type: 'EmbeddedMap', mandatory: true, notNull: true, collate: 'default' }
+        { name: 'definition_type', type: 'String', collate: 'default' },
+        { name: 'definition', type: 'EmbeddedMap', collate: 'default' }
       ]
     },
     {
@@ -642,7 +639,7 @@ export const schema: ISchemaFile = {
       properties: [
         { name: 'explanation', type: 'String', collate: 'default' },
         { name: 'authors', type: 'EmbeddedList', collate: 'default' },
-        { name: 'opinion', type: 'String', mandatory: true, notNull: true, collate: 'default' }, // enum
+        { name: 'opinion', type: 'String', mandatory: true, notNull: true, collate: 'default' }, // TODO: enforce opinion-enum
         { name: 'object_refs', type: 'EmbeddedList', mandatory: true, notNull: true, collate: 'default' }
       ]
     },
@@ -688,7 +685,7 @@ export const schema: ISchemaFile = {
       properties: [
         { name: 'name', type: 'String', mandatory: true, notNull: true, collate: 'default' },
         { name: 'description', type: 'String', collate: 'default' },
-        { name: 'report_types', type: 'EmbeddedList', notNull: true, collate: 'default' },
+        { name: 'report_types', type: 'EmbeddedList', collate: 'default' }, //TODO: enforce report-type-ov
         { name: 'published', type: 'DateTime', mandatory: true, notNull: true, collate: 'default' },
         { name: 'object_refs', type: 'EmbeddedList', mandatory: true, notNull: true, collate: 'default' }
       ]
@@ -722,7 +719,7 @@ export const schema: ISchemaFile = {
       properties: [
         { name: 'name', type: 'String', mandatory: true, notNull: true, collate: 'default' },
         { name: 'description', type: 'String', collate: 'default' },
-        { name: 'threat_actor_types', type: 'EmbeddedList', mandatory: true, notNull: true, collate: 'default' },
+        { name: 'threat_actor_types', type: 'EmbeddedList', collate: 'default' },
         { name: 'aliases', type: 'EmbeddedList', collate: 'default' },
         { name: 'first_seen', type: 'DateTime', collate: 'default' },
         { name: 'last_seen', type: 'DateTime', collate: 'default' },
@@ -741,7 +738,7 @@ export const schema: ISchemaFile = {
       properties: [
         { name: 'name', type: 'String', mandatory: true, notNull: true, collate: 'default' },
         { name: 'description', type: 'String', collate: 'default' },
-        { name: 'tool_types', type: 'EmbeddedList', mandatory: true, notNull: true, collate: 'default' },
+        { name: 'tool_types', type: 'EmbeddedList', collate: 'default' }, //TODO: enforce tool-type-ov
         { name: 'aliases', type: 'EmbeddedList', collate: 'default' },
         { name: 'kill_chain_phases', type: 'EmbeddedList', collate: 'default' },
         { name: 'tool_version', type: 'String', collate: 'default' }
@@ -791,7 +788,8 @@ export const schema: ISchemaFile = {
       superClasses: ['core'],
       properties: [
         { name: 'name', type: 'String', mandatory: true, notNull: true, collate: 'default' },
-        { name: 'description', type: 'String', collate: 'default' }
+        { name: 'description', type: 'String', collate: 'default' },
+        { name: 'external_references', type: 'EmbeddedList', collate: 'default'} //list of external-reference
       ]
     },
     {
