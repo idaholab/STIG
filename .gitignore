@@ -17,3 +17,4 @@ out
 **/*.bak
 **/*.swp
 src/static/index.js
+neo4jdata/*
