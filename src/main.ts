@@ -675,18 +675,26 @@ export class Main {
         // Get raw data from all cy elements
         // Create bundle object
         const bundle_id = 'bundle--' + uuid.v4();
-        const bundle: BundleType = { type: 'bundle', id: bundle_id, objects: [] } as any;
+        let bundle: BundleType = { type: 'bundle', id: bundle_id, objects: [] } as any;
         let nodes = window.cycore.$(':visible');
         nodes = nodes.union(nodes.connectedEdges());
+        
+        //ATTN: the following logic may actually do nothing at all. If that is the case, this problem can be solved by doing the filter like on the visual edges
+        // logic to remove null on json export
         nodes.each((ele) => {
           if (ele.length === 0) {
             return;
           }
-          // logic to remove null on json export
           if (ele.data('raw_data') !== undefined) {
             bundle.objects.push(ele.data('raw_data'));
           }
         });
+
+        //filter out embedded relationship visual edges
+        bundle.objects = bundle.objects.filter((bundleObj: any) => {
+          return bundleObj !== "visual_edge";
+        })
+
         // Open the export widget
         openBundleExport(bundle);
       });
