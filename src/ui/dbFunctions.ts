@@ -110,6 +110,7 @@ function getAllProps (schemaObject: IJSONClassOptions) {
 export function checkProps (object: StixObject): boolean {
   const schemaObject = schema.classes.find(c => { return c.name === object.type; });
   if (typeof schemaObject !== 'object') {
+    console.error(`${schemaObject} is not equal to type 'object'`);
     return false;
   }
 
@@ -121,7 +122,7 @@ export function checkProps (object: StixObject): boolean {
     if (prop.name === 'id_') continue;
 
     if (object[prop.name] === undefined) {
-      // Return false to indicate that this object is invalid
+      console.error(`${prop.name} is undefined for:\n`, object);
       return false;
     }
   }
