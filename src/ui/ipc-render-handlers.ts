@@ -28,8 +28,8 @@ function cycore2stix (o: SingularElementArgument) {
  * Takes each object from the graph and commits them to the database
  */
 export async function commit_all () {
-  const nodes = window.cycore.$('nodes');
-  const edges = window.cycore.$('edges');
+  let nodes = window.cycore.$('nodes');
+  let edges = window.cycore.$('edges');
   const stix_nodes: StixObject[] = nodes.map(cycore2stix).filter(s => s !== undefined);
   const stix_edges: Relationship[] = edges.map(cycore2stix).filter(s => s !== undefined);
 
@@ -38,6 +38,10 @@ export async function commit_all () {
 
   for (let i = 0; i < nodes.length; i++) {
     const ele = nodes[i];
+    if (ele.data('raw_data') == undefined){
+      nodes = nodes.filter(obj => {return obj !== ele});
+      continue;
+    }
     const { id } = ele.data('raw_data');
     if (cnodes.has(id)) {
       ele.data('saved', true);
@@ -47,6 +51,10 @@ export async function commit_all () {
   for (let i = 0; i < edges.length; i++) {
     const ele = edges[i];
     const { id } = ele.data('raw_data');
+    if (ele.data('raw_data') == undefined){
+      nodes = nodes.filter(obj => {return obj !== ele});
+      continue;
+    }
     if (cedges.has(id)) {
       ele.data('saved', true);
     }
