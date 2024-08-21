@@ -1,36 +1,37 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "title": "grouping",
-    "description": "A Grouping object explicitly asserts that the referenced STIX Objects have a shared content.",
-    "type": "object",
-    "$ref": "static/jsedit/core.json",
-    "properties": {
-        "id": {
-            "title": "id",
-            "pattern": "^grouping--",
-            "default": "grouping--",
-            "type": "string",
-            "readonly": "true"
-        },
+  "$id": "http://raw.githubusercontent.com/oasis-open/cti-stix2-json-schemas/stix2.1/schemas/sdos/grouping.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "grouping",
+  "description": "A Grouping object explicitly asserts that the referenced STIX Objects have a shared content.",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "static/jsedit/core.json"
+    },
+    {
+      "properties": {
         "type": {
           "type": "string",
           "description": "The type of this object, which MUST be the literal `grouping`.",
-          "default": "grouping",
-          "readonly": "true"
-      },
+          "enum": [
+            "grouping"
+          ]
+        },
+        "id": {
+          "title": "id",
+          "pattern": "^grouping--"
+        },
         "name": {
           "type": "string",
           "description": "A name used to identify the Grouping."
         },
         "description": {
           "type": "string",
-          "format": "textarea",
           "description": "A description which provides more details and context about the Grouping, potentially including the purpose and key characteristics."
         },
         "context": {
           "type": "string",
-          "description": "A short description of the particular context shared by the content referenced by the Grouping.",
-          "$ref": "#/definitions/grouping-context-ov"
+          "description": "A short description of the particular context shared by the content referenced by the Grouping."
         },
         "object_refs": {
           "type": "array",
@@ -40,19 +41,21 @@
           },
           "minItems": 1
         }
-    },
-    "required": [
-        "context",
-        "object_refs"
-    ],
-    "definitions": {
-        "grouping-context-ov": {
-          "type": "string",
-          "enum": [
-            "suspicious-activity",
-            "malware-analysis",
-            "unspecified"
-          ]
-        }
+      }
     }
+  ],
+  "required": [
+    "context",
+    "object_refs"
+  ],
+  "definitions": {
+    "grouping-context-ov": {
+      "type": "string",
+      "enum": [
+        "suspicious-activity",
+        "malware-analysis",
+        "unspecified"
+      ]
+    }
+  }
 }

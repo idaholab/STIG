@@ -1,54 +1,58 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "title": "Campaign",
-    "description": "A Campaign is a grouping of adversary behavior that describes a set of malicious activities or attacks that occur over a period of time against a specific set of targets.",
-    "$ref": "static/jsedit/core.json",
-    "properties": {
-        "id": {
-            "type": "string",
-            "pattern": "^campaign--",
-            "default": "campaign--",
-            "readonly": "true"
-        },
+  "$id": "http://raw.githubusercontent.com/oasis-open/cti-stix2-json-schemas/stix2.1/schemas/sdos/campaign.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "campaign",
+  "description": "A Campaign is a grouping of adversary behavior that describes a set of malicious activities or attacks that occur over a period of time against a specific set of targets.",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "static/jsedit/core.json"
+    },
+    {
+      "properties": {
         "type": {
-            "type": "string",
-            "description": "The type of this object, which MUST be the literal `campaign`.",
-            "default": "campaign",
-            "readonly": "true"
+          "type": "string",
+          "description": "The type of this object, which MUST be the literal `campaign`.",
+          "enum": [
+            "campaign"
+          ]
+        },
+        "id": {
+          "title": "id",
+          "pattern": "^campaign--"
         },
         "name": {
-            "type": "string",
-            "description": "The name used to identify the Campaign."
+          "type": "string",
+          "description": "The name used to identify the Campaign."
         },
         "description": {
-            "type": "string",
-            "format": "textarea",
-            "description": "A description that provides more details and context about the Campaign, potentially including its purpose and its key characteristics."
+          "type": "string",
+          "description": "A description that provides more details and context about the Campaign, potentially including its purpose and its key characteristics."
         },
         "aliases": {
-            "type": "array",
-            "description": "Alternative names used to identify this campaign.",
-            "items": {
-                "type": "string"
-            },
-            "minItems": 1
+          "type": "array",
+          "description": "Alternative names used to identify this campaign.",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
         },
         "first_seen": {
-            "type": "string",
-            "format": "datetime",
-            "description": "The time that this Campaign was first seen."
+          "$ref": "static/jsedit/common/timestamp.json",
+          "description": "The time that this Campaign was first seen."
         },
         "last_seen": {
-            "type": "string",
-            "format": "datetime",
-            "description": "The time that this Campaign was last seen."
+          "$ref": "static/jsedit/common/timestamp.json",
+          "description": "The time that this Campaign was last seen."
         },
         "objective": {
-            "type": "string",
-            "description": "This field defines the Campaign’s primary goal, objective, desired outcome, or intended effect."
+          "type": "string",
+          "description": "This field defines the Campaign’s primary goal, objective, desired outcome, or intended effect."
         }
-    },
-    "required": [
-        "name"
-    ]
+      }
+    }
+  ],
+  "required": [
+    "name"
+  ]
 }

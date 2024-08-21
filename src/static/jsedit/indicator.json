@@ -1,101 +1,101 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "title": "indicator",
-    "description": "Indicators contain a pattern that can be used to detect suspicious or malicious cyber activity.",
-    "type": "object",
-    "$ref": "static/jsedit/core.json",
-    "properties": {
-        "id": {
-            "type": "string",
-            "title": "id",
-            "pattern": "^indicator--",
-            "default": "indicator--",
-            "readonly": "true"
-        },
+  "$id": "http://raw.githubusercontent.com/oasis-open/cti-stix2-json-schemas/stix2.1/schemas/sdos/indicator.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "indicator",
+  "description": "Indicators contain a pattern that can be used to detect suspicious or malicious cyber activity.",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "static/jsedit/core.json"
+    },
+    {
+      "properties": {
         "type": {
-            "type": "string",
-            "description": "The type of this object, which MUST be the literal `indicator`.",
-            "default": "indicator",
-            "readonly": "true"
+          "type": "string",
+          "description": "The type of this object, which MUST be the literal `indicator`.",
+          "enum": [
+            "indicator"
+          ]
         },
-        "name": {
-            "type": "string",
-            "description": "The name used to identify the Indicator."
-        },
-        "description": {
-            "type": "string",
-            "format": "textarea",
-            "description": "A description that provides the recipient with context about this Indicator potentially including its purpose and its key characteristics.",
-            "format": "textarea"
+        "id": {
+          "title": "id",
+          "pattern": "^indicator--"
         },
         "indicator_types": {
-            "type": "array",
-            "description": "The values for this property SHOULD come from the indicator-type-ov open vocabulary.",
-            "items": {
-                "type": "string",
-                "$ref": "#/definitions/indicator-type-ov"
-            },
-            "minItems": 1
+          "type": "array",
+          "description": "This field is an Open Vocabulary that specifies the type of indicator. Open vocab - indicator-type-ov",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "name": {
+          "type": "string",
+          "description": "The name used to identify the Indicator."
+        },
+        "description": {
+          "type": "string",
+          "description": "A description that provides the recipient with context about this Indicator potentially including its purpose and its key characteristics."
         },
         "pattern": {
-            "type": "string",
-            "description": "The detection pattern for this Indicator MAY be expressed as a STIX Pattern as specified in section 9 or another appropriate language such as SNORT, YARA, etc.",
-            "format": "textarea"
+          "type": "string",
+          "description": "The detection pattern for this indicator."
         },
-        "pattern_type": {
-            "type": "string",
-            "description": "The value for this property SHOULD come from the pattern-type-ov open vocabulary.",
-            "$ref": "#/definitions/pattern-type-ov"
+        "pattern_type" : {
+          "type" : "string",
+          "description": "The type of pattern used in this indicator."
         },
-        "pattern_version": {
-            "type": "string",
-            "description": "The version of the pattern language that is used for the data in the pattern property which MUST match the type of pattern data included in the pattern property."
+        "pattern_version" : {
+          "type" : "string",
+          "description": "The version of the pattern that is used."
         },
         "valid_from": {
-            "type": "string",
-            "format": "datetime",
-            "description": "The time from which this indicator should be considered valuable intelligence."
+          "$ref": "static/jsedit/common/timestamp.json",
+          "description": "The time from which this indicator should be considered valuable intelligence."
         },
         "valid_until": {
-            "type": "string",
-            "format": "datetime",
-            "description": "The time at which this indicator should no longer be considered valuable intelligence."
+          "$ref": "static/jsedit/common/timestamp.json",
+          "description": "The time at which this indicator should no longer be considered valuable intelligence."
         },
         "kill_chain_phases": {
-            "type": "array",
-            "description": "The list of kill chain phases for which this indicator is used.",
-            "$ref": "static/jsedit/kill-chain-phase.json",
-            "minItems": 1
+          "type": "array",
+          "description": "The phases of the kill chain that this indicator detects.",
+          "items": {
+            "$ref": "static/jsedit/common/kill-chain-phase.json"
+          },
+          "minItems": 1
         }
-    },
-    "required": [
-        "pattern",
-        "pattern_type",
-        "valid_from"
-    ],
-    "definitions": {
-        "indicator-type-ov": {
-            "type": "string",
-            "enum": [
-                "anomalous-activity",
-                "anonymization",
-                "benign",
-                "compromised",
-                "malicious-activity",
-                "attribution",
-                "unknown"
-            ]
-        },
-        "pattern-type-ov": {
-            "type": "string",
-            "enum": [
-                "stix",
-                "pcre",
-                "sigma",
-                "snort",
-                "suricata",
-                "yara"
-            ]
-        }
+      }
     }
+  ],
+  "required": [
+    "pattern",
+    "pattern_type",
+    "valid_from"
+  ],
+  "definitions": {
+    "indicator-type-ov": {
+      "type": "string",
+      "enum": [
+        "anomalous-activity",
+        "anonymization",
+        "benign",
+        "compromised",
+        "malicious-activity",
+        "attribution",
+        "unknown"
+      ]
+    },
+    "pattern-type-ov": {
+      "type": "string",
+      "enum": [
+        "stix",
+        "pcre",
+        "sigma",
+        "snort",
+        "suricata",
+        "yara"
+      ]
+    }
+  }
 }
