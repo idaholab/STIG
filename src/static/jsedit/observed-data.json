@@ -1,132 +1,138 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "title": "observed-data",
-    "description": "Observed data conveys information that was observed on systems and networks, such as log data or network traffic, using the Cyber Observable specification.",
-    "type": "object",
-    "$ref": "static/jsedit/core.json",
-    "properties": {
-        "id": {
-            "title": "id",
-            "pattern": "^observed-data--",
-            "type": "string",
-            "default": "observed-data--",
-            "readonly": "true"
-        },
+  "$id": "http://raw.githubusercontent.com/oasis-open/cti-stix2-json-schemas/stix2.1/schemas/sdos/observed-data.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "observed-data",
+  "description": "Observed data conveys information that was observed on systems and networks, such as log data or network traffic, using the Cyber Observable specification.",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "static/jsedit/core.json"
+    },
+    {
+      "properties": {
         "type": {
-            "type": "string",
-            "description": "The type of this object, which MUST be the literal `observed-data`.",
-            "default": "observed-data",
-            "readonly": "true"
+          "type": "string",
+          "description": "The type of this object, which MUST be the literal `observed-data`.",
+          "enum": [
+            "observed-data"
+          ]
+        },
+        "id": {
+          "title": "id",
+          "pattern": "^observed-data--"
         },
         "first_observed": {
-            "type": "string",
-            "description": "The beginning of the time window that the data was observed during."
+          "$ref": "static/jsedit/common/timestamp.json",
+          "description": "The beginning of the time window that the data was observed during."
         },
         "last_observed": {
-            "type": "string",
-            "description": "The end of the time window that the data was observed during."
+          "$ref": "static/jsedit/common/timestamp.json",
+          "description": "The end of the time window that the data was observed during."
         },
         "number_observed": {
-            "type": "integer",
-            "description": "The number of times the data represented in the objects property was observed. This MUST be an integer between 1 and 999,999,999 inclusive.",
-            "minimum": 1,
-            "maximum": 999999999,
-            "default": 1
-        },
-        "object_refs": {
-            "type": "array",
-            "description": "A list of id's referencing SCOs and SROs representing the observation. The object_refs MUST contain at least one SCO reference if defined.",
-            "items": {
-              "$ref": "static/jsedit/common/identifier.json"
-            },
-            "minItems": 1
+          "type": "integer",
+          "description": "The number of times the data represented in the objects property was observed. This MUST be an integer between 1 and 999,999,999 inclusive.",
+          "minimum": 1,
+          "maximum": 999999999
         },
         "objects": {
-            "type": "object",
-            "description": "A dictionary of Cyber Observable Objects that describes the single 'fact' that was observed.",
-            "minProperties": 1,
-            "patternProperties": {
-                "^.*$": {
-                    "type": "object",
-                    "oneOf": [{
-                            "allOf": [{
-                                    "$ref": "static/jsedit/common/cyber-observable-core.json"
-                                },
-                                {
-                                    "not": {
-                                        "properties": {
-                                            "type": {
-                                                "type": "string",
-                                                "pattern": "^artifact|directory|file|mutex|process|software|user-account|windows-registry-key|x509-certificate|autonomous-system|domain-name|email-addr|email-message|ipv4-addr|ipv6-addr|mac-addr|network-traffic|url$",
-                                                "description": "Indicates that this object is a custom Observable Object."
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        },
-                        {
-                            "$ref": "static/jsedit/observables/artifact.json"
-                        },
-                        {
-                            "$ref": "static/jsedit/observables/autonomous-system.json"
-                        },
-                        {
-                            "$ref": "static/jsedit/observables/directory.json"
-                        },
-                        {
-                            "$ref": "static/jsedit/observables/domain-name.json"
-                        },
-                        {
-                            "$ref": "static/jsedit/observables/email-addr.json"
-                        },
-                        {
-                            "$ref": "static/jsedit/observables/email-message.json"
-                        },
-                        {
-                            "$ref": "static/jsedit/observables/file.json"
-                        },
-                        {
-                            "$ref": "static/jsedit/observables/ipv4-addr.json"
-                        },
-                        {
-                            "$ref": "static/jsedit/observables/ipv6-addr.json"
-                        },
-                        {
-                            "$ref": "static/jsedit/observables/mac-addr.json"
-                        },
-                        {
-                            "$ref": "static/jsedit/observables/mutex.json"
-                        },
-                        {
-                            "$ref": "static/jsedit/observables/network-traffic.json"
-                        },
-                        {
-                            "$ref": "static/jsedit/observables/process.json"
-                        },
-                        {
-                            "$ref": "static/jsedit/observables/software.json"
-                        },
-                        {
-                            "$ref": "static/jsedit/observables/url.json"
-                        },
-                        {
-                            "$ref": "static/jsedit/observables/user-account.json"
-                        },
-                        {
-                            "$ref": "static/jsedit/observables/windows-registry-key.json"
-                        },
-                        {
-                            "$ref": "static/jsedit/observables/x509-certificate.json"
+          "type": "object",
+          "description": "A dictionary of Cyber Observable Objects that describes the single 'fact' that was observed.",
+          "minProperties": 1,
+          "patternProperties": {
+            "^.*$": {
+              "type": "object",
+              "oneOf": [
+                {
+                  "allOf": [
+                    {
+                      "$ref": "static/jsedit/common/cyber-observable-core.json"
+                    },
+                    {
+                      "not": {
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "pattern": "^artifact|directory|file|mutex|process|software|user-account|windows-registry-key|x509-certificate|autonomous-system|domain-name|email-addr|email-message|ipv4-addr|ipv6-addr|mac-addr|network-traffic|url$",
+                            "description": "Indicates that this object is a custom Observable Object."
+                          }
                         }
-                    ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "$ref": "static/jsedit/observables/artifact.json"
+                },
+                {
+                  "$ref": "static/jsedit/observables/autonomous-system.json"
+                },
+                {
+                  "$ref": "static/jsedit/observables/directory.json"
+                },
+                {
+                  "$ref": "static/jsedit/observables/domain-name.json"
+                },
+                {
+                  "$ref": "static/jsedit/observables/email-addr.json"
+                },
+                {
+                  "$ref": "static/jsedit/observables/email-message.json"
+                },
+                {
+                  "$ref": "static/jsedit/observables/file.json"
+                },
+                {
+                  "$ref": "static/jsedit/observables/ipv4-addr.json"
+                },
+                {
+                  "$ref": "static/jsedit/observables/ipv6-addr.json"
+                },
+                {
+                  "$ref": "static/jsedit/observables/mac-addr.json"
+                },
+                {
+                  "$ref": "static/jsedit/observables/mutex.json"
+                },
+                {
+                  "$ref": "static/jsedit/observables/network-traffic.json"
+                },
+                {
+                  "$ref": "static/jsedit/observables/process.json"
+                },
+                {
+                  "$ref": "static/jsedit/observables/software.json"
+                },
+                {
+                  "$ref": "static/jsedit/observables/url.json"
+                },
+                {
+                  "$ref": "static/jsedit/observables/user-account.json"
+                },
+                {
+                  "$ref": "static/jsedit/observables/windows-registry-key.json"
+                },
+                {
+                  "$ref": "static/jsedit/observables/x509-certificate.json"
                 }
+              ]
             }
+          }
+        },
+        "object_refs": {
+          "type": "array",
+          "description": "A list of SCOs and SROs representing the observation.",
+          "items": {
+            "$ref": "static/jsedit/common/identifier.json"
+          },
+          "minItems": 1
         }
-    },
-    "required": [
-        "first_observed",
-        "last_observed",
-        "number_observed"
-    ]
+      }
+    }
+  ],
+  "required": [
+    "first_observed",
+    "last_observed",
+    "number_observed"
+  ]
 }
