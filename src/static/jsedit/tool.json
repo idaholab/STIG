@@ -33,7 +33,8 @@
           "type": "array",
           "description": "The kind(s) of tool(s) being described. Open Vocab - tool-type-ov",
           "items": {
-            "type": "string"
+            "type": "string",
+            "$ref":"#/definitions/tool-type-ov"
           },
           "minItems": 1
         },

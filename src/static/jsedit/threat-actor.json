@@ -25,7 +25,8 @@
           "type": "array",
           "description": "This field specifies the type of threat actor. Open Vocab - threat-actor-type-ov",
           "items": {
-            "type": "string"
+            "type": "string",
+            "$ref":"#/definitions/threat-actor-type-ov"
           },
           "minItems": 1
         },
@@ -49,7 +50,8 @@
           "type": "array",
           "description": "This is a list of roles the Threat Actor plays. Open Vocab - threat-actor-role-ov",
           "items": {
-            "type": "string"
+            "type": "string",
+            "$ref":"#/definitions/threat-actor-role-ov"
           },
           "minItems": 1
         },
@@ -71,21 +73,26 @@
         },
         "sophistication": {
           "type": "string",
-          "description": "The skill, specific knowledge, special training, or expertise a Threat Actor must have to perform the attack. Open Vocab - threat-actor-sophistication-ov"
+          "description": "The skill, specific knowledge, special training, or expertise a Threat Actor must have to perform the attack. Open Vocab - threat-actor-sophistication-ov",
+          "$ref": "#/definitions/threat-actor-sophistication-ov"
         },
         "resource_level": {
           "type": "string",
-          "description": "This defines the organizational level at which this Threat Actor typically works. Open Vocab - attack-resource-level-ov"
+          "description": "This defines the organizational level at which this Threat Actor typically works. Open Vocab - attack-resource-level-ov",
+          "$ref": "#/definitions/attack-resource-level-ov"
         },
         "primary_motivation": {
           "type": "string",
-          "description": "The primary reason, motivation, or purpose behind this Threat Actor. Open Vocab - attack-motivation-ov"
+          "description": "The primary reason, motivation, or purpose behind this Threat Actor. Open Vocab - attack-motivation-ov",
+          "$ref": "#/definitions/attack-motivation-ov"
+
         },
         "secondary_motivations": {
           "type": "array",
           "description": "The secondary reasons, motivations, or purposes behind this Threat Actor. Open Vocab - attack-motivation-ov",
           "items": {
-            "type": "string"
+            "type": "string",
+            "$ref": "#/definitions/attack-motivation-ov"
           },
           "minItems": 1
         },
@@ -93,7 +100,8 @@
           "type": "array",
           "description": "The personal reasons, motivations, or purposes of the Threat Actor regardless of organizational goals. Open Vocab - attack-motivation-ov",
           "items": {
-            "type": "string"
+            "type": "string",
+            "$ref": "#/definitions/attack-motivation-ov"
           },
           "minItems": 1
         }

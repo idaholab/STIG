@@ -55,17 +55,20 @@
         },
         "resource_level": {
           "type": "string",
-          "description": "This defines the organizational level at which this Intrusion Set typically works. Open Vocab - attack-resource-level-ov"
+          "description": "This defines the organizational level at which this Intrusion Set typically works. Open Vocab - attack-resource-level-ov",
+          "$ref": "#/definitions/attack-resource-level-ov"
         },
         "primary_motivation": {
           "type": "string",
-          "description": "The primary reason, motivation, or purpose behind this Intrusion Set. Open Vocab - attack-motivation-ov"
+          "description": "The primary reason, motivation, or purpose behind this Intrusion Set. Open Vocab - attack-motivation-ov",
+          "$ref": "#/definitions/attack-motivation-ov"
         },
         "secondary_motivations": {
           "type": "array",
           "description": "The secondary reasons, motivations, or purposes behind this Intrusion Set. Open Vocab - attack-motivation-ov",
           "items": {
-            "type": "string"
+            "type": "string",
+            "$ref": "#/definitions/attack-motivation-ov"
           },
           "minItems": 1
         }

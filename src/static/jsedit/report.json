@@ -25,7 +25,8 @@
           "type": "array",
           "description": "This field is an Open Vocabulary that specifies the primary subject of this report. The suggested values for this field are in report-type-ov.",
           "items": {
-            "type": "string"
+            "type": "string",
+            "$ref":"#/definitions/report-type-ov"
           },
           "minItems": 1
         },
