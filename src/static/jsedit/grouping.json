@@ -31,7 +31,8 @@
         },
         "context": {
           "type": "string",
-          "description": "A short description of the particular context shared by the content referenced by the Grouping."
+          "description": "A short description of the particular context shared by the content referenced by the Grouping.",
+          "$ref": "#/definitions/grouping-context-ov"
         },
         "object_refs": {
           "type": "array",

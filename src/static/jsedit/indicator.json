@@ -25,7 +25,8 @@
           "type": "array",
           "description": "This field is an Open Vocabulary that specifies the type of indicator. Open vocab - indicator-type-ov",
           "items": {
-            "type": "string"
+            "type": "string",
+            "$ref": "#/definitions/indicator-type-ov"
           },
           "minItems": 1
         },
@@ -43,7 +44,9 @@
         },
         "pattern_type" : {
           "type" : "string",
-          "description": "The type of pattern used in this indicator."
+          "description": "The type of pattern used in this indicator.", 
+          "$ref": "#/definitions/pattern-type-ov"
+
         },
         "pattern_version" : {
           "type" : "string",

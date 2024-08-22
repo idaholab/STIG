@@ -47,7 +47,8 @@
         },
         "region": {
           "type": "string",
-          "description": "The region that this Location describes."
+          "description": "The region that this Location describes.",
+          "$ref": "#/definitions/region-ov"
         },
 
         "country": {

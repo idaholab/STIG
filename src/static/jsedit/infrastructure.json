@@ -33,7 +33,9 @@
           "type": "array",
           "description": "This field is an Open Vocabulary that specifies the type of infrastructure. Open vocab - infrastructure-type-ov",
           "items": {
-            "type": "string"
+            "type": "string", 
+            "$ref": "#/definitions/infrastructure-type-ov"
+            
           },
           "minItems": 1
         },

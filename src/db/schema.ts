@@ -410,7 +410,7 @@ export const schema: ISchemaFile = {
         { name: 'description', type: 'String', collate: 'default' },
         { name: 'roles', type: 'EmbeddedList', collate: 'default' },
         { name: 'identity_class', type: 'String', collate: 'default' },
-        { name: 'sectors', type: 'EmbeddedList', collate: 'default' }, //TODO: enforce open-vocab industry-sector-ov
+        { name: 'sectors', type: 'EmbeddedList', collate: 'default' }, 
         { name: 'contact_information', type: 'String', collate: 'default' }
       ]
     },
@@ -434,7 +434,7 @@ export const schema: ISchemaFile = {
         { name: 'description', type: 'String', collate: 'default' },
         { name: 'indicator_types', type: 'EmbeddedList', notNull: true, collate: 'default' },
         { name: 'pattern', type: 'String', mandatory: true, notNull: true, collate: 'default' },
-        { name: 'pattern_type', type: 'String', mandatory: true, notNull: true, collate: 'default' },
+        { name: 'pattern_type', type: 'String', notNull: true, collate: 'default' },
         { name: 'pattern_version', type: 'String', collate: 'default' },
         { name: 'valid_from', type: 'DateTime', mandatory: true, notNull: true, collate: 'default' },
         { name: 'valid_until', type: 'DateTime', collate: 'default' },
