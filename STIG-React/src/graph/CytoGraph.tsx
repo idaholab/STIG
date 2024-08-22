@@ -1,11 +1,10 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import cytoscape, { CytoscapeOptions } from 'cytoscape';
+
+import cytoscape from 'cytoscape';
 import { EventContext } from '@/contexts/EventContext';
 import { v4 as uuidv4 } from 'uuid';
-import { useTheme } from '../../contexts/useTheme';
-import { compound_style, edge_style, modified_select_style, modified_unselect_style, node_style, select_node_style } from './graphOptions';
-import { edgehandles_style, setup_edge_handles } from './edge-handles';
-import edgehandles from 'cytoscape-edgehandles';
+import { useTheme } from '../contexts/useTheme';
+import { compound_style, edge_style, modified_select_style, modified_unselect_style, node_style, select_node_style, view_utils_options } from './graphOptions';
 import { StixNode, StixNodeData } from '@/types/StixNodeData';
 import moment from 'moment';
 import { Indicator } from '@/types/Indicator';
@@ -17,28 +16,38 @@ import cosebilkent from 'cytoscape-cose-bilkent';
 import dagre from 'cytoscape-dagre';
 import klay from 'cytoscape-klay';
 import spread from 'cytoscape-spread';
+import viewUtilities from 'cytoscape-view-utilities';
 
-cytoscape.use(edgehandles);
+import cxtmenu from 'cytoscape-cxtmenu';
+import { edgehandles_style, setup_edge_handles } from './edge-handles';
+import { useStigPropsContext } from '@/contexts/StigPropsContext';
+import { setupCtxMenu } from '@/util/GraphUtils';
+
+
+
+cytoscape.use(viewUtilities);
+cytoscape.use(cxtmenu);
+//cytoscape.use(edgehandles);
+
 cosebilkent(cytoscape);
 dagre(cytoscape);
 klay(cytoscape);
 spread(cytoscape);
 
 const Graph: React.FC = () => {
-    const cyRef = useRef<HTMLDivElement>(null);
-    const [cy, setCy] = useState<cytoscape.Core | null>(null);
+    const cyContainerRef = useRef<HTMLDivElement>(null);
     const { addEventListener, removeEventListener } = useContext(EventContext);
     const { theme, toggleTheme } = useTheme();
-
     const nodeTextLightColor: string = getComputedStyle(document.documentElement).getPropertyValue('--color-primary-dark-hex-100');
     const nodeTextDarkColor: string = getComputedStyle(document.documentElement).getPropertyValue('--color-primary-dark-hex-900');
     const selectedColor = getComputedStyle(document.documentElement).getPropertyValue('--selected-node-border-color');
     const edgeColorDark = getComputedStyle(document.documentElement).getPropertyValue('--edge-dark-color');
     const edgeColorLight = getComputedStyle(document.documentElement).getPropertyValue('--edge-light-color');
+    const { cyInstance, setCyInstance } = useStigPropsContext();
 
     useEffect(() => {
-        if (cy) {
-            cy.style()
+        if (cyInstance) {
+            cyInstance.style()
                 .selector('node')
                 .style({
                     'color': theme === 'dark' ? nodeTextLightColor : nodeTextDarkColor,
@@ -65,7 +74,7 @@ const Graph: React.FC = () => {
                 })
                 .update();
         }
-    }, [theme, cy, edgeColorDark, edgeColorLight]);
+    }, [theme, cyInstance, edgeColorDark, edgeColorLight]);
 
     useEffect(() => {
         const handleCustomEvent = (payload: any) => {
@@ -80,14 +89,14 @@ const Graph: React.FC = () => {
                     position: position,
                 },
             });
-            cyRef.current?.dispatchEvent(customEvent);
+            cyContainerRef.current?.dispatchEvent(customEvent);
         };
 
         addEventListener('stencilMouseUpEvent', handleCustomEvent);
 
         const handleClearGraphClickEvent = () => {
             const clearGraphEvent = new CustomEvent('clearGraph');
-            cyRef.current?.dispatchEvent(clearGraphEvent);
+            cyContainerRef.current?.dispatchEvent(clearGraphEvent);
         }
         addEventListener('clearGraphClickEvent', handleClearGraphClickEvent);
 
@@ -98,7 +107,7 @@ const Graph: React.FC = () => {
                     layout
                 }
             });
-            cyRef.current?.dispatchEvent(layoutChangeEvent);
+            cyContainerRef.current?.dispatchEvent(layoutChangeEvent);
         };
         addEventListener('layoutSelect', handleLayoutChangeEvent);
 
@@ -109,41 +118,33 @@ const Graph: React.FC = () => {
         };
     }, [addEventListener, removeEventListener]);
 
-
     useEffect(() => {
-        if (cyRef.current) {
-
-            const cyto_options: CytoscapeOptions = {
-                container: cyRef.current,
+        if (cyContainerRef.current) {
+            let cy = cytoscape({
+                container: cyContainerRef.current,
                 style: [node_style, compound_style, edge_style, select_node_style, modified_select_style, modified_unselect_style, ...edgehandles_style],
-                wheelSensitivity: 0.25,
                 layout: {
                     name: 'grid',
                     rows: 1,
                 },
-            };
-            const cyInstance = cytoscape(cyto_options);
-            setCy(cyInstance);
-
-            const eh = setup_edge_handles(cyInstance);
-
-            // const eh = cyInstance.edgehandles({
-            //     toggleOffOnLeave: true,
-            //     handleNodes: 'node',
-            //     handlePosition: function (node) {
-            //         return 'middle top';
-            //     },
-            //     edgeType: function (sourceNode, targetNode) {
-            //         return 'flat';
-            //     },
-            //     complete: function (sourceNode, targetNode, addedEles) {
-            //         console.log('Edge created:', addedEles);
-            //     },
-            // });
-            cyInstance.on('ehcomplete', (event, sourceNode, targetNode, addedEles) => {
-                console.log('Edge created:', addedEles);
             });
 
+            const eh = setup_edge_handles(cy);
+            // cy.on('ehcomplete', (event, sourceNode, targetNode, addedEles) => {
+            //     console.log('Edge created:', addedEles);
+            // });
+
+            // View Utilities
+            try {
+                let viewUtil = cy?.viewUtilities(view_utils_options);
+                if (viewUtil) {
+                    setupCtxMenu(cy, viewUtil);
+                }
+            }
+            catch (e) {
+                console.error('View utilities could not be initialized.', e);
+            }
+            setCyInstance(cy);
 
             const handleAddNode = (event: CustomEvent) => {
                 const { label, imageUrl, position } = event.detail;
@@ -152,7 +153,7 @@ const Graph: React.FC = () => {
                 const node = handleAddStixNode(label, imageUrl, position, 'GUI');
                 node.group = 'nodes';
 
-                cyInstance.add(node);
+                cy?.add(node);
 
                 // cyInstance.add({
                 //     group: 'nodes',
@@ -163,38 +164,36 @@ const Graph: React.FC = () => {
             };
 
             const handleClearGraph = () => {
-                cyInstance.elements().remove();
-                cyInstance.reset();
+                cy.elements().remove();
+                cy.reset();
             }
             const handleLayoutChangeEvent = (event: CustomEvent) => {
                 const { layout } = event.detail;
                 // Select all nodes with no parents or children
-                const orphans = cyInstance.$(':orphan').filter(':childless');
+                const orphans = cy.elements(':orphan').filter(':childless');
                 const cyLayout = orphans.layout(layouts[layout]);
                 cyLayout.run();
             }
 
-            const graphElement = cyRef.current;
+            const graphElement = cyContainerRef.current;
             graphElement.addEventListener('addNode', handleAddNode as EventListener);
             graphElement.addEventListener('clearGraph', handleClearGraph);
             graphElement.addEventListener('changeLayout', handleLayoutChangeEvent as EventListener);
-
             return () => {
                 graphElement.removeEventListener('addNode', handleAddNode as EventListener);
                 graphElement.removeEventListener('clearGraph', handleClearGraph);
                 graphElement.removeEventListener('changeLayout', handleLayoutChangeEvent as EventListener);
+
             };
         }
     }, []);
-
-
 
     const handleDrop = (event: React.DragEvent) => {
         event.preventDefault();
         const id = uuidv4();
         const label = event.dataTransfer.getData('text');
         const imageUrl = event.dataTransfer.getData('imageUrl');
-        const position = cyRef.current ? cyRef.current.getBoundingClientRect() : { x: 0, y: 0 };
+        const position = cyContainerRef.current ? cyContainerRef.current.getBoundingClientRect() : { x: 0, y: 0 };
         const x = event.clientX - position.x;
         const y = event.clientY - position.y;
 
@@ -210,13 +209,12 @@ const Graph: React.FC = () => {
             },
         });
 
-        cyRef.current?.dispatchEvent(customEvent);
+        cyContainerRef.current?.dispatchEvent(customEvent);
     };
 
     const handleDragOver = (event: React.DragEvent) => {
         event.preventDefault();
     };
-
 
     function handleAddStixNode(nodeType: StixType, imgUrl: string, position: any, dSource: DataSourceType): StixNode {
         const opts: StixNodeData = {
@@ -270,7 +268,7 @@ const Graph: React.FC = () => {
         return rtnNode
     };
 
-    return <div ref={cyRef}
+    return <div ref={cyContainerRef}
         style={{ width: '100%', height: '100%' }}
         onDrop={handleDrop}
         onDragOver={handleDragOver} />;

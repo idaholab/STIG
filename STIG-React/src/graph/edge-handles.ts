@@ -2,7 +2,6 @@
 Copyright 2018 Southern California Edison Company
 ALL RIGHTS RESERVED
  */
-
 import cytoscape from 'cytoscape';
 import edgehandles from 'cytoscape-edgehandles';
 
@@ -22,11 +21,18 @@ const defaults: cytoscapeEdgehandles.EdgeHandlesOptions = {
     // returning null/undefined means an edge can't be added between the two nodes
 
     // Disable edges for compound nodes
-    // const src = window.cycore.$(`#${_sourceNode.id()}`);
-    // const tgt = window.cycore.$(`#${_targetNode.id()}`);
-    // if (src.isParent() || tgt.isParent()) {
-    //   return null;
-    // }
+    // const src = _sourceNode.cy().$(`#${_sourceNode.id()}`);
+    // const tgt = _targetNode.cy().$(`#${_targetNode.id()}`);
+    const src = _sourceNode as cytoscape.NodeSingular;
+    const tgt = _targetNode as cytoscape.NodeSingular;
+
+    if (src.isNode() && src.isParent()) {
+      return null;
+    }
+
+    if (tgt.isNode() && tgt.isParent()) {
+      return null;
+    }
     return 'flat';
   },
 
@@ -40,7 +46,7 @@ const defaults: cytoscapeEdgehandles.EdgeHandlesOptions = {
     // return element object to be passed to cy.add() for intermediary node
     return {};
   },
-  edgeParams(_sourceNode: cytoscape.SingularElementArgument, _targetNode: cytoscape.SingularElementArgument, _i: number) {
+  edgeParams(_sourceNode: cytoscape.SingularElementArgument, _targetNode: cytoscape.SingularElementArgument) {
     // for edges between the specified source and target
     // return element object to be passed to cy.add() for edge
     // NB: i indicates edge index in case of edgeType: 'node'

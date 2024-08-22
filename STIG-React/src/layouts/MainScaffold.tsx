@@ -3,11 +3,12 @@ import ThemeContextComponent from '../contexts/ThemeContextComponent';
 import Header from '../components/core/Header';
 import Drawer from '../components/core/Drawer';
 import StixPropsPanel from '@/components/core/StixPropsPanel';
-import { useStixPropsContext } from '@/contexts/StixPropsContext';
+import { useStigPropsContext } from '@/contexts/StigPropsContext';
+
 
 type Props = { children: any };
 const MainScaffold: React.FC<Props> = ({ children }) => {
-  const { isDrawerOpen } = useStixPropsContext();
+  const { isDrawerOpen } = useStigPropsContext();
   const [panelWidth, setPanelWidth] = useState(480); // Default width in pixels
   const [isResizing, setIsResizing] = useState(false);
 

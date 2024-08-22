@@ -2,7 +2,8 @@ import React, { useState, useContext, useRef, useEffect } from 'react';
 import { EventContext } from '@/contexts/EventContext';
 import FormElementTextInput from '../forms/formElements/FormElementTextInput';
 import AccordionSection from './AccordionSection';
-import StencilLibrary from '../Graphs/StencilLibrary';
+import StencilLibrary from './StencilLibrary';
+
 
 const Drawer = () => {
   const [stencilFilterText, setStencilFilterText] = useState("");

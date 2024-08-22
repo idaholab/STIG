@@ -16,3 +16,19 @@ export type IStixRelationship = cytoscape.EdgeDefinition & {
     data: StixRelationshipData;
     saved?: boolean;
 }
+
+export function createStixRelationship(
+    the_data: StixRelationshipData,
+    data_source: DataSourceType
+): IStixRelationship {
+    const data: StixRelationshipData = {
+        ...the_data,
+        data_source,
+        saved: data_source === 'DB' || data_source === 'IGNORE',
+    };
+
+    return {
+        data,
+        saved: data.saved,
+    };
+}

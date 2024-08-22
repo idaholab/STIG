@@ -1,4 +1,4 @@
-import Graph from '@/components/Graphs/CytoGraph';
+import Graph from '@/graph/CytoGraph';
 import React from 'react';
 
 import { ConnectedDBProvider } from '../contexts/ConnectedDBContext';

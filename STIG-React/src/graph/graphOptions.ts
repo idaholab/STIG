@@ -4,11 +4,10 @@ Copyright 2018 Southern California Edison Company
 ALL RIGHTS RESERVED
  */
 
-import cytoscape, { LayoutOptions, RandomLayoutOptions } from 'cytoscape';
+import cytoscape, { KlayOptions, LayoutOptions, RandomLayoutOptions, SpreadLayoutOptions } from 'cytoscape';
 import { IColaLayoutOptions } from './colaLayoutOptions';
 import { useTheme } from '@/contexts/useTheme';
-import { KlayOptions } from '@/types/LayoutTypes/KlayOptions';
-import { SpreadLayoutOptions } from '@/types/LayoutTypes/SpreadLayoutOptions';
+import { ViewUtilitiesOptions } from '@/types/ViewUtilitiesOptions';
 
 export const node_style: cytoscape.Stylesheet = {
   selector: 'node',
@@ -590,7 +589,6 @@ export const euler_options: any = {
 };
 
 export type LayoutsType = Record<string, LayoutOptions>;
-
 export const layouts: LayoutsType = {
   spread: spread_options,
   cola: cola_layout_options,
@@ -607,19 +605,4 @@ export const layouts: LayoutsType = {
   breadthfirst: breadthfirst_options
 };
 
-export interface ViewUtilitiesOptions {
-  node: {
-    highlighted: any; // styles for when nodes are highlighted.
-    unhighlighted: any; // styles for when nodes are unhighlighted.
-  };
-  edge: {
-    highlighted: any; // styles for when edges are highlighted.
-    unhighlighted: any; // styles for when edges are unhighlighted.
-  };
-  setVisibilityOnHide?: boolean; // whether to set visibility on hide/show
-  setDisplayOnHide?: boolean; // whether to set display on hide/show
-  neighbor?: any; // return desired neighbors of tapheld node
 
-  neighborSelectTime?: number; // ms, time to taphold to select desired neighbors
-  searchBy?: string[];
-}

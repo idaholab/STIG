@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { useStixPropsContext } from '../../contexts/StixPropsContext.tsx';
+import { useStigPropsContext } from '../../contexts/StigPropsContext.tsx';
 
 const StixPropsPanel: React.FC = () => {
-  const { isDrawerOpen, toggleDrawer } = useStixPropsContext();
+  const { isDrawerOpen, toggleDrawer } = useStigPropsContext();
 
   return (
     <div className={`drawer flex flex-col w-full h-full p-4 }`}>

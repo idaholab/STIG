@@ -3,7 +3,10 @@
     "target": "ES2020",
     "module": "ESNext",
     "moduleResolution": "Node",
-    "lib": ["DOM", "ESNext"],
+    "lib": [
+      "DOM",
+      "ESNext"
+    ],
     "jsx": "react",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -13,15 +16,32 @@
     "isolatedModules": true,
     "resolveJsonModule": true,
     "allowImportingTsExtensions": true,
+    "strictNullChecks": true,
     "noEmit": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@app/*": ["app/*"],
-      "@components/*": ["src/components/*"]
+      "@/*": [
+        "src/*"
+      ],
+      "@app/*": [
+        "app/*"
+      ],
+      "@components/*": [
+        "src/components/*"
+      ]
     },
-    "types": ["node", "@types/react", "vite/client"]
+    "types": [
+      "node",
+      "@types/react",
+      "vite/client"
+    ]
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "src",
+    "globals.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }

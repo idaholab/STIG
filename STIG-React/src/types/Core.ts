@@ -41,6 +41,16 @@ export type Dictionary = Record<string, any>;
 export type DataSourceType = 'DB' | 'GUI' | 'IGNORE';
 export const node_img: Record<string, string> = {};
 
+
+const relationshipsKeyRegex = /((r|R)elationship)|((s|S)ighting)/;
+export function isSRO(item: Core): item is SRO {
+    return relationshipsKeyRegex.exec(item.type) !== null;
+}
+
+export function isRelationship(item: Core): item is Relationship {
+    return item.type.toLocaleLowerCase() === 'relationship';
+}
+
 export type Core = {
     type: StixType;
     id: Identifier;
@@ -85,3 +95,23 @@ export type StixNodeData = cytoscape.NodeDataDefinition & {
     raw_data?: Core; // the_data
     saved?: boolean;
 }
+
+export interface IStixNode extends cytoscape.ElementDefinition {
+    data: StixNodeData;
+    data_source?: DataSourceType;
+    style?: CSSStyleDeclaration;
+    saved?: boolean;
+    classes?: string;
+}
+
+export type ObjectMarkingRelationship = Relationship & {
+    type: 'relationship';
+    relationship_type: 'applies-to';
+    id: Identifier;
+    source_ref: Identifier;
+    target_ref: Identifier;
+    created: Timestamp;
+    modified: Timestamp;
+    description: string;
+}
+

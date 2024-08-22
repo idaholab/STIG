@@ -5,17 +5,18 @@
 @layer base {
   :root {
     /* Accent Colors (blue) */
-    --color-accent-rgb-50: 226 245 254;
-    --color-accent-rgb-100: 183 230 252;
-    --color-accent-rgb-200: 137 214 250;
-    --color-accent-rgb-300: 95 197 246;
-    --color-accent-rgb-400: 70 185 244;
-    --color-accent-rgb-500: 57 172 242;
-    --color-accent-rgb-600: 53 158 226;
-    --color-accent-rgb-700: 48 139 206;
-    --color-accent-rgb-800: 44 122 186;
+    --color-accent-rgb-50: 226, 245, 254;
+    --color-accent-rgb-100: 183, 230, 252;
+    --color-accent-rgb-200: 137, 214, 250;
+    --color-accent-rgb-300: 95, 197, 246;
+    --color-accent-rgb-400: 70, 185, 244;
+    --color-accent-rgb-500: 57, 172, 242;
+    --color-accent-rgb-600: 53, 158, 226;
+    --color-accent-rgb-700: 48, 139, 206;
+    --color-accent-rgb-800: 44, 122, 186;
     /* main */
-    --color-accent-rgb-900: 36 90 151;
+    --color-accent-rgb-900: 36, 90, 151;
+
     --color-accent-hex-50: #e2f5fe;
     --color-accent-hex-100: #b7e6fc;
     --color-accent-hex-200: #89d6fa;
@@ -29,18 +30,17 @@
     --color-accent-hex-900: #245a97;
 
     /* Primary (gray) */
-    --color-primary-dark-rgb-50: 249 250 251;
-    --color-primary-dark-rgb-100: 243 244 246;
-    --color-primary-dark-rgb-200: 229 231 235;
-    --color-primary-dark-rgb-300: 209 213 219;
-    --color-primary-dark-rgb-400: 156 163 175;
-    --color-primary-dark-rgb-500: 107 114 128;
-    --color-primary-dark-rgb-600: 75 85 99;
-    --color-primary-dark-rgb-700: 55 65 81;
-    --color-primary-dark-rgb-800: 31 41 55;
-    --color-primary-dark-rgb-900: 17 24 39;
-    --color-primary-dark-rgb-950: 3 7 18;
-
+    --color-primary-dark-rgb-50: 249, 250, 251;
+    --color-primary-dark-rgb-100: 243, 244, 246;
+    --color-primary-dark-rgb-200: 229, 231, 235;
+    --color-primary-dark-rgb-300: 209, 213, 219;
+    --color-primary-dark-rgb-400: 156, 163, 175;
+    --color-primary-dark-rgb-500: 107, 114, 128;
+    --color-primary-dark-rgb-600: 75, 85, 99;
+    --color-primary-dark-rgb-700: 55, 65, 81;
+    --color-primary-dark-rgb-800: 31, 41, 55;
+    --color-primary-dark-rgb-900: 17, 24, 39;
+    --color-primary-dark-rgb-950: 3, 7, 18;
     --color-primary-dark-rgb-75: 246 247 248;
     --color-primary-dark-rgb-150: 236 237 240;
     --color-primary-dark-rgb-925: 10 16 29;
@@ -62,17 +62,17 @@
     --color-primary-dark-hex-925: #0d162b;
 
     /* Reds */
-    --color-red-rgb-50: 254 242 242;
-    --color-red-rgb-100: 254 226 226;
-    --olor-red-rgb-200: 254 202 202;
-    --color-red-rgb-300: 252 165 165;
-    --color-red-rgb-400: 248 113 113;
-    --color-red-rgb-500: 239 68 68;
-    --color-red-rgb-600: 220 38 38;
-    --color-red-rgb-700: 185 28 28;
-    --color-red-rgb-800: 153 27 27;
-    --color-red-rgb-900: 124 45 18;
-    --color-red-rgb-950: 69 10 10;
+    --color-red-rgb-50: 254, 242, 242;
+    --color-red-rgb-100: 254, 226, 226;
+    --color-red-rgb-200: 254, 202, 202;
+    --color-red-rgb-300: 252, 165 165;
+    --color-red-rgb-400: 248, 113, 113;
+    --color-red-rgb-500: 239, 68, 68;
+    --color-red-rgb-600: 220, 38, 38;
+    --color-red-rgb-700: 185, 28, 28;
+    --color-red-rgb-800: 153, 27, 27;
+    --color-red-rgb-900: 124, 45, 18;
+    --color-red-rgb-950: 69, 10, 10;
     --color-red-hex-50: #fef2f2;
     --color-red-hex-100: #fee2e2;
     --color-red-hex-200: #fecaca;
@@ -86,6 +86,17 @@
     --color-red-hex-950: #450a0a;
 
     /* Greens */
+    --color-green-rgb-50: 240, 253, 244;
+    --color-green-rgb-100: 220, 252, 231;
+    --color-green-rgb-200: 187, 247, 208;
+    --color-green-rgb-300: 134, 239, 172;
+    --color-green-rgb-400: 74, 222, 128;
+    --color-green-rgb-500: 34, 197, 94;
+    --color-green-rgb-600: 22, 163, 74;
+    --color-green-rgb-700: 21, 128, 61;
+    --color-green-rgb-800: 22, 101, 52;
+    --color-green-rgb-900: 20, 83, 45;
+    --color-green-rgb-950: 5, 46, 22;
     --color-green-hex-50: #f0fdf4;
     --color-green-hex-100: #dcfce7;
     --color-green-hex-200: #bbf7d0;
@@ -99,6 +110,17 @@
     --color-green-hex-950: #052e16;
 
     /* Oranges */
+    --color-orange-rgb-50: 255, 247, 237;
+    --color-orange-rgb-100: 255, 27, 213;
+    --color-orange-rgb-200: 254, 215, 170;
+    --color-orange-rgb-300: 253, 186, 116;
+    --color-orange-rgb-400: 251, 146, 60;
+    --color-orange-rgb-500: 249, 115, 22;
+    --color-orange-rgb-600: 234, 88, 12;
+    --color-orange-rgb-700: 194, 65, 12;
+    --color-orange-rgb-800: 154, 52, 18;
+    --color-orange-rgb-900: 124, 45, 18;
+    --color-orange-rgb-950: 67, 20, 7;
     --color-orange-hex-50: #fff7ed;
     --color-orange-hex-100: #ffedd5;
     --color-orange-hex-200: #fed7aa;
@@ -117,10 +139,12 @@
     --arrow-light-color: var(--color-primary-dark-hex-600);
     --selected-node-border-color:var(--color-orange-hex-300);
 
-
-    --color-graph-blue: blue;
-    --color-graph-green: green;
-    --color-graph-red: red;
+    --context-menu-node-background: rgba(var(--color-primary-dark-rgb-950), 0.85);
+    --context-menu-node-active-background: rgba(var(--color-accent-rgb-900), 0.95);
+    --context-menu-edge-background: rgba(var(--color-primary-dark-rgb-950), 0.85);
+    --context-menu-edge-active-background: rgba(var(--color-green-rgb-700), 0.95);
+    --context-menu-core-background: rgba(var(--color-accent-rgb-800), 0.85);
+    --context-menu-core-active-background: rgba(var(--color-primary-dark-rgb-950), 0.95);
 
     /* 44 122 186; */
     --color-scrollbar-track-light: var(--color-primary-dark-hex-300);

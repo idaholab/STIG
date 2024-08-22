@@ -17,19 +17,19 @@ import "@fontsource/source-sans-pro/900.css"; // Specify weight
 
 // Import Store
 import { store } from '../app/store/index';
-import { DrawerContextProvider } from './contexts/StixPropsContext';
+import { StigContextProvider } from './contexts/StigPropsContext';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <Provider store={store}>
       <BrowserRouter basename="/stig">
-        <DrawerContextProvider>
+        <StigContextProvider>
           <App>
             <Routes>
               <Route path="/" element={<PageMainLanding />} />
             </Routes>
           </App>
-        </DrawerContextProvider>
+        </StigContextProvider>
       </BrowserRouter>
     </Provider>
   </React.StrictMode>
