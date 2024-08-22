@@ -22,10 +22,12 @@
           "pattern": "^observed-data--"
         },
         "first_observed": {
+          "title": "first_observed",
           "$ref": "static/jsedit/common/timestamp.json",
           "description": "The beginning of the time window that the data was observed during."
         },
         "last_observed": {
+          "title": "last_observed",
           "$ref": "static/jsedit/common/timestamp.json",
           "description": "The end of the time window that the data was observed during."
         },

@@ -53,10 +53,12 @@
           "description": "The version of the pattern that is used."
         },
         "valid_from": {
+          "title":"valid_from",
           "$ref": "static/jsedit/common/timestamp.json",
           "description": "The time from which this indicator should be considered valuable intelligence."
         },
         "valid_until": {
+          "title":"valid_until",
           "$ref": "static/jsedit/common/timestamp.json",
           "description": "The time at which this indicator should no longer be considered valuable intelligence."
         },

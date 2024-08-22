@@ -1,49 +1,58 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://raw.githubusercontent.com/oasis-open/cti-stix2-json-schemas/stix2.1/schemas/common/language-content.json",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
     "title": "language-content",
     "description": "The language-content object represents text content for STIX Objects represented in languages other than that of the original object.",
     "type": "object",
-    "properties": {
-        "id": {
-            "title": "id",
-            "pattern": "^language-content--",
-            "type": "string",
-            "default": "language-content--",
-            "readonly": "true"
-        },
-        "type": {
+    "allOf": [
+      {
+        "$ref": "static/jsedit/core.json"
+      },
+      {
+        "properties": {
+          "type": {
             "type": "string",
             "description": "The type of this object, which MUST be the literal `language-content`.",
-            "default": "language-content",
-            "readonly": "true"
-        },
-        "object_ref": {
+            "enum": [
+              "language-content"
+            ]
+          },
+          "id": {
+            "title": "id",
+            "pattern": "^language-content--"
+          },
+          "object_ref": {
             "title": "object_ref",
             "description": "Identifies the object that this Language Content applies to.",
             "allOf": [
-                {
-                    "$ref": "static/jsedit/common/identifier.json"
-                },
-                {
-                    "not": {
-                        "pattern": "^(bundle|language-content)--.+$"
-                    }
+              {
+                "$ref": "static/jsedit/common/identifier.json"
+              },
+              {
+                "not": {
+                  "pattern": "^(bundle|language-content)--.+$"
                 }
+              }
             ]
-        },
-        "object_modified": {
+          },
+          "object_modified": {
             "title": "object_modified",
             "$ref": "static/jsedit/common/timestamp.json",
             "description": "Identifies the modified time of the object that this Language Content applies to."
-        },
-        "contents": {
+          },
+          "contents": {
             "title": "contents",
             "$ref": "static/jsedit/common/dictionary.json",
             "description": "Contains the actual Language Content (translation)."
+          }
         }
-    },
-    "required": [
-        "object_ref",
-        "contents"
+      },
+      {
+        "required": [
+          "object_ref",
+          "contents"
+        ]
+      }
     ]
-}
+  }
+  

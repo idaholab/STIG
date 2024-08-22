@@ -39,6 +39,7 @@
           "description": "A description that provides more details and context about Report."
         },
         "published": {
+          "title":"published",
           "$ref": "static/jsedit/common/timestamp.json",
           "description": "The date that this report object was officially published by the creator of this report."
         },

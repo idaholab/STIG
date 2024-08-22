@@ -64,10 +64,12 @@
           "minItems": 1
         },
         "first_seen" : {
+          "title":"first_seen",
           "$ref": "static/jsedit/common/timestamp.json",
           "description": "The time that this Threat Actor was first seen."
         },
         "last_seen" : {
+          "title":"last_seen",
           "$ref": "static/jsedit/common/timestamp.json",
           "description": "The time that this Threat Actor was last seen."
         },
