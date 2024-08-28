@@ -10,7 +10,7 @@ const Drawer = () => {
   const [stencilFilterText, setStencilFilterText] = useState("");
   const [isPanelOpen, setIsPanelOpen] = useState(true);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [openAccordionSections, setOpenAccordionSections] = useState<{ [key: string]: boolean }>({ sdo: true, sco: true });
+  const [openAccordionSections, setOpenAccordionSections] = useState<{ [key: string]: boolean }>({ sdo: true, sco: true, smo: true });
 
   const toggleDrawer = (shouldOpen: boolean) => {
     setIsPanelOpen(shouldOpen);
@@ -54,6 +54,11 @@ const Drawer = () => {
       title: isPanelOpen ? "STIX Cyber-Observable Objects (SCO)" : "SCO",
       type: 'sco',
     },
+    {
+      key: 'smo',
+      title: isPanelOpen ? "STIX Meta Objects (SMO)" : "SMO",
+      type: 'smo'
+    }
   ];
 
   const [accordionContainerHeight, setAccordionContainerHeight] = useState<string>('0px');

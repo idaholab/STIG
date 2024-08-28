@@ -17,6 +17,7 @@ import { IntrusionSet } from "./IntrusionSet";
 import { Ipv4Addr } from "./Ipv4Addr";
 import { Ipv6Addr } from "./Ipv6Addr";
 import { Malware } from "./Malware";
+import { MarkingDefinition } from "./MarkingDefinition";
 import { ObservedData } from "./ObservedData";
 import { Relationship } from "./Relationship";
 import { Report } from "./Report";
@@ -27,12 +28,14 @@ import { Vulnerability } from "./Vulnerability";
 
 // TODO: 
 //   Remove: Asset?
-//   Add: ExtensionDefinition | Grouping | Infrastructure | LanguageContent | Location | MalwareAnalysis | Marking Definition | Note | Opinion?
+//   Add: Grouping | Infrastructure | Location | MalwareAnalysis | Note | Opinion?
 export type SDO = Asset | AttackPattern | Campaign | CourseOfAction | Identity | Indicator | IntrusionSet | Malware | ObservedData | Report | ThreatActor | Tool | Vulnerability;
 // TODO: Add MacAddress | Mutex | NetworkTraffic | Process | Software | URL | UserAccount | WindowsRegistryKey | X509Certificate?
 export type SCO = Artifact | AutonomousSystem | Directory | DomainName | EmailAddr | EmailMessage | File | Ipv4Addr | Ipv6Addr;
+// TODO: Add ExtensionDefinition | LanguageContent 
+export type SMO = MarkingDefinition;
 export type SRO = Relationship | Sighting;
-export type StixObject = SDO | SCO | SRO;
+export type StixObject = SDO | SCO | SMO | SRO;
 /**
  * Specifies the hexadecimal constant ('magic number') associated with a specific file format that corresponds to the file, if applicable.
  */

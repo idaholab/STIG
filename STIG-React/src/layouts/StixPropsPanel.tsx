@@ -39,7 +39,8 @@ function PropsPanelHeader({ selectedProperties, setSelectedProperties }:{
   const stixObjectType = stencilItems.find(stencilItem => {
     return stencilItem.id === selectedSTIXObject?.type
   })?.type;
-  const schemaPath = stixObjectType === "sdo" ? "domain_objects" : "observables";
+  const schemaPath = stixObjectType === "sdo" ? "domain_objects" : 
+    stixObjectType === "sco" ? "observables" : "meta_objects";
   if(selectedSTIXObject?.type) {
     import(`../static/jsedit/${schemaPath}/${selectedSTIXObject?.type + '.json'}`)
       .then( schema => {
