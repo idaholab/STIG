@@ -59,6 +59,7 @@ export default function FormDatabaseConnect({ selectedProfile, setSelectedProfil
         infoIcon='info_outline'
         additionalInputClasses='input-sm'
         additionalInfoClasses='tooltip-left'
+        additionalLabelClasses='mr-5 w-48'
       />
       <FormElementSelect
         label="Database Type"
@@ -87,6 +88,7 @@ export default function FormDatabaseConnect({ selectedProfile, setSelectedProfil
         infoIcon='info_outline'
         additionalInputClasses='input-sm'
         additionalInfoClasses='tooltip-left'
+        additionalLabelClasses='mr-5 w-48'
       />
       <FormElementTextInput
         label="Database Name"
@@ -102,6 +104,7 @@ export default function FormDatabaseConnect({ selectedProfile, setSelectedProfil
         infoIcon='info_outline'
         additionalInputClasses='input-sm'
         additionalInfoClasses='tooltip-left'
+        additionalLabelClasses='mr-5 w-48'
       />
       <FormElementTextInput
         label="Username"
@@ -117,6 +120,7 @@ export default function FormDatabaseConnect({ selectedProfile, setSelectedProfil
         infoIcon='info_outline'
         additionalInputClasses='input-sm'
         additionalInfoClasses='tooltip-left'
+        additionalLabelClasses='mr-5 w-48'
       />
       <FormElementTextInput
         label="Password"
@@ -132,6 +136,7 @@ export default function FormDatabaseConnect({ selectedProfile, setSelectedProfil
         infoIcon='info_outline'
         additionalInputClasses='input-sm'
         additionalInfoClasses='tooltip-left'
+        additionalLabelClasses='mr-5 w-48'
       />
       <div className="flex justify-end ">
         <ButtonDBConnect

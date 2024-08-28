@@ -15,6 +15,7 @@ const DatabaseProfile: React.FC = () => {
   return (
     <Dropdown
       title="Database Profile"
+      includeDropdownArrow
     >
       <div className='w-[230px]'>
         <div className='grid'>

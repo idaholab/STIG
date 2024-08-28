@@ -17,7 +17,7 @@ import "@fontsource/source-sans-pro/900.css"; // Specify weight
 
 // Import Store
 import { store } from '../app/store/index';
-import { StigContextProvider } from './contexts/StigPropsContext';
+import { StigContextProvider } from './contexts/StigContext';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>

@@ -1,12 +1,21 @@
+import { Artifact } from "./Artifact";
 import { Asset } from "./Asset";
 import { AttackPattern } from "./AttackPattern";
+import { AutonomousSystem } from "./AutonomousSystem";
 import { Campaign } from "./Campaign";
 import { CourseOfAction } from "./CourseOfAction";
+import { Directory } from "./Directory";
+import { DomainName } from "./DomainName";
+import { EmailAddr } from "./EmailAddr";
+import { EmailMessage } from "./EmailMessage";
 import { ExternalReference } from "./ExternalReference";
+import { File } from "./File";
 import { GranularMarking } from "./GranularMarking";
 import { Identity } from "./Identity";
 import { Indicator } from "./Indicator";
 import { IntrusionSet } from "./IntrusionSet";
+import { Ipv4Addr } from "./Ipv4Addr";
+import { Ipv6Addr } from "./Ipv6Addr";
 import { Malware } from "./Malware";
 import { ObservedData } from "./ObservedData";
 import { Relationship } from "./Relationship";
@@ -16,9 +25,14 @@ import { ThreatActor } from "./ThreatActor";
 import { Tool } from "./Tool";
 import { Vulnerability } from "./Vulnerability";
 
+// TODO: 
+//   Remove: Asset?
+//   Add: ExtensionDefinition | Grouping | Infrastructure | LanguageContent | Location | MalwareAnalysis | Marking Definition | Note | Opinion?
 export type SDO = Asset | AttackPattern | Campaign | CourseOfAction | Identity | Indicator | IntrusionSet | Malware | ObservedData | Report | ThreatActor | Tool | Vulnerability;
+// TODO: Add MacAddress | Mutex | NetworkTraffic | Process | Software | URL | UserAccount | WindowsRegistryKey | X509Certificate?
+export type SCO = Artifact | AutonomousSystem | Directory | DomainName | EmailAddr | EmailMessage | File | Ipv4Addr | Ipv6Addr;
 export type SRO = Relationship | Sighting;
-export type StixObject = SDO | SRO;
+export type StixObject = SDO | SCO | SRO;
 /**
  * Specifies the hexadecimal constant ('magic number') associated with a specific file format that corresponds to the file, if applicable.
  */

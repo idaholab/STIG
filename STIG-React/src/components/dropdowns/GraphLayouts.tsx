@@ -17,6 +17,7 @@ const GraphLayouts: React.FC = () => {
   return (
     <Dropdown
       title="Graph Layouts"
+      includeDropdownArrow
     >
       <div className='w-[140px]'>
         <li className='hover:bg-primary hover:text-white'><a onClick={() => handleLayoutChange("breadthfirst")}>

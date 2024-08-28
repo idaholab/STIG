@@ -5,6 +5,7 @@ const ContextLayouts: React.FC = () => {
   return (
     <Dropdown
       title="Context Layouts"
+      includeDropdownArrow
     >
       {/* <li className='hover:bg-primary hover:text-white'><a>Option 1</a></li>
       <li className='hover:bg-primary hover:text-white'><a>Option 2</a></li> */}

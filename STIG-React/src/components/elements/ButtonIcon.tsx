@@ -23,13 +23,16 @@ interface ButtonProps {
    */
   link?: string;
   title?: string;
+  disabled?: boolean;
   /**
    * Optional click handler
    */
   onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 }
 
-const ButtonIcon: React.FC<ButtonProps> = ({ label, buttonIcon, buttonSize, color, link, title, onClick }) => {
+const ButtonIcon: React.FC<ButtonProps> = ({ 
+  label, buttonIcon, buttonSize, color, link, title, disabled, onClick 
+}) => {
   // Define base classes
   const baseClasses = `btn btn-circle ${color} ${buttonSize} uppercase hover:opacity-100 border-transparent`;
 
@@ -53,7 +56,12 @@ const ButtonIcon: React.FC<ButtonProps> = ({ label, buttonIcon, buttonSize, colo
           </span>
         </Link>
       ) : (
-        <button className={btnClass} onClick={onClick} title={title}>
+        <button 
+          className={btnClass} 
+          onClick={onClick} 
+          title={title}
+          disabled={disabled}
+        >
           <span className="material-icons">
             {buttonIcon}
           </span>

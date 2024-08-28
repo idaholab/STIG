@@ -1,10 +1,11 @@
 import React from 'react';
 import { stencilItems } from '../elements/StencilItems';
+import { StixType } from '@/types/Core';
 import AlertComponent from '../elements/AlertComponent';
 
 type StencilLibraryProps = {
     type: string;
-    onAddNode: (name: string, imageUrl: string) => void;
+    onAddNode: (label: string, type: StixType, imageUrl: string) => void;
     searchText?: string;
     isAccordionOpen: boolean;
     isPanelOpen: boolean;
@@ -16,13 +17,14 @@ const StencilLibrary: React.FC<StencilLibraryProps> = ({ type, onAddNode, search
         filteredItems = filteredItems.filter(item => item.alt.toLowerCase().includes(searchText?.toLowerCase()));
     }
 
-    const handleDragStart = (event: React.DragEvent, name: string, imageUrl: string) => {
-        event.dataTransfer.setData('text', name);
+    const handleDragStart = (event: React.DragEvent, label: string, type: StixType, imageUrl: string) => {
+        event.dataTransfer.setData('text', label);
         event.dataTransfer.setData('imageUrl', imageUrl);
+        event.dataTransfer.setData('type', type);
     };
 
-    const handleClickAddNode = (name: string, imageUrl: string) => {
-        onAddNode(name, imageUrl);
+    const handleClickAddNode = (label: string, type: StixType, imageUrl: string) => {
+        onAddNode(label, type, imageUrl);
     };
 
     return (
@@ -34,8 +36,8 @@ const StencilLibrary: React.FC<StencilLibraryProps> = ({ type, onAddNode, search
                             <div
                                 className={`stencil-item cursor-pointer flex items-center`}
                                 draggable
-                                onMouseUp={() => handleClickAddNode(item.alt, item.imageUrl)}
-                                onDragStart={(event) => handleDragStart(event, item.alt, item.imageUrl)}
+                                onMouseUp={() => handleClickAddNode(item.alt, item.id, item.imageUrl)}
+                                onDragStart={(event) => handleDragStart(event, item.alt, item.id, item.imageUrl)}
                             >
                                 <img src={item.imageUrl} alt={item.alt} className={` w-8 h-8 max-w-8 min-w-8 ${isPanelOpen ? 'ml-4' : 'm-0'} `} />
                                 {isPanelOpen &&

@@ -1,0 +1,326 @@
+import React from 'react';
+
+import { StixPropsContextProvider, useStixPropsContext } from '@/contexts/StixPropsContext';
+import { PropertyConfig } from '@/types/schema';
+import FormElementTextInput from './formElements/FormElementTextInput';
+import FormElementSelect from './formElements/FormElementSelect';
+import FormElementSTIXEmbeddedList from './formElements/FormElementSTIXEmbeddedList';
+import FormElementDatePicker from './formElements/FormElementDatePicker';
+import FormElementFileInput from './formElements/FormElementFileInput';
+import FormElementSTIXEmbeddedMap from './formElements/FormElementSTIXEmbeddedMap';
+import { SchemaType } from '@/types/SchemaType';
+
+export default function FormSTIXPropsPanel({ selectedProperties }: {
+  selectedProperties: PropertyConfig[]
+}) {
+  const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
+
+  const handlePropertyUpdate = (
+    newVal: string | boolean | number | Date | ArrayBuffer | null | undefined | Object | [], 
+    propName: string
+  ) => {
+    const tempSelectedSTIXObject = { ...selectedSTIXObject };
+    if (tempSelectedSTIXObject) {
+      tempSelectedSTIXObject[propName] = newVal;
+    }
+    setSelectedSTIXObject(tempSelectedSTIXObject);
+  };
+
+  return (
+    <>
+      <div className='flex justify-between mb-4'>
+        <span>
+          <span className='mr-3'>created</span>
+          <FormElementDatePicker
+            value={selectedSTIXObject && selectedSTIXObject["created"] !== undefined ? 
+              selectedSTIXObject["created"] 
+              : ""
+            }
+            onChange={([date]) => {
+              handlePropertyUpdate(date, "created");
+            }}
+            className='select-sm dark:bg-gray-900'
+          />
+        </span>
+        <span>
+          <span className='mr-3'>modified</span>
+          <FormElementDatePicker
+            value={selectedSTIXObject && selectedSTIXObject["modified"] !== undefined ? 
+              selectedSTIXObject["modified"] 
+              : ""
+            }
+            onChange={([date]) => {
+              handlePropertyUpdate(date, "modified");
+            }}
+            className='select-sm dark:bg-gray-900'
+          />
+        </span>
+      </div>
+      {selectedProperties.map((selectedProperty, i) =>
+        <STIXPropertyRenderer
+          key={i}
+          property={selectedProperty}
+          handlePropertyUpdate={handlePropertyUpdate}
+        />
+      )}
+    </>
+  );
+}
+
+export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeSelector, onTypeChange,
+  parentEmbeddedMapProps, setParentEmbeddedMapProps, 
+  parentSelectedProperties, setParentSelectedProperties
+ }:{
+  property: PropertyConfig,
+  handlePropertyUpdate: (newVal: string | boolean | number | Date | ArrayBuffer | null | undefined, 
+    propName: string) => void,
+  // The remaining properties are only passed in when the STIXPropertyRenderer
+  // is used from within an EmbeddedMap component
+  showTypeSelector?: boolean,
+  onTypeChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void,
+  // Needed so that an EmbeddedMap within an EmbeddedMap can have its type changed
+  parentEmbeddedMapProps?: PropertyConfig[];
+  setParentEmbeddedMapProps?: React.Dispatch<React.SetStateAction<PropertyConfig[]>>;
+  parentSelectedProperties?: PropertyConfig[];
+  setParentSelectedProperties?: React.Dispatch<React.SetStateAction<PropertyConfig[]>>;
+}){
+  const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
+
+  switch(property.name) {
+    case "created": 
+    case "modified":
+      return(
+        null
+      );
+    case "spec_version":
+      return (
+        <>
+          <STIXPropertyTitle
+            propName={property.name}
+            type={property.type}
+            showTypeSelector={showTypeSelector}
+            onTypeChange={onTypeChange}
+          />
+          <FormElementSelect
+            value={selectedSTIXObject && "spec_version" in selectedSTIXObject ?
+              selectedSTIXObject.spec_version : ""
+            }
+            options={["2.0", "2.1"]}
+            onChange={(event) => {
+              handlePropertyUpdate(event.target.value, property.name);
+            }}
+            additionalClasses='mb-4 dark:bg-gray-900'
+            // STIG does not currently support STIX 2.0
+            disabled
+          />
+        </>
+      );
+    default:
+      // TODO: Make it possible to clear each type of form input
+      switch(property.type) {
+        case "String":
+          return (
+            <>
+              <STIXPropertyTitle
+                propName={property.name}
+                type={property.type}
+                showTypeSelector={showTypeSelector}
+                onTypeChange={onTypeChange}
+              />
+              <FormElementTextInput
+                type="text"
+                value={selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ?
+                  selectedSTIXObject[property.name] 
+                  : ""
+                }
+                onChange={(event) => {
+                  handlePropertyUpdate(event.target.value, property.name);
+                }}
+                disabled={property.name === "id" || property.name === "type"}
+                additionalInputClasses='select-sm mb-4 dark:bg-gray-900'
+              />
+            </>
+          );
+        case "EmbeddedList":
+          // TODO: Develop way to delete items (and reorganize list, 
+          // clear list, and remove last item?)
+          return (
+            <>
+              <STIXPropertyTitle
+                propName={property.name}
+                type={property.type}
+                showTypeSelector={showTypeSelector}
+                onTypeChange={onTypeChange}
+              />
+              <FormElementSTIXEmbeddedList
+                label="item "
+                propName={property.name}
+                stixObj={selectedSTIXObject}
+                setSTIXObj={setSelectedSTIXObject}
+                className='mb-2'
+                additionalInputClasses='select-sm dark:bg-gray-900'
+                additionalLabelClasses='ml-6 mr-5 w-20'
+                btnLabel="+ Item"
+                btnColor="btn-primary"
+                btnAdditionalClasses='btn-sm ml-6 mb-4'
+              />
+            </>
+          );
+        case "Boolean":
+          return (
+            <>
+              <STIXPropertyTitle
+                propName={property.name}
+                type={property.type}
+                showTypeSelector={showTypeSelector}
+                onTypeChange={onTypeChange}
+              />
+              <FormElementSelect
+                placeholder=''
+                value={selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ? 
+                  selectedSTIXObject[property.name]
+                  : ""
+                }
+                options={["true", "false"]}
+                onChange={(event) => {
+                  handlePropertyUpdate(event.target.value === "true" ? true : false, property.name);
+                }}
+                additionalClasses='mb-4 dark:bg-gray-900'
+              />
+            </>
+          );
+        case "Integer":
+        case "Float":
+          return (
+            <>
+              <STIXPropertyTitle
+                propName={property.name}
+                type={property.type}
+                showTypeSelector={showTypeSelector}
+                onTypeChange={onTypeChange}
+              />
+              <FormElementTextInput
+                type="number"
+                min={property.min}
+                max={property.max}
+                value={selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ? 
+                  selectedSTIXObject[property.name] 
+                  : ""
+                }
+                onChange={(event) => {
+                  let number:string | number = event.target.value;
+                  if (number !== "") {
+                    number = Number(event.target.value);
+                    if (property.max !== undefined && number > property.max) {
+                      number = property.max;
+                    } else if (property.min !== undefined && number < property.min) {
+                      number = property.min;
+                    }
+                  }
+                  handlePropertyUpdate(number, property.name);
+                }}
+                additionalInputClasses='select-sm mb-4 dark:bg-gray-900'
+              />
+            </>
+          );
+        case "DateTime":
+          return (
+            <>
+              <STIXPropertyTitle
+                propName={property.name}
+                type={property.type}
+                showTypeSelector={showTypeSelector}
+                onTypeChange={onTypeChange}
+              />
+              <FormElementDatePicker
+                value={selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ? 
+                  selectedSTIXObject[property.name] 
+                  : ""
+                }
+                onChange={([date]) => {
+                  handlePropertyUpdate(date, property.name);
+                }}
+                className='w-full select-sm mb-4 dark:bg-gray-900'
+              />
+            </>
+          );
+        case "Binary":
+          return (
+            <>
+              <STIXPropertyTitle
+                propName={property.name}
+                type={property.type}
+                showTypeSelector={showTypeSelector}
+                onTypeChange={onTypeChange}
+              />
+              <FormElementFileInput
+                buttonLabel='Upload'
+                onFileChange={async (fileVal: string | ArrayBuffer | null | undefined) => {
+                  handlePropertyUpdate(fileVal, property.name);
+                }}
+                additionalInputClasses='input-sm'
+                additionalBtnClasses='btn-sm'
+              />
+            </>
+          );
+        case "EmbeddedMap":
+          return (
+            <StixPropsContextProvider>
+              <FormElementSTIXEmbeddedMap
+                propName={property.name}
+                embeddedMap={selectedSTIXObject ? selectedSTIXObject[property.name] : undefined}
+                showTypeSelector={showTypeSelector}
+                parentSTIXObject={selectedSTIXObject}
+                setParentSTIXObject={setSelectedSTIXObject}
+                parentEmbeddedMapProps={parentEmbeddedMapProps}
+                setParentEmbeddedMapProps={setParentEmbeddedMapProps}
+                parentSelectedProperties={parentSelectedProperties}
+                setParentSelectedProperties={setParentSelectedProperties}
+              />
+            </StixPropsContextProvider>
+          );
+        default:
+          return (
+            <STIXPropertyTitle
+              propName={property.name}
+              type={property.type}
+              showTypeSelector={showTypeSelector}
+              onTypeChange={onTypeChange}
+            />
+          );
+      }
+  }
+}
+
+function STIXPropertyTitle({ propName, type, showTypeSelector, onTypeChange }:{
+  propName: string,
+  type?: SchemaType,
+  showTypeSelector?: boolean,
+  onTypeChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+}) {
+  const stixSchemaToUITypeConverter = {
+    "String": "string",
+    "EmbeddedList": "array",
+    "Boolean": "boolean",
+    "Integer": "integer",
+    "DateTime": "",
+    "Binary": "",
+    "EmbeddedMap": "object",
+    "Float": "number"
+  };
+
+  return(
+    <div className='flex gap-2 mb-2 items-center'>
+      <p>{propName}</p>
+      {showTypeSelector && type && onTypeChange ?
+        <FormElementSelect
+          options={["array", "string", "integer", "boolean", "number", "object"]}
+          value={stixSchemaToUITypeConverter[type]}
+          onChange={onTypeChange}
+          additionalClasses='select-xs dark:bg-gray-900'
+        />
+        :null
+      }
+    </div>
+  );
+}

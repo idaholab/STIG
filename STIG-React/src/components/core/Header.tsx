@@ -4,13 +4,15 @@ import { Link } from 'react-router-dom';
 
 // Custom Components
 import ThemeToggle from './ThemeToggle';
-import { useStigPropsContext } from '../../contexts/StigPropsContext';
+import { useStigContext } from '@/contexts/StigContext';
+import { useStixPropsContext } from '../../contexts/StixPropsContext';
 import ButtonIcon from '../elements/ButtonIcon';
 
 type Props = object;
 
 const Header: React.FC<Props> = () => {
-  const { toggleDrawer } = useStigPropsContext();
+  const { toggleDrawer } = useStigContext();
+  const { selectedSTIXObject } = useStixPropsContext();
 
   return (
     <div className="navbar bg-primary text-primary-content sticky top-0 z-50">
@@ -29,6 +31,7 @@ const Header: React.FC<Props> = () => {
           buttonIcon="more_vert"
           color="btn-primary"
           onClick={toggleDrawer}
+          disabled={!selectedSTIXObject}
         />
       </div>
     </div>

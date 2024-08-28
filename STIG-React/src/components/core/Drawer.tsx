@@ -4,6 +4,7 @@ import FormElementTextInput from '../forms/formElements/FormElementTextInput';
 import AccordionSection from './AccordionSection';
 import StencilLibrary from './StencilLibrary';
 
+import { StixType } from '@/types/Core';
 
 const Drawer = () => {
   const [stencilFilterText, setStencilFilterText] = useState("");
@@ -16,10 +17,11 @@ const Drawer = () => {
   };
 
   const { dispatchEvent } = useContext(EventContext);
-  const handleAddStencilNode = (name: string, imageUrl: string) => {
+  const handleAddStencilNode = (label: string, type: StixType, imageUrl: string) => {
     const customEvent = new CustomEvent('addNode', {
       detail: {
-        label: name,
+        label,
+        type,
         imageUrl,
         position: { x: 200, y: 200 },
       },

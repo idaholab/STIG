@@ -12,6 +12,7 @@ type Props = {
   disabled?: boolean;
   includeInfo?: boolean;
   infoText?: string;
+  additionalClasses?: string;
   additionalInfoClasses?: string;
 };
 
@@ -25,17 +26,17 @@ const FormElementSelect: React.FC<Props> = ({
   disabled,
   includeInfo,
   infoText,
+  additionalClasses,
   additionalInfoClasses
 }) => {
   return (
     <div className={`flex items-center ${className}`}>
       {label && <span className="mr-5 w-[195px]">{label}</span>}
       <select
-        // placeholder={placeholder}
         value={value}
         onChange={onChange}
-        className="
-        flex
+        className={`
+          flex
           select
           select-bordered
           select-sm
@@ -47,9 +48,15 @@ const FormElementSelect: React.FC<Props> = ({
           border
           border-gray-500
           bg-gray-100
-        "
+          ${additionalClasses}
+        `}
         disabled={disabled}
       >
+        {placeholder !== undefined ?
+          <option disabled>{placeholder}</option>
+          : null
+        }
+
         {options.map((option, i) => {
           return (
             <option key={i}>{option}</option>

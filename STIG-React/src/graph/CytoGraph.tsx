@@ -11,6 +11,7 @@ import { Indicator } from '@/types/Indicator';
 import { ObservedData } from '@/types/ObservedData';
 import { Report } from "@/types/Report";
 import { DataSourceType, StixType } from '@/types/Core';
+import { useStixPropsContext } from '@/contexts/StixPropsContext';
 import { layouts } from './graphOptions';
 import cosebilkent from 'cytoscape-cose-bilkent';
 import dagre from 'cytoscape-dagre';
@@ -20,7 +21,7 @@ import viewUtilities from 'cytoscape-view-utilities';
 
 import cxtmenu from 'cytoscape-cxtmenu';
 import { edgehandles_style, setup_edge_handles } from './edge-handles';
-import { useStigPropsContext } from '@/contexts/StigPropsContext';
+import { useStigContext } from '@/contexts/StigContext';
 import { setupCtxMenu } from '@/util/GraphUtils';
 
 
@@ -43,7 +44,8 @@ const Graph: React.FC = () => {
     const selectedColor = getComputedStyle(document.documentElement).getPropertyValue('--selected-node-border-color');
     const edgeColorDark = getComputedStyle(document.documentElement).getPropertyValue('--edge-dark-color');
     const edgeColorLight = getComputedStyle(document.documentElement).getPropertyValue('--edge-light-color');
-    const { cyInstance, setCyInstance } = useStigPropsContext();
+    const { cyInstance, setCyInstance, isDrawerOpen, toggleDrawer } = useStigContext();
+    const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
 
     useEffect(() => {
         if (cyInstance) {
@@ -80,11 +82,13 @@ const Graph: React.FC = () => {
         const handleCustomEvent = (payload: any) => {
             //const id = payload.data.detail.id;
             const label = payload.data.detail.label;
+            const type = payload.data.detail.type;
             const imageUrl = payload.data.detail.imageUrl;
             const position = payload.data.detail.position;
             const customEvent = new CustomEvent('addNode', {
                 detail: {
                     label,
+                    type,
                     imageUrl,
                     position: position,
                 },
@@ -147,10 +151,10 @@ const Graph: React.FC = () => {
             setCyInstance(cy);
 
             const handleAddNode = (event: CustomEvent) => {
-                const { label, imageUrl, position } = event.detail;
+                const { label, type, imageUrl, position } = event.detail;
 
                 // TODO: Create stix object
-                const node = handleAddStixNode(label, imageUrl, position, 'GUI');
+                const node = handleAddStixNode(label, type, imageUrl, position, 'GUI');
                 node.group = 'nodes';
 
                 cy?.add(node);
@@ -163,10 +167,6 @@ const Graph: React.FC = () => {
                 //cyInstance.layout({ name: 'grid' }).run(); // TODO: Change to selected layout...
             };
 
-            const handleClearGraph = () => {
-                cy.elements().remove();
-                cy.reset();
-            }
             const handleLayoutChangeEvent = (event: CustomEvent) => {
                 const { layout } = event.detail;
                 // Select all nodes with no parents or children
@@ -177,22 +177,48 @@ const Graph: React.FC = () => {
 
             const graphElement = cyContainerRef.current;
             graphElement.addEventListener('addNode', handleAddNode as EventListener);
-            graphElement.addEventListener('clearGraph', handleClearGraph);
             graphElement.addEventListener('changeLayout', handleLayoutChangeEvent as EventListener);
             return () => {
                 graphElement.removeEventListener('addNode', handleAddNode as EventListener);
-                graphElement.removeEventListener('clearGraph', handleClearGraph);
                 graphElement.removeEventListener('changeLayout', handleLayoutChangeEvent as EventListener);
 
             };
         }
     }, []);
 
+    // Needed to move handleClearGraph out of the above useEffect so that
+    // isDrawerOpen would properly update and clearing the graph would
+    // properly know when to also close the properties panel.
+    useEffect(() => {
+        const handleClearGraph = () => {
+            cyInstance?.elements().remove();
+            cyInstance?.reset();
+            if(isDrawerOpen) {
+                setSelectedSTIXObject(undefined);
+                toggleDrawer();
+            }
+        }
+
+        const graphElement = cyContainerRef.current;
+        graphElement?.addEventListener('clearGraph', handleClearGraph);
+
+        return () => {
+            graphElement?.removeEventListener('clearGraph', handleClearGraph);
+        };
+    }, [isDrawerOpen]);
+
+    // Triggered on edit of a node's properties
+    useEffect(() => {
+        const cytoElement = cyInstance?.getElementById(selectedSTIXObject?.id);
+        if (cytoElement === undefined) { return }
+        cytoElement.data(selectedSTIXObject);
+    }, [selectedSTIXObject]);
+
     const handleDrop = (event: React.DragEvent) => {
         event.preventDefault();
-        const id = uuidv4();
         const label = event.dataTransfer.getData('text');
         const imageUrl = event.dataTransfer.getData('imageUrl');
+        const type = event.dataTransfer.getData('type');
         const position = cyContainerRef.current ? cyContainerRef.current.getBoundingClientRect() : { x: 0, y: 0 };
         const x = event.clientX - position.x;
         const y = event.clientY - position.y;
@@ -202,8 +228,8 @@ const Graph: React.FC = () => {
 
         const customEvent = new CustomEvent('addNode', {
             detail: {
-                id,
                 label,
+                type,
                 imageUrl,
                 position: { x, y },
             },
@@ -216,12 +242,12 @@ const Graph: React.FC = () => {
         event.preventDefault();
     };
 
-    function handleAddStixNode(nodeType: StixType, imgUrl: string, position: any, dSource: DataSourceType): StixNode {
+    function handleAddStixNode(label:string, nodeType: StixType, imgUrl: string, position: any, dSource: DataSourceType): StixNode {
         const opts: StixNodeData = {
             type: nodeType,
             id: nodeType + '--' + uuidv4(),
             created: moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
-            level: 1,
+            spec_version: "2.1"
         };
         if (nodeType === 'indicator') {
             (opts as Indicator).valid_from = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
@@ -258,15 +284,38 @@ const Graph: React.FC = () => {
                 }
             }
         }
-        rtnNode.data.label = nodelabel;
+        rtnNode.data.label = label;
         nodelabel = (nodelabel && nodelabel.length > 60) ? nodelabel.substring(0, 60).concat('...') : nodelabel;
         rtnNode.data.name = nodelabel;
-        rtnNode.data.data_source = dSource;
+        // rtnNode.data.data_source = dSource;
         rtnNode.data.raw_data = rtnNode.data;
-        rtnNode.data.description = '??'; // TODO: Must be when adding a node from database... ?? Will need to track this down...
-        rtnNode.data.saved = (dSource === 'DB' || dSource === 'IGNORE');
+        // rtnNode.data.saved = (dSource === 'DB' || dSource === 'IGNORE');
         return rtnNode
     };
+
+    // TODO: Add edge back into this list: 'node, edge'
+    // (Currently breaks the application if it is added)
+    // Show STIX props panel on node/edge click
+    cyInstance?.on('click', 'node', (evt: cytoscape.EventObject) => {
+        if(!isDrawerOpen) {
+            toggleDrawer();
+        }
+        const ele: cytoscape.CollectionReturnValue = evt.target;
+        cyInstance.$(':selected').unselect();
+        if (ele.empty() || ele.length > 1) {
+          return;
+        }
+        setSelectedSTIXObject(ele.data());
+    });
+
+    // TODO: Add edge back into this list: 'node, edge'
+    // (Currently breaks the application if it is added)
+    // Hide STIX props panel when node/edge is unselected
+    cyInstance?.on('unselect', 'node', (evt: cytoscape.EventObject) => {
+        if(isDrawerOpen) {
+            toggleDrawer();
+        }
+    });
 
     return <div ref={cyContainerRef}
         style={{ width: '100%', height: '100%' }}

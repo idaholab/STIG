@@ -4,8 +4,10 @@ import React, { forwardRef } from 'react';
 type Props = {
   label?: string;
   placeholder?: string;
-  type: "text" | "password";
-  value?: string;
+  type: "text" | "password" | "number";
+  min?: number;
+  max?: number
+  value?: string | number;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   className?: string;
   disabled?: boolean;
@@ -17,6 +19,7 @@ type Props = {
   additionalInputClasses?: string;
   additionalInfoClasses?: string;
   additionalXClasses?: string;
+  additionalLabelClasses?: string;
   prefix?: string;
   badgeText?: string
 };
@@ -25,6 +28,8 @@ const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
   placeholder,
   label,
   type,
+  min,
+  max,
   value,
   onChange,
   className,
@@ -37,6 +42,7 @@ const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
   additionalInputClasses,
   additionalInfoClasses,
   additionalXClasses,
+  additionalLabelClasses,
   prefix,
   badgeText
 }, ref) => {
@@ -44,7 +50,7 @@ const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
   return (
     <div className={`flex flex-col items-start ${className}`}>
       <div className={`relative flex items-center w-full`}>
-        {label && <span className="mr-5 w-48">{label}</span>}
+        {label && <span className={`${additionalLabelClasses}`}>{label}</span>}
         {prefix && (
           <span className="absolute inset-y-0 left-1 flex items-center text-gray-400 dark:text-gray-400">
             <span className="material-icons">{prefix}</span>
@@ -53,6 +59,8 @@ const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
         <input
           ref={ref}
           type={type}
+          min={min}
+          max={max}
           placeholder={placeholder ? placeholder : undefined}
           value={value}
           onChange={onChange}

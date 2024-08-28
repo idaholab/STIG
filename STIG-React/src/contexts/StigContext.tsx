@@ -1,18 +1,18 @@
 import React, { createContext, useContext, useState } from 'react';
 
-type StigPropsContextType = {
+type StigContextType = {
   isDrawerOpen: boolean;
   cyInstance: cytoscape.Core | undefined;
   toggleDrawer: () => void;
   setCyInstance: React.Dispatch<React.SetStateAction<cytoscape.Core | undefined>>;
 };
 
-const StixPropsContext = createContext<StigPropsContextType | undefined>(undefined);
+const StigContext = createContext<StigContextType | undefined>(undefined);
 
-export const useStigPropsContext = () => {
-  const context = useContext(StixPropsContext);
+export const useStigContext = () => {
+  const context = useContext(StigContext);
   if (!context) {
-    throw new Error('useStixPropsContext must be used within a StigContextProvider');
+    throw new Error('useStigContext must be used within a StigContextProvider');
   }
   return context;
 };
@@ -30,8 +30,8 @@ export const StigContextProvider: React.FC<Props> = ({ children }) => {
   };
 
   return (
-    <StixPropsContext.Provider value={{ isDrawerOpen, toggleDrawer, cyInstance, setCyInstance }}>
+    <StigContext.Provider value={{ isDrawerOpen, toggleDrawer, cyInstance, setCyInstance }}>
       {children}
-    </StixPropsContext.Provider>
+    </StigContext.Provider>
   );
 };
