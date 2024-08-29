@@ -117,8 +117,8 @@ const Drawer = () => {
         </div>
 
 
-        <div className="flex flex-col flex-grow h-full scrollbar" >
-          <ul className={`menu p-0 flex flex-col justify-start `}>
+        <div className="flex flex-col flex-grow h-full scrollbar mb-6" >
+          <ul className={`menu p-0 flex flex-col justify-start`}>
             {accordionSections.map(section => (
               <li className="flex" key={section.key}>
                 <AccordionSection
