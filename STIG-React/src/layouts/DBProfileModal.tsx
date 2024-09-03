@@ -16,7 +16,7 @@ const DBProfileModal: React.FC = () => {
   const [inDBDeleteProcess, setInDBDeleteProcess] = useState(false);
 
   return (
-    <>
+    <div className='h-full relative'>
       {/* Database Delete Confirmation Dialog: */}
       {inDBDeleteProcess ?
         <DBDeleteConfirmationDialog
@@ -25,9 +25,9 @@ const DBProfileModal: React.FC = () => {
           setInDBDeleteProcess={setInDBDeleteProcess}
           setDBProfiles={setSavedDBProfiles}
         />
-        : null
+        : undefined
       }
-      <div className='flex justify-between'>
+      <div className='flex flex-nowrap justify-between h-full'>
         {/* Database Profile Selector: */}
         <DBProfileSelector
           dbProfiles={savedDBProfiles}
@@ -47,7 +47,7 @@ const DBProfileModal: React.FC = () => {
           setDBProfiles={setSavedDBProfiles}
         />
       </div>
-    </>
+    </div>
   );
 };
 
@@ -61,12 +61,12 @@ function DBDeleteConfirmationDialog({ selectedProfile, setSelectedProfile, setIn
     setDBProfiles: React.Dispatch<React.SetStateAction<DBProfile[]>>
   }) {
   return (
-    <div role="alert" className="alert mb-8 w-1/2">
+    <div role="alert" className="alert text-base mb-8 w-1/2 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-40 text-gray-900 bg-accent-100 border-accent-900 dark:bg-accent-500 dark:border-accent-100">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
-        className="stroke-info h-6 w-6 shrink-0"
+        className="stroke-gray-900 dark:stroke-gray-900 h-10 w-10 shrink-0"
       >
         <path
           strokeLinecap="round"
@@ -75,9 +75,15 @@ function DBDeleteConfirmationDialog({ selectedProfile, setSelectedProfile, setIn
           d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
         />
       </svg>
-      <span>Are you sure you wish to delete {selectedProfile?.ProfileName}?</span>
-      <button
-        className="btn btn-sm btn-primary"
+      <span>
+        Are you sure you wish to delete the profile for
+        <span className="font-semibold">
+          {selectedProfile?.ProfileName && selectedProfile?.ProfileName?.length > 50 ? ` '${selectedProfile?.ProfileName?.substring(0, 50)}'...` : ` '${selectedProfile?.ProfileName}'`}</span> ?
+      </span>
+      <ButtonBasic
+        label={'Delete'}
+        color={'btn-primary'}
+        additionalClasses={`${'btn-sm'}`}
         onClick={() => {
           if (selectedProfile) {
             removeDBConfig(selectedProfile.Id);
@@ -86,17 +92,16 @@ function DBDeleteConfirmationDialog({ selectedProfile, setSelectedProfile, setIn
             setDBProfiles(readDBConfigStorage());
           }
         }}
-      >
-        Delete
-      </button>
-      <button
-        className="btn btn-sm"
+      />
+
+      <ButtonBasic
+        label={'cancel'}
+        color={'btn-ghost'}
+        additionalClasses={`${'btn-sm text-gray-900'}`}
         onClick={() => {
           setInDBDeleteProcess(false);
         }}
-      >
-        Cancel
-      </button>
+      />
     </div>
   );
 }
@@ -115,68 +120,69 @@ function DBProfileSelector({ dbProfiles, inDBDeleteProcess, setInDBDeleteProcess
   const { connectedDBProfile } = useContext(ConnectedDBContext) as ConnectedDBContextType;
 
   return (
-    <ul
-      className="rounded-box h-full bg-gray-300 dark:bg-gray-800
-        flex flex-col p-2 basis-2/5 max-h-60"
-    >
-      <div className={"scrollbar"}>
-        {dbProfiles.map((profile) => {
-          return (
-            <li key={profile.Id} className={inDBDeleteProcess ? "disabled" : ""}>
-              <a
-                className={!inDBDeleteProcess && selectedProfile?.Id === profile.Id ?
-                  "bg-primary text-white hover:text-black dark:hover:text-white" : ""}
-                onClick={() => {
-                  if (!inDBDeleteProcess) {
-                    setSelectedProfile(profile);
-                    setIsFormComplete(true);
-                    profile.LastDBOperationSuccessful = true;
-                    editDBConfig(profile);
+    <div className='rounded-box flex h-[256px]  bg-gray-300 dark:bg-gray-800 p-2 basis-2/5 '>
+      <ul
+        className="h-full flex flex-col flex-auto justify-between "
+      >
+        <div className={"scrollbar"}>
+          {dbProfiles.map((profile) => {
+            return (
+              <li key={profile.Id} className={inDBDeleteProcess ? "disabled" : ""}>
+                <a
+                  className={!inDBDeleteProcess && selectedProfile?.Id === profile.Id ?
+                    "bg-primary text-white hover:text-black dark:hover:text-white" : ""}
+                  onClick={() => {
+                    if (!inDBDeleteProcess) {
+                      setSelectedProfile(profile);
+                      setIsFormComplete(true);
+                      profile.LastDBOperationSuccessful = true;
+                      editDBConfig(profile);
+                    }
+                  }}
+                >
+                  {/* Display a star for the connected DB */}
+                  {connectedDBProfile?.Id === profile.Id ?
+                    <div className={`tooltip tooltip-right`} data-tip={"Connected"}>
+                      <span className="material-icons">
+                        star
+                      </span>
+                    </div>
+                    : null
                   }
-                }}
-              >
-                {/* Display a star for the connected DB */}
-                {connectedDBProfile?.Id === profile.Id ?
-                  <div className={`tooltip tooltip-right`} data-tip={"Connected"}>
-                    <span className="material-icons">
-                      star
-                    </span>
+                  <div className={"truncate" + (connectedDBProfile?.Id !== profile.Id ? " ml-8" : "")}>
+                    {profile.ProfileName}
                   </div>
-                  : null
-                }
-                <div className={"truncate" + (connectedDBProfile?.Id !== profile.Id ? " ml-8" : "")}>
-                  {profile.ProfileName}
-                </div>
-                {/* Display a trashcan for the selected DB
+                  {/* Display a trashcan for the selected DB
                 as long as the selected DB is not connected */}
-                {selectedProfile?.Id === profile.Id &&
-                  connectedDBProfile?.Id !== profile.Id ?
-                  <div className="flex justify-end">
-                    <ButtonIcon
-                      label={"Delete Database Connection"}
-                      color={"text-red-600"}
-                      onClick={() => {
-                        setInDBDeleteProcess(true);
-                      }}
-                      buttonIcon={"delete"}
-                      buttonSize={"btn-xs"}
-                    />
-                  </div>
-                  : null
-                }
-              </a>
-            </li>
-          );
-        })}
-      </div>
-      <li className="flex justify-start w-max">
-        <ButtonBasic
-          label="+ NEW"
-          additionalClasses={"btn-sm mt-2" + (inDBDeleteProcess ? " btn-disabled" : "")}
-          onClick={() => { setSelectedProfile(undefined) }}
-        />
-      </li>
-    </ul>
+                  {selectedProfile?.Id === profile.Id &&
+                    connectedDBProfile?.Id !== profile.Id ?
+                    <div className="flex justify-end">
+                      <ButtonIcon
+                        label={"Delete Database Connection"}
+                        color={"text-red-600"}
+                        onClick={() => {
+                          setInDBDeleteProcess(true);
+                        }}
+                        buttonIcon={"delete"}
+                        buttonSize={"btn-xs"}
+                      />
+                    </div>
+                    : null
+                  }
+                </a>
+              </li>
+            );
+          })}
+        </div>
+        <li className="flex justify-start w-max">
+          <ButtonBasic
+            label="+ NEW"
+            additionalClasses={"btn-sm mt-2" + (inDBDeleteProcess ? " btn-disabled" : "")}
+            onClick={() => { setSelectedProfile(undefined) }}
+          />
+        </li>
+      </ul>
+    </div>
   );
 }
 

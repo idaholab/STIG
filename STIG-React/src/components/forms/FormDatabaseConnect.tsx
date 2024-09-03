@@ -46,7 +46,7 @@ export default function FormDatabaseConnect({ selectedProfile, setSelectedProfil
   return (
     <div className='flex basis-3/6 flex-col'>
       <FormElementTextInput
-        label="Profile Name"
+        label="Profile Name *"
         type="text"
         value={profileName}
         onChange={(event) => { setProfileName(event.target.value) }}
@@ -62,7 +62,7 @@ export default function FormDatabaseConnect({ selectedProfile, setSelectedProfil
         additionalLabelClasses='mr-5 w-48'
       />
       <FormElementSelect
-        label="Database Type"
+        label="Database Type *"
         value={databaseType}
         options={dbTypeOptions}
         onChange={(event) => { setDatabaseType(event.target.value) }}
@@ -75,7 +75,7 @@ export default function FormDatabaseConnect({ selectedProfile, setSelectedProfil
         additionalInfoClasses='tooltip-left'
       />
       <FormElementTextInput
-        label="Host"
+        label="Host *"
         type="text"
         value={host}
         onChange={(event) => { setHost(event.target.value) }}
@@ -91,7 +91,7 @@ export default function FormDatabaseConnect({ selectedProfile, setSelectedProfil
         additionalLabelClasses='mr-5 w-48'
       />
       <FormElementTextInput
-        label="Database Name"
+        label="Database Name *"
         type="text"
         value={databaseName}
         onChange={(event) => { setDatabaseName(event.target.value) }}
@@ -107,7 +107,7 @@ export default function FormDatabaseConnect({ selectedProfile, setSelectedProfil
         additionalLabelClasses='mr-5 w-48'
       />
       <FormElementTextInput
-        label="Username"
+        label="Username *"
         type="text"
         value={username}
         onChange={(event) => { setUsername(event.target.value) }}
@@ -123,7 +123,7 @@ export default function FormDatabaseConnect({ selectedProfile, setSelectedProfil
         additionalLabelClasses='mr-5 w-48'
       />
       <FormElementTextInput
-        label="Password"
+        label="Password *"
         type="password"
         value={password}
         onChange={(event) => { setPassword(event.target.value) }}
@@ -138,66 +138,68 @@ export default function FormDatabaseConnect({ selectedProfile, setSelectedProfil
         additionalInfoClasses='tooltip-left'
         additionalLabelClasses='mr-5 w-48'
       />
-      <div className="flex justify-end ">
-        <ButtonDBConnect
-          dbProfile={selectedProfile}
-          additionalButtonClasses='btn-sm mt-2 mr-2'
-          isConnectProcessing={isFormSubmitting}
-          setIsConnectProcessing={setIsFormSubmitting}
-          inDBDeleteProcess={inDBDeleteProcess}
-        />
-        <ButtonBasic
-          label="Save"
-          color="btn-primary"
-          additionalClasses={"btn-sm mt-2" +
-            (inDBDeleteProcess || (selectedProfile && selectedProfile.Id === connectedDBProfile?.Id) ||
-              isFormSubmitting ?
-              " btn-disabled" : ""
-            )
-          }
-          onClick={() => {
-            setIsFormSubmitting(true);
-            // Validate form data
-            if (profileName === "" || databaseType === "" ||
-              host === "" || databaseName === "" ||
-              username === "" || password === ""
-            ) {
-              setIsFormComplete(false);
+      <div className="flex justify-between items-center">
+        <span>* Required</span>
+        <span>
+          <ButtonDBConnect
+            dbProfile={selectedProfile}
+            additionalButtonClasses='btn-sm mt-2 mr-2'
+            isConnectProcessing={isFormSubmitting}
+            setIsConnectProcessing={setIsFormSubmitting}
+            inDBDeleteProcess={inDBDeleteProcess}
+          />
+          <ButtonBasic
+            label="Save"
+            color="btn-primary"
+            additionalClasses={"btn-sm mt-2" +
+              (inDBDeleteProcess || (selectedProfile && selectedProfile.Id === connectedDBProfile?.Id) ||
+                isFormSubmitting ?
+                " btn-disabled" : ""
+              )
+            }
+            onClick={() => {
+              setIsFormSubmitting(true);
+              // Validate form data
+              if (profileName === "" || databaseType === "" ||
+                host === "" || databaseName === "" ||
+                username === "" || password === ""
+              ) {
+                setIsFormComplete(false);
+                setIsFormSubmitting(false);
+                return;
+              } else {
+                setIsFormComplete(true);
+              }
+              const newDBProfile = {
+                Id: selectedProfile ? selectedProfile.Id : uuidv4(),
+                ProfileName: profileName,
+                DatabaseType: databaseType,
+                Host: host,
+                DatabaseName: databaseName,
+                Username: username,
+                Password: password,
+                LastDBOperationSuccessful: true
+              };
+              // Save form data
+              if (selectedProfile) {
+                // Edit selected database profile
+                editDBConfig(newDBProfile);
+              } else {
+                // Create a new database profile
+                addDBConfig(newDBProfile);
+              }
+              setSelectedProfile(newDBProfile);
+              setDBProfiles(readDBConfigStorage());
               setIsFormSubmitting(false);
-              return;
-            } else {
-              setIsFormComplete(true);
-            }
-            const newDBProfile = {
-              Id: selectedProfile ? selectedProfile.Id : uuidv4(),
-              ProfileName: profileName,
-              DatabaseType: databaseType,
-              Host: host,
-              DatabaseName: databaseName,
-              Username: username,
-              Password: password,
-              LastDBOperationSuccessful: true
-            };
-            // Save form data
-            if (selectedProfile) {
-              // Edit selected database profile
-              editDBConfig(newDBProfile);
-            } else {
-              // Create a new database profile
-              addDBConfig(newDBProfile);
-            }
-            setSelectedProfile(newDBProfile);
-            setDBProfiles(readDBConfigStorage());
-            setIsFormSubmitting(false);
-          }}
-        />
+            }}
+          />
+        </span>
       </div>
-      {!isFormComplete ?
-        <p className="flex justify-end dark:text-red-300 text-red-700">
-          Please double check that all fields above have been completed.
-        </p>
-        : null
-      }
+
+      <p className="flex justify-end dark:text-red-300 text-red-700 mt-2 h-[20px]">
+        {!isFormComplete ? 'Please complete all the required information.' : undefined}
+      </p>
+
     </div>
   );
 }

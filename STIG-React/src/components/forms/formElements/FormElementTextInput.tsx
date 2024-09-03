@@ -75,6 +75,7 @@ const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
           dark:bg-gray-600
           placeholder-gray-500
           dark:placeholder-gray-300
+          ${disabled ? 'cursor-not-allowed opacity-30' : undefined}
           ${additionalInputClasses}
         `}
           disabled={disabled}

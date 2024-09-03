@@ -48,6 +48,7 @@ const FormElementSelect: React.FC<Props> = ({
           border
           border-gray-500
           bg-gray-100
+          ${disabled ? 'cursor-not-allowed opacity-30' : undefined}
           ${additionalClasses}
         `}
         disabled={disabled}
