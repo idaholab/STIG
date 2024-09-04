@@ -193,7 +193,7 @@ const Graph: React.FC = () => {
         const handleClearGraph = () => {
             cyInstance?.elements().remove();
             cyInstance?.reset();
-            if(isDrawerOpen) {
+            if (isDrawerOpen) {
                 setSelectedSTIXObject(undefined);
                 toggleDrawer();
             }
@@ -209,9 +209,13 @@ const Graph: React.FC = () => {
 
     // Triggered on edit of a node's properties
     useEffect(() => {
-        const cytoElement = cyInstance?.getElementById(selectedSTIXObject?.id);
+        let elementId = selectedSTIXObject?.id;
+        if(selectedSTIXObject?.type === "relationship") {
+            elementId = elementId.replace("relationship--", "");
+        }
+        const cytoElement = cyInstance?.getElementById(elementId);
         if (cytoElement === undefined) { return }
-        cytoElement.data(selectedSTIXObject);
+        cytoElement.data("raw_data", selectedSTIXObject);
     }, [selectedSTIXObject]);
 
     const handleDrop = (event: React.DragEvent) => {
@@ -242,7 +246,7 @@ const Graph: React.FC = () => {
         event.preventDefault();
     };
 
-    function handleAddStixNode(label:string, nodeType: StixType, imgUrl: string, position: any, dSource: DataSourceType): StixNode {
+    function handleAddStixNode(label: string, nodeType: StixType, imgUrl: string, position: any, dSource: DataSourceType): StixNode {
         const opts: StixNodeData = {
             type: nodeType,
             id: nodeType + '--' + uuidv4(),
@@ -286,34 +290,84 @@ const Graph: React.FC = () => {
         }
         rtnNode.data.label = label;
         nodelabel = (nodelabel && nodelabel.length > 60) ? nodelabel.substring(0, 60).concat('...') : nodelabel;
-        rtnNode.data.name = nodelabel;
-        // rtnNode.data.data_source = dSource;
-        rtnNode.data.raw_data = rtnNode.data;
+        const raw_data = {
+            ...opts,
+            name: nodelabel
+        };
+        delete raw_data.label;
+        rtnNode.data.raw_data = raw_data;
         // rtnNode.data.saved = (dSource === 'DB' || dSource === 'IGNORE');
-        return rtnNode
+        return rtnNode;
     };
 
-    // TODO: Add edge back into this list: 'node, edge'
-    // (Currently breaks the application if it is added)
     // Show STIX props panel on node/edge click
-    cyInstance?.on('click', 'node', (evt: cytoscape.EventObject) => {
-        if(!isDrawerOpen) {
+    cyInstance?.on('click', 'node, edge', (evt: cytoscape.EventObject) => {
+        if (!isDrawerOpen) {
             toggleDrawer();
         }
         const ele: cytoscape.CollectionReturnValue = evt.target;
         cyInstance.$(':selected').unselect();
         if (ele.empty() || ele.length > 1) {
-          return;
+            return;
         }
-        setSelectedSTIXObject(ele.data());
+        setSelectedSTIXObject(ele.data("raw_data"));
     });
 
-    // TODO: Add edge back into this list: 'node, edge'
-    // (Currently breaks the application if it is added)
     // Hide STIX props panel when node/edge is unselected
-    cyInstance?.on('unselect', 'node', (evt: cytoscape.EventObject) => {
-        if(isDrawerOpen) {
+    cyInstance?.on('unselect', 'node, edge', (evt: cytoscape.EventObject) => {
+        if (isDrawerOpen) {
             toggleDrawer();
+        }
+    });
+
+    // Handler for when an edge is created via the graph editor
+    cyInstance?.on('add', 'edge', (evt: cytoscape.EventObject) => {
+        const my_map = new Map();
+
+        my_map.set('attack-pattern', 'uses');
+        my_map.set('campaign', 'uses');
+        my_map.set('course-of-action', 'mitigates');
+        my_map.set('identity', 'located-at');
+        my_map.set('indicator', 'indicates');
+        my_map.set('infrastructure', 'consists-of');
+        my_map.set('intrusion-set', 'uses');
+        my_map.set('malware', 'targets');
+        my_map.set('malware-analysis', 'analysis-of');
+        my_map.set('threat-actor', 'uses');
+        my_map.set('tool', 'targets');
+
+        const ele = evt.target;
+        // first check to see if the edge has been completed
+        // if either end of the edge doesn't have raw_data it hasn't been completed
+        if (ele.source().data('raw_data') === undefined || ele.target().data('raw_data') === undefined) {
+            return;
+        }
+
+        const input_data = ele.data('raw_data');
+        if (input_data === undefined) {
+            const src_obj_type = ele.source().data('raw_data').type;
+            let default_relationship = '';
+            if (my_map.has(src_obj_type)) {
+                default_relationship = my_map.get(src_obj_type);
+            } else {
+                default_relationship = 'related-to';
+            }
+
+            const raw_data = {
+                // get source node
+                source_ref: ele.source().data('raw_data').id,
+                // get target node
+                target_ref: ele.target().data('raw_data').id,
+                type: 'relationship',
+                created: moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+                modified: moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+                id: 'relationship--' + ele.id(),
+                relationship_type: (default_relationship),
+                spec_version: "2.1"
+            };
+            ele.data("raw_data", raw_data);
+            //   ele.data('saved', false);
+            ele.style('label', default_relationship);
         }
     });
 

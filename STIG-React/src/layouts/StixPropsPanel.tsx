@@ -30,6 +30,12 @@ const StixPropsPanel: React.FC = () => {
   const schemaPath = stixObjectType === "sdo" ? "domain_objects" :
     stixObjectType === "sco" ? "observables" : "meta_objects";
   if (selectedSTIXObject?.type) {
+  })?.type ?? "sro";
+  const schemaPath = stixObjectType === "sdo" ? "domain_objects" :
+    stixObjectType === "sco" ? "observables" :
+      stixObjectType === "smo" ? "meta_objects" :
+        "relationships";
+  if (selectedSTIXObject?.type) {
     import(`../static/jsedit/${schemaPath}/${selectedSTIXObject?.type + '.json'}`)
       .then(schema => {
         setSTIXTypeSchema(schema);
@@ -51,50 +57,20 @@ const StixPropsPanel: React.FC = () => {
     setSelectedProperties(stixTypeProps.filter(prop => prop.mandatory));
   }, [stixTypeProps]);
 
-  return (
-    <div className={`drawer flex flex-col w-full h-full p-4 overflow-y-scroll scrollbar`}>
-      <PropsPanelHeader
-        selectedProperties={selectedProperties}
-        setSelectedProperties={setSelectedProperties}
-        showingJson={showJson}
-        setIsShowingJson={setShowJson}
-        stixTypeProps={stixTypeProps}
-        stixTypeSchema={stixTypeSchema}
-      />
-      <FormSTIXPropsPanel
-        selectedProperties={selectedProperties}
-        selectedStixJson={jsonViewSelectedSTIXObject}
-        showJson={showJson}
-        isJsonDisabled={false}
-      />
-    </div>
-  );
-};
-
-
-function PropsPanelHeader({ selectedProperties, setSelectedProperties, showingJson, setIsShowingJson, stixTypeProps, stixTypeSchema }: {
-  selectedProperties: PropertyConfig[],
-  setSelectedProperties: React.Dispatch<React.SetStateAction<PropertyConfig[]>>,
-  showingJson: boolean,
-  setIsShowingJson: React.Dispatch<React.SetStateAction<boolean>>,
-  stixTypeProps: PropertyConfig[],
-  stixTypeSchema: any
-}) {
-  const { toggleDrawer } = useStigContext();
-  const [showJson, setShowJson] = useState<boolean>(showingJson);
-  const { selectedSTIXObject } = useStixPropsContext();
-
-  function toggleJSONPropertyView() {
-    const isShowingJson: boolean = !showJson;
-    setShowJson(isShowingJson);
-    setIsShowingJson(isShowingJson)
-  }
+  const jsonViewSelectedSTIXObject = { ...selectedSTIXObject };
+  delete jsonViewSelectedSTIXObject.raw_data;
+  delete jsonViewSelectedSTIXObject.label;
 
   return (
     <>
       <div className="flex justify-between items-center">
         <h1 className="text-lg">
-          {selectedSTIXObject && ("label" in selectedSTIXObject) ? selectedSTIXObject?.label : "Relationship"}
+          {selectedSTIXObject && ("type" in selectedSTIXObject) ?
+            stencilItems.find(stencilItem => {
+              return selectedSTIXObject.type === stencilItem.id
+            })?.alt ?? "Relationship"
+            : null
+          }
         </h1>
         <button
           className="btn border-none text-gray-900 dark:text-gray-100 shadow-none"

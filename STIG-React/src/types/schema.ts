@@ -65,7 +65,7 @@ export const schema: ISchemaFile = {
       name: 'relationship',
       superClasses: ['E'],
       properties: [
-        { name: 'id_', type: 'String', mandatory: true, notNull: true, collate: 'default' },
+        { name: 'id', type: 'String', mandatory: true, notNull: true, collate: 'default' },
         { name: 'type', type: 'String', mandatory: true, notNull: true, collate: 'default' },
         { name: 'spec_version', type: 'String', mandatory: true, notNull: true, collate: 'default' },
         { name: 'created_by_ref', type: 'String', collate: 'default' },
