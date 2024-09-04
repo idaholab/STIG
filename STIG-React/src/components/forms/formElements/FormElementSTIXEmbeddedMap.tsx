@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { PropertyConfig } from '@/types/schema';
-import FormSTIXJSON from '../FormSTIXJSON';
+import ButtonSTIXJSON from '../../elements/ButtonSTIXJSON';
 import FormElementSTIXPropertySelection from '../FormSTIXPropertySelection';
 import { inferSTIXType } from '@/stix/inferSTIXType';
 import { STIXPropertyRenderer } from '../FormSTIXPropsPanel';
@@ -150,6 +150,11 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
     }
   };
 
+  const [showJsonPanel, setShowJsonPanel] = useState<boolean>(false);
+  function toggleJSONPropertyView() {
+    setShowJsonPanel(!showJsonPanel);
+  }
+
   return (
     <>
       <div className='flex gap-2 mb-2 items-center'>
@@ -174,7 +179,7 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
         }
       </div>
       <div className='flex gap-2 mb-2 items-center'>
-        <FormSTIXJSON />
+        <ButtonSTIXJSON showJson={showJsonPanel} setIsShowingJson={toggleJSONPropertyView} />
         <FormElementSTIXPropertySelection
           propertyOptions={localEmbeddedMapProps}
           setPropertyOptions={setLocalEmbeddedMapProps}
