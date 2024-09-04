@@ -26,25 +26,23 @@ const FormElementSTIXPropertySelection: React.FC<Props> = ({
       additionalButtonClasses="btn-sm"
     >
       <div className='max-h-60 overflow-y-scroll scrollbar w-max'>
-        {propertyOptions?.map((prop, i) => 
-          // TODO: hover:text-white does not work here
-          <label key={i} className="label cursor-pointer hover:bg-primary hover:text-white">
-            <span className="label-text mr-2">{prop.name}</span>
-            <input 
+        {propertyOptions?.map((prop, i) =>
+          <label key={i} className="label cursor-pointer dark:text-gray-300 hover:bg-primary hover:text-white dark:hover:text-white">
+            <span className="mr-2">{prop.name}</span>
+            <input
               type="checkbox"
-              // TODO: Make check not disappear on hover in light mode
               className="checkbox checkbox-primary hover:checkbox-secondary"
               checked={selectedProperties.find(selectedProperty => selectedProperty.name === prop.name) ? true : false}
               disabled={prop.mandatory}
               onChange={(event) => {
-                if(event.target.checked) {
+                if (event.target.checked) {
                   selectedProperties.push(prop);
                   // Need this so that React recognizes the variable change and updates the checkbox
                   const tempPropertiesSelection = [...selectedProperties];
                   setSelectedProperties(tempPropertiesSelection);
                 } else {
                   setSelectedProperties(
-                    selectedProperties.filter(selectedProperty => 
+                    selectedProperties.filter(selectedProperty =>
                       selectedProperty.name !== prop.name
                     )
                   );
@@ -53,13 +51,13 @@ const FormElementSTIXPropertySelection: React.FC<Props> = ({
             />
           </label>
         )}
-        {includeAddNew  && setPropertyOptions ?
+        {includeAddNew && setPropertyOptions ?
           <>
             <FormElementTextInput
               type="text"
               placeholder="Property name..."
               value={newPropertyName}
-              onChange={(event) => {setNewPropertyName(event.target.value)}}
+              onChange={(event) => { setNewPropertyName(event.target.value) }}
               className='mb-2'
               additionalInputClasses='bg-primary dark:bg-primary p-2 placeholder-white text-white'
             />
@@ -75,12 +73,12 @@ const FormElementSTIXPropertySelection: React.FC<Props> = ({
               additionalClasses='btn-xs'
               onClick={() => {
                 // Can't add a property with no name
-                if(newPropertyName) {
+                if (newPropertyName) {
                   const tempPropertyOptions = [...propertyOptions];
-                  tempPropertyOptions.push({name: newPropertyName, type:"String"});
+                  tempPropertyOptions.push({ name: newPropertyName, type: "String" });
                   setPropertyOptions(tempPropertyOptions);
                   const tempSelectedProperties = [...selectedProperties];
-                  tempSelectedProperties.push({name: newPropertyName, type:"String"});
+                  tempSelectedProperties.push({ name: newPropertyName, type: "String" });
                   setSelectedProperties(tempSelectedProperties);
                   setNewPropertyName("");
                 }

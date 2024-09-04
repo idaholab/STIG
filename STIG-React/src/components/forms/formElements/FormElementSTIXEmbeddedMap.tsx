@@ -45,11 +45,11 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
   const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
 
   useEffect(() => {
-    if(!selectedSTIXObject) {
+    if (!selectedSTIXObject) {
       setSelectedSTIXObject(embeddedMap);
-      setLocalEmbeddedMapProps(embeddedMap ? 
+      setLocalEmbeddedMapProps(embeddedMap ?
         Object.keys(embeddedMap).map(key => {
-          return{name: key, type: inferSTIXType(embeddedMap[key])}
+          return { name: key, type: inferSTIXType(embeddedMap[key]) }
         })
         : []
       );
@@ -59,13 +59,13 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
   // Update the parent STIX object when its
   // embedded map child changes
   useEffect(() => {
-    const tempParentSTIXObject = { ...parentSTIXObject};
+    const tempParentSTIXObject = { ...parentSTIXObject };
     tempParentSTIXObject[propName] = selectedSTIXObject;
     setParentSTIXObject(tempParentSTIXObject);
   }, [selectedSTIXObject]);
 
   const handlePropertyUpdate = (
-    newVal: string | boolean | number | Date | ArrayBuffer | null | undefined | [], 
+    newVal: string | boolean | number | Date | ArrayBuffer | null | undefined | [],
     propName: string
   ) => {
     let tempSelectedSTIXObject = { ...selectedSTIXObject };
@@ -160,7 +160,7 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
             value={"object"}
             onChange={(event) => {
               handlePropertyTypeChange(
-                propName, 
+                propName,
                 event.target.value as UIPropertyType,
                 parentEmbeddedMapProps,
                 setParentEmbeddedMapProps,
@@ -174,9 +174,9 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
         }
       </div>
       <div className='flex gap-2 mb-2 items-center'>
-        <FormSTIXJSON
-          jsonContents={selectedSTIXObject}
-        />
+        {/* <FormSTIXJSON
+          input={selectedSTIXObject}
+        /> */}
         <FormElementSTIXPropertySelection
           propertyOptions={localEmbeddedMapProps}
           setPropertyOptions={setLocalEmbeddedMapProps}
