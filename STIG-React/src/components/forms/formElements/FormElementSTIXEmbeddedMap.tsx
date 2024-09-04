@@ -174,9 +174,7 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
         }
       </div>
       <div className='flex gap-2 mb-2 items-center'>
-        <FormSTIXJSON
-          jsonContents={selectedSTIXObject}
-        />
+        <FormSTIXJSON />
         <FormElementSTIXPropertySelection
           propertyOptions={localEmbeddedMapProps}
           setPropertyOptions={setLocalEmbeddedMapProps}

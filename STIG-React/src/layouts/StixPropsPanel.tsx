@@ -38,9 +38,11 @@ function PropsPanelHeader({ selectedProperties, setSelectedProperties }:{
   const [stixTypeSchema, setSTIXTypeSchema] = useState<any>();
   const stixObjectType = stencilItems.find(stencilItem => {
     return stencilItem.id === selectedSTIXObject?.type
-  })?.type;
+  })?.type ?? "sro";
   const schemaPath = stixObjectType === "sdo" ? "domain_objects" : 
-    stixObjectType === "sco" ? "observables" : "meta_objects";
+    stixObjectType === "sco" ? "observables" : 
+    stixObjectType === "smo" ? "meta_objects":
+    "relationships";
   if(selectedSTIXObject?.type) {
     import(`../static/jsedit/${schemaPath}/${selectedSTIXObject?.type + '.json'}`)
       .then( schema => {
@@ -64,15 +66,16 @@ function PropsPanelHeader({ selectedProperties, setSelectedProperties }:{
     setSelectedProperties(stixTypeProps.filter(prop => prop.mandatory));
   }, [stixTypeProps]);
 
-  const jsonViewSelectedSTIXObject = {...selectedSTIXObject};
-  delete jsonViewSelectedSTIXObject.raw_data;
-  delete jsonViewSelectedSTIXObject.label;
-
   return(
     <>
       <div className="flex justify-between items-center">
         <h1 className="text-lg">
-          {selectedSTIXObject && ("label" in selectedSTIXObject) ? selectedSTIXObject?.label : "Relationship"}
+          {selectedSTIXObject && ("type" in selectedSTIXObject) ? 
+            stencilItems.find(stencilItem => {
+              return selectedSTIXObject.type === stencilItem.id
+            })?.alt ?? "Relationship"
+            : null
+          }
         </h1>
         <button
           className="btn border-none text-gray-900 dark:text-gray-100 shadow-none"
@@ -82,9 +85,7 @@ function PropsPanelHeader({ selectedProperties, setSelectedProperties }:{
         </button>
       </div>
       <div className='flex gap-2 mb-4'>
-        <FormSTIXJSON
-          jsonContents={jsonViewSelectedSTIXObject}
-        />
+        <FormSTIXJSON />
         <FormSTIXPropertySelection
           propertyOptions={stixTypeProps}
           selectedProperties={selectedProperties}

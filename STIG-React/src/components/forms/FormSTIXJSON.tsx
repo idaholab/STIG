@@ -1,14 +1,10 @@
 import React from 'react';
 import Dropdown from '@/components/core/Dropdown';
+import { useStixPropsContext } from '@/contexts/StixPropsContext';
 // import FormElementTextInput from '@/components/forms/formElements/FormElementTextInput.tsx';
 
-type Props = {
-  jsonContents: Object;
-};
-
-const FormSTIXJSON: React.FC<Props> = ({
-  jsonContents
-}) => {
+const FormSTIXJSON = () => {
+  const { selectedSTIXObject } = useStixPropsContext();
   return (
     <Dropdown
       title="JSON"
@@ -17,7 +13,7 @@ const FormSTIXJSON: React.FC<Props> = ({
     >
       {/* TODO: Make this a text input (or area?) and styled*/}
       <pre className='w-max'>
-        {JSON.stringify(jsonContents, null, 2)}
+        {JSON.stringify(selectedSTIXObject, null, 2)}
       </pre>
       {/* <FormElementTextInput
         type="text"

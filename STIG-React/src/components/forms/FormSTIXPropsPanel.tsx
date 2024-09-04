@@ -9,6 +9,7 @@ import FormElementDatePicker from './formElements/FormElementDatePicker';
 import FormElementFileInput from './formElements/FormElementFileInput';
 import FormElementSTIXEmbeddedMap from './formElements/FormElementSTIXEmbeddedMap';
 import { SchemaType } from '@/types/SchemaType';
+import { useStigContext } from '@/contexts/StigContext';
 
 export default function FormSTIXPropsPanel({ selectedProperties }: {
   selectedProperties: PropertyConfig[]
@@ -85,6 +86,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
   setParentSelectedProperties?: React.Dispatch<React.SetStateAction<PropertyConfig[]>>;
 }){
   const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
+  const { cyInstance } = useStigContext();
 
   switch(property.name) {
     case "created": 
@@ -115,6 +117,33 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
           />
         </>
       );
+    case "relationship_type":
+      return (
+        <>
+          <STIXPropertyTitle
+            propName={property.name}
+            type={property.type}
+            showTypeSelector={showTypeSelector}
+            onTypeChange={onTypeChange}
+          />
+          <FormElementSelect
+            value={selectedSTIXObject && "relationship_type" in selectedSTIXObject ?
+              selectedSTIXObject.relationship_type : ""
+            }
+            // TODO: Figure out what determines which of these options are choices
+            // and implement as part of schema.ts or here
+            options={["uses", "targets", "delivers", "related-to", "created-by", "derived-from", "duplicate-of"]}
+            onChange={(event) => {
+              handlePropertyUpdate(event.target.value, property.name);
+              // Get cytoscape element (by id)
+              const ele = cyInstance?.getElementById(selectedSTIXObject.id.replace("relationship--", ""));
+              // Update style for the element
+              ele?.style('label', event.target.value);
+            }}
+            additionalClasses='mb-4 dark:bg-gray-900'
+          />
+        </>
+      );
     default:
       // TODO: Make it possible to clear each type of form input
       switch(property.type) {
@@ -136,7 +165,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                 onChange={(event) => {
                   handlePropertyUpdate(event.target.value, property.name);
                 }}
-                disabled={property.name === "id" || property.name === "type"}
+                disabled={property.name === "id" || property.name === "type" || property.name === "source_ref" || property.name === "target_ref"}
                 additionalInputClasses='select-sm mb-4 dark:bg-gray-900'
               />
             </>
