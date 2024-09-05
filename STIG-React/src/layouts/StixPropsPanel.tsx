@@ -11,29 +11,6 @@ import ButtonSTIXJSON from '@/components/elements/ButtonSTIXJSON.tsx';
 const StixPropsPanel: React.FC = () => {
   const [selectedProperties, setSelectedProperties] = useState<PropertyConfig[]>([]);
   const [showJson, setShowJson] = useState<boolean>(false);
-  const { selectedSTIXObject } = useStixPropsContext();
-  const [setSTIXTypeSchema] = useState<any>();
-  const jsonViewSelectedSTIXObject = { ...selectedSTIXObject };
-  delete jsonViewSelectedSTIXObject.raw_data;
-  delete jsonViewSelectedSTIXObject.label;
-
-  // Import the STIX object's correct json schema file to later 
-  // get the STIX object type's description
-  // TODO: Grab description from schema.ts
-  const stixObjectType = stencilItems.find(stencilItem => {
-    return stencilItem.id === selectedSTIXObject?.type
-  })?.type;
-
-  const schemaPath = stixObjectType === "sdo" ? "domain_objects" :
-    stixObjectType === "sco" ? "observables" :
-      stixObjectType === "smo" ? "meta_objects" :
-        "relationships";
-  if (selectedSTIXObject?.type) {
-    import(`../static/jsedit/${schemaPath}/${selectedSTIXObject?.type + '.json'}`)
-      .then(schema => {
-        setSTIXTypeSchema(schema);
-      });
-  }
   return (
     <div className={`drawer flex flex-col w-full h-full p-4 overflow-y-scroll scrollbar`}>
       <PropsPanelHeader
@@ -43,9 +20,7 @@ const StixPropsPanel: React.FC = () => {
       />
       <FormSTIXPropsPanel
         selectedProperties={selectedProperties}
-        selectedStixJson={jsonViewSelectedSTIXObject}
         showJson={showJson}
-        isJsonDisabled={false}
       />
     </div>
   );

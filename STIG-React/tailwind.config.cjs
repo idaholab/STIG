@@ -22,6 +22,7 @@ module.exports = {
           700: 'var(--color-accent-hex-700)',
           800: 'var(--color-accent-hex-800)',
           900: 'var(--color-accent-hex-900)',
+          1000: '#966124'
         },
         red: {
           50: 'var(--color-red-hex-50)',

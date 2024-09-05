@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { StixPropsContextProvider, useStixPropsContext } from '@/contexts/StixPropsContext';
 import { PropertyConfig } from '@/types/schema';
@@ -11,11 +11,9 @@ import FormElementSTIXEmbeddedMap from './formElements/FormElementSTIXEmbeddedMa
 import { SchemaType } from '@/types/SchemaType';
 import { useStigContext } from '@/contexts/StigContext';
 
-export default function FormSTIXPropsPanel({ selectedProperties, selectedStixJson, showJson, isJsonDisabled }: {
+export default function FormSTIXPropsPanel({ selectedProperties, showJson }: {
   selectedProperties: PropertyConfig[],
-  selectedStixJson: any,
   showJson: boolean
-  isJsonDisabled: boolean
 }) {
   const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
 
@@ -30,9 +28,7 @@ export default function FormSTIXPropsPanel({ selectedProperties, selectedStixJso
     setSelectedSTIXObject(tempSelectedSTIXObject);
   };
 
-
-
-  const [jsonText, setJsonText] = useState<string>(JSON.stringify(selectedStixJson, null, 2));
+  const [jsonText, setJsonText] = useState<string>('');
   const handleJsonChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
     setJsonText(value);
@@ -45,6 +41,14 @@ export default function FormSTIXPropsPanel({ selectedProperties, selectedStixJso
     }
   };
 
+  // When stixTypeProps gets set for the object or changes
+  // when clicking on a different object, update the selectedProperties
+  useEffect(() => {
+    const selectedSTIXObjectJSONString = { ...selectedSTIXObject };
+    delete selectedSTIXObjectJSONString.raw_data;
+    delete selectedSTIXObjectJSONString.label;
+    setJsonText(JSON.stringify(selectedSTIXObjectJSONString, null, 2));
+  }, [selectedSTIXObject]);
 
   return (
     <>
@@ -55,7 +59,6 @@ export default function FormSTIXPropsPanel({ selectedProperties, selectedStixJso
             className="flex flex-grow p-2 font-mono scrollbar h-full w-full rounded bg-gray-100 dark:bg-gray-900"
             onChange={handleJsonChange}
             value={jsonText}
-            disabled={isJsonDisabled}
           />
         </div>
         :

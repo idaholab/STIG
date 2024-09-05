@@ -154,6 +154,26 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
   function toggleJSONPropertyView() {
     setShowJsonPanel(!showJsonPanel);
   }
+  const [jsonText, setJsonText] = useState<string>('');
+  const handleJsonChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    setJsonText(value);
+    try {
+      //const parsedJson = JSON.parse(value);
+      // TODO: Return the JSON string to the parent or convert it back to a stix object to return to the parent.
+      // Not part of task 106
+    } catch (error) {
+      console.error('Invalid JSON:', error);
+    }
+  };
+
+  useEffect(() => {
+    const selectedSTIXObjectJSONString = { ...localEmbeddedMapProps };
+    // delete selectedSTIXObjectJSONString.raw_data;
+    // delete selectedSTIXObjectJSONString.label;
+    setJsonText(JSON.stringify(selectedSTIXObjectJSONString, null, 2));
+  }, [localEmbeddedMapProps]);
+
 
   return (
     <>
@@ -179,7 +199,7 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
         }
       </div>
       <div className='flex gap-2 mb-2 items-center'>
-        <ButtonSTIXJSON showJson={showJsonPanel} setIsShowingJson={toggleJSONPropertyView} />
+        <ButtonSTIXJSON color='btn-secondary' showJson={showJsonPanel} setIsShowingJson={toggleJSONPropertyView} />
         <FormElementSTIXPropertySelection
           propertyOptions={localEmbeddedMapProps}
           setPropertyOptions={setLocalEmbeddedMapProps}
@@ -188,8 +208,21 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
           includeAddNew
         />
       </div>
+
       <div className="ml-4">
-        {localSelectedProperties.map((selectedProperty, i) =>
+        {showJsonPanel && (
+          <div className='form-stix-json flex h-full w-full mb-4'>
+            <textarea
+              rows={10}
+              style={{ whiteSpace: 'pre', overflow: 'auto' }}
+              className="flex flex-grow p-2 font-mono scrollbar h-full w-full rounded bg-gray-100 dark:bg-gray-900"
+              onChange={handleJsonChange}
+              value={jsonText}
+            />
+          </div>
+        )}
+
+        {!showJsonPanel && localSelectedProperties.map((selectedProperty, i) =>
           <STIXPropertyRenderer
             key={i}
             property={selectedProperty}

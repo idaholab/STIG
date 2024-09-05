@@ -8,9 +8,9 @@ interface DropdownProps {
   children?: React.ReactNode;
 }
 
-const Dropdown: React.FC<DropdownProps> = ({ title, includeDropdownArrow, 
-  additionalClasses, 
-  additionalButtonClasses, children 
+const Dropdown: React.FC<DropdownProps> = ({ title, includeDropdownArrow,
+  additionalClasses,
+  additionalButtonClasses, children
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
 
@@ -20,10 +20,10 @@ const Dropdown: React.FC<DropdownProps> = ({ title, includeDropdownArrow,
 
   return (
     <div className={`dropdown dropdown-bottom ${additionalClasses}`}>
-      <div 
-        tabIndex={0} 
-        role="button" 
-        className={`btn btn-ghost ${additionalButtonClasses}`} 
+      <div
+        tabIndex={0}
+        role="button"
+        className={`btn btn-ghost ${additionalButtonClasses}`}
         onClick={handleToggle}
       >
         {title}
