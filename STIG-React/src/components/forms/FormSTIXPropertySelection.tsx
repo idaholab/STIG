@@ -29,9 +29,9 @@ const FormElementSTIXPropertySelection: React.FC<Props> = ({
       additionalButtonClasses="btn-sm"
     >
       <div className="relative">
-        <div className='max-h-60 overflow-y-scroll scrollbar w-60 mb-8'>
+        <div className={`max-h-60 overflow-y-scroll scrollbar w-60 ${includeAddNew ? 'mb-8' : ''} `}>
           {propertyOptions?.map((prop, i) =>
-            <label key={i} className="label cursor-pointer dark:text-gray-300 hover:bg-accent-1000 hover:text-white dark:hover:text-white">
+            <label key={i} className="label cursor-pointer dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-800 text-gray-700 hover:text-black hover:bg-gray-200">
               <span className="mr-2">{prop.name}</span>
               <input
                 type="checkbox"

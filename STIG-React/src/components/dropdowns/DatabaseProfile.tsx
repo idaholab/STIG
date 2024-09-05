@@ -6,12 +6,12 @@ import ConnectedDBContext, { ConnectedDBContextType } from '@/contexts/Connected
 import ButtonDBConnect from '../elements/ButtonDBConnect';
 
 const DatabaseProfile: React.FC = () => {
-  const { 
+  const {
     savedDBProfiles, connectedDBProfile, setSelectedProfile,
   } = useContext(ConnectedDBContext) as ConnectedDBContextType;
 
   const [isConnectProcessing, setIsConnectProcessing] = useState(false);
-  
+
   return (
     <Dropdown
       title="Database Profile"
@@ -28,7 +28,7 @@ const DatabaseProfile: React.FC = () => {
               buttonSize="btn-xs"
               showFormButtons={false}
               onClose={() => setSelectedProfile(undefined)}
-              buttonLabel={!savedDBProfiles.length ? 
+              buttonLabel={!savedDBProfiles.length ?
                 <>
                   <span className="material-icons">
                     add_circle
@@ -48,8 +48,8 @@ const DatabaseProfile: React.FC = () => {
         {savedDBProfiles.length ?
           <ul>
             {savedDBProfiles.map(dbProfile => {
-              return(
-                <li key={dbProfile.Id} className='grid hover:bg-primary hover:text-white group h-[40px]'>
+              return (
+                <li key={dbProfile.Id} className='grid hover:bg-gray-200 dark:hover:bg-gray-700 group h-[40px]'>
                   <a
                     className='py-1 pr-1 self-center hover:bg-transparent'
                     onClick={() => {
@@ -70,10 +70,10 @@ const DatabaseProfile: React.FC = () => {
                       {dbProfile.ProfileName}
                     </div>
                   </a>
-                  <span className='col-start-2 justify-self-end hover:bg-primary hover:text-white pl-1'>
+                  <span className='col-start-2 justify-self-end hover:text-white pl-1 hover:bg-transparent'>
                     <ButtonDBConnect
                       dbProfile={dbProfile}
-                      additionalButtonClasses='btn-xs hidden group-hover:flex bg-primary hover:bg-primary text-white hover:text-white !border-white'
+                      additionalButtonClasses='btn-xs hidden group-hover:flex bg-primary text-white !border-white'
                       isConnectProcessing={isConnectProcessing}
                       setIsConnectProcessing={setIsConnectProcessing}
                     />

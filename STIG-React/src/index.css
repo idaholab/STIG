@@ -142,7 +142,7 @@
     --context-menu-node-background: rgba(var(--color-primary-dark-rgb-950), 0.85);
     --context-menu-node-active-background: rgba(var(--color-accent-rgb-900), 0.95);
     --context-menu-edge-background: rgba(var(--color-primary-dark-rgb-950), 0.85);
-    --context-menu-edge-active-background: rgba(var(--color-green-rgb-700), 0.95);
+    --context-menu-edge-active-background: rgba(var(--color-accent-rgb-900), 0.95);
     --context-menu-core-background: rgba(var(--color-accent-rgb-800), 0.85);
     --context-menu-core-active-background: rgba(var(--color-primary-dark-rgb-950), 0.95);
 

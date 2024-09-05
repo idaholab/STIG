@@ -5,52 +5,41 @@ import { EventContext } from '@/contexts/EventContext';
 const GraphLayouts: React.FC = () => {
   const { dispatchEvent } = useContext(EventContext);
 
-  const handleLayoutChange = (layoutName:string) => {
+  const handleLayoutChange = (layoutName: string) => {
     const layoutChangeEvent = new CustomEvent('changeLayout', {
       detail: {
         layout: layoutName
       }
     });
-    dispatchEvent('layoutSelect', { data: layoutChangeEvent});
-  }
-  
+    dispatchEvent('layoutSelect', { data: layoutChangeEvent });
+  };
+
+  const layouts = [
+    "breadthfirst",
+    "circle",
+    "concentric",
+    "cose",
+    "cose_bilkent",
+    "dagre",
+    "grid",
+    "klay",
+    "random",
+    "spread"
+  ];
+
   return (
     <Dropdown
       title="Graph Layouts"
       includeDropdownArrow
+      additionalOptionClasses={'w-[150px] hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-black dark:hover-text-white'}
     >
-      <div className='w-[140px]'>
-        <li className='hover:bg-primary hover:text-white'><a onClick={() => handleLayoutChange("breadthfirst")}>
-          Breadthfirst
-        </a></li>
-        <li className='hover:bg-primary hover:text-white'><a onClick={() => handleLayoutChange("circle")}>
-          Circle
-        </a></li>
-        <li className='hover:bg-primary hover:text-white'><a onClick={() => handleLayoutChange("concentric")}>
-          Concentric
-        </a></li>
-        <li className='hover:bg-primary hover:text-white'><a onClick={() => handleLayoutChange("cose")}>
-          Cose
-        </a></li>
-        <li className='hover:bg-primary hover:text-white'><a onClick={() => handleLayoutChange("cose_bilkent")}>
-          Cose_Bilkent
-        </a></li>
-        <li className='hover:bg-primary hover:text-white'><a onClick={() => handleLayoutChange("dagre")}>
-          Dagre
-        </a></li>
-        <li className='hover:bg-primary hover:text-white'><a onClick={() => handleLayoutChange("grid")}>
-          Grid
-        </a></li>
-        <li className='hover:bg-primary hover:text-white'><a onClick={() => handleLayoutChange("klay")}>
-          Klay
-        </a></li>
-        <li className='hover:bg-primary hover:text-white'><a onClick={() => handleLayoutChange("random")}>
-          Random
-        </a></li>
-        <li className='hover:bg-primary hover:text-white'><a onClick={() => handleLayoutChange("spread")}>
-          Spread
-        </a></li>
-      </div>
+      {layouts.map((layout) => (
+        <li key={layout} className='hover:bg-primary hover:text-white'>
+          <a onClick={() => handleLayoutChange(layout)}>
+            {layout.charAt(0).toUpperCase() + layout.slice(1)}
+          </a>
+        </li>
+      ))}
     </Dropdown>
   );
 };
