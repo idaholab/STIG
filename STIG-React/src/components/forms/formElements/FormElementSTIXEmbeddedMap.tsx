@@ -45,7 +45,7 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
   const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
 
   useEffect(() => {
-    if (!selectedSTIXObject) {
+    if (!selectedSTIXObject && embeddedMap) {
       setSelectedSTIXObject(embeddedMap);
       setLocalEmbeddedMapProps(embeddedMap ?
         Object.keys(embeddedMap).map(key => {
@@ -168,6 +168,9 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
   };
 
   useEffect(() => {
+    if (!localEmbeddedMapProps) {
+      return;
+    }
     const selectedSTIXObjectJSONString = { ...localEmbeddedMapProps };
     // delete selectedSTIXObjectJSONString.raw_data;
     // delete selectedSTIXObjectJSONString.label;
