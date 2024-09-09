@@ -32,6 +32,7 @@
             "maximum": 999999999
         },
         "sighting_of_ref": {
+            "title":"sighting_of_ref",
             "$ref": "static/jsedit/common/identifier.json",
             "description": "An ID reference to the object that has been sighted."
         },

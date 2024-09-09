@@ -57,7 +57,18 @@ export async function commitBundle (bundle: BundleType): Promise<[Set<string>, S
 }
 
 export async function commit (nodes: StixObject[], edges: Relationship[]): Promise<[Set<string>, Set<string>]> {
-  if (!nodes.every(checkProps) || !edges.every(checkProps)) throw new Error('Invalid stix');
+  edges.forEach(e=>{
+    if (!e.target_ref && !e.source_ref && !e.relationship_type){
+      //NOTE: this means that it is a visual edge, which ought to be removed
+      edges = edges.filter(obj => {return obj !== e});
+    }
+  })
+  if (!nodes.every(checkProps)){
+    throw new Error('Invalid objects');
+  }
+  if (!edges.every(checkProps)){
+    throw new Error('Invalid relationships')
+  }
   const pair: [StixObject[], Relationship[]] = [nodes, edges];
   return wrapReturn(pair, () => [new Set(), new Set()], ([n, e]) => currentDB.updateDB(n, e));
 }
@@ -99,6 +110,7 @@ function getAllProps (schemaObject: IJSONClassOptions) {
 export function checkProps (object: StixObject): boolean {
   const schemaObject = schema.classes.find(c => { return c.name === object.type; });
   if (typeof schemaObject !== 'object') {
+    console.error(`${schemaObject} is not equal to type 'object'`);
     return false;
   }
 
@@ -110,7 +122,7 @@ export function checkProps (object: StixObject): boolean {
     if (prop.name === 'id_') continue;
 
     if (object[prop.name] === undefined) {
-      // Return false to indicate that this object is invalid
+      console.error(`${prop.name} is undefined for:\n`, object);
       return false;
     }
   }

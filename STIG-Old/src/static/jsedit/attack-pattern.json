@@ -1,46 +1,53 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "title": "Attack Pattern",
-    "$ref": "static/jsedit/core.json",
-    "type": "object",
-    "description": "Attack Patterns are a type of TTP that describe ways that adversaries attempt to compromise targets.",
-    "properties": {
-        "id": {
-            "type": "string",
-            "default": "attack-pattern--",
-            "pattern": "^[a-z][a-z-]+[a-z]--[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
-            "readonly": "true"
-        },
+  "$id": "http://raw.githubusercontent.com/oasis-open/cti-stix2-json-schemas/stix2.1/schemas/sdos/attack-pattern.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "attack-pattern",
+  "description": "Attack Patterns are a type of TTP that describe ways that adversaries attempt to compromise targets. ",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "static/jsedit/core.json"
+    },
+    {
+      "properties": {
         "type": {
-            "type": "string",
-            "default": "attack-pattern",
-            "readonly": "true"
+          "type": "string",
+          "description": "The type of this object, which MUST be the literal `attack-pattern`.",
+          "enum": [
+            "attack-pattern"
+          ]
+        },
+        "aliases" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          },
+          "description": "Alternative names used to identify this Attack Pattern."
+        },
+        "id": {
+          "title": "id",
+          "pattern": "^attack-pattern--"
         },
         "name": {
-            "type": "string",
-            "description": "The name used to identify the Attack Pattern."
+          "type": "string",
+          "description": "The name used to identify the Attack Pattern."
         },
         "description": {
-            "type": "string",
-            "format": "textarea",
-            "description": "A description that provides more details and context about the Attack Pattern, potentially including its purpose and its key characteristics."
-        },
-        "aliases": {
-            "type": "array",
-            "description": "Alternative names used to identify this mattack pattern.",
-            "items": {
-                "type": "string"
-            },
-            "minItems": 1
+          "type": "string",
+          "description": "A description that provides more details and context about the Attack Pattern, potentially including its purpose and its key characteristics."
         },
         "kill_chain_phases": {
-            "type": "array",
-            "description": "The list of kill chain phases for which this attack pattern is used.",
-            "$ref": "static/jsedit/kill-chain-phase.json",
-            "minItems": 1
+          "type": "array",
+          "description": "The list of kill chain phases for which this attack pattern is used.",
+          "items": {
+            "$ref": "static/jsedit/common/kill-chain-phase.json"
+          },
+          "minItems": 1
         }
-    },
-    "required": [
-        "name"
-    ]
+      }
+    }
+  ],
+  "required": [
+    "name"
+  ]
 }
