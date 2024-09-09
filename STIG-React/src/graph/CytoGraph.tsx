@@ -142,7 +142,8 @@ const Graph: React.FC = () => {
             try {
                 let viewUtil = cy?.viewUtilities(view_utils_options);
                 if (viewUtil) {
-                    setupCtxMenu(cy, viewUtil);
+                    setupCtxMenu(cy, isDrawerOpen, toggleDrawer, 
+                        selectedSTIXObject, setSelectedSTIXObject, viewUtil);
                 }
             }
             catch (e) {
@@ -185,6 +186,22 @@ const Graph: React.FC = () => {
             };
         }
     }, []);
+
+    useEffect(() => {
+        if(cyInstance) {
+            // View Utilities
+            try {
+                let viewUtil = cyInstance.viewUtilities(view_utils_options);
+                if (viewUtil) {
+                    setupCtxMenu(cyInstance, isDrawerOpen, toggleDrawer, 
+                        selectedSTIXObject, setSelectedSTIXObject, viewUtil);
+                }
+            }
+            catch (e) {
+                console.error('View utilities could not be initialized.', e);
+            }
+        }
+    }, [isDrawerOpen, selectedSTIXObject]);
 
     // Needed to move handleClearGraph out of the above useEffect so that
     // isDrawerOpen would properly update and clearing the graph would

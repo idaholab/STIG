@@ -5,7 +5,7 @@ ALL RIGHTS RESERVED
  */
 import moment from 'moment';
 import cytoscape, { CollectionElements, CollectionReturnValue, ElementDefinition } from 'cytoscape';
-import { Core, DataSourceType, Identifier, isSRO } from '@/types/Core';
+import { Core, DataSourceType, Identifier, isSRO, StixObject } from '@/types/Core';
 import { Relationship } from '@/types/Relationship';
 import { Sighting } from '@/types/Sighting';
 import { createStixRelationship, StixRelationshipData } from '@/types/StixRelationshipData';
@@ -200,7 +200,14 @@ export class GraphUtils {
     }
 }
 
-export function setupCtxMenu(cy: cytoscape.Core, view_util?: any): void {
+export function setupCtxMenu(
+    cy: cytoscape.Core, 
+    isDrawerOpen: boolean,
+    toggleDrawer: () => void,
+    selectedSTIXObject: StixObject | undefined | any,
+    setSelectedSTIXObject: React.Dispatch<React.SetStateAction<StixObject | undefined>>,
+    view_util?: any
+): void {
     const graph_utils = new GraphUtils(cy);
     //const menuBackground = theme === 'dark' ? getCssVarColor('--context-menu-background-dark') : getCssVarColor('--context-menu-background-light');
 
@@ -217,7 +224,18 @@ export function setupCtxMenu(cy: cytoscape.Core, view_util?: any): void {
             {
                 content: 'Graph Remove',
                 select: (ele: cytoscape.CollectionElements) => {
-                    cy.remove(ele as unknown as CollectionArgument);
+                    const element = ele as unknown as CollectionArgument;
+                    // Check if the deleted element is currently selected
+                    // and if so, close the property panel and clear
+                    // the currently selected object
+                    const selectedSTIXObjectId = selectedSTIXObject?.id;
+                    if(selectedSTIXObjectId === element.data("id")) {
+                        setSelectedSTIXObject(undefined);
+                        if(isDrawerOpen) {
+                            toggleDrawer();
+                        }
+                    }
+                    cy.remove(element);
                 }
             },
             // {
@@ -310,8 +328,19 @@ export function setupCtxMenu(cy: cytoscape.Core, view_util?: any): void {
         commands: [
             {
                 content: 'Remove from Graph',
-                select(ele: cytoscape.CollectionElements) {
-                    cy.remove(ele as unknown as CollectionArgument);
+                select: (ele: cytoscape.CollectionElements) => {
+                    const element = ele as unknown as CollectionArgument;
+                    // Check if the deleted element is currently selected
+                    // and if so, close the property panel and clear
+                    // the currently selected object
+                    const selectedSTIXObjectId = selectedSTIXObject?.id.replace("relationship--", "");
+                    if(selectedSTIXObjectId === element.data("id")) {
+                        setSelectedSTIXObject(undefined);
+                        if(isDrawerOpen) {
+                            toggleDrawer();
+                        }
+                    }
+                    cy.remove(element);
                 }
             },
             // {
@@ -396,6 +425,21 @@ export function setupCtxMenu(cy: cytoscape.Core, view_util?: any): void {
                 content: 'Remove Selected',
                 select: () => {
                     cy.remove(':selected');
+                    // Check if selectedSTIXObject is in the group
+                    // of remaining elements.
+                    // If not, close the property panel and clear
+                    // the currently selected object
+                    let selectedSTIXObjectId = selectedSTIXObject?.id;
+                    if(selectedSTIXObject?.type === "relationship") {
+                        selectedSTIXObjectId = selectedSTIXObjectId.replace("relationship--", "");
+                    }
+                    const remainingElementIds = cy.elements().map(element => element.data("id"));
+                    if(selectedSTIXObjectId && !remainingElementIds.includes(selectedSTIXObjectId)) {
+                        setSelectedSTIXObject(undefined);
+                        if(isDrawerOpen) {
+                            toggleDrawer();
+                        }
+                    }
                 }
             }
         ]
