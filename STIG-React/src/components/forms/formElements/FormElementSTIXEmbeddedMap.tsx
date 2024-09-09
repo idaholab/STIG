@@ -45,7 +45,7 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
   const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
 
   useEffect(() => {
-    if (!selectedSTIXObject && embeddedMap) {
+    if (!selectedSTIXObject) {
       setSelectedSTIXObject(embeddedMap);
       setLocalEmbeddedMapProps(embeddedMap ?
         Object.keys(embeddedMap).map(key => {
@@ -113,6 +113,7 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
     const oldType = embeddedMapProps[embeddedMapPropIndex].type;
     tempEmbeddedMapProps[embeddedMapPropIndex].type = stixUIToSchemaTypeConverter[newType] as SchemaType;
     setEmbeddedMapProps(tempEmbeddedMapProps);
+
     // Update selectedProperties
     const tempSelectedProperties = [...selectedProperties];
     const selectedPropertiesIndex = tempSelectedProperties.findIndex(prop => {
@@ -168,14 +169,14 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
   };
 
   useEffect(() => {
-    if (!localEmbeddedMapProps) {
+    if (!selectedSTIXObject) {
       return;
     }
-    const selectedSTIXObjectJSONString = { ...localEmbeddedMapProps };
+    const selectedSTIXObjectJSONString = { ...selectedSTIXObject };
     // delete selectedSTIXObjectJSONString.raw_data;
     // delete selectedSTIXObjectJSONString.label;
     setJsonText(JSON.stringify(selectedSTIXObjectJSONString, null, 2));
-  }, [localEmbeddedMapProps]);
+  }, [selectedSTIXObject]);
 
 
   return (
