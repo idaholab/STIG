@@ -22,6 +22,7 @@ module.exports = {
           700: 'var(--color-accent-hex-700)',
           800: 'var(--color-accent-hex-800)',
           900: 'var(--color-accent-hex-900)',
+          // 1000: '#966124'
         },
         red: {
           50: 'var(--color-red-hex-50)',
@@ -102,9 +103,9 @@ module.exports = {
           "primary": '#2c7aba',
           "primary-focus": "",
           "primary-content": "#ffffff",
-          "secondary": '#F9FAFB',
+          "secondary": '#f3f4f6',
           "secondary-focus": "",
-          "secondary-content": "#ffffff",
+          "secondary-content": "#000000",
           "neutral": '#9ca3af',
           "neutral-focus": "",
           "neutral-content": "#ffffff",

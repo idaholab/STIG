@@ -1,36 +1,39 @@
 import React, { useEffect, useState } from 'react';
-
 import { useStigContext } from '@/contexts/StigContext.tsx';
 import { useStixPropsContext } from '../contexts/StixPropsContext.tsx';
 import { PropertyConfig, schema } from '@/types/schema.ts';
 import { getSTIXPropsFromSchema } from '@/stix/getSTIXPropsFromSchema.ts';
 import FormSTIXPropsPanel from '@/components/forms/FormSTIXPropsPanel.tsx';
 import { stencilItems } from '@/components/elements/StencilItems.ts';
-import FormSTIXJSON from '@/components/forms/FormSTIXJSON.tsx';
 import FormSTIXPropertySelection from '@/components/forms/FormSTIXPropertySelection.tsx';
+import ButtonSTIXJSON from '@/components/elements/ButtonSTIXJSON.tsx';
 
 const StixPropsPanel: React.FC = () => {
   const [selectedProperties, setSelectedProperties] = useState<PropertyConfig[]>([]);
-
+  const [showJson, setShowJson] = useState<boolean>(false);
   return (
     <div className={`drawer flex flex-col w-full h-full p-4 overflow-y-scroll scrollbar`}>
       <PropsPanelHeader
         selectedProperties={selectedProperties}
         setSelectedProperties={setSelectedProperties}
+        setIsShowingJson={setShowJson}
       />
       <FormSTIXPropsPanel
         selectedProperties={selectedProperties}
+        showJson={showJson}
       />
     </div>
   );
 };
 
-function PropsPanelHeader({ selectedProperties, setSelectedProperties }:{
+function PropsPanelHeader({ selectedProperties, setSelectedProperties, setIsShowingJson }: {
   selectedProperties: PropertyConfig[],
-  setSelectedProperties: React.Dispatch<React.SetStateAction<PropertyConfig[]>>
+  setSelectedProperties: React.Dispatch<React.SetStateAction<PropertyConfig[]>>,
+  setIsShowingJson: React.Dispatch<React.SetStateAction<boolean>>
 }) {
   const { toggleDrawer } = useStigContext();
   const { selectedSTIXObject } = useStixPropsContext();
+  const [showJsonPanel, setShowJsonPanel] = useState<boolean>(false);
 
   // Import the STIX object's correct json schema file to later 
   // get the STIX object type's description
@@ -39,13 +42,13 @@ function PropsPanelHeader({ selectedProperties, setSelectedProperties }:{
   const stixObjectType = stencilItems.find(stencilItem => {
     return stencilItem.id === selectedSTIXObject?.type
   })?.type ?? "sro";
-  const schemaPath = stixObjectType === "sdo" ? "domain_objects" : 
-    stixObjectType === "sco" ? "observables" : 
-    stixObjectType === "smo" ? "meta_objects":
-    "relationships";
-  if(selectedSTIXObject?.type) {
+  const schemaPath = stixObjectType === "sdo" ? "domain_objects" :
+    stixObjectType === "sco" ? "observables" :
+      stixObjectType === "smo" ? "meta_objects" :
+        "relationships";
+  if (selectedSTIXObject?.type) {
     import(`../static/jsedit/${schemaPath}/${selectedSTIXObject?.type + '.json'}`)
-      .then( schema => {
+      .then(schema => {
         setSTIXTypeSchema(schema);
       });
   }
@@ -66,11 +69,17 @@ function PropsPanelHeader({ selectedProperties, setSelectedProperties }:{
     setSelectedProperties(stixTypeProps.filter(prop => prop.mandatory));
   }, [stixTypeProps]);
 
-  return(
+  function toggleJSONPropertyView() {
+    const isShowingJson: boolean = !showJsonPanel;
+    setShowJsonPanel(isShowingJson);
+    setIsShowingJson(isShowingJson)
+  }
+
+  return (
     <>
       <div className="flex justify-between items-center">
         <h1 className="text-lg">
-          {selectedSTIXObject && ("type" in selectedSTIXObject) ? 
+          {selectedSTIXObject && ("type" in selectedSTIXObject) ?
             stencilItems.find(stencilItem => {
               return selectedSTIXObject.type === stencilItem.id
             })?.alt ?? "Relationship"
@@ -85,7 +94,7 @@ function PropsPanelHeader({ selectedProperties, setSelectedProperties }:{
         </button>
       </div>
       <div className='flex gap-2 mb-4'>
-        <FormSTIXJSON />
+        <ButtonSTIXJSON showJson={showJsonPanel} setIsShowingJson={toggleJSONPropertyView} />
         <FormSTIXPropertySelection
           propertyOptions={stixTypeProps}
           selectedProperties={selectedProperties}

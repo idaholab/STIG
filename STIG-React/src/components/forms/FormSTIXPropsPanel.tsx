@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { StixPropsContextProvider, useStixPropsContext } from '@/contexts/StixPropsContext';
 import { PropertyConfig } from '@/types/schema';
@@ -11,13 +11,14 @@ import FormElementSTIXEmbeddedMap from './formElements/FormElementSTIXEmbeddedMa
 import { SchemaType } from '@/types/SchemaType';
 import { useStigContext } from '@/contexts/StigContext';
 
-export default function FormSTIXPropsPanel({ selectedProperties }: {
-  selectedProperties: PropertyConfig[]
+export default function FormSTIXPropsPanel({ selectedProperties, showJson }: {
+  selectedProperties: PropertyConfig[],
+  showJson: boolean
 }) {
   const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
 
   const handlePropertyUpdate = (
-    newVal: string | boolean | number | Date | ArrayBuffer | null | undefined | Object | [], 
+    newVal: string | boolean | number | Date | ArrayBuffer | null | undefined | Object | [],
     propName: string
   ) => {
     const tempSelectedSTIXObject = { ...selectedSTIXObject };
@@ -27,53 +28,89 @@ export default function FormSTIXPropsPanel({ selectedProperties }: {
     setSelectedSTIXObject(tempSelectedSTIXObject);
   };
 
+  const [jsonText, setJsonText] = useState<string>('');
+  const handleJsonChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    setJsonText(value);
+    try {
+      const parsedJson = JSON.parse(value);
+      // TODO: Return the JSON string to the parent or convert it back to a stix object to return to the parent.
+      // Not part of task 106
+    } catch (error) {
+      console.error('Invalid JSON:', error);
+    }
+  };
+
+  // When stixTypeProps gets set for the object or changes
+  // when clicking on a different object, update the selectedProperties
+  useEffect(() => {
+    const selectedSTIXObjectJSONString = { ...selectedSTIXObject };
+    delete selectedSTIXObjectJSONString.raw_data;
+    delete selectedSTIXObjectJSONString.label;
+    setJsonText(JSON.stringify(selectedSTIXObjectJSONString, null, 2));
+  }, [selectedSTIXObject]);
+
   return (
     <>
-      <div className='flex justify-between mb-4'>
-        <span>
-          <span className='mr-3'>created</span>
-          <FormElementDatePicker
-            value={selectedSTIXObject && selectedSTIXObject["created"] !== undefined ? 
-              selectedSTIXObject["created"] 
-              : ""
-            }
-            onChange={([date]) => {
-              handlePropertyUpdate(date, "created");
-            }}
-            className='select-sm dark:bg-gray-900'
+      {showJson ?
+        <div className='form-stix-json flex h-full w-full'>
+          <textarea
+            style={{ whiteSpace: 'pre', overflow: 'auto' }}
+            className="flex flex-grow p-2 font-mono scrollbar h-full w-full rounded bg-gray-100 dark:bg-gray-900"
+            onChange={handleJsonChange}
+            value={jsonText}
           />
-        </span>
-        <span>
-          <span className='mr-3'>modified</span>
-          <FormElementDatePicker
-            value={selectedSTIXObject && selectedSTIXObject["modified"] !== undefined ? 
-              selectedSTIXObject["modified"] 
-              : ""
-            }
-            onChange={([date]) => {
-              handlePropertyUpdate(date, "modified");
-            }}
-            className='select-sm dark:bg-gray-900'
-          />
-        </span>
-      </div>
-      {selectedProperties.map((selectedProperty, i) =>
-        <STIXPropertyRenderer
-          key={i}
-          property={selectedProperty}
-          handlePropertyUpdate={handlePropertyUpdate}
-        />
-      )}
+        </div>
+        :
+        <>
+          <div className='flex justify-between mb-4'>
+            <span>
+              <span className='mr-3'>created</span>
+              <FormElementDatePicker
+                value={selectedSTIXObject && selectedSTIXObject["created"] !== undefined ?
+                  selectedSTIXObject["created"]
+                  : ""
+                }
+                onChange={([date]) => {
+                  handlePropertyUpdate(date, "created");
+                }}
+                className='select-sm dark:bg-gray-900'
+              />
+            </span>
+            <span>
+              <span className='mr-3'>modified</span>
+              <FormElementDatePicker
+                value={selectedSTIXObject && selectedSTIXObject["modified"] !== undefined ?
+                  selectedSTIXObject["modified"]
+                  : ""
+                }
+                onChange={([date]) => {
+                  handlePropertyUpdate(date, "modified");
+                }}
+                className='select-sm dark:bg-gray-900'
+              />
+            </span>
+          </div>
+
+          {selectedProperties.map((selectedProperty, i) =>
+            <STIXPropertyRenderer
+              key={i}
+              property={selectedProperty}
+              handlePropertyUpdate={handlePropertyUpdate}
+            />
+          )}
+        </>
+      }
     </>
   );
 }
 
 export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeSelector, onTypeChange,
-  parentEmbeddedMapProps, setParentEmbeddedMapProps, 
+  parentEmbeddedMapProps, setParentEmbeddedMapProps,
   parentSelectedProperties, setParentSelectedProperties
- }:{
+}: {
   property: PropertyConfig,
-  handlePropertyUpdate: (newVal: string | boolean | number | Date | ArrayBuffer | null | undefined, 
+  handlePropertyUpdate: (newVal: string | boolean | number | Date | ArrayBuffer | null | undefined,
     propName: string) => void,
   // The remaining properties are only passed in when the STIXPropertyRenderer
   // is used from within an EmbeddedMap component
@@ -84,14 +121,14 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
   setParentEmbeddedMapProps?: React.Dispatch<React.SetStateAction<PropertyConfig[]>>;
   parentSelectedProperties?: PropertyConfig[];
   setParentSelectedProperties?: React.Dispatch<React.SetStateAction<PropertyConfig[]>>;
-}){
+}) {
   const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
   const { cyInstance } = useStigContext();
 
-  switch(property.name) {
-    case "created": 
+  switch (property.name) {
+    case "created":
     case "modified":
-      return(
+      return (
         null
       );
     case "spec_version":
@@ -146,7 +183,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
       );
     default:
       // TODO: Make it possible to clear each type of form input
-      switch(property.type) {
+      switch (property.type) {
         case "String":
           return (
             <>
@@ -159,7 +196,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
               <FormElementTextInput
                 type="text"
                 value={selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ?
-                  selectedSTIXObject[property.name] 
+                  selectedSTIXObject[property.name]
                   : ""
                 }
                 onChange={(event) => {
@@ -206,7 +243,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
               />
               <FormElementSelect
                 placeholder=''
-                value={selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ? 
+                value={selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ?
                   selectedSTIXObject[property.name]
                   : ""
                 }
@@ -232,12 +269,12 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                 type="number"
                 min={property.min}
                 max={property.max}
-                value={selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ? 
-                  selectedSTIXObject[property.name] 
+                value={selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ?
+                  selectedSTIXObject[property.name]
                   : ""
                 }
                 onChange={(event) => {
-                  let number:string | number = event.target.value;
+                  let number: string | number = event.target.value;
                   if (number !== "") {
                     number = Number(event.target.value);
                     if (property.max !== undefined && number > property.max) {
@@ -262,8 +299,8 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                 onTypeChange={onTypeChange}
               />
               <FormElementDatePicker
-                value={selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ? 
-                  selectedSTIXObject[property.name] 
+                value={selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ?
+                  selectedSTIXObject[property.name]
                   : ""
                 }
                 onChange={([date]) => {
@@ -321,7 +358,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
   }
 }
 
-function STIXPropertyTitle({ propName, type, showTypeSelector, onTypeChange }:{
+function STIXPropertyTitle({ propName, type, showTypeSelector, onTypeChange }: {
   propName: string,
   type?: SchemaType,
   showTypeSelector?: boolean,
@@ -338,7 +375,7 @@ function STIXPropertyTitle({ propName, type, showTypeSelector, onTypeChange }:{
     "Float": "number"
   };
 
-  return(
+  return (
     <div className='flex gap-2 mb-2 items-center'>
       <p>{propName}</p>
       {showTypeSelector && type && onTypeChange ?
@@ -348,7 +385,7 @@ function STIXPropertyTitle({ propName, type, showTypeSelector, onTypeChange }:{
           onChange={onTypeChange}
           additionalClasses='select-xs dark:bg-gray-900'
         />
-        :null
+        : null
       }
     </div>
   );

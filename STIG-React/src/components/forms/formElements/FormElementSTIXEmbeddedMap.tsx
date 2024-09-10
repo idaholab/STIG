@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { PropertyConfig } from '@/types/schema';
-import FormSTIXJSON from '../FormSTIXJSON';
+import ButtonSTIXJSON from '../../elements/ButtonSTIXJSON';
 import FormElementSTIXPropertySelection from '../FormSTIXPropertySelection';
 import { inferSTIXType } from '@/stix/inferSTIXType';
 import { STIXPropertyRenderer } from '../FormSTIXPropsPanel';
@@ -45,11 +45,11 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
   const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
 
   useEffect(() => {
-    if(!selectedSTIXObject) {
+    if (!selectedSTIXObject) {
       setSelectedSTIXObject(embeddedMap);
-      setLocalEmbeddedMapProps(embeddedMap ? 
+      setLocalEmbeddedMapProps(embeddedMap ?
         Object.keys(embeddedMap).map(key => {
-          return{name: key, type: inferSTIXType(embeddedMap[key])}
+          return { name: key, type: inferSTIXType(embeddedMap[key]) }
         })
         : []
       );
@@ -59,13 +59,13 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
   // Update the parent STIX object when its
   // embedded map child changes
   useEffect(() => {
-    const tempParentSTIXObject = { ...parentSTIXObject};
+    const tempParentSTIXObject = { ...parentSTIXObject };
     tempParentSTIXObject[propName] = selectedSTIXObject;
     setParentSTIXObject(tempParentSTIXObject);
   }, [selectedSTIXObject]);
 
   const handlePropertyUpdate = (
-    newVal: string | boolean | number | Date | ArrayBuffer | null | undefined | [], 
+    newVal: string | boolean | number | Date | ArrayBuffer | null | undefined | [],
     propName: string
   ) => {
     let tempSelectedSTIXObject = { ...selectedSTIXObject };
@@ -113,6 +113,7 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
     const oldType = embeddedMapProps[embeddedMapPropIndex].type;
     tempEmbeddedMapProps[embeddedMapPropIndex].type = stixUIToSchemaTypeConverter[newType] as SchemaType;
     setEmbeddedMapProps(tempEmbeddedMapProps);
+
     // Update selectedProperties
     const tempSelectedProperties = [...selectedProperties];
     const selectedPropertiesIndex = tempSelectedProperties.findIndex(prop => {
@@ -150,6 +151,34 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
     }
   };
 
+  const [showJsonPanel, setShowJsonPanel] = useState<boolean>(false);
+  function toggleJSONPropertyView() {
+    setShowJsonPanel(!showJsonPanel);
+  }
+  const [jsonText, setJsonText] = useState<string>('');
+  const handleJsonChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    setJsonText(value);
+    try {
+      //const parsedJson = JSON.parse(value);
+      // TODO: Return the JSON string to the parent or convert it back to a stix object to return to the parent.
+      // Not part of task 106
+    } catch (error) {
+      console.error('Invalid JSON:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (!selectedSTIXObject) {
+      return;
+    }
+    const selectedSTIXObjectJSONString = { ...selectedSTIXObject };
+    // delete selectedSTIXObjectJSONString.raw_data;
+    // delete selectedSTIXObjectJSONString.label;
+    setJsonText(JSON.stringify(selectedSTIXObjectJSONString, null, 2));
+  }, [selectedSTIXObject]);
+
+
   return (
     <>
       <div className='flex gap-2 mb-2 items-center'>
@@ -160,7 +189,7 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
             value={"object"}
             onChange={(event) => {
               handlePropertyTypeChange(
-                propName, 
+                propName,
                 event.target.value as UIPropertyType,
                 parentEmbeddedMapProps,
                 setParentEmbeddedMapProps,
@@ -174,7 +203,7 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
         }
       </div>
       <div className='flex gap-2 mb-2 items-center'>
-        <FormSTIXJSON />
+        <ButtonSTIXJSON color='btn-secondary' showJson={showJsonPanel} setIsShowingJson={toggleJSONPropertyView} />
         <FormElementSTIXPropertySelection
           propertyOptions={localEmbeddedMapProps}
           setPropertyOptions={setLocalEmbeddedMapProps}
@@ -183,8 +212,21 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
           includeAddNew
         />
       </div>
+
       <div className="ml-4">
-        {localSelectedProperties.map((selectedProperty, i) =>
+        {showJsonPanel && (
+          <div className='form-stix-json flex h-full w-full mb-4'>
+            <textarea
+              rows={10}
+              style={{ whiteSpace: 'pre', overflow: 'auto' }}
+              className="flex flex-grow p-2 font-mono scrollbar h-full w-full rounded bg-gray-100 dark:bg-gray-900"
+              onChange={handleJsonChange}
+              value={jsonText}
+            />
+          </div>
+        )}
+
+        {!showJsonPanel && localSelectedProperties.map((selectedProperty, i) =>
           <STIXPropertyRenderer
             key={i}
             property={selectedProperty}

@@ -68,7 +68,7 @@ const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
           flex
           ${prefix && 'pl-8'}
           w-full
-          rounded-lg
+          rounded-md
           border
           border-gray-500
           bg-gray-100

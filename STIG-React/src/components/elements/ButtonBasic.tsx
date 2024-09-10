@@ -22,9 +22,13 @@ interface ButtonProps {
    * Optional additional classes
    */
   additionalClasses?: string;
+  /**
+   * Disable the button
+   */
+  disabled?: boolean;
 }
 
-const ButtonBasic: React.FC<ButtonProps> = ({ label, color, link, onClick, additionalClasses }) => {
+const ButtonBasic: React.FC<ButtonProps> = ({ label, color, link, onClick, additionalClasses, disabled }) => {
   // Define base classes
   const baseClasses = `btn ${color} uppercase hover:opacity-100`;
 
@@ -44,7 +48,7 @@ const ButtonBasic: React.FC<ButtonProps> = ({ label, color, link, onClick, addit
           {label}
         </Link>
       ) : (
-        <button className={btnClass} onClick={onClick}>
+        <button className={btnClass} onClick={onClick} disabled={disabled}>
           {label}
         </button>
       )}
