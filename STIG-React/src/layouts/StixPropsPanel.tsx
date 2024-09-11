@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useStigContext } from '@/contexts/StigContext.tsx';
 import { useStixPropsContext } from '../contexts/StixPropsContext.tsx';
-import { PropertyConfig, schema } from '@/types/schema.ts';
+import {IJSONClassOptions, PropertyConfig, schema } from '@/types/schema.ts';
 import { getSTIXPropsFromSchema } from '@/stix/getSTIXPropsFromSchema.ts';
 import FormSTIXPropsPanel from '@/components/forms/FormSTIXPropsPanel.tsx';
 import { stencilItems } from '@/components/elements/StencilItems.ts';
@@ -35,9 +35,10 @@ function PropsPanelHeader({ selectedProperties, setSelectedProperties, setIsShow
   const { selectedSTIXObject } = useStixPropsContext();
   const [showJsonPanel, setShowJsonPanel] = useState<boolean>(false);
 
+  /*
+  //TODO: Remove all this related code that grabbed the descriptions from the schema files
   // Import the STIX object's correct json schema file to later 
   // get the STIX object type's description
-  // TODO: Grab description from schema.ts
   const [stixTypeSchema, setSTIXTypeSchema] = useState<any>();
   const stixObjectType = stencilItems.find(stencilItem => {
     return stencilItem.id === selectedSTIXObject?.type
@@ -52,17 +53,19 @@ function PropsPanelHeader({ selectedProperties, setSelectedProperties, setIsShow
         setSTIXTypeSchema(schema);
       });
   }
+  */
 
   // Used to determine which STIX properties the selected STIX object can have
   const [stixTypeProps, setStixTypeProps] = useState<PropertyConfig[]>([]);
+  const [stixTypeDesc, setStixTypeDesc] = useState<IJSONClassOptions>();
   useEffect(() => {
     const schemaObject = schema.classes.find(c => { return c.name === selectedSTIXObject?.type; });
     if (typeof schemaObject !== 'object') {
       return;
     }
     setStixTypeProps(getSTIXPropsFromSchema(schemaObject));
+    setStixTypeDesc(schemaObject);
   }, [selectedSTIXObject?.id]);
-
   // When stixTypeProps gets set for the object or changes
   // when clicking on a different object, update the selectedProperties
   useEffect(() => {
@@ -101,7 +104,7 @@ function PropsPanelHeader({ selectedProperties, setSelectedProperties, setIsShow
           setSelectedProperties={setSelectedProperties}
         />
       </div>
-      <p className='mb-4'>{stixTypeSchema?.description}</p>
+      <p className='mb-4'>{stixTypeDesc?.description}</p>
     </>
   );
 }

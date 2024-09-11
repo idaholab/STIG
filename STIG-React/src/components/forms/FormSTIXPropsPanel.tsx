@@ -8,7 +8,7 @@ import FormElementSTIXEmbeddedList from './formElements/FormElementSTIXEmbeddedL
 import FormElementDatePicker from './formElements/FormElementDatePicker';
 import FormElementFileInput from './formElements/FormElementFileInput';
 import FormElementSTIXEmbeddedMap from './formElements/FormElementSTIXEmbeddedMap';
-import { SchemaType } from '@/types/SchemaType';
+import { s_SchemaType } from '@/types/SchemaType';
 import { useStigContext } from '@/contexts/StigContext';
 
 export default function FormSTIXPropsPanel({ selectedProperties, showJson }: {
@@ -207,31 +207,77 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
               />
             </>
           );
-        case "EmbeddedList":
+//=======LIST================================================================================
+        case "List":
           // TODO: Develop way to delete items (and reorganize list, 
           // clear list, and remove last item?)
-          return (
-            <>
-              <STIXPropertyTitle
-                propName={property.name}
-                type={property.type}
-                showTypeSelector={showTypeSelector}
-                onTypeChange={onTypeChange}
-              />
-              <FormElementSTIXEmbeddedList
-                label="item "
-                propName={property.name}
-                stixObj={selectedSTIXObject}
-                setSTIXObj={setSelectedSTIXObject}
-                className='mb-2'
-                additionalInputClasses='select-sm dark:bg-gray-900'
-                additionalLabelClasses='ml-6 mr-5 w-20'
-                btnLabel="+ Item"
-                btnColor="btn-primary"
-                btnAdditionalClasses='btn-sm ml-6 mb-4'
-              />
-            </>
-          );
+          let title = <STIXPropertyTitle
+            propName={property.name}
+            type={property.type}
+            showTypeSelector={showTypeSelector}
+            onTypeChange={onTypeChange}
+          />
+          switch (property.listType) {
+            case "external_reference":
+              console.log(property.name)
+              console.log(selectedSTIXObject)
+              console.log(setSelectedSTIXObject)
+              return (
+                <>
+                  {title}
+                  <FormElementSTIXEmbeddedList
+                    label="item "
+                    propName={property.name}           //NOTE: what does this provide?
+                    stixObj={selectedSTIXObject}       //NOTE: what does this provide?
+                    setSTIXObj={setSelectedSTIXObject} //NOTE: what does this provide?
+                    className='mb-2'
+                    additionalInputClasses='select-sm dark:bg-gray-900'
+                    additionalLabelClasses='ml-6 mr-5 w-20'
+                    btnLabel="+ Item"
+                    btnColor="btn-primary"
+                    btnAdditionalClasses='btn-sm ml-6 mb-4'
+                  />
+                </>
+              )
+            case "kill_chain_phase":
+              return (
+                <>
+                  {title}
+                  <FormElementSTIXEmbeddedList
+                    label="kill-chain-phase "
+                    propName={property.name}
+                    stixObj={selectedSTIXObject}
+                    setSTIXObj={setSelectedSTIXObject}
+                    className='mb-2'
+                    additionalInputClasses='select-sm dark:bg-gray-900'
+                    additionalLabelClasses='ml-6 mr-5 w-20'
+                    btnLabel="+ Item"
+                    btnColor="btn-primary"
+                    btnAdditionalClasses='btn-sm ml-6 mb-4'
+                  />
+                </>
+              )
+            case "String":
+            default:
+              return (
+                <>
+                  {title}
+                  <FormElementSTIXEmbeddedList
+                    label="item "
+                    propName={property.name}
+                    stixObj={selectedSTIXObject}
+                    setSTIXObj={setSelectedSTIXObject}
+                    className='mb-2'
+                    additionalInputClasses='select-sm dark:bg-gray-900'
+                    additionalLabelClasses='ml-6 mr-5 w-20'
+                    btnLabel="+ Item"
+                    btnColor="btn-primary"
+                    btnAdditionalClasses='btn-sm ml-6 mb-4'
+                  />
+                </>
+              );
+          }
+//=======END LIST============================================================================
         case "Boolean":
           return (
             <>
@@ -289,7 +335,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
               />
             </>
           );
-        case "DateTime":
+        case "Timestamp":
           return (
             <>
               <STIXPropertyTitle
@@ -329,7 +375,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
               />
             </>
           );
-        case "EmbeddedMap":
+        case "Dictionary":
           return (
             <StixPropsContextProvider>
               <FormElementSTIXEmbeddedMap
@@ -345,6 +391,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
               />
             </StixPropsContextProvider>
           );
+
         default:
           return (
             <STIXPropertyTitle
@@ -360,21 +407,32 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
 
 function STIXPropertyTitle({ propName, type, showTypeSelector, onTypeChange }: {
   propName: string,
-  type?: SchemaType,
+  type?: s_SchemaType,
   showTypeSelector?: boolean,
   onTypeChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }) {
+  //TODO: see about getting rid of this and just using the options down below
   const stixSchemaToUITypeConverter = {
     "String": "string",
-    "EmbeddedList": "array",
+    "List": "array",
     "Boolean": "boolean",
     "Integer": "integer",
-    "DateTime": "",
-    "Binary": "",
-    "EmbeddedMap": "object",
-    "Float": "number"
+    "Timestamp": "string",
+    "Binary": "string",
+    "Dictionary": "object",
+    "Float": "number",
+    "kill_chain_phase": "object",
+    "external_reference": "object",
+    "granular_marking": "object",
+    "email_mime_part_type": "object",
+    "windows_registry_value_type": "object",
+    "Hashes": "array",
+    "Hex": "string",
+    "Identifier": "string",
+    "open_vocab": "string",
+    "Enum": "string",
+    "x509_v3_extensions_type":"object"
   };
-
   return (
     <div className='flex gap-2 mb-2 items-center'>
       <p>{propName}</p>

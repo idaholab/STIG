@@ -1,7 +1,7 @@
 // import diffpatch from 'jsondiffpatch';
 
 import { StigDB } from "@/db/dbi";
-import { IJSONClassOptions, schema } from "@/db/schema";
+import { IJSONClassOptions, schema } from "@/types/schema";
 import { IDatabaseConfigOptions } from "@/storage/database-configuration-storage";
 import { BundleType } from "@/types/BundleType";
 import { StixObject } from "@/types/Core";
