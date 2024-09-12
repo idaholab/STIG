@@ -149,7 +149,7 @@ export class Main {
       });
       $('#dd-viewEmbeddedRels').on('click', () => {
         // list all objects with property "object_refs"
-        const embedded_rel_types = ['report', 'opinion', 'grouping', 'note', 'observed-data'];
+        const has_object_refs = ['report', 'opinion', 'grouping', 'note', 'observed-data'];
 
         // get all current objects
         let nodes = window.cycore.$(':visible');
@@ -158,23 +158,27 @@ export class Main {
 
         // if an object has "object_refs" property, create relationships for all reference objects
         nodes.each((ele) => {
-          const current_object = ele.data('raw_data');
-          if (current_object !== undefined && embedded_rel_types.includes(current_object.type) && current_object.object_refs) {
-            for (const ref_id of current_object.object_refs) {
+          const obj = ele.data('raw_data');
+          if (obj !== undefined && has_object_refs.includes(obj.type) && obj.object_refs) {
+            for (const ref_id of obj.object_refs) {
               // Step 1.
               const rel_id = uuid.v4();
               const opts: stix.VisualEdgeData = {
                 raw_data: 'visual_edge',
                 id: rel_id,
                 target: ref_id,
-                source: current_object.id
+                source: obj.id
               };
 
               // Step 2.
               const rel_node = new stix.VisualEdge(opts);
 
               // Step 3.
-              cy.add(rel_node);
+              try{
+                cy.add(rel_node);
+              }catch(err){
+                console.warn(err);
+              }
             }
           }
         });
