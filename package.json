@@ -164,7 +164,7 @@
         "cytoscape-klay": "^3.0.0",
         "cytoscape-spread": "^3.0.0",
         "cytoscape-view-utilities": "^2.0.7",
-        "express": "^4.19.2",
+        "express": "^4.21.0",
         "express-session": "^1.18.0",
         "file-saver": "^2.0.0",
         "flatpickr": "^4.6.13",
