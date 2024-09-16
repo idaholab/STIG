@@ -10,9 +10,8 @@ import { useTheme } from '@/contexts/useTheme';
 import { ViewUtilitiesOptions } from '@/types/ViewUtilitiesOptions';
 
 export const node_style: cytoscape.Stylesheet = {
-  selector: 'node',
+  selector: '.stix_node',
   style: {
-    'background-image': 'data(image)', // ??
     'color': 'white',
     'font-size': 14,
     'text-margin-y': -8,
@@ -40,7 +39,7 @@ export const compound_style: cytoscape.Stylesheet = {
 };
 
 export const edge_style: cytoscape.Stylesheet = {
-  selector: 'edge',
+  selector: '.edge',
   style: {
     events: 'yes',
     label: 'data(label)',

@@ -204,8 +204,8 @@ const Graph: React.FC = () => {
     }, [isDrawerOpen, selectedSTIXObject]);
 
     // Needed to move handleClearGraph out of the above useEffect so that
-    // isDrawerOpen would properly update and clearing the graph would
-    // properly know when to also close the properties panel.
+    // isDrawerOpen and cyInstance would properly update and clearing the
+    // graph would properly know when to also close the properties panel.
     useEffect(() => {
         const handleClearGraph = () => {
             cyInstance?.elements().remove();
@@ -222,7 +222,7 @@ const Graph: React.FC = () => {
         return () => {
             graphElement?.removeEventListener('clearGraph', handleClearGraph);
         };
-    }, [isDrawerOpen]);
+    }, [isDrawerOpen, cyInstance]);
 
     // Triggered on edit of a node's properties
     useEffect(() => {
@@ -230,7 +230,12 @@ const Graph: React.FC = () => {
         if(selectedSTIXObject?.type === "relationship") {
             elementId = elementId.replace("relationship--", "");
         }
-        const cytoElement = cyInstance?.getElementById(elementId);
+        // If a relationship is created via the application (as opposed to imported), its cytoscape id will be
+        // its raw_data id with "relationship--" on the front
+        let cytoElement = cyInstance?.getElementById(elementId);
+        if(cytoElement?.length === 0) {
+            cytoElement = cyInstance?.getElementById(selectedSTIXObject?.id);
+        }
         if (cytoElement === undefined) { return }
         cytoElement.data("raw_data", selectedSTIXObject);
     }, [selectedSTIXObject]);
@@ -383,9 +388,10 @@ const Graph: React.FC = () => {
                 spec_version: "2.1"
             };
             ele.data("raw_data", raw_data);
+            ele.data('label', default_relationship);
             //   ele.data('saved', false);
-            ele.style('label', default_relationship);
-        }
+        } 
+        ele.classes('edge');
     });
 
     return <div ref={cyContainerRef}

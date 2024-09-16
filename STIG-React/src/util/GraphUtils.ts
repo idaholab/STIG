@@ -334,7 +334,9 @@ export function setupCtxMenu(
                     // and if so, close the property panel and clear
                     // the currently selected object
                     const selectedSTIXObjectId = selectedSTIXObject?.id.replace("relationship--", "");
-                    if(selectedSTIXObjectId === element.data("id")) {
+                    // If a relationship is created via the application (as opposed to imported), its cytoscape id will be
+                    // its raw_data id with "relationship--" on the front
+                    if(selectedSTIXObjectId === element.data("id") || selectedSTIXObject?.id === element.data("id")) {
                         setSelectedSTIXObject(undefined);
                         if(isDrawerOpen) {
                             toggleDrawer();
@@ -434,7 +436,11 @@ export function setupCtxMenu(
                         selectedSTIXObjectId = selectedSTIXObjectId.replace("relationship--", "");
                     }
                     const remainingElementIds = cy.elements().map(element => element.data("id"));
-                    if(selectedSTIXObjectId && !remainingElementIds.includes(selectedSTIXObjectId)) {
+                    // If a relationship is created via the application (as opposed to imported), its cytoscape id will be
+                    // its raw_data id with "relationship--" on the front
+                    if((selectedSTIXObjectId && !remainingElementIds.includes(selectedSTIXObjectId)) ||
+                        !remainingElementIds.includes(selectedSTIXObject?.id)
+                    ) {
                         setSelectedSTIXObject(undefined);
                         if(isDrawerOpen) {
                             toggleDrawer();

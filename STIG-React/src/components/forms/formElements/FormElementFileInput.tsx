@@ -3,10 +3,12 @@ import ButtonBasic from '../../elements/ButtonBasic.tsx';
 
 type Props = {
   placeholder?: string;
+  label?: string;
   /**
   * Button label
   */
   buttonLabel: string;
+  acceptedFileTypes?: string;
   /**
   * Optional click handler
   */
@@ -15,15 +17,19 @@ type Props = {
   * File change handler to communicate the file to the parent component
   */
   onFileChange?: (fileVal: string | ArrayBuffer | null | undefined) => void;
+  parsedFileType?: "url" | "text";
   additionalInputClasses?: string;
   additionalBtnClasses?: string;
 };
 
 const FormElementFileInput: React.FC<Props> = ({
   placeholder,
+  label,
   buttonLabel = 'Save',
+  acceptedFileTypes,
   onClick,
   onFileChange,
+  parsedFileType = "text",
   additionalInputClasses,
   additionalBtnClasses
 }) => {
@@ -45,7 +51,11 @@ const FormElementFileInput: React.FC<Props> = ({
       setFilename(file.name); // Update the filename state
 
       const fileReader = new FileReader();
-      fileReader.readAsDataURL(file);
+      if (parsedFileType === "url") {
+        fileReader.readAsDataURL(file);
+      } else if (parsedFileType === "text") {
+        fileReader.readAsText(file);
+      }
       fileReader.onload = (event) => {
         const fileValue = event.target?.result;
         if (onFileChange) {
@@ -57,14 +67,15 @@ const FormElementFileInput: React.FC<Props> = ({
 
   return (
     <div className={`flex gap-2`}>
-      {placeholder ?
-        <span>{placeholder}</span>
+      {label ?
+        <span>{label}</span>
         : null
       }
       <input
         type="text"
         value={filename}
         readOnly
+        placeholder={placeholder}
         className={`
           input
           input-bordered
@@ -80,6 +91,7 @@ const FormElementFileInput: React.FC<Props> = ({
         ref={fileInputRef}
         className="hidden"
         onChange={handleFileChange}
+        accept={acceptedFileTypes}
       />
       <ButtonBasic 
         label={buttonLabel} 

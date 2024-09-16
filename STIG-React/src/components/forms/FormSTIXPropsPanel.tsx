@@ -173,7 +173,12 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
             onChange={(event) => {
               handlePropertyUpdate(event.target.value, property.name);
               // Get cytoscape element (by id)
-              const ele = cyInstance?.getElementById(selectedSTIXObject.id.replace("relationship--", ""));
+              // If a relationship is created via the application (as opposed to imported), its cytoscape id will be
+              // its raw_data id with "relationship--" on the front
+              let ele = cyInstance?.getElementById(selectedSTIXObject.id.replace("relationship--", ""));
+              if(ele?.length === 0) {
+                ele = cyInstance?.getElementById(selectedSTIXObject.id);
+              }
               // Update style for the element
               ele?.style('label', event.target.value);
             }}
@@ -370,6 +375,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                 onFileChange={async (fileVal: string | ArrayBuffer | null | undefined) => {
                   handlePropertyUpdate(fileVal, property.name);
                 }}
+                parsedFileType='url'
                 additionalInputClasses='input-sm'
                 additionalBtnClasses='btn-sm'
               />
