@@ -6,9 +6,18 @@ import { STIXPropertyLabel } from '@/components/elements/STIXPropertyLabel.tsx';
 
 type Props = {
   placeholder?: string;
+  label?: string;
+  /**
+  * Button label
+  */
   buttonLabel: string;
+  acceptedFileTypes?: string;
+  /**
+  * Optional click handler
+  */
   onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   onFileChange?: (fileVal: string | ArrayBuffer | null | undefined) => void;
+  parsedFileType?: "url" | "text";
   additionalInputClasses?: string;
   additionalBtnClasses?: string;
   className?: string;
@@ -21,9 +30,12 @@ type Props = {
 
 const FormElementFileInput: React.FC<Props> = ({
   placeholder,
+  label,
   buttonLabel = 'Save',
+  acceptedFileTypes,
   onClick,
   onFileChange,
+  parsedFileType = "text",
   additionalInputClasses,
   additionalBtnClasses,
   className,
@@ -51,7 +63,11 @@ const FormElementFileInput: React.FC<Props> = ({
       setFilename(file.name); // Update the filename state
 
       const fileReader = new FileReader();
-      fileReader.readAsDataURL(file);
+      if (parsedFileType === "url") {
+        fileReader.readAsDataURL(file);
+      } else if (parsedFileType === "text") {
+        fileReader.readAsText(file);
+      }
       fileReader.onload = (event) => {
         const fileValue = event.target?.result;
         if (onFileChange) {
@@ -103,20 +119,8 @@ const FormElementFileInput: React.FC<Props> = ({
           additionalClasses={`${additionalBtnClasses}`}
           onClick={handleButtonClick}
         />
-
-        <InfoButton
-          visible={includeInfo}
-          toggleInfo={toggleInfo}
-          additionalInfoClasses={`${additionalInfoClasses}`}
-          parentRef={parentRef}
-        />
       </div>
-      {
-        showInfo && includeInfo && infoText && infoText?.length > 0 &&
-        <span className="text-xs p-1 dark:text-orange-300 text-orange-800">{infoText}</span>
-      }
-    </div>
-  );
+      );
 };
 
-export default FormElementFileInput;
+      export default FormElementFileInput;

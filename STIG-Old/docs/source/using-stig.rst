@@ -46,6 +46,16 @@ Drag and Drop
 
 - Drag or click on an icon in the topmost row of the UI.  This will add one instance of the selected object to the graph.  Click on the new item in the graph to edit its details.
 
+Query Database
+-----------------
+Use the **Query Database** box to query the configured Neo4j database for objects. Queried objects will be added to the graph. Querying the database for an object that is already present in the graph may not have any visual effect, though it is possible for the layout to be rearranged. Queries should be written in the `Cypher Query Language <https://neo4j.com/docs/cypher-manual/current/introduction/>`_. For example:
+
+``MATCH (n) RETURN n`` will return all objects in the database
+
+``MATCH r=()-->() RETURN r`` will return all relationships and their corresponding objects
+
+``MATCH (a:`attack-pattern`) WHERE a.name='MITRE ATT&CK' RETURN a LIMIT 1`` will return one attack-pattern with the name "MITRE ATT&CK"
+
 Copy / Paste 
 -----------------
 - Cut the JSON of a STIX object out of a text editor.  Paste it into STIG using either Graph->Paste elements, or via CTRL/CMD-SHIFT-V.  Likewise you can copy the JSON of displayed elements by selecting them and using Graph->Copy Selected Elements or CTRL/CMD-SHIFT-C.
@@ -53,6 +63,17 @@ Copy / Paste
 Creating Relationships 
 ----------------------
 - Create relationships by hovering over an object in the graph, then dragging from the small red box to the other object.  When the target object's border turns purple release the mouse to complete the relationship.
+
+Examining Data
+^^^^^^^^^^^^^^^^^^
+
+Search Graph
+---------------
+Objects and relationships in the displayed graph can be searched using this box. Presently this search supports searches of the format property:value. Property is any STIX property such as type, name, id, created, source_ref, etc. For example:
+
+``type:attack-pattern`` will find and select all objects of type "attack-pattern".
+
+``relationship_type:targets`` will find and select all relationships of the type "targets".
 
 Diff 
 ----------

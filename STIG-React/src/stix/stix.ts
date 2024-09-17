@@ -1,3 +1,4 @@
+import { stencilItems } from "@/components/elements/StencilItems";
 import { DataSourceType, Identifier, IStixNode, node_img, ObjectMarkingRelationship, StixNodeData, StixType, Timestamp } from "@/types/Core";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -50,9 +51,13 @@ export const createStixNode = (
         nodelabel = nodelabel.substring(0, 60).concat('...');
     }
 
+    const displayLabel = stencilItems.find(stencilItem => {
+        return stencilItem.id === the_type
+    })?.alt;
+
     const data: StixNodeData = {
         id: the_data.id,
-        label: nodelabel,
+        label: displayLabel,
         type: the_type,
         level: 1,
         created: the_data.created,
@@ -69,8 +74,11 @@ export const createStixNode = (
         y: 100,
     };
 
+    const nodeImage = stencilItems.find(stencilItem => {
+        return stencilItem.id === the_type
+    })?.imageUrl;
     const style: CSSStyleDeclaration = {
-        backgroundImage: node_img[the_type],
+        backgroundImage: nodeImage,
     } as unknown as CSSStyleDeclaration;
 
     const classes = 'stix_node';
