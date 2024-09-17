@@ -3,20 +3,18 @@ import { PropertyConfig } from '@/types/schema';
 import ButtonSTIXJSON from '../../elements/ButtonSTIXJSON';
 import FormElementSTIXPropertySelection from '../FormSTIXPropertySelection';
 import { inferSTIXType } from '@/stix/inferSTIXType';
-import { STIXPropertyRenderer } from '../FormSTIXPropsPanel';
 import { useStixPropsContext } from '@/contexts/StixPropsContext';
 import { UIPropertyType } from '@/types/UIPropertyType';
-import { SchemaType } from '@/types/SchemaType';
+import { s_SchemaType } from '@/types/SchemaType';
 import FormElementSelect from './FormElementSelect';
 import { StixObject } from '@/types/Core';
+import { STIXPropertyRenderer } from '../STIXPropertyRenderer';
 
 type Props = {
-  propName: string;
   // Had to add the "any" to this typing because VS Code was
   // not happy with any way I was attempting to check if a property
   // existed in the Object before attempting to use said property.
   embeddedMap: Object | any;
-  showTypeSelector?: boolean;
   // Had to add the "any" to this typing because VS Code was
   // not happy with any way I was attempting to check if a property
   // existed in the StixObject before attempting to use said property.
@@ -27,18 +25,24 @@ type Props = {
   setParentEmbeddedMapProps?: React.Dispatch<React.SetStateAction<PropertyConfig[]>>;
   parentSelectedProperties?: PropertyConfig[];
   setParentSelectedProperties?: React.Dispatch<React.SetStateAction<PropertyConfig[]>>;
+  className?: string;
+  property?: PropertyConfig;
+  showTypeSelector?: boolean,
+  onTypeChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void,
 };
 
 const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
-  propName,
   embeddedMap,
-  showTypeSelector,
   parentSTIXObject,
   setParentSTIXObject,
   parentEmbeddedMapProps,
   setParentEmbeddedMapProps,
   parentSelectedProperties,
-  setParentSelectedProperties
+  setParentSelectedProperties,
+  className,
+  property,
+  showTypeSelector,
+  onTypeChange,
 }) => {
   const [localSelectedProperties, setLocalSelectedProperties] = useState<PropertyConfig[]>([]);
   const [localEmbeddedMapProps, setLocalEmbeddedMapProps] = useState<PropertyConfig[]>([]);
@@ -60,7 +64,7 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
   // embedded map child changes
   useEffect(() => {
     const tempParentSTIXObject = { ...parentSTIXObject };
-    tempParentSTIXObject[propName] = selectedSTIXObject;
+    tempParentSTIXObject[property?.name || ''] = selectedSTIXObject;
     setParentSTIXObject(tempParentSTIXObject);
   }, [selectedSTIXObject]);
 
@@ -111,7 +115,7 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
       return prop.name === propName;
     });
     const oldType = embeddedMapProps[embeddedMapPropIndex].type;
-    tempEmbeddedMapProps[embeddedMapPropIndex].type = stixUIToSchemaTypeConverter[newType] as SchemaType;
+    tempEmbeddedMapProps[embeddedMapPropIndex].type = stixUIToSchemaTypeConverter[newType] as s_SchemaType;
     setEmbeddedMapProps(tempEmbeddedMapProps);
 
     // Update selectedProperties
@@ -119,7 +123,7 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
     const selectedPropertiesIndex = tempSelectedProperties.findIndex(prop => {
       return prop.name === propName;
     });
-    tempSelectedProperties[selectedPropertiesIndex].type = stixUIToSchemaTypeConverter[newType] as SchemaType;
+    tempSelectedProperties[selectedPropertiesIndex].type = stixUIToSchemaTypeConverter[newType] as s_SchemaType;
     setSelectedProperties(tempSelectedProperties);
 
     // When changing to an array, clear the value of the propName
@@ -178,18 +182,17 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
     setJsonText(JSON.stringify(selectedSTIXObjectJSONString, null, 2));
   }, [selectedSTIXObject]);
 
-
   return (
     <>
       <div className='flex gap-2 mb-2 items-center'>
-        <span>{propName}</span>
+        <span>{property?.name || ''}</span>
         {showTypeSelector ?
           <FormElementSelect
             options={["array", "string", "integer", "boolean", "number", "object"]}
             value={"object"}
             onChange={(event) => {
               handlePropertyTypeChange(
-                propName,
+                property?.name || '',
                 event.target.value as UIPropertyType,
                 parentEmbeddedMapProps,
                 setParentEmbeddedMapProps,

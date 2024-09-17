@@ -1,7 +1,12 @@
+import { PropertyConfig } from "./schema";
 
-let propertyDescriptions: Object;
 
-propertyDescriptions = [
+// export type PropertyDescription = {
+//     name: string;
+//     properties: PropertyConfig;
+// }
+
+export const PropertyDescriptions = [
     {
         name: 'core',
         properties: {
@@ -551,7 +556,7 @@ propertyDescriptions = [
     },
     {
         name: 'windows-registry-value-type',
-        properties:{
+        properties: {
             name: "Specifies the name of the registry value. For specifying the default value in a registry key, an empty string MUST be used.",
             data: "Specifies the data contained in the registry value.",
             data_type: "Specifies the registry (REG_*) data type used in the registry value. The values of this property MUST come from the windows-registry-datatype-enum enumeration.",
@@ -559,19 +564,19 @@ propertyDescriptions = [
     },
     {
         name: 'kill-chain-phase',
-        properties:{
-            kill_chain_name:"The name of the kill chain. The value of this property SHOULD be all lowercase and SHOULD use hyphens instead of spaces or underscores as word separators.",
-            phase_name:"The name of the phase in the kill chain. The value of this property SHOULD be all lowercase and SHOULD use hyphens instead of spaces or underscores as word separators.",
+        properties: {
+            kill_chain_name: "The name of the kill chain. The value of this property SHOULD be all lowercase and SHOULD use hyphens instead of spaces or underscores as word separators.",
+            phase_name: "The name of the phase in the kill chain. The value of this property SHOULD be all lowercase and SHOULD use hyphens instead of spaces or underscores as word separators.",
         }
     },
     {
         name: 'x509-v3-extensions-type',
-        properties:{
+        properties: {
             basic_constraints: "Specifies a multi-valued extension which indicates whether a certificate is a CA certificate.",
             name_constraints: "Specifies a namespace within which all subject names in subsequent certificates in a certification path MUST be located.",
-            policy_constraints:"Specifies any constraints on path validation for certificates issued to CAs.",
-            key_usage:"Specifies a multi-valued extension consisting of a list of names of the permitted key usages.",
-            extended_key_usage:"Specifies a list of usages indicating purposes for which the certificate public key can be used for.",
+            policy_constraints: "Specifies any constraints on path validation for certificates issued to CAs.",
+            key_usage: "Specifies a multi-valued extension consisting of a list of names of the permitted key usages.",
+            extended_key_usage: "Specifies a list of usages indicating purposes for which the certificate public key can be used for.",
             subject_key_identifier: "Specifies the identifier that provides a means of identifying certificates that contain a particular public key.",
             authority_key_identifier: "Specifies the identifier that provides a means of identifying the public key corresponding to the private key used to sign a certificate.",
             subject_alternative_name: "Specifies the additional identities to be bound to the subject of the certificate.",

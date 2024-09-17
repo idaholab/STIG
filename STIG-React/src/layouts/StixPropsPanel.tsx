@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useStigContext } from '@/contexts/StigContext.tsx';
 import { useStixPropsContext } from '../contexts/StixPropsContext.tsx';
-import {IJSONClassOptions, PropertyConfig, schema } from '@/types/schema.ts';
+import { IJSONClassOptions, PropertyConfig, schema } from '@/types/schema.ts';
 import { getSTIXPropsFromSchema } from '@/stix/getSTIXPropsFromSchema.ts';
 import FormSTIXPropsPanel from '@/components/forms/FormSTIXPropsPanel.tsx';
 import { stencilItems } from '@/components/elements/StencilItems.ts';
 import FormSTIXPropertySelection from '@/components/forms/FormSTIXPropertySelection.tsx';
 import ButtonSTIXJSON from '@/components/elements/ButtonSTIXJSON.tsx';
+import { PropertyDescriptions } from '@/types/PropertyDescriptions.ts';
+
 
 const StixPropsPanel: React.FC = () => {
   const [selectedProperties, setSelectedProperties] = useState<PropertyConfig[]>([]);
@@ -63,7 +65,16 @@ function PropsPanelHeader({ selectedProperties, setSelectedProperties, setIsShow
     if (typeof schemaObject !== 'object') {
       return;
     }
-    setStixTypeProps(getSTIXPropsFromSchema(schemaObject));
+
+    const properties = getSTIXPropsFromSchema(schemaObject);
+    const propertyDescriptionGroup: any = PropertyDescriptions.find((group) => group.name === selectedSTIXObject?.type);
+    if (propertyDescriptionGroup) {
+      properties.forEach((prop) => {
+        prop.propertyDescription = propertyDescriptionGroup.properties[prop.name] || "No description available";
+      });
+    }
+
+    setStixTypeProps(properties);
     setStixTypeDesc(schemaObject);
   }, [selectedSTIXObject?.id]);
   // When stixTypeProps gets set for the object or changes

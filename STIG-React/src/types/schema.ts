@@ -16,6 +16,7 @@ export type PropertyConfig = {
   default?: string;
   min?: number;
   max?: number;
+  propertyDescription?: string;
 }
 
 export type IJSONClassOptions = {
@@ -76,16 +77,16 @@ export const schema: ISchemaFile = {
         { name: 'id', type: 'Identifier', mandatory: true, notNull: true, },
         { name: 'type', type: 'String', mandatory: true, notNull: true, },
         { name: 'spec_version', type: 'String', mandatory: true, notNull: true, },
-        { name: 'created_by_ref', type: 'Identifier'},
+        { name: 'created_by_ref', type: 'Identifier' },
         { name: 'created', type: 'Timestamp', mandatory: true, notNull: true, },
         { name: 'modified', type: 'Timestamp', mandatory: true, notNull: true, },
         { name: 'revoked', type: 'Boolean', default: 'False' },
-        { name: 'labels', type: 'List', listType: 'String'},
+        { name: 'labels', type: 'List', listType: 'String' },
         { name: 'confidence', type: 'Integer', min: 0, max: 100, },
-        { name: 'lang', type: 'String'},
-        { name: 'external_references', type: 'List', listType: "external_reference"},
-        { name: 'object_marking_refs', type: 'List', listType: 'Identifier'},
-        { name: 'granular_markings', type: 'List', listType: 'granular_marking'}
+        { name: 'lang', type: 'String' },
+        { name: 'external_references', type: 'List', listType: "external_reference" },
+        { name: 'object_marking_refs', type: 'List', listType: 'Identifier' },
+        { name: 'granular_markings', type: 'List', listType: 'granular_marking' }
       ]
     },
     {
@@ -95,9 +96,9 @@ export const schema: ISchemaFile = {
         { name: 'id', type: 'Identifier', mandatory: true, notNull: true, },
         { name: 'type', type: 'String', mandatory: true, notNull: true, },
         { name: 'spec_version', type: 'String', default: '2.1' },
-        { name: 'object_marking_refs', type: 'List', listType: 'Identifier'},
-        { name: 'granular_markings', type: 'List', listType: 'granular_marking'},
-        { name: 'extensions', type: 'Dictionary'},
+        { name: 'object_marking_refs', type: 'List', listType: 'Identifier' },
+        { name: 'granular_markings', type: 'List', listType: 'granular_marking' },
+        { name: 'extensions', type: 'Dictionary' },
         { name: 'defanged', type: 'Boolean', default: 'False' }
       ]
     },
@@ -109,23 +110,23 @@ export const schema: ISchemaFile = {
         { name: 'id', type: 'Identifier', mandatory: true, notNull: true, },
         { name: 'type', type: 'String', mandatory: true, notNull: true, },
         { name: 'spec_version', type: 'String', mandatory: true, notNull: true, },
-        { name: 'created_by_ref', type: 'Identifier'},
+        { name: 'created_by_ref', type: 'Identifier' },
         { name: 'created', type: 'Timestamp', mandatory: true, notNull: true, },
         { name: 'modified', type: 'Timestamp', mandatory: true, notNull: true, },
         { name: 'revoked', type: 'Boolean', default: 'False' },
-        { name: 'labels', type: 'List', listType: 'String'},
+        { name: 'labels', type: 'List', listType: 'String' },
         { name: 'confidence', type: 'Integer', min: 0, max: 100, },
-        { name: 'lang', type: 'String'},
-        { name: 'external_references', type: 'List', listType: 'external_reference'},
-        { name: 'object_marking_refs', type: 'List', listType: 'Identifier'},
-        { name: 'granular_markings', type: 'List', listType: 'granular_marking'},
+        { name: 'lang', type: 'String' },
+        { name: 'external_references', type: 'List', listType: 'external_reference' },
+        { name: 'object_marking_refs', type: 'List', listType: 'Identifier' },
+        { name: 'granular_markings', type: 'List', listType: 'granular_marking' },
         // The following are not specified in the core of relationships, but all relationships require these so including here.
         { name: 'relationship_type', type: 'String', mandatory: true, notNull: true, },
-        { name: 'description', type: 'String'},
+        { name: 'description', type: 'String' },
         { name: 'source_ref', type: 'Identifier', mandatory: true, notNull: true, },
         { name: 'target_ref', type: 'Identifier', mandatory: true, notNull: true, },
-        { name: 'start_time', type: 'Timestamp'},
-        { name: 'end_time', type: 'Timestamp'}
+        { name: 'start_time', type: 'Timestamp' },
+        { name: 'end_time', type: 'Timestamp' }
       ]
     },
     {
@@ -136,24 +137,24 @@ export const schema: ISchemaFile = {
         { name: 'id_', type: 'Identifier', mandatory: true, notNull: true, },
         { name: 'type', type: 'String', mandatory: true, notNull: true, },
         { name: 'spec_version', type: 'String', mandatory: true, notNull: true, },
-        { name: 'created_by_ref', type: 'Identifier'},
+        { name: 'created_by_ref', type: 'Identifier' },
         { name: 'created', type: 'Timestamp', mandatory: true, notNull: true, },
         { name: 'modified', type: 'Timestamp', mandatory: true, notNull: true, },
         { name: 'revoked', type: 'Boolean', default: 'False' },
-        { name: 'labels', type: 'List', listType: 'String'},
-        { name: 'confidence', type: 'Integer'},
-        { name: 'lang', type: 'String'},
-        { name: 'external_references', type: 'List', listType: 'external_reference'},
-        { name: 'object_marking_refs', type: 'List', listType: 'Identifier'},
-        { name: 'granular_markings', type: 'List', listType: 'granular_marking'},
+        { name: 'labels', type: 'List', listType: 'String' },
+        { name: 'confidence', type: 'Integer' },
+        { name: 'lang', type: 'String' },
+        { name: 'external_references', type: 'List', listType: 'external_reference' },
+        { name: 'object_marking_refs', type: 'List', listType: 'Identifier' },
+        { name: 'granular_markings', type: 'List', listType: 'granular_marking' },
         // sighting specific.  TODO: Break out relationship-meta and include as superClass
-        { name: 'description', type: 'String'},
-        { name: 'first_seen', type: 'Timestamp'},
-        { name: 'last_seen', type: 'Timestamp'},
-        { name: 'count', type: 'Integer'},
+        { name: 'description', type: 'String' },
+        { name: 'first_seen', type: 'Timestamp' },
+        { name: 'last_seen', type: 'Timestamp' },
+        { name: 'count', type: 'Integer' },
         { name: 'sighting_of_ref', type: 'Identifier', mandatory: true, notNull: true, },
-        { name: 'observed_data_refs', type: 'List', listType: 'Identifier'}, // observed data scos
-        { name: 'where_sighted_refs', type: 'List', listType: 'Identifier'}, // identity or location sdos
+        { name: 'observed_data_refs', type: 'List', listType: 'Identifier' }, // observed data scos
+        { name: 'where_sighted_refs', type: 'List', listType: 'Identifier' }, // identity or location sdos
         { name: 'summary', type: 'Boolean', default: 'False' }
 
       ]
@@ -165,15 +166,15 @@ export const schema: ISchemaFile = {
         { name: 'id', type: 'String', mandatory: true, notNull: true, },
         { name: 'type', type: 'String', mandatory: true, notNull: true, },
         { name: 'spec_version', type: 'String', mandatory: true, notNull: true, default: '2.1' },
-        { name: 'created_by_ref', type: 'Identifier'},
+        { name: 'created_by_ref', type: 'Identifier' },
         { name: 'created', type: 'Timestamp', mandatory: true, notNull: true, },
         { name: 'modified', type: 'Timestamp', mandatory: true, notNull: true, },
         { name: 'revoked', type: 'Boolean', default: 'False' },
-        { name: 'labels', type: 'List', listType: 'String'},
-        { name: 'confidence', type: 'Integer'},
-        { name: 'external_references', type: 'List', listType: 'external_reference'},
-        { name: 'object_marking_refs', type: 'List', listType: 'Identifier'},
-        { name: 'granular_markings', type: 'List', listType: 'granular_marking'}
+        { name: 'labels', type: 'List', listType: 'String' },
+        { name: 'confidence', type: 'Integer' },
+        { name: 'external_references', type: 'List', listType: 'external_reference' },
+        { name: 'object_marking_refs', type: 'List', listType: 'Identifier' },
+        { name: 'granular_markings', type: 'List', listType: 'granular_marking' }
       ]
     },
     {
@@ -183,11 +184,11 @@ export const schema: ISchemaFile = {
         { name: 'id', type: 'String', mandatory: true, notNull: true, },
         { name: 'type', type: 'String', mandatory: true, notNull: true, },
         { name: 'spec_version', type: 'String', mandatory: true, notNull: true, default: '2.1' },
-        { name: 'created_by_ref', type: 'String'},
+        { name: 'created_by_ref', type: 'String' },
         { name: 'created', type: 'Timestamp', mandatory: true, notNull: true, },
-        { name: 'external_references', type: 'List', listType: 'external_reference'},
-        { name: 'object_marking_refs', type: 'List', listType: 'Identifier'},
-        { name: 'granular_markings', type: 'List', listType: 'granular_marking'}
+        { name: 'external_references', type: 'List', listType: 'external_reference' },
+        { name: 'object_marking_refs', type: 'List', listType: 'Identifier' },
+        { name: 'granular_markings', type: 'List', listType: 'granular_marking' }
       ]
     },
     {
@@ -201,12 +202,12 @@ export const schema: ISchemaFile = {
       description: "The Artifact Object permits capturing an array of bytes (8-bits), as a base64-encoded string string, or linking to a file-like payload.",
       superClasses: ['cyberobservablecore'],
       properties: [
-        { name: 'mime_type', type: 'String'},
-        { name: 'payload_bin', type: 'Binary'},
-        { name: 'url', type: 'String'},
-        { name: 'hashes', type: 'Hashes'},
-        { name: 'encryption_algorithm', type: 'Enum', enumType: 'encryption_algorithm_enum'},
-        { name: 'decryption_key', type: 'String'}
+        { name: 'mime_type', type: 'String' },
+        { name: 'payload_bin', type: 'Binary' },
+        { name: 'url', type: 'String' },
+        { name: 'hashes', type: 'Hashes' },
+        { name: 'encryption_algorithm', type: 'Enum', enumType: 'encryption_algorithm_enum' },
+        { name: 'decryption_key', type: 'String' }
       ]
     },
     // {  // OLD NOT IN SPEC
@@ -229,9 +230,9 @@ export const schema: ISchemaFile = {
       superClasses: ['core'],
       properties: [
         { name: 'name', type: 'String', mandatory: true, notNull: true, },
-        { name: 'description', type: 'String'},
-        { name: 'aliases', type: 'List'},
-        { name: 'kill_chain_phases', type: 'List', listType: 'kill_chain_phase'}
+        { name: 'description', type: 'String' },
+        { name: 'aliases', type: 'List' },
+        { name: 'kill_chain_phases', type: 'List', listType: 'kill_chain_phase' }
       ]
     },
     {
@@ -246,8 +247,8 @@ export const schema: ISchemaFile = {
       superClasses: ['cyberobservablecore'],
       properties: [
         { name: 'number', type: 'Integer', mandatory: true, notNull: true, },
-        { name: 'name', type: 'String'},
-        { name: 'rir', type: 'String'}
+        { name: 'name', type: 'String' },
+        { name: 'rir', type: 'String' }
       ]
     },
     {
@@ -268,11 +269,11 @@ export const schema: ISchemaFile = {
       superClasses: ['core'],
       properties: [
         { name: 'name', type: 'String', mandatory: true, notNull: true, },
-        { name: 'description', type: 'String'},
-        { name: 'aliases', type: 'List', listType: 'String'},
-        { name: 'first_seen', type: 'Timestamp'},
-        { name: 'last_seen', type: 'Timestamp'},
-        { name: 'objective', type: 'String'}
+        { name: 'description', type: 'String' },
+        { name: 'aliases', type: 'List', listType: 'String' },
+        { name: 'first_seen', type: 'Timestamp' },
+        { name: 'last_seen', type: 'Timestamp' },
+        { name: 'objective', type: 'String' }
       ]
     },
     {
@@ -311,7 +312,7 @@ export const schema: ISchemaFile = {
       superClasses: ['core'],
       properties: [
         { name: 'name', type: 'String', mandatory: true, notNull: true, },
-        { name: 'description', type: 'String'},
+        { name: 'description', type: 'String' },
         { name: 'action', type: 'String' }, //ATTN: This is reserved, but not currently implemented in the spec
       ]
     },
@@ -327,11 +328,11 @@ export const schema: ISchemaFile = {
       superClasses: ['cyberobservablecore'],
       properties: [
         { name: 'path', type: 'String', mandatory: true, notNull: true, },
-        { name: 'path_enc', type: 'String'},
-        { name: 'ctime', type: 'Timestamp'},
-        { name: 'mtime', type: 'Timestamp'},
-        { name: 'atime', type: 'Timestamp'},
-        { name: 'contains_refs', type: 'List', listType: 'Identifier'}
+        { name: 'path_enc', type: 'String' },
+        { name: 'ctime', type: 'Timestamp' },
+        { name: 'mtime', type: 'Timestamp' },
+        { name: 'atime', type: 'Timestamp' },
+        { name: 'contains_refs', type: 'List', listType: 'Identifier' }
       ]
     },
     {
@@ -340,7 +341,7 @@ export const schema: ISchemaFile = {
       superClasses: ['cyberobservablecore'],
       properties: [
         { name: 'value', type: 'String', mandatory: true, notNull: true, },
-        { name: 'resolves_to_refs', type: 'List', listType: 'Identifier'}
+        { name: 'resolves_to_refs', type: 'List', listType: 'Identifier' }
       ]
     },
     {
@@ -367,8 +368,8 @@ export const schema: ISchemaFile = {
       superClasses: ['cyberobservablecore'],
       properties: [
         { name: 'value', type: 'String', mandatory: true, notNull: true, },
-        { name: 'display_name', type: 'String'},
-        { name: 'belongs_to_ref', type: 'Identifier'}
+        { name: 'display_name', type: 'String' },
+        { name: 'belongs_to_ref', type: 'Identifier' }
       ]
     },
     {
@@ -377,20 +378,20 @@ export const schema: ISchemaFile = {
       superClasses: ['cyberobservablecore'],
       properties: [
         { name: 'is_multipart', type: 'Boolean', mandatory: true, notNull: true, },
-        { name: 'date', type: 'Timestamp'},
-        { name: 'content_type', type: 'String'},
-        { name: 'from_ref', type: 'Identifier'},
-        { name: 'sender_ref', type: 'Identifier'},
-        { name: 'to_refs', type: 'List', listType: 'Identifier'},
-        { name: 'cc_refs', type: 'List', listType: 'Identifier'},
-        { name: 'bcc_refs', type: 'List', listType: 'Identifier'},
-        { name: 'message_id', type: 'String'},
-        { name: 'subject', type: 'String'},
-        { name: 'received_lines', type: 'List', listType: 'String'},
-        { name: 'additional_header_fields', type: 'Dictionary'},
-        { name: 'body', type: 'String'},
-        { name: 'body_multipart', type: 'List', listType: 'email_mime_part_type'},
-        { name: 'raw_email_ref', type: 'Identifier'}
+        { name: 'date', type: 'Timestamp' },
+        { name: 'content_type', type: 'String' },
+        { name: 'from_ref', type: 'Identifier' },
+        { name: 'sender_ref', type: 'Identifier' },
+        { name: 'to_refs', type: 'List', listType: 'Identifier' },
+        { name: 'cc_refs', type: 'List', listType: 'Identifier' },
+        { name: 'bcc_refs', type: 'List', listType: 'Identifier' },
+        { name: 'message_id', type: 'String' },
+        { name: 'subject', type: 'String' },
+        { name: 'received_lines', type: 'List', listType: 'String' },
+        { name: 'additional_header_fields', type: 'Dictionary' },
+        { name: 'body', type: 'String' },
+        { name: 'body_multipart', type: 'List', listType: 'email_mime_part_type' },
+        { name: 'raw_email_ref', type: 'Identifier' }
       ]
     },
     {
@@ -410,11 +411,11 @@ export const schema: ISchemaFile = {
       description: "The extension-definition object represents a specific extension.",
       superClasses: ['core'],
       properties: [
-        { name: 'name', type: 'String'},
+        { name: 'name', type: 'String' },
         { name: 'schema', type: 'String', mandatory: true, notNull: true, },
         { name: 'version', type: 'String', mandatory: true, notNull: true, },
         { name: 'extension_types', type: 'List', listType: 'Enum', mandatory: true, notNull: true, },
-        { name: 'extension_properties', type: 'List', listType: 'String'}
+        { name: 'extension_properties', type: 'List', listType: 'String' }
       ]
     },
     {
@@ -422,18 +423,18 @@ export const schema: ISchemaFile = {
       description: "The File Object represents the properties of a file.",
       superClasses: ['cyberobservablecore'],
       properties: [
-        { name: 'hashes', type: 'Hashes'},
-        { name: 'size', type: 'Integer', min: 0},
-        { name: 'name', type: 'String'},
-        { name: 'name_enc', type: 'String'},
-        { name: 'magic_number_hex', type: 'Hex'},
-        { name: 'mime_type', type: 'String'},
-        { name: 'ctime', type: 'Timestamp'},
-        { name: 'mtime', type: 'Timestamp'},
-        { name: 'atime', type: 'Timestamp'},
-        { name: 'parent_directory_ref', type: 'Identifier'},
-        { name: 'contains_refs', type: 'List', listType: 'Identifier'},
-        { name: 'content_ref', type: 'Identifier'}
+        { name: 'hashes', type: 'Hashes' },
+        { name: 'size', type: 'Integer', min: 0 },
+        { name: 'name', type: 'String' },
+        { name: 'name_enc', type: 'String' },
+        { name: 'magic_number_hex', type: 'Hex' },
+        { name: 'mime_type', type: 'String' },
+        { name: 'ctime', type: 'Timestamp' },
+        { name: 'mtime', type: 'Timestamp' },
+        { name: 'atime', type: 'Timestamp' },
+        { name: 'parent_directory_ref', type: 'Identifier' },
+        { name: 'contains_refs', type: 'List', listType: 'Identifier' },
+        { name: 'content_ref', type: 'Identifier' }
       ]
     },
     {
@@ -441,8 +442,8 @@ export const schema: ISchemaFile = {
       description: "A Grouping object explicitly asserts that the referenced STIX Objects have a shared content.",
       superClasses: ['core'],
       properties: [
-        { name: 'name', type: 'String'},
-        { name: 'description', type: 'String'},
+        { name: 'name', type: 'String' },
+        { name: 'description', type: 'String' },
         { name: 'context', type: 'open_vocab', enumType: 'grouping_context_ov', mandatory: true, notNull: true, },
         { name: 'object_refs', type: 'List', listType: 'Identifier', mandatory: true, notNull: true, }
       ]
@@ -464,12 +465,12 @@ export const schema: ISchemaFile = {
       description: "Identities can represent actual individuals, organizations, or groups (e.g., ACME, Inc.) as well as classes of individuals, organizations, or groups.",
       superClasses: ['core'],
       properties: [
-        { name: 'name', type: 'String', mandatory: true, notNull: true},
-        { name: 'description', type: 'String'},
-        { name: 'roles', type: 'List', listType: 'String'},
-        { name: 'identity_class', type: 'open_vocab', enumType: "identity_class_ov"},
-        { name: 'sectors', type: 'List', listType: 'open_vocab', enumType: "industry_sector_ov"},
-        { name: 'contact_information', type: 'String'}
+        { name: 'name', type: 'String', mandatory: true, notNull: true },
+        { name: 'description', type: 'String' },
+        { name: 'roles', type: 'List', listType: 'String' },
+        { name: 'identity_class', type: 'open_vocab', enumType: "identity_class_ov" },
+        { name: 'sectors', type: 'List', listType: 'open_vocab', enumType: "industry_sector_ov" },
+        { name: 'contact_information', type: 'String' }
       ]
     },
     {
@@ -489,15 +490,15 @@ export const schema: ISchemaFile = {
       description: "Indicators contain a pattern that can be used to detect suspicious or malicious cyber activity.",
       superClasses: ['core'],
       properties: [
-        { name: 'name', type: 'String'},
-        { name: 'description', type: 'String'},
+        { name: 'name', type: 'String' },
+        { name: 'description', type: 'String' },
         { name: 'indicator_types', type: 'List', listType: 'open_vocab', enumType: 'pattern_type_ov', notNull: true, },
         { name: 'pattern', type: 'String', mandatory: true, notNull: true, },
-        { name: 'pattern_type', type: 'open_vocab', enumType:'pattern_type_ov', notNull: true, },
-        { name: 'pattern_version', type: 'String'},
+        { name: 'pattern_type', type: 'open_vocab', enumType: 'pattern_type_ov', notNull: true, },
+        { name: 'pattern_version', type: 'String' },
         { name: 'valid_from', type: 'Timestamp', mandatory: true, notNull: true, },
-        { name: 'valid_until', type: 'Timestamp'},
-        { name: 'kill_chain_phases', type: 'List', listType: 'kill_chain_phase'}
+        { name: 'valid_until', type: 'Timestamp' },
+        { name: 'kill_chain_phases', type: 'List', listType: 'kill_chain_phase' }
       ]
     },
     {
@@ -506,12 +507,12 @@ export const schema: ISchemaFile = {
       superClasses: ['core'],
       properties: [
         { name: 'name', type: 'String', mandatory: true, notNull: true, },
-        { name: 'description', type: 'String'},
-        { name: 'infrastructure_types', type: 'List', listType: 'open_vocab', enumType: "infrastructure_type_ov"},
-        { name: 'aliases', type: 'List', listType: 'String'},
-        { name: 'kill_chain_phases', type: 'List', listType: 'kill_chain_phase'},
-        { name: 'first_seen', type: 'Timestamp'},
-        { name: 'last_seen', type: 'Timestamp'}
+        { name: 'description', type: 'String' },
+        { name: 'infrastructure_types', type: 'List', listType: 'open_vocab', enumType: "infrastructure_type_ov" },
+        { name: 'aliases', type: 'List', listType: 'String' },
+        { name: 'kill_chain_phases', type: 'List', listType: 'kill_chain_phase' },
+        { name: 'first_seen', type: 'Timestamp' },
+        { name: 'last_seen', type: 'Timestamp' }
       ]
     },
     {
@@ -520,14 +521,14 @@ export const schema: ISchemaFile = {
       superClasses: ['core'],
       properties: [
         { name: 'name', type: 'String', mandatory: true, notNull: true, },
-        { name: 'description', type: 'String'},
-        { name: 'aliases', type: 'List', listType: 'String'},
-        { name: 'first_seen', type: 'Timestamp'},
-        { name: 'last_seen', type: 'Timestamp'},
-        { name: 'goals', type: 'List', listType: 'String'},
-        { name: 'resource_level', type: 'open_vocab', enumType: "attack_resource_level_ov"},
-        { name: 'primary_motivation', type: 'open_vocab', enumType: "attack_motivation_ov"},
-        { name: 'secondary_motivations', type: 'List', listType: 'open_vocab', enumType: "attack_motivation_ov"}
+        { name: 'description', type: 'String' },
+        { name: 'aliases', type: 'List', listType: 'String' },
+        { name: 'first_seen', type: 'Timestamp' },
+        { name: 'last_seen', type: 'Timestamp' },
+        { name: 'goals', type: 'List', listType: 'String' },
+        { name: 'resource_level', type: 'open_vocab', enumType: "attack_resource_level_ov" },
+        { name: 'primary_motivation', type: 'open_vocab', enumType: "attack_motivation_ov" },
+        { name: 'secondary_motivations', type: 'List', listType: 'open_vocab', enumType: "attack_motivation_ov" }
       ]
     },
     {
@@ -542,8 +543,8 @@ export const schema: ISchemaFile = {
       superClasses: ['cyberobservablecore'],
       properties: [
         { name: 'value', type: 'String', mandatory: true, notNull: true, },
-        { name: 'resolves_to_refs', type: 'List', listType: 'Identifier'},
-        { name: 'belongs_to_refs', type: 'List', listType: 'Identifier'}
+        { name: 'resolves_to_refs', type: 'List', listType: 'Identifier' },
+        { name: 'belongs_to_refs', type: 'List', listType: 'Identifier' }
       ]
     },
     {
@@ -552,8 +553,8 @@ export const schema: ISchemaFile = {
       superClasses: ['cyberobservablecore'],
       properties: [
         { name: 'value', type: 'String', mandatory: true, notNull: true, },
-        { name: 'resolves_to_refs', type: 'List', listType: 'Identifier'},
-        { name: 'belongs_to_refs', type: 'List', listType: 'Identifier'}
+        { name: 'resolves_to_refs', type: 'List', listType: 'Identifier' },
+        { name: 'belongs_to_refs', type: 'List', listType: 'Identifier' }
       ]
     },
     {
@@ -562,7 +563,7 @@ export const schema: ISchemaFile = {
       superClasses: ['languagemetacore'],
       properties: [
         { name: 'object_ref', type: 'String', mandatory: true, notNull: true, },
-        { name: 'object_modified', type: 'Timestamp'},
+        { name: 'object_modified', type: 'Timestamp' },
         { name: 'contents', type: 'Dictionary', mandatory: true, notNull: true, }
       ]
     },
@@ -571,17 +572,17 @@ export const schema: ISchemaFile = {
       description: "A Location represents a geographic location. The location may be described as any, some or all of the following: region (e.g., North America), civic address (e.g. New York, US), latitude and longitude.",
       superClasses: ['core'],
       properties: [
-        { name: 'name', type: 'String'},
-        { name: 'description', type: 'String'},
-        { name: 'latitude', type: 'Float'},
-        { name: 'longitude', type: 'Float'},
-        { name: 'precision', type: 'Float'},
-        { name: 'region', type: 'open_vocab', enumType: "region_ov"},
-        { name: 'country', type: 'String'},
-        { name: 'administrative_area', type: 'String'},
-        { name: 'city', type: 'String'},
-        { name: 'street_address', type: 'String'},
-        { name: 'postal_code', type: 'String'}
+        { name: 'name', type: 'String' },
+        { name: 'description', type: 'String' },
+        { name: 'latitude', type: 'Float' },
+        { name: 'longitude', type: 'Float' },
+        { name: 'precision', type: 'Float' },
+        { name: 'region', type: 'open_vocab', enumType: "region_ov" },
+        { name: 'country', type: 'String' },
+        { name: 'administrative_area', type: 'String' },
+        { name: 'city', type: 'String' },
+        { name: 'street_address', type: 'String' },
+        { name: 'postal_code', type: 'String' }
       ]
     },
     {
@@ -597,19 +598,19 @@ export const schema: ISchemaFile = {
       description: "Malware is a type of TTP that is also known as malicious code and malicious software, refers to a program that is inserted into a system, usually covertly, with the intent of compromising the confidentiality, integrity, or availability of the victim's data, applications, or operating system (OS) or of otherwise annoying or disrupting the victim.",
       superClasses: ['core'],
       properties: [
-        { name: 'name', type: 'String'},
-        { name: 'description', type: 'String'},
-        { name: 'malware_types', type: 'List', listType: 'open_vocab', enumType: 'malware_type_ov'},
-        { name: 'is_family', type: 'Boolean', notNull: true, mandatory: true},
-        { name: 'aliases', type: 'List', listType: 'String'},
-        { name: 'kill_chain_phases', type: 'List', listType: 'kill_chain_phase'},
-        { name: 'first_seen', type: 'Timestamp'},
-        { name: 'last_seen', type: 'Timestamp'},
-        { name: 'operating_system_refs', type:'List', listType: 'Identifier'},
-        { name: 'architecture_execution_envs', type: 'List', listType: 'open_vocab', enumType: 'processor_architecture_ov'},
-        { name: 'implementaion_languages', type: 'List', listType: 'open_vocab', enumType: 'implementation_language_ov'},
-        { name: 'capabilities', type: 'List', listType: 'open_vocab', enumType: 'malware_capabilities_ov'},
-        { name: 'sample_refs', type: 'List', listType: 'Identifier'}
+        { name: 'name', type: 'String' },
+        { name: 'description', type: 'String' },
+        { name: 'malware_types', type: 'List', listType: 'open_vocab', enumType: 'malware_type_ov' },
+        { name: 'is_family', type: 'Boolean', notNull: true, mandatory: true },
+        { name: 'aliases', type: 'List', listType: 'String' },
+        { name: 'kill_chain_phases', type: 'List', listType: 'kill_chain_phase' },
+        { name: 'first_seen', type: 'Timestamp' },
+        { name: 'last_seen', type: 'Timestamp' },
+        { name: 'operating_system_refs', type: 'List', listType: 'Identifier' },
+        { name: 'architecture_execution_envs', type: 'List', listType: 'open_vocab', enumType: 'processor_architecture_ov' },
+        { name: 'implementaion_languages', type: 'List', listType: 'open_vocab', enumType: 'implementation_language_ov' },
+        { name: 'capabilities', type: 'List', listType: 'open_vocab', enumType: 'malware_capabilities_ov' },
+        { name: 'sample_refs', type: 'List', listType: 'Identifier' }
       ]
     },
     {
@@ -618,21 +619,21 @@ export const schema: ISchemaFile = {
       superClasses: ['core'],
       properties: [
         { name: 'product', type: 'String', notNull: true, mandatory: true, },
-        { name: 'version', type: 'String'},
-        { name: 'host_vm_ref', type: 'Identifier'}, // The value of this property MUST be the identifier for a SCO software object.
-        { name: 'operating_system_ref', type: 'Identifier'}, // The value of this property MUST be the identifier for a SCO software object.
-        { name: 'installed_software_refs', type: 'List', listType: 'Identifier'}, // The value of this property MUST be the identifier for a SCO software object.
-        { name: 'configuration_version', type: 'String'},
-        { name: 'modules', type: 'List', listType: 'String'},
-        { name: 'analysis_engine_version', type: 'String'},
-        { name: 'analysis_definition_version', type: 'String'},
-        { name: 'submitted', type: 'Timestamp'},
-        { name: 'analysis_started', type: 'Timestamp'},
-        { name: 'analysis_ended', type: 'Timestamp'},
-        { name: "result_name", type: "String"},
-        { name: "result", type: "open_vocab", enumType: 'malware_result_ov'}, //TODO: enforce open-vocab malware-result-ov
-        { name: 'analysis_sco_refs', type: 'List', listType: 'Identifier'},
-        { name: "sample_ref", type: "Identifier"},
+        { name: 'version', type: 'String' },
+        { name: 'host_vm_ref', type: 'Identifier' }, // The value of this property MUST be the identifier for a SCO software object.
+        { name: 'operating_system_ref', type: 'Identifier' }, // The value of this property MUST be the identifier for a SCO software object.
+        { name: 'installed_software_refs', type: 'List', listType: 'Identifier' }, // The value of this property MUST be the identifier for a SCO software object.
+        { name: 'configuration_version', type: 'String' },
+        { name: 'modules', type: 'List', listType: 'String' },
+        { name: 'analysis_engine_version', type: 'String' },
+        { name: 'analysis_definition_version', type: 'String' },
+        { name: 'submitted', type: 'Timestamp' },
+        { name: 'analysis_started', type: 'Timestamp' },
+        { name: 'analysis_ended', type: 'Timestamp' },
+        { name: "result_name", type: "String" },
+        { name: "result", type: "open_vocab", enumType: 'malware_result_ov' }, //TODO: enforce open-vocab malware-result-ov
+        { name: 'analysis_sco_refs', type: 'List', listType: 'Identifier' },
+        { name: "sample_ref", type: "Identifier" },
       ]
     },
     {
@@ -640,9 +641,9 @@ export const schema: ISchemaFile = {
       description: "The marking-definition object represents a specific marking.",
       superClasses: ['markingmetacore'],
       properties: [
-        { name: 'name', type: 'String'},
-        { name: 'definition_type', type: 'String'},
-        { name: 'definition', type: 'Dictionary'}
+        { name: 'name', type: 'String' },
+        { name: 'definition_type', type: 'String' },
+        { name: 'definition', type: 'Dictionary' }
       ]
     },
     {
@@ -664,11 +665,11 @@ export const schema: ISchemaFile = {
       description: "The Network Traffic Object represents arbitrary network traffic that originates from a source and is addressed to a destination.",
       superClasses: ['cyberobservablecore'],
       properties: [
-        { name: 'start', type: 'Timestamp'},
-        { name: 'end', type: 'Timestamp'},
-        { name: 'is_active', type: 'Boolean'},
-        { name: 'src_ref', type: 'Identifier'},
-        { name: 'dst_ref', type: 'Identifier'},
+        { name: 'start', type: 'Timestamp' },
+        { name: 'end', type: 'Timestamp' },
+        { name: 'is_active', type: 'Boolean' },
+        { name: 'src_ref', type: 'Identifier' },
+        { name: 'dst_ref', type: 'Identifier' },
         { name: 'src_port', type: 'Integer', min: 0, max: 65535, },
         { name: 'dst_port', type: 'Integer', min: 0, max: 65535, },
         { name: 'protocols', type: 'List', listType: 'String', mandatory: true },
@@ -676,11 +677,11 @@ export const schema: ISchemaFile = {
         { name: 'dst_byte_count', type: 'Integer', min: 0, },
         { name: 'src_packets', type: 'Integer', min: 0, },
         { name: 'dst_packets', type: 'Integer', min: 0, },
-        { name: 'ipfix', type: 'Dictionary'},
-        { name: 'src_payload_ref', type: 'Identifier'},
-        { name: 'dst_payload_ref', type: 'Identifier'},
-        { name: 'encapsulates_refs', type: 'List', listType: 'Identifier'},
-        { name: 'encapsulated_by_ref', type: 'Identifier'}
+        { name: 'ipfix', type: 'Dictionary' },
+        { name: 'src_payload_ref', type: 'Identifier' },
+        { name: 'dst_payload_ref', type: 'Identifier' },
+        { name: 'encapsulates_refs', type: 'List', listType: 'Identifier' },
+        { name: 'encapsulated_by_ref', type: 'Identifier' }
       ]
     },
     {
@@ -688,9 +689,9 @@ export const schema: ISchemaFile = {
       description: "A Note is a comment or note containing informative text to help explain the context of one or more STIX Objects (SDOs or SROs) or to provide additional analysis that is not contained in the original object.",
       superClasses: ['core'],
       properties: [
-        { name: 'abstract', type: 'String'},
+        { name: 'abstract', type: 'String' },
         { name: 'content', type: 'String', mandatory: true, notNull: true, },
-        { name: 'authors', type: 'List', listType: 'String'},
+        { name: 'authors', type: 'List', listType: 'String' },
         { name: 'object_refs', type: 'List', listType: 'Identifier', mandatory: true, notNull: true, }
       ]
     },
@@ -702,7 +703,7 @@ export const schema: ISchemaFile = {
         { name: 'first_observed', type: 'Timestamp', mandatory: true, notNull: true, },
         { name: 'last_observed', type: 'Timestamp', mandatory: true, notNull: true, },
         { name: 'number_observed', type: 'Integer', min: 1, mandatory: true, notNull: true, },
-        { name: 'objects_refs', type: 'List', listType: 'Identifier'}
+        { name: 'objects_refs', type: 'List', listType: 'Identifier' }
       ]
     },
     {
@@ -710,9 +711,9 @@ export const schema: ISchemaFile = {
       description: "An Opinion is an assessment of the correctness of the information in a STIX Object produced by a different entity and captures the level of agreement or disagreement using a fixed scale.",
       superClasses: ['core'],
       properties: [
-        { name: 'explanation', type: 'String'},
-        { name: 'authors', type: 'List', listType: 'String'},
-        { name: 'opinion', type: 'Enum', enumType:'opinion_enum', mandatory: true, notNull: true, }, // TODO: enforce opinion-enum
+        { name: 'explanation', type: 'String' },
+        { name: 'authors', type: 'List', listType: 'String' },
+        { name: 'opinion', type: 'Enum', enumType: 'opinion_enum', mandatory: true, notNull: true, }, // TODO: enforce opinion-enum
         { name: 'object_refs', type: 'List', listType: 'Identifier', mandatory: true, notNull: true, }
       ]
     },
@@ -733,17 +734,17 @@ export const schema: ISchemaFile = {
       description: "The Process Object represents common properties of an instance of a computer program as executed on an operating system.",
       superClasses: ['cyberobservablecore'],
       properties: [
-        { name: 'is_hidden', type: 'Boolean'},
-        { name: 'pid', type: 'Integer'},
-        { name: 'created_time', type: 'Timestamp'},
-        { name: 'cwd', type: 'String'},
-        { name: 'command_line', type: 'String'},
-        { name: 'environment_variables', type: 'Dictionary'},
-        { name: 'opened_connection_refs', type: 'List', listType: 'Identifier'},
-        { name: 'creator_user_ref', type: 'Identifier'},
-        { name: 'image_ref', type: 'Identifier'},
-        { name: 'parent_ref', type: 'Identifier'},
-        { name: 'child_refs', type: 'List', listType: 'Identifier'}
+        { name: 'is_hidden', type: 'Boolean' },
+        { name: 'pid', type: 'Integer' },
+        { name: 'created_time', type: 'Timestamp' },
+        { name: 'cwd', type: 'String' },
+        { name: 'command_line', type: 'String' },
+        { name: 'environment_variables', type: 'Dictionary' },
+        { name: 'opened_connection_refs', type: 'List', listType: 'Identifier' },
+        { name: 'creator_user_ref', type: 'Identifier' },
+        { name: 'image_ref', type: 'Identifier' },
+        { name: 'parent_ref', type: 'Identifier' },
+        { name: 'child_refs', type: 'List', listType: 'Identifier' }
       ]
     },
     {
@@ -759,8 +760,8 @@ export const schema: ISchemaFile = {
       superClasses: ['core'],
       properties: [
         { name: 'name', type: 'String', mandatory: true, notNull: true, },
-        { name: 'description', type: 'String'},
-        { name: 'report_types', type: 'List', listType: 'open_vocab', enumType: 'report_type_ov'}, 
+        { name: 'description', type: 'String' },
+        { name: 'report_types', type: 'List', listType: 'open_vocab', enumType: 'report_type_ov' },
         { name: 'published', type: 'Timestamp', mandatory: true, notNull: true, },
         { name: 'object_refs', type: 'List', listType: 'Identifier', mandatory: true, notNull: true, }
       ]
@@ -771,10 +772,10 @@ export const schema: ISchemaFile = {
       superClasses: ['cyberobservablecore'],
       properties: [
         { name: 'name', type: 'String', mandatory: true, notNull: true, },
-        { name: 'cpe', type: 'String'},
-        { name: 'languages', type: 'List', listType: 'String'},
-        { name: 'vendor', type: 'String'},
-        { name: 'version', type: 'String'}
+        { name: 'cpe', type: 'String' },
+        { name: 'languages', type: 'List', listType: 'String' },
+        { name: 'vendor', type: 'String' },
+        { name: 'version', type: 'String' }
       ]
     },
     {
@@ -795,18 +796,18 @@ export const schema: ISchemaFile = {
       superClasses: ['core'],
       properties: [
         { name: 'name', type: 'String', mandatory: true, notNull: true, },
-        { name: 'description', type: 'String'},
-        { name: 'threat_actor_types', type: 'List', listType: 'open_vocab', enumType: 'threat_actor_type_ov'},
-        { name: 'aliases', type: 'List', listType: 'String'},
-        { name: 'first_seen', type: 'Timestamp'},
-        { name: 'last_seen', type: 'Timestamp'},
-        { name: 'roles', type: 'List', listType: 'open_vocab', enumType: 'threat_actor_role_ov'},
-        { name: 'goals', type: 'List', listType: 'String'},
-        { name: 'sophistication', type: 'open_vocab', enumType: 'threat_actor_sophistication_ov'},
-        { name: 'resource_level', type: 'open_vocab', enumType: 'attack_resource_level_ov'},
-        { name: 'primary_motivation', type: 'open_vocab', enumType: 'attack_motivation_ov'},
-        { name: 'secondary_motivations', type: 'List', listType: 'open_vocab', enumType: 'attack_motivation_ov'},
-        { name: 'personal_motivations', type: 'List', listType: 'open_vocab', enumType: 'attack_motivation_ov'}
+        { name: 'description', type: 'String' },
+        { name: 'threat_actor_types', type: 'List', listType: 'open_vocab', enumType: 'threat_actor_type_ov' },
+        { name: 'aliases', type: 'List', listType: 'String' },
+        { name: 'first_seen', type: 'Timestamp' },
+        { name: 'last_seen', type: 'Timestamp' },
+        { name: 'roles', type: 'List', listType: 'open_vocab', enumType: 'threat_actor_role_ov' },
+        { name: 'goals', type: 'List', listType: 'String' },
+        { name: 'sophistication', type: 'open_vocab', enumType: 'threat_actor_sophistication_ov' },
+        { name: 'resource_level', type: 'open_vocab', enumType: 'attack_resource_level_ov' },
+        { name: 'primary_motivation', type: 'open_vocab', enumType: 'attack_motivation_ov' },
+        { name: 'secondary_motivations', type: 'List', listType: 'open_vocab', enumType: 'attack_motivation_ov' },
+        { name: 'personal_motivations', type: 'List', listType: 'open_vocab', enumType: 'attack_motivation_ov' }
       ]
     },
     {
@@ -815,11 +816,11 @@ export const schema: ISchemaFile = {
       superClasses: ['core'],
       properties: [
         { name: 'name', type: 'String', mandatory: true, notNull: true, },
-        { name: 'description', type: 'String'},
-        { name: 'tool_types', type: 'List', listType: 'open_vocab', enumType: 'tool_type_ov'}, 
-        { name: 'aliases', type: 'List', listType: 'String'},
-        { name: 'kill_chain_phases', type: 'List', listType: 'kill_chain_phase'},
-        { name: 'tool_version', type: 'String'}
+        { name: 'description', type: 'String' },
+        { name: 'tool_types', type: 'List', listType: 'open_vocab', enumType: 'tool_type_ov' },
+        { name: 'aliases', type: 'List', listType: 'String' },
+        { name: 'kill_chain_phases', type: 'List', listType: 'kill_chain_phase' },
+        { name: 'tool_version', type: 'String' }
       ]
     },
     {
@@ -835,20 +836,20 @@ export const schema: ISchemaFile = {
       description: "The User Account Object represents an instance of any type of user account, including but not limited to operating system, device, messaging service, and social media platform accounts.",
       superClasses: ['cyberobservablecore'],
       properties: [
-        { name: 'user_id', type: 'String'},
-        { name: 'credential', type: 'String'},
-        { name: 'account_login', type: 'String'},
-        { name: 'account_type', type: 'open_vocab', enumType: 'account_type_ov'},
-        { name: 'display_name', type: 'String'},
-        { name: 'is_service_account', type: 'Boolean'},
-        { name: 'is_privileged', type: 'Boolean'},
-        { name: 'can_escalate_privs', type: 'Boolean'},
-        { name: 'is_disabled', type: 'Boolean'},
-        { name: 'account_created', type: 'Timestamp'},
-        { name: 'account_expires', type: 'Timestamp'},
-        { name: 'credential_last_changed', type: 'Timestamp'},
-        { name: 'account_first_login', type: 'Timestamp'},
-        { name: 'account_last_login', type: 'Timestamp'}
+        { name: 'user_id', type: 'String' },
+        { name: 'credential', type: 'String' },
+        { name: 'account_login', type: 'String' },
+        { name: 'account_type', type: 'open_vocab', enumType: 'account_type_ov' },
+        { name: 'display_name', type: 'String' },
+        { name: 'is_service_account', type: 'Boolean' },
+        { name: 'is_privileged', type: 'Boolean' },
+        { name: 'can_escalate_privs', type: 'Boolean' },
+        { name: 'is_disabled', type: 'Boolean' },
+        { name: 'account_created', type: 'Timestamp' },
+        { name: 'account_expires', type: 'Timestamp' },
+        { name: 'credential_last_changed', type: 'Timestamp' },
+        { name: 'account_first_login', type: 'Timestamp' },
+        { name: 'account_last_login', type: 'Timestamp' }
       ]
     },
     {
@@ -869,7 +870,7 @@ export const schema: ISchemaFile = {
       superClasses: ['core'],
       properties: [
         { name: 'name', type: 'String', mandatory: true, notNull: true, },
-        { name: 'description', type: 'String'},
+        { name: 'description', type: 'String' },
       ]
     },
     {
@@ -877,11 +878,11 @@ export const schema: ISchemaFile = {
       description: "The Registry Key Object represents the properties of a Windows registry key.",
       superClasses: ['cyberobservablecore'],
       properties: [
-        { name: 'key', type: 'String'},
-        { name: 'values', type: 'List', listType: 'windows_registry_value_type'},
-        { name: 'modified_time', type: 'Timestamp'},
-        { name: 'creator_user_ref', type: 'Identifier'},
-        { name: 'number_of_subkeys', type: 'Integer', min: 0}
+        { name: 'key', type: 'String' },
+        { name: 'values', type: 'List', listType: 'windows_registry_value_type' },
+        { name: 'modified_time', type: 'Timestamp' },
+        { name: 'creator_user_ref', type: 'Identifier' },
+        { name: 'number_of_subkeys', type: 'Integer', min: 0 }
       ]
     },
     {
@@ -889,19 +890,19 @@ export const schema: ISchemaFile = {
       description: "The X509 Certificate Object represents the properties of an X.509 certificate.",
       superClasses: ['cyberobservablecore'],
       properties: [
-        { name: 'is_self_signed', type: 'Boolean'},
-        { name: 'hashes', type: 'Hashes'},
-        { name: 'version', type: 'String'},
-        { name: 'serial_number', type: 'String'},
-        { name: 'signature_algorithm', type: 'String'},
-        { name: 'issuer', type: 'String'},
-        { name: 'validity_not_before', type: 'Timestamp'},
-        { name: 'validity_not_after', type: 'Timestamp'},
-        { name: 'subject', type: 'String'},
-        { name: 'subject_public_key_algorithm', type: 'String'},
-        { name: 'subject_public_key_modulus', type: 'String'},
-        { name: 'subject_public_key_exponent', type: 'Integer'},
-        { name: 'x509_v3_extensions', type: 'x509_v3_extensions_type'}
+        { name: 'is_self_signed', type: 'Boolean' },
+        { name: 'hashes', type: 'Hashes' },
+        { name: 'version', type: 'String' },
+        { name: 'serial_number', type: 'String' },
+        { name: 'signature_algorithm', type: 'String' },
+        { name: 'issuer', type: 'String' },
+        { name: 'validity_not_before', type: 'Timestamp' },
+        { name: 'validity_not_after', type: 'Timestamp' },
+        { name: 'subject', type: 'String' },
+        { name: 'subject_public_key_algorithm', type: 'String' },
+        { name: 'subject_public_key_modulus', type: 'String' },
+        { name: 'subject_public_key_exponent', type: 'Integer' },
+        { name: 'x509_v3_extensions', type: 'x509_v3_extensions_type' }
       ]
     }
   ]

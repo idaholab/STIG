@@ -8,13 +8,13 @@ import { hash } from "crypto";
 
 export type SchemaType =
   Binary | Boolean | Dictionary | external_reference | Float | Hashes | Hex |
-  Identifier | Integer | kill_chain_phase | String |   Timestamp | open_vocab | Enum |
+  Identifier | Integer | kill_chain_phase | String | Timestamp | open_vocab | Enum |
   /*List |*/ granular_marking | email_mime_part_type | windows_registry_value_type | x509_v3_extensions_type;
 
 export type s_SchemaType =
   "Binary" | "Boolean" | "Dictionary" | "external_reference" | "Float" | "Hashes" | "Hex" |
   "Identifier" | "Integer" | "kill_chain_phase" | "String" | "Timestamp" | "open_vocab" | "Enum" |
-  "List" | "granular_marking" | "email_mime_part_type" | "windows_registry_value_type" | "x509_v3_extensions_type";
+  "List" | "granular_marking" | "email_mime_part_type" | "windows_registry_value_type" | "x509_v3_extensions_type" | 'EmbeddedMap';
 
 export type Binary = string;
 export type Boolean = boolean;
@@ -45,34 +45,34 @@ export type granular_marking = {
   marking_ref: Identifier
   selectors: List<String>
 }
-export type email_mime_part_type={
+export type email_mime_part_type = {
   body: String
   body_raw_ref: Identifier
   content_type: String
   content_disposition: String
 }
-export type windows_registry_value_type={
-  name:String
-  data:String
-  data_type:windows_registry_datatype_enum
+export type windows_registry_value_type = {
+  name: String
+  data: String
+  data_type: windows_registry_datatype_enum
 }
-export type x509_v3_extensions_type={
-  basic_constraints:String
-  name_constraints:String
-  policy_constraints:String
-  key_usage:String
-  extended_key_usage:String
-  subject_key_identifier:String
-  authority_key_identifier:String
-  subject_alternative_name:String
-  issuer_alternative_name:String
-  subject_directory_attributes:String
-  crl_distribution_points:String
-  inhibit_any_policy:String
-  private_key_usage_period_not_before:Identifier
-  private_key_usage_period_not_after:Identifier
-  certificate_policies:String
-  policy_mappings:String
+export type x509_v3_extensions_type = {
+  basic_constraints: String
+  name_constraints: String
+  policy_constraints: String
+  key_usage: String
+  extended_key_usage: String
+  subject_key_identifier: String
+  authority_key_identifier: String
+  subject_alternative_name: String
+  issuer_alternative_name: String
+  subject_directory_attributes: String
+  crl_distribution_points: String
+  inhibit_any_policy: String
+  private_key_usage_period_not_before: Identifier
+  private_key_usage_period_not_after: Identifier
+  certificate_policies: String
+  policy_mappings: String
 }
 
 
@@ -83,24 +83,24 @@ export type open_vocab =
   pattern_type_ov | processor_architecture_ov | region_ov | report_type_ov | threat_actor_type_ov |
   threat_actor_role_ov | threat_actor_sophistication_ov | tool_type_ov | windows_pebinary_type_ov | grouping_context_ov;
 
-export type s_open_vocab = 
+export type s_open_vocab =
   "string" | "account_type_ov" | "attack_motivation_ov" | "attack_resource_level_ov" | "hash_algorithm_ov" |
   "identity_class_ov" | "implementation_language_ov" | "indicator_type_ov" | "industry_sector_ov" |
   "infrastructure_type_ov" | "malware_result_ov" | "malware_capabilities_ov" | "malware_type_ov" |
   "pattern_type_ov" | "processor_architecture_ov" | "region_ov" | "report_type_ov" | "threat_actor_type_ov" |
-  "threat_actor_role_ov" | "threat_actor_sophistication_ov" | "tool_type_ov" | "windows_pebinary_type_ov"| "grouping_context_ov";
+  "threat_actor_role_ov" | "threat_actor_sophistication_ov" | "tool_type_ov" | "windows_pebinary_type_ov" | "grouping_context_ov";
 
-export type Enum = 
+export type Enum =
   encryption_algorithm_enum | extension_type_enum | network_socket_address_family_enum |
   network_socket_type_enum | opinion_enum | windows_integrity_level_enum |
   windows_registry_datatype_enum | windows_service_start_type_enum |
   windows_service_type_enum | windows_service_status_enum;
 
-export type s_Enum = 
-"encryption_algorithm_enum" | "extension_type_enum" | "network_socket_address_family_enum" |
-"network_socket_type_enum" | "opinion_enum" | "windows_integrity_level_enum" |
-"windows_registry_datatype_enum" | "windows_service_start_type_enum" |
-"windows_service_type_enum" | "windows_service_status_enum";
+export type s_Enum =
+  "encryption_algorithm_enum" | "extension_type_enum" | "network_socket_address_family_enum" |
+  "network_socket_type_enum" | "opinion_enum" | "windows_integrity_level_enum" |
+  "windows_registry_datatype_enum" | "windows_service_start_type_enum" |
+  "windows_service_type_enum" | "windows_service_status_enum";
 
 
 enum account_type_ov {
@@ -136,10 +136,10 @@ enum attack_resource_level_ov {
   organization = "organization",
   government = "government",
 }
-enum grouping_context_ov{
-  suspicious_activity="suspicious-activity",
-  malware_analysis="malware-analysis",
-  unspecified="unspecified",
+enum grouping_context_ov {
+  suspicious_activity = "suspicious-activity",
+  malware_analysis = "malware-analysis",
+  unspecified = "unspecified",
 }
 enum hash_algorithm_ov {
   MD5 = "MD5",
