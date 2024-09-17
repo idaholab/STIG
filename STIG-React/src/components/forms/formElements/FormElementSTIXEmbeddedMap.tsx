@@ -9,6 +9,7 @@ import { s_SchemaType } from '@/types/SchemaType';
 import FormElementSelect from './FormElementSelect';
 import { StixObject } from '@/types/Core';
 import { STIXPropertyRenderer } from '../STIXPropertyRenderer';
+import { STIXPropertyLabel } from '@/components/elements/STIXPropertyLabel';
 
 type Props = {
   // Had to add the "any" to this typing because VS Code was
@@ -185,7 +186,13 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
   return (
     <>
       <div className='flex gap-2 mb-2 items-center'>
-        <span>{property?.name || ''}</span>
+        <STIXPropertyLabel
+          propName={property ? property?.name : ''}
+          propertyType={property ? property.type : undefined}
+          showTypeSelector={showTypeSelector}
+          onTypeChange={onTypeChange}
+          additionalLabelClasses='mr-2'
+        />
         {showTypeSelector ?
           <FormElementSelect
             options={["array", "string", "integer", "boolean", "number", "object"]}

@@ -66,6 +66,7 @@ const FormElementSTIXPropertySelection: React.FC<Props> = ({
                 value={newPropertyName}
                 onChange={(event) => { setNewPropertyName(event.target.value) }}
                 additionalInputClasses='bg-secondary dark:bg-secondary p-2 dark:placeholder:text-gray-100 placeholder:text-gray-900 dark:text-white text-black btn-xs'
+                includeInfo={false}
               />
               <ButtonBasic
                 label={

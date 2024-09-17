@@ -120,7 +120,7 @@ function DBProfileSelector({ dbProfiles, inDBDeleteProcess, setInDBDeleteProcess
   const { connectedDBProfile } = useContext(ConnectedDBContext) as ConnectedDBContextType;
 
   return (
-    <div className='rounded-box flex h-[256px]  bg-gray-300 dark:bg-gray-800 p-2 basis-2/5 '>
+    <div className='rounded-box flex h-[452px] bg-gray-300 dark:bg-gray-800 p-2 basis-2/5 '>
       <ul
         className="h-full flex flex-col flex-auto justify-between "
       >

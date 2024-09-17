@@ -10,7 +10,7 @@ export function STIXPropertyLabel({ propName, propertyType, showTypeSelector, on
     additionalLabelClasses: string
 }) {
     //TODO: see about getting rid of this and just using the options down below
-    const stixSchemaToUITypeConverter = {
+    const stixSchemaToUITypeConverter: any = {
         "String": "string",
         "List": "array",
         "Boolean": "boolean",

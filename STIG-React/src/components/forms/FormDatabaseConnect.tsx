@@ -50,7 +50,7 @@ export default function FormDatabaseConnect({ selectedProfile, setSelectedProfil
         type="text"
         value={profileName}
         onChange={(event) => { setProfileName(event.target.value) }}
-        className='mb-1'
+        className='mb-2'
         disabled={inDBDeleteProcess ||
           (selectedProfile && selectedProfile.Id === connectedDBProfile?.Id)
         }
@@ -66,7 +66,7 @@ export default function FormDatabaseConnect({ selectedProfile, setSelectedProfil
         value={databaseType}
         options={dbTypeOptions}
         onChange={(event) => { setDatabaseType(event.target.value) }}
-        className='mb-1'
+        className='mb-2'
         disabled={inDBDeleteProcess ||
           (selectedProfile && selectedProfile.Id === connectedDBProfile?.Id)
         }
@@ -79,7 +79,7 @@ export default function FormDatabaseConnect({ selectedProfile, setSelectedProfil
         type="text"
         value={host}
         onChange={(event) => { setHost(event.target.value) }}
-        className='mb-1'
+        className='mb-2'
         disabled={inDBDeleteProcess ||
           (selectedProfile && selectedProfile.Id === connectedDBProfile?.Id)
         }
@@ -95,7 +95,7 @@ export default function FormDatabaseConnect({ selectedProfile, setSelectedProfil
         type="text"
         value={databaseName}
         onChange={(event) => { setDatabaseName(event.target.value) }}
-        className='mb-1'
+        className='mb-2'
         disabled={inDBDeleteProcess ||
           (selectedProfile && selectedProfile.Id === connectedDBProfile?.Id)
         }
@@ -111,7 +111,7 @@ export default function FormDatabaseConnect({ selectedProfile, setSelectedProfil
         type="text"
         value={username}
         onChange={(event) => { setUsername(event.target.value) }}
-        className='mb-1'
+        className='mb-2'
         disabled={inDBDeleteProcess ||
           (selectedProfile && selectedProfile.Id === connectedDBProfile?.Id)
         }
@@ -127,7 +127,7 @@ export default function FormDatabaseConnect({ selectedProfile, setSelectedProfil
         type="password"
         value={password}
         onChange={(event) => { setPassword(event.target.value) }}
-        className='mb-1'
+        className='mb-2'
         disabled={inDBDeleteProcess ||
           (selectedProfile && selectedProfile.Id === connectedDBProfile?.Id)
         }

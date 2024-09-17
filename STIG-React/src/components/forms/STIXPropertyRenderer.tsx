@@ -59,7 +59,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                         additionalClasses='dark:bg-gray-900'
                         // STIG does not currently support STIX 2.0
                         disabled
-                        includeInfo={true}
+                        includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
                         infoText={property?.propertyDescription}
                         property={property}
                         showTypeSelector={showTypeSelector}
@@ -111,7 +111,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                                 }}
                                 disabled={property.name === "id" || property.name === "type" || property.name === "source_ref" || property.name === "target_ref"}
                                 additionalInputClasses='select-sm dark:bg-gray-900'
-                                includeInfo={true}
+                                includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
                                 infoText={property?.propertyDescription}
                                 className="mb-2"
                                 property={property}
@@ -203,7 +203,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                                     handlePropertyUpdate(event.target.value === "true" ? true : false, property.name);
                                 }}
                                 additionalClasses='dark:bg-gray-900'
-                                includeInfo={true}
+                                includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
                                 infoText={property?.propertyDescription}
                                 property={property}
                                 showTypeSelector={showTypeSelector}
@@ -237,7 +237,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                                     handlePropertyUpdate(number, property.name);
                                 }}
                                 additionalInputClasses='select-sm dark:bg-gray-900'
-                                includeInfo={true}
+                                includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
                                 infoText={property?.propertyDescription}
                                 property={property}
                                 showTypeSelector={showTypeSelector}
@@ -259,7 +259,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                                 }}
                                 className='w-full mb-2'
                                 additionalInputClasses='select-sm w-full dark:bg-gray-900'
-                                includeInfo={true}
+                                includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
                                 infoText={property?.propertyDescription}
                                 property={property}
                                 showTypeSelector={showTypeSelector}
@@ -277,7 +277,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                                 }}
                                 additionalInputClasses='input-sm'
                                 additionalBtnClasses='btn-sm'
-                                includeInfo={true}
+                                includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
                                 infoText={property?.propertyDescription}
                                 className='mb-2'
                             />
