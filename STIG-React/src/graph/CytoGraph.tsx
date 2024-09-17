@@ -210,8 +210,8 @@ const Graph: React.FC = () => {
         const handleClearGraph = () => {
             cyInstance?.elements().remove();
             cyInstance?.reset();
+            setSelectedSTIXObject(undefined);
             if (isDrawerOpen) {
-                setSelectedSTIXObject(undefined);
                 toggleDrawer();
             }
         }
