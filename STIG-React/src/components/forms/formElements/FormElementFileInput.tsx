@@ -7,14 +7,8 @@ import { STIXPropertyLabel } from '@/components/elements/STIXPropertyLabel.tsx';
 type Props = {
   placeholder?: string;
   label?: string;
-  /**
-  * Button label
-  */
   buttonLabel: string;
   acceptedFileTypes?: string;
-  /**
-  * Optional click handler
-  */
   onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   onFileChange?: (fileVal: string | ArrayBuffer | null | undefined) => void;
   parsedFileType?: "url" | "text";
@@ -86,7 +80,7 @@ const FormElementFileInput: React.FC<Props> = ({
   return (
     <div className={`flex flex-col items-start ${className}`}>
       <STIXPropertyLabel
-        propName={property ? property?.name : placeholder || ''}
+        propName={property ? property?.name : label || ''}
         propertyType={property ? property.type : undefined}
         showTypeSelector={false}
         additionalLabelClasses=''
@@ -112,6 +106,8 @@ const FormElementFileInput: React.FC<Props> = ({
           ref={fileInputRef}
           className="hidden"
           onChange={handleFileChange}
+          placeholder={placeholder}
+          accept={acceptedFileTypes}
         />
         <ButtonBasic
           label={buttonLabel}
@@ -119,8 +115,20 @@ const FormElementFileInput: React.FC<Props> = ({
           additionalClasses={`${additionalBtnClasses}`}
           onClick={handleButtonClick}
         />
+        <InfoButton
+          visible={includeInfo}
+          toggleInfo={toggleInfo}
+          additionalInfoClasses={`${additionalInfoClasses}`}
+          parentRef={parentRef}
+          infoIcon={infoIcon}
+        />
       </div>
-      );
+      {
+        showInfo && includeInfo && infoText && infoText?.length > 0 &&
+        <span className="text-xs p-1 dark:text-orange-300 text-orange-800">{infoText}</span>
+      }
+    </div>
+  );
 };
 
-      export default FormElementFileInput;
+export default FormElementFileInput;
