@@ -86,7 +86,7 @@ export class GraphUtils {
         }
     }
 
-    public buildNodes(objects: Core[], data_source: DataSourceType): CollectionReturnValue {
+    public buildNodes(objects: Core[], data_source: DataSourceType): [number, number] {
         const [nodes_added, relationships, sightings] = this._addVertices(objects, data_source);
         const to_add: ElementDefinition[] = [];
 
@@ -180,7 +180,7 @@ export class GraphUtils {
         }
 
         const edges_added = this.cy.add(to_add);
-        return nodes_added.union(edges_added);
+        return [nodes_added.length, edges_added.length];
     }
 
     /**

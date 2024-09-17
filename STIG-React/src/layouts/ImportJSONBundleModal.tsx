@@ -1,5 +1,7 @@
+import { AlertType } from '@/components/elements/AlertComponent';
 import ButtonBasic from '@/components/elements/ButtonBasic';
 import FormElementFileInput from '@/components/forms/formElements/FormElementFileInput';
+import { useNotificationContext } from '@/contexts/NotificationContext';
 import { useStigContext } from '@/contexts/StigContext';
 import { StigSettings } from '@/storage';
 import { BundleType } from '@/types/BundleType';
@@ -8,6 +10,7 @@ import React, { useState } from 'react';
 
 const ImportJSONBundleModal: React.FC = () => {
     const { cyInstance } = useStigContext();
+    const { addNotification } = useNotificationContext();
     const [selectedFile, setSelectedFile] = useState<string | ArrayBuffer | null | undefined>();
 
     return (
@@ -26,7 +29,14 @@ const ImportJSONBundleModal: React.FC = () => {
                 additionalClasses={'place-self-end mt-8' + (!selectedFile ? " btn-disabled" : "")}
                 onClick={() => {
                     if(cyInstance) {
-                        addToGraph(JSON.parse(selectedFile as string), cyInstance);
+                        const [numVertificesAdded, numEdgesAdded] = addToGraph(JSON.parse(selectedFile as string), cyInstance);
+                        if(numVertificesAdded < 0 && numEdgesAdded < 0) {
+                            addNotification("Import failed", "error");
+                        } else if (numVertificesAdded === 0 && numEdgesAdded === 0) {
+                            addNotification("Imported " + numVertificesAdded + " nodes and " + numEdgesAdded + " edges", "warning");
+                        } else {
+                            addNotification("Imported " + numVertificesAdded + " nodes and " + numEdgesAdded + " edges", "success");
+                        }
                     }
                     // Close the dialog
                     const dialogElement = document.getElementById("ImportJSONBundleModal") as HTMLDialogElement;
@@ -39,13 +49,13 @@ const ImportJSONBundleModal: React.FC = () => {
 
 function addToGraph(pkg: BundleType, cyInstance: cytoscape.Core) {
     const graph_utils = new GraphUtils(cyInstance);
-    // TODO: We want to display the number of elements added
-    // to the graph
+    let numVerticiesAdded, numEdgesAdded = 0;
     try{
-        graph_utils.buildNodes(pkg.objects, "GUI");
+        [numVerticiesAdded, numEdgesAdded] = graph_utils.buildNodes(pkg.objects, "GUI");
     }catch (err){
         console.warn("[Nodes could not be built. JSON may be invalid] :", err);
         //TODO: make some sort of meaningful message appear to the user informing them why the nodes couldn't be added
+        return [-1, -1];
     }
 
     if (pkg.metadata) {
@@ -85,6 +95,8 @@ function addToGraph(pkg: BundleType, cyInstance: cytoscape.Core) {
             graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
         }
     }
+
+    return [numVerticiesAdded, numEdgesAdded];
 }
 
 export default ImportJSONBundleModal;
