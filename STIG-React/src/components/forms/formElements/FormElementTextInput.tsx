@@ -72,7 +72,7 @@ const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
         onTypeChange={onTypeChange}
         additionalLabelClasses='mr-2'
       />
-      <div ref={parentRef} className={`relative group flex items-center w-full`}>
+      <div ref={parentRef} className={`relative group flex items-center w-full `}>
         {prefix && (
           <span className="absolute inset-y-0 left-1 flex items-center text-gray-400 dark:text-gray-400">
             <span className="material-icons">{prefix}</span>

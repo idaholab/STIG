@@ -66,7 +66,7 @@ export default function FormSTIXPropsPanel({ selectedProperties, showJson }: {
                 handlePropertyUpdate(date, "created");
               }}
               className='flex flex-auto'
-              additionalInputClasses='select-sm px-2 dark:bg-gray-900 w-full'
+              additionalInputClasses='select-sm px-2 w-full'
               includeInfo={true}
               infoText={'The date this object was created'}
               label={'Created'}
@@ -81,7 +81,7 @@ export default function FormSTIXPropsPanel({ selectedProperties, showJson }: {
                 handlePropertyUpdate(date, "modified");
               }}
               className='flex flex-auto'
-              additionalInputClasses='select-sm px-2 w-full dark:bg-gray-900'
+              additionalInputClasses='select-sm px-2 w-full'
               includeInfo={true}
               infoText={'The date this object was modified'}
               label={'Modified'}

@@ -51,7 +51,7 @@ const FormElementDatePicker: React.FC<Props> = ({
       />
       <div ref={parentRef} className={`relative group flex items-center w-full`}>
         <Flatpickr
-          className={`input ${additionalInputClasses}`}
+          className={`input dark:bg-gray-900 bg-gray-100 ${additionalInputClasses}`}
           data-enable-time
           options={{
             time_24hr: true,

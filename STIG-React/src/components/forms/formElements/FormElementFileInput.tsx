@@ -95,7 +95,7 @@ const FormElementFileInput: React.FC<Props> = ({
           input-bordered
           input-secondary
           w-full
-          bg-gray-300
+          bg-gray-100
           dark:bg-gray-900
           ${additionalInputClasses}
           mr-1

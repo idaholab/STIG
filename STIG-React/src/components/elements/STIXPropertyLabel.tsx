@@ -39,8 +39,7 @@ export function STIXPropertyLabel({ propName, propertyType, showTypeSelector, on
                     options={["array", "string", "integer", "boolean", "number", "object"]}
                     value={stixSchemaToUITypeConverter[propertyType]}
                     onChange={onTypeChange}
-                    additionalClasses='select-xs dark:bg-gray-900'
-                    className='w-fit'
+                    additionalClasses='select-xs dark:bg-gray-900 w-fit'
                     includeInfo={false}
                 />
                 : null

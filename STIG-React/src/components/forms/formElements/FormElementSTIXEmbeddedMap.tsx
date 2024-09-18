@@ -185,7 +185,7 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
 
   return (
     <>
-      <div className='flex gap-2 mb-2 items-center'>
+      <div className='flex gap-2 items-center'>
         <STIXPropertyLabel
           propName={property ? property?.name : ''}
           propertyType={property ? property.type : undefined}
@@ -207,7 +207,7 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
                 setParentSelectedProperties
               );
             }}
-            additionalClasses='select-xs dark:bg-gray-900'
+            additionalClasses='select-xs dark:bg-gray-900 w-fit'
           />
           : null
         }

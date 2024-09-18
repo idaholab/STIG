@@ -56,7 +56,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                             handlePropertyUpdate(event.target.value, property.name);
                         }}
                         className='mb-2'
-                        additionalClasses='dark:bg-gray-900'
+                        additionalClasses='dark:bg-gray-900 w-full'
                         // STIG does not currently support STIX 2.0
                         disabled
                         includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
@@ -80,11 +80,14 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                         onChange={(event) => {
                             handlePropertyUpdate(event.target.value, property.name);
                             // Get cytoscape element (by id)
-                            const ele = cyInstance?.getElementById(selectedSTIXObject.id.replace("relationship--", ""));
+                            let ele = cyInstance?.getElementById(selectedSTIXObject.id.replace("relationship--", ""));
+                            if (ele?.length === 0) {
+                                ele = cyInstance?.getElementById(selectedSTIXObject.id);
+                            }
                             // Update style for the element
                             ele?.style('label', event.target.value);
                         }}
-                        additionalClasses='dark:bg-gray-900'
+                        additionalClasses='dark:bg-gray-900 w-full'
                         includeInfo={true}
                         infoText={property?.propertyDescription}
                         property={property}
@@ -202,7 +205,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                                 onChange={(event) => {
                                     handlePropertyUpdate(event.target.value === "true" ? true : false, property.name);
                                 }}
-                                additionalClasses='dark:bg-gray-900'
+                                additionalClasses='dark:bg-gray-900 w-full'
                                 includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
                                 infoText={property?.propertyDescription}
                                 property={property}
@@ -258,7 +261,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                                     handlePropertyUpdate(date, property.name);
                                 }}
                                 className='w-full mb-2'
-                                additionalInputClasses='select-sm w-full dark:bg-gray-900'
+                                additionalInputClasses='select-sm w-full'
                                 includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
                                 infoText={property?.propertyDescription}
                                 property={property}
@@ -275,6 +278,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                                 onFileChange={async (fileVal: string | ArrayBuffer | null | undefined) => {
                                     handlePropertyUpdate(fileVal, property.name);
                                 }}
+                                parsedFileType='url'
                                 additionalInputClasses='input-sm'
                                 additionalBtnClasses='btn-sm'
                                 includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
@@ -299,18 +303,6 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                                 property={property}
                             />
                         </StixPropsContextProvider>
-                    );
-                default:
-                    return (
-                        <>
-                            <STIXPropertyLabel
-                                propName={property.name}
-                                propertyType={property.type}
-                                showTypeSelector={showTypeSelector}
-                                onTypeChange={onTypeChange}
-                                additionalLabelClasses={''}
-                            />
-                        </>
                     );
             }
     }

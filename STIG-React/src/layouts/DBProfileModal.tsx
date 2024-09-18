@@ -61,7 +61,7 @@ function DBDeleteConfirmationDialog({ selectedProfile, setSelectedProfile, setIn
     setDBProfiles: React.Dispatch<React.SetStateAction<DBProfile[]>>
   }) {
   return (
-    <div role="alert" className="alert text-base mb-8 w-1/2 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-40 text-gray-900 bg-accent-100 border-accent-900 dark:bg-accent-500 dark:border-accent-100">
+    <div role="alert" className="alert text-base mb-8 w-1/2 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-40 text-gray-900 bg-orange-100 border-accent-900 dark:bg-orange-400 dark:border-accent-100">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"

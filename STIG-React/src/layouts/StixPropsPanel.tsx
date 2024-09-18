@@ -70,7 +70,7 @@ function PropsPanelHeader({ selectedProperties, setSelectedProperties, setIsShow
     const propertyDescriptionGroup: any = PropertyDescriptions.find((group) => group.name === selectedSTIXObject?.type);
     if (propertyDescriptionGroup) {
       properties.forEach((prop) => {
-        prop.propertyDescription = propertyDescriptionGroup.properties[prop.name] || "No description available";
+        prop.propertyDescription = propertyDescriptionGroup.properties[prop.name] || undefined;
       });
     }
 
