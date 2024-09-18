@@ -108,11 +108,12 @@ function PropsPanelHeader({ selectedProperties, setSelectedProperties, setIsShow
         </button>
       </div>
       <div className='flex gap-2 mb-4'>
-        <ButtonSTIXJSON showJson={showJsonPanel} setIsShowingJson={toggleJSONPropertyView} />
+        <ButtonSTIXJSON size={'standard'} showJson={showJsonPanel} setIsShowingJson={toggleJSONPropertyView} />
         <FormSTIXPropertySelection
           propertyOptions={stixTypeProps}
           selectedProperties={selectedProperties}
           setSelectedProperties={setSelectedProperties}
+          size={'standard'}
         />
       </div>
       <p className='mb-4'>{stixTypeDesc?.description}</p>

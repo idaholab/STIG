@@ -1,4 +1,4 @@
-import { s_SchemaType, SchemaType } from "@/types/SchemaType";
+import { s_SchemaType } from "@/types/SchemaType";
 
 export function inferSTIXType(stixProperty: Object): s_SchemaType {
   // TODO: Should DateTime be allowed? Binary?
@@ -15,9 +15,9 @@ export function inferSTIXType(stixProperty: Object): s_SchemaType {
       }
     case "object":
       if (Array.isArray(stixProperty)) {
-        return "EmbeddedList";
+        return "List";
       } else {
-        return "EmbeddedMap";
+        return "Dictionary";
       }
   }
 }

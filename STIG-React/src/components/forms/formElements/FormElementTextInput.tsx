@@ -64,7 +64,7 @@ const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
   const [isHovered, setIsHovered] = useState(false);
   const parentRef = useRef<HTMLDivElement>(null);
   return (
-    <div className={`flex flex-col w-full ${className}`}>
+    <div className={`formTextInputContainer flex flex-col w-full ${className}`}>
       <STIXPropertyLabel
         propName={property ? property?.name : label || ''}
         propertyType={property ? property.type : undefined}

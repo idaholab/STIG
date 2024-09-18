@@ -82,10 +82,10 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
 
   const stixUIToSchemaTypeConverter = {
     "string": "String",
-    "array": "EmbeddedList",
+    "array": "List",
     "boolean": "Boolean",
     "integer": "Integer",
-    "object": "EmbeddedMap",
+    "object": "Dictionary",
     "number": "Float"
   };
 
@@ -131,7 +131,7 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
     // so the application does not try to map over an object 
     // that isn't an array and subsequently crash
     if (newType === "array") {
-      if (oldType === "EmbeddedMap") {
+      if (oldType === "Dictionary") {
         let tempParentSTIXObject = { ...parentSTIXObject };
         if (tempParentSTIXObject) {
           tempParentSTIXObject[propName] = [];
@@ -144,7 +144,7 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
       // When changing to a boolean, clear the value of the propName
       // so the application does not give a "the `value` prop supplied
       // to <select> must be a scalar value if `multiple` is false" error
-      if (oldType === "EmbeddedMap") {
+      if (oldType === "Dictionary") {
         let tempParentSTIXObject = { ...parentSTIXObject };
         if (tempParentSTIXObject) {
           tempParentSTIXObject[propName] = "";
@@ -174,7 +174,7 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
   };
 
   useEffect(() => {
-    if (!selectedSTIXObject) {
+    if (selectedSTIXObject === undefined) {
       return;
     }
     const selectedSTIXObjectJSONString = { ...selectedSTIXObject };
@@ -185,7 +185,7 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
 
   return (
     <>
-      <div className='flex gap-2 items-center'>
+      <div className={`flex gap-2 items-center`}>
         <STIXPropertyLabel
           propName={property ? property?.name : ''}
           propertyType={property ? property.type : undefined}
@@ -208,18 +208,20 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
               );
             }}
             additionalClasses='select-xs dark:bg-gray-900 w-fit'
+            includeInfo={false}
           />
           : null
         }
       </div>
       <div className='flex gap-2 mb-2 items-center'>
-        <ButtonSTIXJSON color='btn-secondary' showJson={showJsonPanel} setIsShowingJson={toggleJSONPropertyView} />
+        <ButtonSTIXJSON size={'small'} color='btn-secondary' showJson={showJsonPanel} setIsShowingJson={toggleJSONPropertyView} />
         <FormElementSTIXPropertySelection
           propertyOptions={localEmbeddedMapProps}
           setPropertyOptions={setLocalEmbeddedMapProps}
           selectedProperties={localSelectedProperties}
           setSelectedProperties={setLocalSelectedProperties}
           includeAddNew
+          size={'small'}
         />
       </div>
 

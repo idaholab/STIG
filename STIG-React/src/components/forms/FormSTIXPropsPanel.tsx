@@ -69,7 +69,7 @@ export default function FormSTIXPropsPanel({ selectedProperties, showJson }: {
               additionalInputClasses='select-sm px-2 w-full'
               includeInfo={true}
               infoText={'The date this object was created'}
-              label={'Created'}
+              label={'created'}
             />
 
             <FormElementDatePicker
@@ -84,7 +84,7 @@ export default function FormSTIXPropsPanel({ selectedProperties, showJson }: {
               additionalInputClasses='select-sm px-2 w-full'
               includeInfo={true}
               infoText={'The date this object was modified'}
-              label={'Modified'}
+              label={'modified'}
             />
           </div>
 

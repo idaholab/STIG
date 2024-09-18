@@ -4,11 +4,10 @@ import { PropertyConfig } from "@/types/schema";
 import React from "react";
 import FormElementSelect from "./formElements/FormElementSelect";
 import FormElementTextInput from "./formElements/FormElementTextInput";
-import FormElementSTIXEmbeddedList from "./formElements/FormElementSTIXEmbeddedList";
+import FormElementSTIXList from "./formElements/FormElementSTIXList";
 import FormElementDatePicker from "./formElements/FormElementDatePicker";
 import FormElementFileInput from "./formElements/FormElementFileInput";
-import FormElementSTIXEmbeddedMap from "./formElements/FormElementSTIXEmbeddedMap";
-import { STIXPropertyLabel } from "../elements/STIXPropertyLabel";
+import FormElementSTIXEmbeddedMap from "./formElements/FormElementSTIXDictionary";
 
 export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeSelector, onTypeChange,
     parentEmbeddedMapProps, setParentEmbeddedMapProps,
@@ -29,7 +28,6 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
 }) {
     const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
     const { cyInstance } = useStigContext();
-
 
     const renderDescription = () => {
         if (property?.propertyDescription) {
@@ -131,7 +129,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                         case "external_reference":
                             return (
                                 <>
-                                    <FormElementSTIXEmbeddedList
+                                    <FormElementSTIXList
                                         label="item"
                                         stixObj={selectedSTIXObject}       //NOTE: what does this provide?
                                         setSTIXObj={setSelectedSTIXObject} //NOTE: what does this provide?
@@ -152,7 +150,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                         case "kill_chain_phase":
                             return (
                                 <>
-                                    <FormElementSTIXEmbeddedList
+                                    <FormElementSTIXList
                                         label="kill-chain-phase "
                                         stixObj={selectedSTIXObject}
                                         setSTIXObj={setSelectedSTIXObject}
@@ -172,7 +170,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                         default:
                             return (
                                 <>
-                                    <FormElementSTIXEmbeddedList
+                                    <FormElementSTIXList
                                         label="item "
                                         stixObj={selectedSTIXObject}
                                         setSTIXObj={setSelectedSTIXObject}

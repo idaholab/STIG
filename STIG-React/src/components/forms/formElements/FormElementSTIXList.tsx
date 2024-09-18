@@ -36,7 +36,7 @@ type Props = {
   onTypeChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void,
 };
 
-const FormElementSTIXEmbeddedList: React.FC<Props> = ({
+const FormElementSTIXList: React.FC<Props> = ({
   label,
   placeholder,
   stixObj,
@@ -135,4 +135,4 @@ const FormElementSTIXEmbeddedList: React.FC<Props> = ({
   );
 };
 
-export default FormElementSTIXEmbeddedList;
+export default FormElementSTIXList;

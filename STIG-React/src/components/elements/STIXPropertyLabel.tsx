@@ -32,18 +32,22 @@ export function STIXPropertyLabel({ propName, propertyType, showTypeSelector, on
         "x509_v3_extensions_type": "object"
     };
     return (
-        <div className='flex mb-1 items-center'>
-            <p className={`${additionalLabelClasses}`}>{propName.charAt(0).toUpperCase() + propName.slice(1)}</p>
-            {showTypeSelector && propertyType && onTypeChange ?
-                <FormElementSelect
-                    options={["array", "string", "integer", "boolean", "number", "object"]}
-                    value={stixSchemaToUITypeConverter[propertyType]}
-                    onChange={onTypeChange}
-                    additionalClasses='select-xs dark:bg-gray-900 w-fit'
-                    includeInfo={false}
-                />
-                : null
+        <>
+            {propName &&
+                <div className='flex items-center mb-1'>
+                    <p className={`${additionalLabelClasses}`}>{propName}</p>
+                    {showTypeSelector && propertyType && onTypeChange ?
+                        <FormElementSelect
+                            options={["array", "string", "integer", "boolean", "number", "object"]}
+                            value={stixSchemaToUITypeConverter[propertyType]}
+                            onChange={onTypeChange}
+                            additionalClasses='select-xs dark:bg-gray-900 w-fit'
+                            includeInfo={false}
+                        />
+                        : null
+                    }
+                </div>
             }
-        </div>
+        </>
     );
 }
