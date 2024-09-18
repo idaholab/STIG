@@ -14,7 +14,8 @@ export type SchemaType =
 export type s_SchemaType =
   "Binary" | "Boolean" | "Dictionary" | "external_reference" | "Float" | "Hashes" | "Hex" |
   "Identifier" | "Integer" | "kill_chain_phase" | "String" | "Timestamp" | "open_vocab" | "Enum" |
-  "List" | "granular_marking" | "email_mime_part_type" | "windows_registry_value_type" | "x509_v3_extensions_type" | 'EmbeddedMap' | 'EmbeddedList';
+  "List" | "granular_marking" | "email_mime_part_type" | "windows_registry_value_type" | "x509_v3_extensions_type";
+//| 'EmbeddedMap' | 'EmbeddedList'
 
 export type Binary = string;
 export type Boolean = boolean;
