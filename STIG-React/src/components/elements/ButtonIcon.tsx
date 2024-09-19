@@ -2,36 +2,21 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 interface ButtonProps {
-  /**
-   * Button contents
-   */
   label?: string;
-  /**
-   * What is the icon?
-   */
   buttonIcon: string;
-  /**
-   * What is the icon size?
-   */
+  iconText?: string;
   buttonSize?: string | undefined;
-  /**
-   * What is the background color? Use classes.
-   */
   color: 'btn-primary' | 'btn-secondary' | 'btn-neutral' | 'btn-ghost' | string;
-  /**
-   * Optional link
-   */
   link?: string;
   title?: string;
   disabled?: boolean;
-  /**
-   * Optional click handler
-   */
+  tabIndex?: number;
   onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLButtonElement>) => void;
 }
 
-const ButtonIcon: React.FC<ButtonProps> = ({ 
-  label, buttonIcon, buttonSize, color, link, title, disabled, onClick 
+const ButtonIcon: React.FC<ButtonProps> = ({
+  label, buttonIcon, iconText, buttonSize, color, link, title, disabled, tabIndex, onClick, onKeyDown
 }) => {
   // Define base classes
   const baseClasses = `btn btn-circle ${color} ${buttonSize} uppercase hover:opacity-100 border-transparent`;
@@ -56,13 +41,15 @@ const ButtonIcon: React.FC<ButtonProps> = ({
           </span>
         </Link>
       ) : (
-        <button 
-          className={btnClass} 
-          onClick={onClick} 
+        <button
+          className={btnClass}
+          onClick={onClick}
+          // onKeyDown={onKeyDown}
           title={title}
           disabled={disabled}
+          tabIndex={tabIndex}
         >
-          <span className="material-icons">
+          <span className={`material-icons ${iconText}`}>
             {buttonIcon}
           </span>
         </button>

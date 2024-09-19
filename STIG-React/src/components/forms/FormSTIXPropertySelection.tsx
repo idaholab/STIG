@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Dropdown from '@/components/core/Dropdown';
 import { PropertyConfig } from '@/types/schema';
 import FormElementTextInput from './formElements/FormElementTextInput';
@@ -10,6 +10,7 @@ type Props = {
   selectedProperties: PropertyConfig[];
   setSelectedProperties: React.Dispatch<React.SetStateAction<PropertyConfig[]>>;
   includeAddNew?: boolean;
+  size: string
 };
 
 const FormElementSTIXPropertySelection: React.FC<Props> = ({
@@ -17,16 +18,24 @@ const FormElementSTIXPropertySelection: React.FC<Props> = ({
   setPropertyOptions,
   selectedProperties,
   setSelectedProperties,
-  includeAddNew
+  includeAddNew,
+  size = 'standard' || 'small'
 }) => {
   const [newPropertyName, setNewPropertyName] = useState("");
+  const [buttonSize, setButtonSize] = useState<string>('');
+  const [buttonContainerSize, setButtonContainerSize] = useState<string>('');
+
+  useEffect(() => {
+    setButtonSize((size === 'standard') ? 'btn-sm' : 'btn-xs');
+    setButtonContainerSize((size === 'standard') ? 'w-[125px]' : 'w-[105px] h-[24px]');
+  }, [size]);
 
   return (
     <Dropdown
       title="Properties"
       includeDropdownArrow
-      additionalClasses="bg-white dark:bg-gray-900 border border-black dark:border-transparent rounded-md"
-      additionalButtonClasses="btn-sm"
+      additionalClasses={`flex items-center bg-white dark:bg-gray-900 border border-black dark:border-transparent rounded-md ${buttonContainerSize}`}
+      additionalButtonClasses={`${buttonSize}`}
     >
       <div className="relative">
         <div className={`max-h-60 overflow-y-scroll scrollbar w-60 ${includeAddNew ? 'mb-8' : ''} `}>
@@ -66,6 +75,7 @@ const FormElementSTIXPropertySelection: React.FC<Props> = ({
                 value={newPropertyName}
                 onChange={(event) => { setNewPropertyName(event.target.value) }}
                 additionalInputClasses='bg-secondary dark:bg-secondary p-2 dark:placeholder:text-gray-100 placeholder:text-gray-900 dark:text-white text-black btn-xs'
+                includeInfo={false}
               />
               <ButtonBasic
                 label={

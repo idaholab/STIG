@@ -1,25 +1,25 @@
 import React, { useRef, useState } from 'react';
 import ButtonBasic from '../../elements/ButtonBasic.tsx';
+import InfoButton from '@/components/elements/InfoButton.tsx';
+import { PropertyConfig } from '@/types/schema.ts';
+import { STIXPropertyLabel } from '@/components/elements/STIXPropertyLabel.tsx';
 
 type Props = {
   placeholder?: string;
   label?: string;
-  /**
-  * Button label
-  */
   buttonLabel: string;
   acceptedFileTypes?: string;
-  /**
-  * Optional click handler
-  */
   onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-  /**
-  * File change handler to communicate the file to the parent component
-  */
   onFileChange?: (fileVal: string | ArrayBuffer | null | undefined) => void;
   parsedFileType?: "url" | "text";
   additionalInputClasses?: string;
   additionalBtnClasses?: string;
+  className?: string;
+  includeInfo?: boolean;
+  additionalInfoClasses?: string;
+  infoIcon?: string;
+  infoText?: string;
+  property?: PropertyConfig
 };
 
 const FormElementFileInput: React.FC<Props> = ({
@@ -31,7 +31,13 @@ const FormElementFileInput: React.FC<Props> = ({
   onFileChange,
   parsedFileType = "text",
   additionalInputClasses,
-  additionalBtnClasses
+  additionalBtnClasses,
+  className,
+  includeInfo,
+  additionalInfoClasses,
+  infoIcon,
+  infoText,
+  property
 }) => {
   const [filename, setFilename] = useState('');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -65,40 +71,62 @@ const FormElementFileInput: React.FC<Props> = ({
     }
   };
 
+  const [showInfo, setShowInfo] = useState(false);
+  const toggleInfo = () => {
+    setShowInfo(prevShowInfo => !prevShowInfo);
+  };
+  const parentRef = useRef<HTMLDivElement>(null);
+
   return (
-    <div className={`flex gap-2`}>
-      {label ?
-        <span>{label}</span>
-        : null
-      }
-      <input
-        type="text"
-        value={filename}
-        readOnly
-        placeholder={placeholder}
-        className={`
+    <div className={`flex flex-col items-start ${className}`}>
+      <STIXPropertyLabel
+        propName={property ? property?.name : label || ''}
+        propertyType={property ? property.type : undefined}
+        showTypeSelector={false}
+        additionalLabelClasses=''
+      />
+      <div ref={parentRef} className={`relative group flex items-center w-full`}>
+        <input
+          type="text"
+          value={filename}
+          readOnly
+          className={`
           input
           input-bordered
           input-secondary
           w-full
-          bg-gray-300
+          bg-gray-100
           dark:bg-gray-900
           ${additionalInputClasses}
+          mr-1
         `}
-      />
-      <input
-        type="file"
-        ref={fileInputRef}
-        className="hidden"
-        onChange={handleFileChange}
-        accept={acceptedFileTypes}
-      />
-      <ButtonBasic 
-        label={buttonLabel} 
-        color={'btn-secondary'} 
-        additionalClasses={`${additionalBtnClasses}`}
-        onClick={handleButtonClick} 
-      />
+        />
+        <input
+          type="file"
+          ref={fileInputRef}
+          className="hidden"
+          onChange={handleFileChange}
+          placeholder={placeholder}
+          accept={acceptedFileTypes}
+        />
+        <ButtonBasic
+          label={buttonLabel}
+          color={'btn-secondary'}
+          additionalClasses={`${additionalBtnClasses}`}
+          onClick={handleButtonClick}
+        />
+        <InfoButton
+          visible={includeInfo}
+          toggleInfo={toggleInfo}
+          additionalInfoClasses={`${additionalInfoClasses}`}
+          parentRef={parentRef}
+          infoIcon={infoIcon}
+        />
+      </div>
+      {
+        showInfo && includeInfo && infoText && infoText?.length > 0 &&
+        <span className="text-xs p-1 dark:text-orange-300 text-orange-800">{infoText}</span>
+      }
     </div>
   );
 };

@@ -36,7 +36,7 @@ const GraphLayouts: React.FC = () => {
       {layouts.map((layout) => (
         <li key={layout} className='hover:bg-primary hover:text-white'>
           <a onClick={() => handleLayoutChange(layout)}>
-            {layout.charAt(0).toUpperCase() + layout.slice(1)}
+            {layout}
           </a>
         </li>
       ))}

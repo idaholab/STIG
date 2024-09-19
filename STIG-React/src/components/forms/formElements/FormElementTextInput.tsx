@@ -1,5 +1,8 @@
 import ButtonIcon from '@/components/elements/ButtonIcon';
-import React, { forwardRef } from 'react';
+import InfoButton from '@/components/elements/InfoButton';
+import { STIXPropertyLabel } from '@/components/elements/STIXPropertyLabel';
+import { PropertyConfig } from '@/types/schema';
+import React, { forwardRef, useRef, useState } from 'react';
 
 type Props = {
   label?: string;
@@ -23,6 +26,10 @@ type Props = {
   prefix?: string;
   suffix?: string;
   badgeText?: string
+
+  property?: PropertyConfig;
+  showTypeSelector?: boolean,
+  onTypeChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void,
 };
 
 const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
@@ -46,13 +53,28 @@ const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
   additionalLabelClasses,
   prefix,
   suffix,
-  badgeText
+  badgeText,
+  showTypeSelector = false,
+  onTypeChange,
+  property,
 }, ref) => {
+  const [showInfo, setShowInfo] = useState(false);
+  const toggleInfo = () => {
+    setShowInfo(prevShowInfo => !prevShowInfo);
+  };
 
+  const [isHovered, setIsHovered] = useState(false);
+  const parentRef = useRef<HTMLDivElement>(null);
   return (
-    <div className={`flex flex-col items-start ${className}`}>
-      <div className={`relative flex items-center w-full`}>
-        {label && <span className={`${additionalLabelClasses}`}>{label}</span>}
+    <div className={`formTextInputContainer flex flex-col w-full ${className}`}>
+      <STIXPropertyLabel
+        propName={property ? property?.name : label || ''}
+        propertyType={property ? property.type : undefined}
+        showTypeSelector={showTypeSelector}
+        onTypeChange={onTypeChange}
+        additionalLabelClasses='mr-2'
+      />
+      <div ref={parentRef} className={`relative group flex items-center w-full `}>
         {prefix && (
           <span className="absolute inset-y-0 left-1 flex items-center text-gray-400 dark:text-gray-400">
             <span className="material-icons">{prefix}</span>
@@ -74,7 +96,7 @@ const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
           border
           border-gray-500
           bg-gray-100
-          dark:bg-gray-600
+          dark:bg-gray-900
           placeholder-gray-500
           dark:placeholder-gray-300
           ${disabled ? 'cursor-not-allowed opacity-30' : undefined}
@@ -92,25 +114,25 @@ const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
           </button>
         )}
 
-        {includeInfo && (
-          <div className={`flex cursor-pointer tooltip ${additionalInfoClasses}`} data-tip={infoText}>
-            <ButtonIcon
-              color={'btn-ghost'}
-              buttonIcon={infoIcon ? infoIcon : ''}
-              buttonSize={'btn-sm'}
-            />
-          </div>
-        )}
-
         {suffix && (
           <div className={"ml-4"}>
             {suffix}
           </div>
         )}
+        <InfoButton
+          visible={includeInfo}
+          toggleInfo={toggleInfo}
+          additionalInfoClasses={`${additionalInfoClasses}`}
+          parentRef={parentRef}
+        />
       </div>
 
       {badgeText && badgeText?.length > 0 &&
         <div className="mt-2 badge dark:bg-orange-600 dark:text-orange-50 bg-orange-200 text-orange-900">{badgeText}</div>
+      }
+
+      {showInfo && includeInfo && infoText && infoText?.length > 0 &&
+        <span className={`text-xs p-1 dark:text-orange-300 text-orange-800`}>{infoText}</span>
       }
     </div>
   );

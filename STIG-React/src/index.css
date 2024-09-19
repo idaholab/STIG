@@ -526,3 +526,45 @@ body,
     right: 1rem;
   }
 }
+
+
+
+.dark .flatpickr-calendar {
+  background-color: var(--color-primary-dark-hex-200);
+
+}
+.light .flatpickr-calendar {
+  background-color: var(--color-primary-dark-hex-800);
+}
+
+.dark .flatpickr-day,
+.dark .flatpickr-months .flatpickr-month,
+.dark .flatpickr-months .flatpickr-prev-month,
+.dark .flatpickr-months .flatpickr-next-month,
+.dark span.flatpickr-weekday,
+.dark .flatpickr-time input,
+.dark .flatpickr-time .numInputWrapper span.arrowUp:after {
+  color: var(--color-primary-dark-hex-800);
+  fill: var(--color-primary-dark-hex-800);
+}
+
+.light .flatpickr-day,
+.light .flatpickr-months .flatpickr-month,
+.light .flatpickr-months .flatpickr-prev-month,
+.light .flatpickr-months .flatpickr-next-month,
+.light span.flatpickr-weekday,
+.light .flatpickr-time input,
+.light .flatpickr-time .numInputWrapper span.arrowUp:after {
+  color: var(--color-primary-dark-hex-200);
+  fill: var(--color-primary-dark-hex-200);
+}
+
+
+.light .flatpickr-time input:hover,
+.light .flatpickr-time input:focus {
+background-color: var(--color-primary-dark-hex-600);
+}
+
+.light .numInputWrapper span.arrowUp:after {
+  /* border-bottom: green; */
+}
