@@ -53,7 +53,6 @@ const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
   additionalLabelClasses,
   prefix,
   suffix,
-  badgeText
   badgeText,
   showTypeSelector = false,
   onTypeChange,
