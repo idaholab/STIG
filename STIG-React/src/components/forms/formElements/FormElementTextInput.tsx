@@ -96,7 +96,7 @@ const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
           border
           border-gray-500
           bg-gray-100
-          dark:bg-gray-600
+          dark:bg-gray-900
           placeholder-gray-500
           dark:placeholder-gray-300
           ${disabled ? 'cursor-not-allowed opacity-30' : undefined}
@@ -112,16 +112,6 @@ const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
             title='Clear'>
             close
           </button>
-        )}
-
-        {includeInfo && (
-          <div className={`flex cursor-pointer tooltip ${additionalInfoClasses}`} data-tip={infoText}>
-            <ButtonIcon
-              color={'btn-ghost'}
-              buttonIcon={infoIcon ? infoIcon : ''}
-              buttonSize={'btn-sm'}
-            />
-          </div>
         )}
 
         {suffix && (
