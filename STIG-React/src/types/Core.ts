@@ -35,7 +35,7 @@ export type SCO = Artifact | AutonomousSystem | Directory | DomainName | EmailAd
 // TODO: Add ExtensionDefinition | LanguageContent 
 export type SMO = MarkingDefinition;
 export type SRO = Relationship | Sighting;
-export type StixObject = SDO | SCO | SMO | SRO;
+export type StixObject = SDO | SCO | SMO | SRO | Core;
 /**
  * Specifies the hexadecimal constant ('magic number') associated with a specific file format that corresponds to the file, if applicable.
  */
@@ -60,11 +60,11 @@ export const node_img: Record<string, string> = {};
 
 
 const relationshipsKeyRegex = /((r|R)elationship)|((s|S)ighting)/;
-export function isSRO(item: Core): item is SRO {
+export function isSRO(item: StixObject): item is SRO {
     return relationshipsKeyRegex.exec(item.type) !== null;
 }
 
-export function isRelationship(item: Core): item is Relationship {
+export function isRelationship(item: StixObject): item is Relationship {
     return item.type.toLocaleLowerCase() === 'relationship';
 }
 

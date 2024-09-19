@@ -8,8 +8,16 @@ const Graph: React.FC = () => {
       includeDropdownArrow
       additionalOptionClasses={'hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-black dark:hover-text-white'}
     >
-      <li className='hover:bg-primary hover:text-white'><a>Option 1</a></li>
-      <li className='hover:bg-primary hover:text-white'><a>Option 2</a></li>
+      {/* <li className='hover:bg-primary hover:text-white'><a>Copy Selected Elements</a></li>
+      <li className='hover:bg-primary hover:text-white'><a>Cut Selected Elements</a></li>
+      <li className='hover:bg-primary hover:text-white'><a>Paste Elements</a></li>
+      <li className='hover:bg-primary hover:text-white'><a>Commit All Elements</a></li>
+      <li className='hover:bg-primary hover:text-white'><a>Delete Selected from Database</a></li>
+      <li className='hover:bg-primary hover:text-white'><a>Select All Elements</a></li>
+      <li className='hover:bg-primary hover:text-white'><a>Invert Selection</a></li>
+      <li className='hover:bg-primary hover:text-white'><a>Toggle Embedded Relationships</a></li>
+      <li className='hover:bg-primary hover:text-white'><a>Toggle STIX Relationships</a></li> */}
+    
     </Dropdown>
   );
 };

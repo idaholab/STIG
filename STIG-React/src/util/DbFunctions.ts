@@ -25,7 +25,7 @@ async function wrapVoid<T>(stix: T, cb: (stix: T) => Promise<void>) {
 async function wrapReturn<T, V>(
   stix: V, def: () => T, cb: ((s: V) => Promise<T>)
 ): Promise<T> {
-  if (currentDB) {
+  if (currentDB && !currentDB.is_closed()) {
     try {
       return cb(stix);
     } catch {
@@ -35,23 +35,21 @@ async function wrapReturn<T, V>(
   return def();
 }
 
-export function check_db() {
-  const db_el = document.getElementById('db-status')!;
-  if (currentDB) {
-    db_el.innerHTML = currentDB?.config?.db ? currentDB.config.db : currentDB?.config?.name || '';
-    db_el.className = 'db-status-green';
-  } else {
-    db_el.innerHTML = 'not connected';
-    db_el.className = 'db-status-red';
+export function close_db(){
+  try{
+    currentDB?.close();
+  }catch(e){
+    console.error(e);
   }
+
 }
 
 export async function use_db(config: IDatabaseConfigOptions) {
   currentDB?.close();
   try {
-    currentDB = await StigDB.getDB('neo4j', config);
-  } finally {
-    check_db();
+    currentDB = await StigDB.getDB('neo4j', config); 
+  }catch(e){
+    console.error(e)
   }
 }
 
