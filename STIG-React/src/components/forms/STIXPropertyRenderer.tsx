@@ -7,22 +7,22 @@ import FormElementTextInput from "./formElements/FormElementTextInput";
 import FormElementSTIXList from "./formElements/FormElementSTIXList";
 import FormElementDatePicker from "./formElements/FormElementDatePicker";
 import FormElementFileInput from "./formElements/FormElementFileInput";
-import FormElementSTIXEmbeddedMap from "./formElements/FormElementSTIXDictionary";
+import FormElementSTIXDictionary from "./formElements/FormElementSTIXDictionary";
 
 export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeSelector, onTypeChange,
-    parentEmbeddedMapProps, setParentEmbeddedMapProps,
+    parentDictionaryProps, setParentDictionaryProps,
     parentSelectedProperties, setParentSelectedProperties
 }: {
     property: PropertyConfig,
     handlePropertyUpdate: (newVal: string | boolean | number | Date | ArrayBuffer | null | undefined,
         propName: string) => void,
     // The remaining properties are only passed in when the STIXPropertyRenderer
-    // is used from within an EmbeddedMap component
+    // is used from within an dictionary component
     showTypeSelector?: boolean,
     onTypeChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void,
-    // Needed so that an EmbeddedMap within an EmbeddedMap can have its type changed
-    parentEmbeddedMapProps?: PropertyConfig[];
-    setParentEmbeddedMapProps?: React.Dispatch<React.SetStateAction<PropertyConfig[]>>;
+    // Needed so that an dictionary within an dictionary can have its type changed
+    parentDictionaryProps?: PropertyConfig[];
+    setParentDictionaryProps?: React.Dispatch<React.SetStateAction<PropertyConfig[]>>;
     parentSelectedProperties?: PropertyConfig[];
     setParentSelectedProperties?: React.Dispatch<React.SetStateAction<PropertyConfig[]>>;
 }) {
@@ -288,13 +288,13 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                 case "Dictionary":
                     return (
                         <StixPropsContextProvider>
-                            <FormElementSTIXEmbeddedMap
-                                embeddedMap={selectedSTIXObject ? selectedSTIXObject[property.name] : undefined}
+                            <FormElementSTIXDictionary
+                                dictionary={selectedSTIXObject ? selectedSTIXObject[property.name] : undefined}
                                 showTypeSelector={showTypeSelector}
                                 parentSTIXObject={selectedSTIXObject}
                                 setParentSTIXObject={setSelectedSTIXObject}
-                                parentEmbeddedMapProps={parentEmbeddedMapProps}
-                                setParentEmbeddedMapProps={setParentEmbeddedMapProps}
+                                parentDictionaryProps={parentDictionaryProps}
+                                setParentDictionaryProps={setParentDictionaryProps}
                                 parentSelectedProperties={parentSelectedProperties}
                                 setParentSelectedProperties={setParentSelectedProperties}
                                 className='mb-2'

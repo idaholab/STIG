@@ -4,7 +4,7 @@ import { hash } from "crypto";
 // export type SchemaType =
 //   "String" | "EmbeddedList" | "Boolean" |
 //   "Integer" | "DateTime" | "Binary" |
-//   "EmbeddedMap" | "Float";
+//   "dictionary" | "Float";
 
 export type SchemaType =
   Binary | Boolean | Dictionary | external_reference | Float | Hashes | Hex |

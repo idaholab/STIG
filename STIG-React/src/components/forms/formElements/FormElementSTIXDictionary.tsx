@@ -15,15 +15,15 @@ type Props = {
   // Had to add the "any" to this typing because VS Code was
   // not happy with any way I was attempting to check if a property
   // existed in the Object before attempting to use said property.
-  embeddedMap: Object | any;
+  dictionary: Object | any;
   // Had to add the "any" to this typing because VS Code was
   // not happy with any way I was attempting to check if a property
   // existed in the StixObject before attempting to use said property.
   parentSTIXObject: StixObject | undefined | any;
   setParentSTIXObject: React.Dispatch<React.SetStateAction<StixObject | undefined>>;
-  // Needed so that an EmbeddedMap within an EmbeddedMap can have its type changed
-  parentEmbeddedMapProps?: PropertyConfig[];
-  setParentEmbeddedMapProps?: React.Dispatch<React.SetStateAction<PropertyConfig[]>>;
+  // Needed so that a Dictionary within a Dictionary can have its type changed
+  parentDictionaryProps?: PropertyConfig[];
+  setParentDictionaryProps?: React.Dispatch<React.SetStateAction<PropertyConfig[]>>;
   parentSelectedProperties?: PropertyConfig[];
   setParentSelectedProperties?: React.Dispatch<React.SetStateAction<PropertyConfig[]>>;
   className?: string;
@@ -32,12 +32,12 @@ type Props = {
   onTypeChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void,
 };
 
-const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
-  embeddedMap,
+const FormElementSTIXDictionary: React.FC<Props> = ({
+  dictionary,
   parentSTIXObject,
   setParentSTIXObject,
-  parentEmbeddedMapProps,
-  setParentEmbeddedMapProps,
+  parentDictionaryProps: parentDictionaryProps,
+  setParentDictionaryProps: setParentDictionaryProps,
   parentSelectedProperties,
   setParentSelectedProperties,
   className,
@@ -46,20 +46,20 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
   onTypeChange,
 }) => {
   const [localSelectedProperties, setLocalSelectedProperties] = useState<PropertyConfig[]>([]);
-  const [localEmbeddedMapProps, setLocalEmbeddedMapProps] = useState<PropertyConfig[]>([]);
+  const [localDictionaryProps, setLocalDictionaryProps] = useState<PropertyConfig[]>([]);
   const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
 
   useEffect(() => {
     if (!selectedSTIXObject) {
-      setSelectedSTIXObject(embeddedMap);
-      setLocalEmbeddedMapProps(embeddedMap ?
-        Object.keys(embeddedMap).map(key => {
-          return { name: key, type: inferSTIXType(embeddedMap[key]) }
+      setSelectedSTIXObject(dictionary);
+      setLocalDictionaryProps(dictionary ?
+        Object.keys(dictionary).map(key => {
+          return { name: key, type: inferSTIXType(dictionary[key]) }
         })
         : []
       );
     }
-  }, [embeddedMap]);
+  }, [dictionary]);
 
   // Update the parent STIX object when its
   // embedded map child changes
@@ -91,18 +91,18 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
 
   const handlePropertyTypeChange = (
     propName: string, newType: UIPropertyType,
-    embeddedMapProps?: PropertyConfig[],
-    setEmbeddedMapProps?: React.Dispatch<React.SetStateAction<PropertyConfig[]>>,
+    dictionaryProps?: PropertyConfig[],
+    setDictionaryProps?: React.Dispatch<React.SetStateAction<PropertyConfig[]>>,
     selectedProperties?: PropertyConfig[],
     setSelectedProperties?: React.Dispatch<React.SetStateAction<PropertyConfig[]>>
   ) => {
     // If no embedded map or selected properties are passed in, just use
     // the ones from the current component
-    if (!embeddedMapProps) {
-      embeddedMapProps = localEmbeddedMapProps;
+    if (!dictionaryProps) {
+      dictionaryProps = localDictionaryProps;
     }
-    if (!setEmbeddedMapProps) {
-      setEmbeddedMapProps = setLocalEmbeddedMapProps;
+    if (!setDictionaryProps) {
+      setDictionaryProps = setLocalDictionaryProps;
     }
     if (!selectedProperties) {
       selectedProperties = localSelectedProperties;
@@ -110,14 +110,14 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
     if (!setSelectedProperties) {
       setSelectedProperties = setLocalSelectedProperties;
     }
-    // Update embeddedMapProps
-    const tempEmbeddedMapProps = [...embeddedMapProps];
-    const embeddedMapPropIndex = tempEmbeddedMapProps.findIndex(prop => {
+
+    const tempDictionaryProps = [...dictionaryProps];
+    const dictionaryPropIndex = tempDictionaryProps.findIndex(prop => {
       return prop.name === propName;
     });
-    const oldType = embeddedMapProps[embeddedMapPropIndex].type;
-    tempEmbeddedMapProps[embeddedMapPropIndex].type = stixUIToSchemaTypeConverter[newType] as s_SchemaType;
-    setEmbeddedMapProps(tempEmbeddedMapProps);
+    const oldType = dictionaryProps[dictionaryPropIndex].type;
+    tempDictionaryProps[dictionaryPropIndex].type = stixUIToSchemaTypeConverter[newType] as s_SchemaType;
+    setDictionaryProps(tempDictionaryProps);
 
     // Update selectedProperties
     const tempSelectedProperties = [...selectedProperties];
@@ -201,8 +201,8 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
               handlePropertyTypeChange(
                 property?.name || '',
                 event.target.value as UIPropertyType,
-                parentEmbeddedMapProps,
-                setParentEmbeddedMapProps,
+                parentDictionaryProps,
+                setParentDictionaryProps,
                 parentSelectedProperties,
                 setParentSelectedProperties
               );
@@ -216,8 +216,8 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
       <div className='flex gap-2 mb-2 items-center'>
         <ButtonSTIXJSON size={'small'} color='btn-secondary' showJson={showJsonPanel} setIsShowingJson={toggleJSONPropertyView} />
         <FormElementSTIXPropertySelection
-          propertyOptions={localEmbeddedMapProps}
-          setPropertyOptions={setLocalEmbeddedMapProps}
+          propertyOptions={localDictionaryProps}
+          setPropertyOptions={setLocalDictionaryProps}
           selectedProperties={localSelectedProperties}
           setSelectedProperties={setLocalSelectedProperties}
           includeAddNew
@@ -247,8 +247,8 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
             onTypeChange={(event) => {
               handlePropertyTypeChange(selectedProperty.name, event.target.value as UIPropertyType);
             }}
-            parentEmbeddedMapProps={localEmbeddedMapProps}
-            setParentEmbeddedMapProps={setLocalEmbeddedMapProps}
+            parentDictionaryProps={localDictionaryProps}
+            setParentDictionaryProps={setLocalDictionaryProps}
             parentSelectedProperties={localSelectedProperties}
             setParentSelectedProperties={setLocalSelectedProperties}
           />
@@ -258,4 +258,4 @@ const FormElementSTIXEmbeddedMap: React.FC<Props> = ({
   );
 };
 
-export default FormElementSTIXEmbeddedMap;
+export default FormElementSTIXDictionary;
