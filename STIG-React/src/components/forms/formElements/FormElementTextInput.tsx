@@ -21,6 +21,7 @@ type Props = {
   additionalXClasses?: string;
   additionalLabelClasses?: string;
   prefix?: string;
+  suffix?: string;
   badgeText?: string
 };
 
@@ -44,6 +45,7 @@ const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
   additionalXClasses,
   additionalLabelClasses,
   prefix,
+  suffix,
   badgeText
 }, ref) => {
 
@@ -97,6 +99,12 @@ const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
               buttonIcon={infoIcon ? infoIcon : ''}
               buttonSize={'btn-sm'}
             />
+          </div>
+        )}
+
+        {suffix && (
+          <div className={"ml-4"}>
+            {suffix}
           </div>
         )}
       </div>
