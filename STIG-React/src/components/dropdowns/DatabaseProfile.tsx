@@ -4,13 +4,16 @@ import DBProfileModal from '@/layouts/DBProfileModal';
 import Dropdown from '../core/Dropdown';
 import ConnectedDBContext, { ConnectedDBContextType } from '@/contexts/ConnectedDBContext';
 import ButtonDBConnect from '../elements/ButtonDBConnect';
+import { useStigContext } from '@/contexts/StigContext';
+import { queryToGraph } from '@/util/GraphUtils';
+
 
 const DatabaseProfile: React.FC = () => {
   const {
     savedDBProfiles, connectedDBProfile, setSelectedProfile,
   } = useContext(ConnectedDBContext) as ConnectedDBContextType;
-
   const [isConnectProcessing, setIsConnectProcessing] = useState(false);
+  const { cyInstance } = useStigContext();
 
   return (
     <Dropdown
@@ -86,9 +89,20 @@ const DatabaseProfile: React.FC = () => {
         }
         <div className="divider dark:divider-neutral my-0"></div>
         <p className="menu-title text-gray-500 dark:text-gray-400 font-normal py-0">Database Actions:</p>
+        <li className='hover:bg-primary hover:text-white'><a onClick={() => console.log("TODO: pop up the DB modal")}>Query</a></li>
+        <li className='hover:bg-primary hover:text-white'><a onClick={
+          async () => {
+            //NOTE: until I find a better way, I think it is more efficient to make these two queries. -wb
+            queryToGraph("match (n) return n", cyInstance);
+            queryToGraph("match r=()-->() return r limit 10", cyInstance); 
+          }
+        }>TEST: Query All</a></li>
+
       </div>
     </Dropdown>
   );
 };
+
+
 
 export default DatabaseProfile;

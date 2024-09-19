@@ -3,7 +3,7 @@ import { IDatabaseConfigOptions } from '../../storage/database-configuration-sto
 import { StigDB } from '../dbi';
 import moment from 'moment';
 import { fromNeo4j, toNeo4j } from './stix2neo';
-import { Identifier, isRelationship, StixObject } from '@/types/Core';
+import { Identifier, isRelationship, StixObject , Core} from '@/types/Core';
 import { BundleType } from '@/types/BundleType';
 import { Relationship } from '@/types/Relationship';
 
@@ -137,7 +137,7 @@ export class Neo4jStigDB implements StigDB {
     return await this.wrapSession(async (s: Session) => {
       const node_res = await s.executeWrite(async (tx: ManagedTransaction) =>
         Promise.all(stix_nodes.map(async (stix) => {
-          stix.modified = time;
+          (stix as Core).modified = time;
           if (!moment(stix.created).isValid()) {
             stix.created = time;
           }
@@ -147,7 +147,7 @@ export class Neo4jStigDB implements StigDB {
               ? 'MERGE (n:stixnode:`' + stix.type + '` {id:$id})\n'
               : 'MATCH (n:stixnode {id:$id})\n';
 
-            await setProperties(tx, toNeo4j(stix), cmd);
+            await setProperties(tx, toNeo4j((stix as Core)), cmd);
             return stix.id;
           } catch (e) {
             console.error(e); // eslint-disable-line no-console
@@ -209,5 +209,8 @@ export class Neo4jStigDB implements StigDB {
   public async close() {
     await this.driver?.close();
     this.driver = undefined;
+  }
+  public is_closed(){
+    return this.driver == undefined
   }
 }

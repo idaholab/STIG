@@ -18,6 +18,9 @@ import { StigSettings } from '@/storage/stig-settings-storage';
 import { graph_copy } from './clipboard';
 import { ContextMenu } from '@/types/ContextMenu';
 import { getCssVarColor } from './GetCssVarColor';
+import { query } from '@/util/DbFunctions';
+import { BundleType } from '@/types/BundleType';
+
 
 export class GraphUtils {
     public cy: cytoscape.Core;
@@ -237,22 +240,22 @@ export function setupCtxMenu(
                     cy.remove(element);
                 }
             },
-            // {
-            //     content: 'DB Delete',
-            //     select(ele: cytoscape.CollectionElements) {
-            //         const element = ele as unknown as CollectionArgument;
+            {
+                content: 'DB Delete',
+                select(ele: cytoscape.CollectionElements) {
+                    const element = ele as unknown as CollectionArgument;
 
-            //         try {
-            //             const eleList = element.toArray();
-            //             eleList.forEach((value) => {
-            //                 cy.remove(value);
-            //                 void db_delete(value.data('raw_data'));
-            //             });
-            //         } catch (e) {
-            //             // Handle error: probably want to indicate that it wasn't deleted from DB
-            //         }
-            //     }
-            // },
+                    try {
+                        const eleList = element.toArray();
+                        eleList.forEach((value) => {
+                            cy.remove(value);
+                            void db_delete(value.data('raw_data'));
+                        });
+                    } catch (e) {
+                        // Handle error: probably want to indicate that it wasn't deleted from DB
+                    }
+                }
+            },
             {
                 content: 'Query Incoming',
                 async select(ele: cytoscape.CollectionElements) {
@@ -262,7 +265,9 @@ export function setupCtxMenu(
                         if (typeof data === 'string') {
                             data = JSON.parse(data);
                         }
-                        await graph_utils.buildNodes(await query_incoming(data), 'DB');
+                        let incoming = await query_incoming(data)
+                        const coreObjects: Core[] = incoming.map(obj => obj as Core);
+                        graph_utils.buildNodes(coreObjects, 'DB');
                         graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
                     }
                 }
@@ -298,7 +303,9 @@ export function setupCtxMenu(
                         if (typeof data === 'string') {
                             data = JSON.parse(data);
                         }
-                        await graph_utils.buildNodes(await query_outgoing(data), 'DB');
+                        let outgoing = await query_outgoing(data)
+                        const coreObjects: Core[] = outgoing.map(obj => obj as Core);
+                        graph_utils.buildNodes(coreObjects, 'DB');
                         graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
                     }
                 }
@@ -344,22 +351,22 @@ export function setupCtxMenu(
                     cy.remove(element);
                 }
             },
-            // {
-            //     content: 'DB Delete',
-            //     select(ele: CollectionElements) {
-            //         const element = ele as unknown as CollectionArgument;
+            {
+                content: 'DB Delete',
+                select(ele: CollectionElements) {
+                    const element = ele as unknown as CollectionArgument;
 
-            //         try {
-            //             const eleList = element.toArray();
-            //             eleList.forEach((value) => {
-            //                 cy.remove(value);
-            //                 void db_delete(value.data('raw_data'));
-            //             });
-            //         } catch (e) {
-            //             // Handle error: probably want to indicate that it wasn't deleted from DB
-            //         }
-            //     }
-            // },
+                    try {
+                        const eleList = element.toArray();
+                        eleList.forEach((value) => {
+                            cy.remove(value);
+                            void db_delete(value.data('raw_data'));
+                        });
+                    } catch (e) {
+                        console.warn("Relationship was not removed from DB", e);
+                    }
+                }
+            },
             {
                 content: 'Select Source',
                 select(ele: CollectionElements) {
@@ -449,4 +456,65 @@ export function setupCtxMenu(
             }
         ]
     } as ContextMenu);
+}
+
+export async function queryToGraph(q: string, cyInstance: cytoscape.Core | undefined){
+    let queryReturn = await query(q);
+    if (!(cyInstance)){return;}
+    const graph_utils = new GraphUtils(cyInstance);
+    //ATTN: this is objectively silly. If this was all programmed correctly, there wouldn't be a need to cast all these back and forth
+    const coreObjects: Core[] = queryReturn.map(obj => obj as Core);
+    graph_utils.buildNodes(coreObjects, "GUI");
+    graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
+}
+export function addToGraph(pkg: BundleType, cyInstance: cytoscape.Core) {
+    const graph_utils = new GraphUtils(cyInstance);
+    let numVerticiesAdded, numEdgesAdded = 0;
+    try{
+        [numVerticiesAdded, numEdgesAdded] = graph_utils.buildNodes(pkg.objects, "GUI");
+    }catch (err){
+        console.warn("[Nodes could not be built. JSON may be invalid] :", err);
+        //TODO: make some sort of meaningful message appear to the user informing them why the nodes couldn't be added
+        return [-1, -1];
+    }
+
+    if (pkg.metadata) {
+        // Position the nodes
+        for (const node of pkg.metadata) {
+            // Find the element on the graph
+            cyInstance.$id(node.id).animate({ 
+                position: node.position, 
+                duration: 1000, 
+                complete: () => cyInstance.fit() 
+            });
+        }
+    } else {
+        let canLayout = true;
+
+        // TODO: Add this logic back in for when
+        // defense in depth gets added as a feature?
+        // Check if defense in depth is on
+        // if (cyInstance.nodes(`#${defense.name.replaceAll(' ', '_')}`).length > 0) {
+        //     canLayout = false;
+        //     $('#dd-ctxLayoutDefInDepth').trigger('click');
+        // }
+
+        // TODO: Add this logic back in for when
+        // kill chain gets added as a feature?
+        // // Check if a kill chain is on
+        // killChain['kill-chain'].forEach(kc => {
+        //     // `#ctxLayout${kc.type}`
+        //     if (cy.nodes(`#${kc.type}`).length > 0) {
+        //         canLayout = false;
+        //         $(`#ctxLayout${kc.type}`).trigger('click');
+        //     }
+        // });
+
+        // Only do this if there aren't any defense in depth or kill chain layouts open
+        if (canLayout) {
+            graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
+        }
+    }
+
+    return [numVerticiesAdded, numEdgesAdded];
 }

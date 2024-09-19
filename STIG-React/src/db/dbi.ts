@@ -21,6 +21,7 @@ export abstract class StigDB {
   abstract updateDB(stix_nodes: StixObject[], stix_edges: Relationship[]): Promise<[Set<string>, Set<string>]>;
   abstract executeQuery(query: string): Promise<StixObject[]>;
   abstract close(): void;
+  abstract is_closed(): boolean;
 
   public static async getDB(_backend: StigDBBackends, config: IDatabaseConfigOptions): Promise<StigDB> {
     const db = new Neo4jStigDB();

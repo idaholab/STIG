@@ -1,5 +1,6 @@
 import { isNode, isPath, isRelationship as isNeoRelationship } from 'neo4j-driver';
-import { Core, Relationship, SDO, StixObject } from '../../stix/stix2';
+import { Core, SDO, StixObject } from '../../types/Core';
+import {Relationship} from '../../types/Relationship';
 
 export function makeDotNotation (parent: string, node: any, obj: Record<string, unknown>) {
   if (node instanceof Array) {
