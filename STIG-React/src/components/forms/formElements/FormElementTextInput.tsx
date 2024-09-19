@@ -24,6 +24,7 @@ type Props = {
   additionalXClasses?: string;
   additionalLabelClasses?: string;
   prefix?: string;
+  suffix?: string;
   badgeText?: string
 
   property?: PropertyConfig;
@@ -51,6 +52,8 @@ const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
   additionalXClasses,
   additionalLabelClasses,
   prefix,
+  suffix,
+  badgeText
   badgeText,
   showTypeSelector = false,
   onTypeChange,
@@ -112,6 +115,21 @@ const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
           </button>
         )}
 
+        {includeInfo && (
+          <div className={`flex cursor-pointer tooltip ${additionalInfoClasses}`} data-tip={infoText}>
+            <ButtonIcon
+              color={'btn-ghost'}
+              buttonIcon={infoIcon ? infoIcon : ''}
+              buttonSize={'btn-sm'}
+            />
+          </div>
+        )}
+
+        {suffix && (
+          <div className={"ml-4"}>
+            {suffix}
+          </div>
+        )}
         <InfoButton
           visible={includeInfo}
           toggleInfo={toggleInfo}
