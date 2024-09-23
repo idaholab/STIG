@@ -8,20 +8,22 @@ const Import: React.FC = () => {
     <Dropdown
       title="Import"
       includeDropdownArrow
-      additionalOptionClasses={'hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-black dark:hover-text-white'}
+      // hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-black dark:hover-text-white
+      additionalOptionClasses={'w-[120px]  '}
+      additionalClasses={''}
     >
-      <li className='hover:bg-primary hover:text-white w-28'>
+      <div className=' '>
         <DialogBasic
           dialogId="ImportJSONBundleModal"
           title="Import JSON Bundle from File"
           buttonColor='btn-ghost'
           showFormButtons={false}
           buttonLabel="JSON Bundle"
-          additionalButtonClasses={"btn-sm justify-start"}
+          additionalButtonClasses={"btn-sm justify-start hover:text-black dark:hover:text-white dark:hover:bg-gray-600 hover:bg-gray-200 w-full rounded-[4px]"}
         >
           <ImportJSONBundleModal />
         </DialogBasic>
-      </li>
+      </div>
     </Dropdown>
   );
 };

@@ -15,10 +15,10 @@ const Dropdown: React.FC<DropdownProps> = ({ title, includeDropdownArrow,
   additionalOptionClasses,
   children
 }) => {
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = React.useState(true);
 
   const handleToggle = () => {
-    setIsOpen(!isOpen);
+    //setIsOpen(!isOpen);
   };
 
   return (
@@ -48,12 +48,6 @@ const Dropdown: React.FC<DropdownProps> = ({ title, includeDropdownArrow,
           })}
         </ul>
       )}
-
-      {/* {isOpen && (
-        <ul tabIndex={0} className={`${additionalOptionClasses} dark:bg-gray-950 border border-black dark:border-none dropdown-content menu bg-gray-100 rounded-[4px] z-[1] p-2 shadow`} style={{ outline: 'none' }}>
-          {children}
-        </ul>
-      )} */}
     </div>
   );
 };
