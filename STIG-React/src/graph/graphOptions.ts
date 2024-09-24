@@ -4,7 +4,7 @@ Copyright 2018 Southern California Edison Company
 ALL RIGHTS RESERVED
  */
 
-import cytoscape, { KlayOptions, LayoutOptions, RandomLayoutOptions, SpreadLayoutOptions } from 'cytoscape';
+import cytoscape, { KlayOptions, LayoutOptions, PresetLayoutOptions, RandomLayoutOptions, SpreadLayoutOptions } from 'cytoscape';
 import { IColaLayoutOptions } from './colaLayoutOptions';
 import { useTheme } from '@/contexts/useTheme';
 import { ViewUtilitiesOptions } from '@/types/ViewUtilitiesOptions';
@@ -122,21 +122,6 @@ export const view_utils_options: ViewUtilitiesOptions = {
   },
   searchBy: ['name']
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -376,7 +361,6 @@ export const random_options: RandomLayoutOptions = {
 
 export const grid_options: cytoscape.GridLayoutOptions = {
   name: 'grid',
-
   fit: true, // whether to fit the viewport to the graph
   padding: 20, // padding used on fit
   boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
@@ -587,6 +571,19 @@ export const euler_options: any = {
   randomize: false
 };
 
+export const preset_options: PresetLayoutOptions = {
+  name: "preset",
+  positions: undefined,
+  zoom: undefined,
+  // the pan level to set (prob want fit = false if set)
+  pan: undefined,
+  // whether to fit to viewport
+  fit: true,
+  // padding on fit
+  padding: 100,
+  animate: true,
+};
+
 export type LayoutsType = Record<string, LayoutOptions>;
 export const layouts: LayoutsType = {
   spread: spread_options,
@@ -601,7 +598,8 @@ export const layouts: LayoutsType = {
   grid: grid_options,
   circle: circle_options,
   concentric: concentric_options,
-  breadthfirst: breadthfirst_options
+  breadthfirst: breadthfirst_options,
+  mitre_timeline: preset_options
 };
 
 

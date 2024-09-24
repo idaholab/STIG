@@ -18,13 +18,10 @@ import dagre from 'cytoscape-dagre';
 import klay from 'cytoscape-klay';
 import spread from 'cytoscape-spread';
 import viewUtilities from 'cytoscape-view-utilities';
-
 import cxtmenu from 'cytoscape-cxtmenu';
 import { edgehandles_style, setup_edge_handles } from './edge-handles';
 import { useStigContext } from '@/contexts/StigContext';
 import { setupCtxMenu } from '@/util/GraphUtils';
-
-
 
 cytoscape.use(viewUtilities);
 cytoscape.use(cxtmenu);
@@ -142,7 +139,7 @@ const Graph: React.FC = () => {
             try {
                 let viewUtil = cy?.viewUtilities(view_utils_options);
                 if (viewUtil) {
-                    setupCtxMenu(cy, isDrawerOpen, toggleDrawer, 
+                    setupCtxMenu(cy, isDrawerOpen, toggleDrawer,
                         selectedSTIXObject, setSelectedSTIXObject, viewUtil);
                 }
             }
@@ -173,7 +170,13 @@ const Graph: React.FC = () => {
                 // Select all nodes with no parents or children
                 const orphans = cy.elements(':orphan').filter(':childless');
                 const cyLayout = orphans.layout(layouts[layout]);
-                cyLayout.run();
+
+                if (layout === 'mitre_timeline') {
+                    layoutByTimeframe(cy);
+                }
+                else {
+                    cyLayout.run();
+                }
             }
 
             const graphElement = cyContainerRef.current;
@@ -188,12 +191,12 @@ const Graph: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        if(cyInstance) {
+        if (cyInstance) {
             // View Utilities
             try {
                 let viewUtil = cyInstance.viewUtilities(view_utils_options);
                 if (viewUtil) {
-                    setupCtxMenu(cyInstance, isDrawerOpen, toggleDrawer, 
+                    setupCtxMenu(cyInstance, isDrawerOpen, toggleDrawer,
                         selectedSTIXObject, setSelectedSTIXObject, viewUtil);
                 }
             }
@@ -227,13 +230,13 @@ const Graph: React.FC = () => {
     // Triggered on edit of a node's properties
     useEffect(() => {
         let elementId = selectedSTIXObject?.id;
-        if(selectedSTIXObject?.type === "relationship") {
+        if (selectedSTIXObject?.type === "relationship") {
             elementId = elementId.replace("relationship--", "");
         }
         // If a relationship is created via the application (as opposed to imported), its cytoscape id will be
         // its raw_data id with "relationship--" on the front
         let cytoElement = cyInstance?.getElementById(elementId);
-        if(cytoElement?.length === 0) {
+        if (cytoElement?.length === 0) {
             cytoElement = cyInstance?.getElementById(selectedSTIXObject?.id);
         }
         if (cytoElement === undefined) { return }
@@ -322,6 +325,65 @@ const Graph: React.FC = () => {
         return rtnNode;
     };
 
+
+    // TODO: Need to display attack patterns based on object_refs as well as relationships
+    function layoutByTimeframe(cy: cytoscape.Core) {
+        const observedDataNodes = cy.nodes().filter(node => node.data('created') && node.data('type') === 'observed-data');
+        const relationshipEdges = cy.edges().filter(edge => edge.data('raw_data')?.type === 'relationship');
+        const positionedAttackPatternNodes = new Set(); // Used so we don't position an attack pattern node more than once if multiple observed nodes point to the same attack pattern
+
+        observedDataNodes.sort((a, b) => {
+            const createdA = new Date(a.data('created')).getTime();
+            const createdB = new Date(b.data('created')).getTime();
+            return createdA - createdB;
+        });
+
+        const startX = 0;  // Starting X position
+        const gap = 120;    // Vertical gap between nodes
+
+        const animations = [];
+        observedDataNodes.forEach((observedNode, index) => {
+            const newX = startX + index * gap;
+            animations.push(observedNode.animate({
+                position: { x: newX, y: 0 }
+            }, {
+                duration: 1000,
+                easing: 'ease-in-out'
+            }).promiseOn('position'));
+
+            observedNode.position({
+                x: newX,
+                y: 0
+            });
+
+            let connectedAttackPatternNodes = relationshipEdges.filter(edge => {
+                const sourceIsObserved = edge.data('raw_data')?.source_ref === observedNode.data('id') && cy.getElementById(edge.data('raw_data').target_ref).data('type') === 'attack-pattern';
+                const targetIsObserved = edge.data('raw_data').target_ref === observedNode.data('id') && cy.getElementById(edge.data('raw_data').source_ref).data('type') === 'attack-pattern';
+                return sourceIsObserved || targetIsObserved;
+            });
+
+            connectedAttackPatternNodes.forEach((edge, attackIndex) => {
+                let attackPatternNode = cy.getElementById(edge.data('raw_data').source_ref === observedNode.data('id') ? edge.data('raw_data').target_ref : edge.data('raw_data').source_ref);
+
+                if (!positionedAttackPatternNodes.has(attackPatternNode.id())) {
+                    animations.push(attackPatternNode.animate({
+                        position: { x: newX, y: 200 + attackIndex * gap }
+                    }, {
+                        duration: 1000,
+                        easing: 'ease-in-out'
+                    }).promiseOn('position'));
+                    positionedAttackPatternNodes.add(attackPatternNode.id());
+                }
+            });
+        });
+
+        cy.layout({ name: 'preset' }).run();  // Run layout
+    }
+
+
+
+
+
     // Show STIX props panel on node/edge click
     cyInstance?.on('click', 'node, edge', (evt: cytoscape.EventObject) => {
         if (!isDrawerOpen) {
@@ -390,7 +452,7 @@ const Graph: React.FC = () => {
             ele.data("raw_data", raw_data);
             ele.data('label', default_relationship);
             //   ele.data('saved', false);
-        } 
+        }
         ele.classes('edge');
     });
 
