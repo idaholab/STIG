@@ -1,8 +1,7 @@
-import { Identifier, Timestamp } from "@/types/Core";
-import { CreatedByRelationship } from "@/types/CreatedByRelationship";
+import { StixRelationshipObject } from "@/types/stixTypes/StixRelationshipObject";
 import * as uuid from 'uuid';
 
-export function CreatedByRelationshipFactory(src_ref: Identifier, tgt_ref: Identifier, ceate_time: Timestamp, mod_time: Timestamp): CreatedByRelationship {
+export function CreatedByRelationshipFactory(src_ref: string, tgt_ref: string, ceate_time: string, mod_time: string): StixRelationshipObject {
     const ret = {
         type: 'relationship',
         relationship_type: 'created-by',
@@ -11,7 +10,8 @@ export function CreatedByRelationshipFactory(src_ref: Identifier, tgt_ref: Ident
         id: 'created-by--' + uuid.v4(),
         description: '',
         created: ceate_time,
-        modified: mod_time
+        modified: mod_time,
+        spec_version: "2.1"
     };
-    return ret as CreatedByRelationship;
+    return ret as StixRelationshipObject;
 }

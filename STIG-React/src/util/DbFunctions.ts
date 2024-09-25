@@ -1,11 +1,12 @@
 // import diffpatch from 'jsondiffpatch';
 
 import { StigDB } from "@/db/dbi";
-import { IJSONClassOptions, schema } from "@/types/schema";
+import { SchemaSTIXClass } from "@/types/stixSchemaTypes/SchemaSTIXClass";
+import { schema } from "@/stix/schema";
 import { IDatabaseConfigOptions } from "@/storage/database-configuration-storage";
-import { BundleType } from "@/types/BundleType";
-import { StixObject } from "@/types/Core";
-import { Relationship } from "@/types/Relationship";
+import { STIGBundle } from "@/types/STIGBundle";
+import { StixObject } from "@/types/stixTypes/StixObject";
+import { StixRelationshipObject } from "@/types/stixTypes/StixRelationshipObject";
 
 let currentDB: StigDB;
 
@@ -53,13 +54,13 @@ export async function use_db(config: IDatabaseConfigOptions) {
   }
 }
 
-export async function commitBundle(bundle: BundleType): Promise<[Set<string>, Set<string>]> {
+export async function commitBundle(bundle: STIGBundle): Promise<[Set<string>, Set<string>]> {
   return wrapReturn(bundle, () => [new Set(), new Set()], b => currentDB.uploadBundle(b));
 }
 
-export async function commit(nodes: StixObject[], edges: Relationship[]): Promise<[Set<string>, Set<string>]> {
+export async function commit(nodes: StixObject[], edges: StixRelationshipObject[]): Promise<[Set<string>, Set<string>]> {
   if (!nodes.every(checkProps) || !edges.every(checkProps)) throw new Error('Invalid stix');
-  const pair: [StixObject[], Relationship[]] = [nodes, edges];
+  const pair: [StixObject[], StixRelationshipObject[]] = [nodes, edges];
   return wrapReturn(pair, () => [new Set(), new Set()], ([n, e]) => currentDB.updateDB(n, e));
 }
 
@@ -84,10 +85,10 @@ export async function query(query: string): Promise<StixObject[]> {
 //   return wrapReturn(stix, () => ({}), s => currentDB.getDiff(s));
 // }
 
-function getAllProps(schemaObject: IJSONClassOptions) {
+function getAllProps(schemaObject: SchemaSTIXClass) {
   const props = schemaObject.properties;
   for (const superClass of schemaObject.superClasses) {
-    const superClassObject = schema.classes.find(c =>
+    const superClassObject = schema.find(c =>
       c.name.replace(/-/g, '') === superClass
     );
     if (superClassObject) {
@@ -98,7 +99,7 @@ function getAllProps(schemaObject: IJSONClassOptions) {
 }
 
 export function checkProps(object: StixObject): boolean {
-  const schemaObject = schema.classes.find(c => { return c.name === object.type; });
+  const schemaObject = schema.find(c => { return c.name === object.type; });
   if (typeof schemaObject !== 'object') {
     return false;
   }

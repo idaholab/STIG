@@ -1,8 +1,7 @@
 // React
-import ButtonIcon from '@/components/elements/ButtonIcon';
 import InfoButton from '@/components/elements/InfoButton';
 import { STIXPropertyLabel } from '@/components/elements/STIXPropertyLabel';
-import { PropertyConfig } from '@/types/schema';
+import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
 import React, { useRef, useState } from 'react';
 
 type Props = {
@@ -18,7 +17,7 @@ type Props = {
   infoIcon?: string,
   additionalClasses?: string;
   additionalInfoClasses?: string;
-  property?: PropertyConfig,
+  property?: SchemaSTIXProperty,
   showTypeSelector?: boolean,
   onTypeChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void,
 };

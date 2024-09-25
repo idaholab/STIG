@@ -1,33 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import { PropertyConfig } from '@/types/schema';
+import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
 import ButtonSTIXJSON from '../../elements/ButtonSTIXJSON';
 import FormElementSTIXPropertySelection from '../FormSTIXPropertySelection';
 import { inferSTIXType } from '@/stix/inferSTIXType';
 import { useStixPropsContext } from '@/contexts/StixPropsContext';
 import { UIPropertyType } from '@/types/UIPropertyType';
-import { s_SchemaType } from '@/types/SchemaType';
+import { SchemaSTIXType } from '@/types/stixSchemaTypes/SchemaSTIXType';
 import FormElementSelect from './FormElementSelect';
-import { StixObject } from '@/types/Core';
+import { StixObject } from '@/types/stixTypes/StixObject';
 import { STIXPropertyRenderer } from '../STIXPropertyRenderer';
 import { STIXPropertyLabel } from '@/components/elements/STIXPropertyLabel';
 
 type Props = {
-  // Had to add the "any" to this typing because VS Code was
-  // not happy with any way I was attempting to check if a property
-  // existed in the Object before attempting to use said property.
-  dictionary: Object | any;
-  // Had to add the "any" to this typing because VS Code was
-  // not happy with any way I was attempting to check if a property
-  // existed in the StixObject before attempting to use said property.
-  parentSTIXObject: StixObject | undefined | any;
+  dictionary: StixObject;
+  parentSTIXObject: StixObject | undefined;
   setParentSTIXObject: React.Dispatch<React.SetStateAction<StixObject | undefined>>;
   // Needed so that a Dictionary within a Dictionary can have its type changed
-  parentDictionaryProps?: PropertyConfig[];
-  setParentDictionaryProps?: React.Dispatch<React.SetStateAction<PropertyConfig[]>>;
-  parentSelectedProperties?: PropertyConfig[];
-  setParentSelectedProperties?: React.Dispatch<React.SetStateAction<PropertyConfig[]>>;
+  parentDictionaryProps?: SchemaSTIXProperty[];
+  setParentDictionaryProps?: React.Dispatch<React.SetStateAction<SchemaSTIXProperty[]>>;
+  parentSelectedProperties?: SchemaSTIXProperty[];
+  setParentSelectedProperties?: React.Dispatch<React.SetStateAction<SchemaSTIXProperty[]>>;
   className?: string;
-  property?: PropertyConfig;
+  property?: SchemaSTIXProperty;
   showTypeSelector?: boolean,
   onTypeChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void,
 };
@@ -45,8 +39,8 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
   showTypeSelector,
   onTypeChange,
 }) => {
-  const [localSelectedProperties, setLocalSelectedProperties] = useState<PropertyConfig[]>([]);
-  const [localDictionaryProps, setLocalDictionaryProps] = useState<PropertyConfig[]>([]);
+  const [localSelectedProperties, setLocalSelectedProperties] = useState<SchemaSTIXProperty[]>([]);
+  const [localDictionaryProps, setLocalDictionaryProps] = useState<SchemaSTIXProperty[]>([]);
   const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
 
   useEffect(() => {
@@ -64,7 +58,7 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
   // Update the parent STIX object when its
   // embedded map child changes
   useEffect(() => {
-    const tempParentSTIXObject = { ...parentSTIXObject };
+    const tempParentSTIXObject = { ...parentSTIXObject } as StixObject;
     tempParentSTIXObject[property?.name || ''] = selectedSTIXObject;
     setParentSTIXObject(tempParentSTIXObject);
   }, [selectedSTIXObject]);
@@ -73,7 +67,7 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
     newVal: string | boolean | number | Date | ArrayBuffer | null | undefined | [],
     propName: string
   ) => {
-    let tempSelectedSTIXObject = { ...selectedSTIXObject };
+    let tempSelectedSTIXObject = { ...selectedSTIXObject } as StixObject;
     if (tempSelectedSTIXObject) {
       tempSelectedSTIXObject[propName] = newVal;
     }
@@ -81,20 +75,20 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
   };
 
   const stixUIToSchemaTypeConverter = {
-    "string": "String",
-    "array": "List",
-    "boolean": "Boolean",
-    "integer": "Integer",
-    "object": "Dictionary",
-    "number": "Float"
+    "string": "string",
+    "array": "list",
+    "boolean": "boolean",
+    "integer": "integer",
+    "object": "dictionary",
+    "number": "float"
   };
 
   const handlePropertyTypeChange = (
     propName: string, newType: UIPropertyType,
-    dictionaryProps?: PropertyConfig[],
-    setDictionaryProps?: React.Dispatch<React.SetStateAction<PropertyConfig[]>>,
-    selectedProperties?: PropertyConfig[],
-    setSelectedProperties?: React.Dispatch<React.SetStateAction<PropertyConfig[]>>
+    dictionaryProps?: SchemaSTIXProperty[],
+    setDictionaryProps?: React.Dispatch<React.SetStateAction<SchemaSTIXProperty[]>>,
+    selectedProperties?: SchemaSTIXProperty[],
+    setSelectedProperties?: React.Dispatch<React.SetStateAction<SchemaSTIXProperty[]>>
   ) => {
     // If no embedded map or selected properties are passed in, just use
     // the ones from the current component
@@ -116,7 +110,7 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
       return prop.name === propName;
     });
     const oldType = dictionaryProps[dictionaryPropIndex].type;
-    tempDictionaryProps[dictionaryPropIndex].type = stixUIToSchemaTypeConverter[newType] as s_SchemaType;
+    tempDictionaryProps[dictionaryPropIndex].type = stixUIToSchemaTypeConverter[newType] as SchemaSTIXType;
     setDictionaryProps(tempDictionaryProps);
 
     // Update selectedProperties
@@ -124,15 +118,15 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
     const selectedPropertiesIndex = tempSelectedProperties.findIndex(prop => {
       return prop.name === propName;
     });
-    tempSelectedProperties[selectedPropertiesIndex].type = stixUIToSchemaTypeConverter[newType] as s_SchemaType;
+    tempSelectedProperties[selectedPropertiesIndex].type = stixUIToSchemaTypeConverter[newType] as SchemaSTIXType;
     setSelectedProperties(tempSelectedProperties);
 
     // When changing to an array, clear the value of the propName
     // so the application does not try to map over an object 
     // that isn't an array and subsequently crash
     if (newType === "array") {
-      if (oldType === "Dictionary") {
-        let tempParentSTIXObject = { ...parentSTIXObject };
+      if (oldType === "dictionary") {
+        let tempParentSTIXObject = { ...parentSTIXObject } as StixObject;
         if (tempParentSTIXObject) {
           tempParentSTIXObject[propName] = [];
         }
@@ -144,8 +138,8 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
       // When changing to a boolean, clear the value of the propName
       // so the application does not give a "the `value` prop supplied
       // to <select> must be a scalar value if `multiple` is false" error
-      if (oldType === "Dictionary") {
-        let tempParentSTIXObject = { ...parentSTIXObject };
+      if (oldType === "dictionary") {
+        let tempParentSTIXObject = { ...parentSTIXObject } as StixObject;
         if (tempParentSTIXObject) {
           tempParentSTIXObject[propName] = "";
         }

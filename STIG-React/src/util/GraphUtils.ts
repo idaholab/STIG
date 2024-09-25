@@ -5,10 +5,11 @@ ALL RIGHTS RESERVED
  */
 import moment from 'moment';
 import cytoscape, { CollectionElements, CollectionReturnValue, ElementDefinition } from 'cytoscape';
-import { Core, DataSourceType, Identifier, isSRO, StixObject } from '@/types/Core';
-import { Relationship } from '@/types/Relationship';
-import { Sighting } from '@/types/Sighting';
-import { createStixRelationship, StixRelationshipData } from '@/types/StixRelationshipData';
+import { DataSourceType } from '@/types/DataSourceType';
+import { StixObject } from '@/types/stixTypes/StixObject';
+import { StixRelationshipObject } from '@/types/stixTypes/StixRelationshipObject';
+import { CytoscapeRelationshipData } from '@/types/cytoscapeTypes/CytoscapeRelationshipData';
+import { createStixRelationship } from './createStixRelationship';
 import { CreatedByRelationshipFactory } from './CreatedByRelationshipFactory';
 import { layouts, LayoutsType } from '@/graph/graphOptions';
 import { createObjectMarkingRelationship, createStixNode } from '../stix/stix';
@@ -16,10 +17,10 @@ import { CollectionArgument } from 'cytoscape';
 import { db_delete, query_incoming, query_outgoing } from './DbFunctions';
 import { StigSettings } from '@/storage/stig-settings-storage';
 import { graph_copy } from './clipboard';
-import { ContextMenu } from '@/types/ContextMenu';
+import { ContextMenu } from '@/types/cytoscapeTypes/ContextMenu';
 import { getCssVarColor } from './GetCssVarColor';
 import { query } from '@/util/DbFunctions';
-import { BundleType } from '@/types/BundleType';
+import { STIGBundle } from '@/types/STIGBundle';
 
 
 export class GraphUtils {
@@ -30,11 +31,11 @@ export class GraphUtils {
         this.cy = cy;
     }
 
-    private _addVertices(sdos: Core[], data_source: DataSourceType): [CollectionReturnValue, Relationship[], Sighting[]] {
-        const in_graph = new Set<Identifier>();
+    private _addVertices(sdos: StixObject[], data_source: DataSourceType): [CollectionReturnValue, StixRelationshipObject[], StixRelationshipObject[]] {
+        const in_graph = new Set<string>();
         const to_add: ElementDefinition[] = [];
-        const relationships: Relationship[] = [];
-        const sightings: Sighting[] = [];
+        const relationships: StixRelationshipObject[] = [];
+        const sightings: StixRelationshipObject[] = [];
         sdos = sdos.sort((a, b) => {
             const momentA = moment(a.modified).unix();
             const momentB = moment(b.modified).unix();
@@ -48,7 +49,7 @@ export class GraphUtils {
                 }
                 if (this.cy.getElementById(sdo.id).length > 0) { continue; }
 
-                if (!isSRO(sdo)) {
+                if (sdo.type.toLowerCase() !== 'relationship' && sdo.type.toLowerCase() !== 'sighting') {
                     const st_node = createStixNode(sdo, sdo.type, data_source);
                     if (!in_graph.has(st_node.data.id)) {
                         to_add.push(JSON.parse(JSON.stringify(st_node)) as ElementDefinition);
@@ -57,7 +58,7 @@ export class GraphUtils {
                     if (sdo.created_by_ref) {
                         if (!in_graph.has(sdo.id)) {
                             const cb_sro = CreatedByRelationshipFactory(sdo.id, sdo.created_by_ref, sdo.created, sdo.modified!);
-                            relationships.push(cb_sro as Relationship);
+                            relationships.push(cb_sro as StixRelationshipObject);
                             in_graph.add(sdo.id);
                         }
                     } else if ('object_marking_refs' in sdo && sdo.object_marking_refs) {
@@ -70,12 +71,12 @@ export class GraphUtils {
                     }
                 } else if (sdo.type.toLowerCase() === 'relationship') {
                     if (!in_graph.has(sdo.id)) {
-                        relationships.push(sdo as Relationship);
+                        relationships.push(sdo as StixRelationshipObject);
                         in_graph.add(sdo.id);
                     }
                 } else if (sdo.type.toLowerCase() === 'sighting') {
                     if (!in_graph.has(sdo.id)) {
-                        sightings.push(sdo as Sighting);
+                        sightings.push(sdo as StixRelationshipObject);
                         in_graph.add(sdo.id);
                     }
                 }
@@ -89,7 +90,7 @@ export class GraphUtils {
         }
     }
 
-    public buildNodes(objects: Core[], data_source: DataSourceType): [number, number] {
+    public buildNodes(objects: StixObject[], data_source: DataSourceType): [number, number] {
         const [nodes_added, relationships, sightings] = this._addVertices(objects, data_source);
         const to_add: ElementDefinition[] = [];
 
@@ -100,7 +101,7 @@ export class GraphUtils {
                 continue;
             }
 
-            const edge_data: StixRelationshipData = {
+            const edge_data: CytoscapeRelationshipData = {
                 target: to_node.id(),
                 source: from_node.id(),
                 id: r.id,
@@ -118,7 +119,7 @@ export class GraphUtils {
             if (r.observed_data_refs) {
                 for (const t_n of r.observed_data_refs) {
                     const to_node = this.cy.getElementById(t_n);
-                    const edge_data: StixRelationshipData = {
+                    const edge_data: CytoscapeRelationshipData = {
                         target: to_node.id(),
                         source: from_node.id(),
                         id: r.id,
@@ -135,7 +136,7 @@ export class GraphUtils {
             if (r.object_marking_refs) {
                 for (const t_n of r.object_marking_refs) {
                     const to_node = this.cy.getElementById(t_n);
-                    const edge_data: StixRelationshipData = {
+                    const edge_data: CytoscapeRelationshipData = {
                         target: to_node.id(),
                         source: from_node.id(),
                         id: r.id,
@@ -152,7 +153,7 @@ export class GraphUtils {
             if (r.where_sighted_refs) {
                 for (const t_n of r.where_sighted_refs) {
                     const to_node = this.cy.getElementById(t_n);
-                    const edge_data: StixRelationshipData = {
+                    const edge_data: CytoscapeRelationshipData = {
                         target: to_node.id(),
                         source: from_node.id(),
                         id: r.id,
@@ -167,7 +168,7 @@ export class GraphUtils {
             }
             if (r.sighting_of_ref) {
                 const to_node = this.cy.getElementById(r.sighting_of_ref);
-                const edge_data: StixRelationshipData = {
+                const edge_data: CytoscapeRelationshipData = {
                     target: to_node.id(),
                     source: from_node.id(),
                     id: r.id,
@@ -207,7 +208,7 @@ export function setupCtxMenu(
     cy: cytoscape.Core, 
     isDrawerOpen: boolean,
     toggleDrawer: () => void,
-    selectedSTIXObject: StixObject | undefined | any,
+    selectedSTIXObject: StixObject | undefined,
     setSelectedSTIXObject: React.Dispatch<React.SetStateAction<StixObject | undefined>>,
     view_util?: any
 ): void {
@@ -266,7 +267,7 @@ export function setupCtxMenu(
                             data = JSON.parse(data);
                         }
                         let incoming = await query_incoming(data)
-                        const coreObjects: Core[] = incoming.map(obj => obj as Core);
+                        const coreObjects: StixObject[] = incoming.map(obj => obj as StixObject);
                         graph_utils.buildNodes(coreObjects, 'DB');
                         graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
                     }
@@ -304,7 +305,7 @@ export function setupCtxMenu(
                             data = JSON.parse(data);
                         }
                         let outgoing = await query_outgoing(data)
-                        const coreObjects: Core[] = outgoing.map(obj => obj as Core);
+                        const coreObjects: StixObject[] = outgoing.map(obj => obj as StixObject);
                         graph_utils.buildNodes(coreObjects, 'DB');
                         graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
                     }
@@ -439,7 +440,7 @@ export function setupCtxMenu(
                     // the currently selected object
                     let selectedSTIXObjectId = selectedSTIXObject?.id;
                     if(selectedSTIXObject?.type === "relationship") {
-                        selectedSTIXObjectId = selectedSTIXObjectId.replace("relationship--", "");
+                        selectedSTIXObjectId = selectedSTIXObjectId?.replace("relationship--", "");
                     }
                     const remainingElementIds = cy.elements().map(element => element.data("id"));
                     // If a relationship is created via the application (as opposed to imported), its cytoscape id will be
@@ -463,11 +464,11 @@ export async function queryToGraph(q: string, cyInstance: cytoscape.Core | undef
     if (!(cyInstance)){return;}
     const graph_utils = new GraphUtils(cyInstance);
     //ATTN: this is objectively silly. If this was all programmed correctly, there wouldn't be a need to cast all these back and forth
-    const coreObjects: Core[] = queryReturn.map(obj => obj as Core);
+    const coreObjects: StixObject[] = queryReturn.map(obj => obj as StixObject);
     graph_utils.buildNodes(coreObjects, "GUI");
     graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
 }
-export function addToGraph(pkg: BundleType, cyInstance: cytoscape.Core) {
+export function addToGraph(pkg: STIGBundle, cyInstance: cytoscape.Core) {
     const graph_utils = new GraphUtils(cyInstance);
     let numVerticiesAdded, numEdgesAdded = 0;
     try{

@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import ButtonBasic from '../../elements/ButtonBasic.tsx';
 import InfoButton from '@/components/elements/InfoButton.tsx';
-import { PropertyConfig } from '@/types/schema.ts';
+import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty.ts';
 import { STIXPropertyLabel } from '@/components/elements/STIXPropertyLabel.tsx';
 
 type Props = {
@@ -19,7 +19,7 @@ type Props = {
   additionalInfoClasses?: string;
   infoIcon?: string;
   infoText?: string;
-  property?: PropertyConfig
+  property?: SchemaSTIXProperty
 };
 
 const FormElementFileInput: React.FC<Props> = ({

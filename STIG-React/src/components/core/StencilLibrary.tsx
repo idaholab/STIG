@@ -1,11 +1,10 @@
 import React from 'react';
 import { stencilItems } from '../elements/StencilItems';
-import { StixType } from '@/types/Core';
 import AlertComponent from '../elements/AlertComponent';
 
 type StencilLibraryProps = {
     type: string;
-    onAddNode: (label: string, type: StixType, imageUrl: string) => void;
+    onAddNode: (label: string, type: string, imageUrl: string) => void;
     searchText?: string;
     isAccordionOpen: boolean;
     isPanelOpen: boolean;
@@ -17,13 +16,13 @@ const StencilLibrary: React.FC<StencilLibraryProps> = ({ type, onAddNode, search
         filteredItems = filteredItems.filter(item => item.alt.toLowerCase().includes(searchText?.toLowerCase()));
     }
 
-    const handleDragStart = (event: React.DragEvent, label: string, type: StixType, imageUrl: string) => {
+    const handleDragStart = (event: React.DragEvent, label: string, type: string, imageUrl: string) => {
         event.dataTransfer.setData('text', label);
         event.dataTransfer.setData('imageUrl', imageUrl);
         event.dataTransfer.setData('type', type);
     };
 
-    const handleClickAddNode = (label: string, type: StixType, imageUrl: string) => {
+    const handleClickAddNode = (label: string, type: string, imageUrl: string) => {
         onAddNode(label, type, imageUrl);
     };
 

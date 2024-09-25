@@ -3,9 +3,10 @@ import { IDatabaseConfigOptions } from '../../storage/database-configuration-sto
 import { StigDB } from '../dbi';
 import moment from 'moment';
 import { fromNeo4j, toNeo4j } from './stix2neo';
-import { Identifier, isRelationship, StixObject , Core} from '@/types/Core';
-import { BundleType } from '@/types/BundleType';
-import { Relationship } from '@/types/Relationship';
+import { isRelationship } from './isRelationship';
+import { StixObject } from '@/types/stixTypes/StixObject';
+import { STIGBundle } from '@/types/STIGBundle';
+import { StixRelationshipObject } from '@/types/stixTypes/StixRelationshipObject';
 
 function setProperties(tx: ManagedTransaction, stix: Record<string, unknown>, cmd: string) {
   return tx.run(
@@ -64,7 +65,7 @@ export class Neo4jStigDB implements StigDB {
     ) as Promise<unknown> as Promise<void>;
   }
 
-  private traverseNode(query: string, id: Identifier): Promise<StixObject[]> {
+  private traverseNode(query: string, id: string): Promise<StixObject[]> {
     return this.wrapSession(async (s: Session) => {
       const res = await s.executeRead((tx: ManagedTransaction) =>
         tx.run(query, { id })
@@ -75,21 +76,21 @@ export class Neo4jStigDB implements StigDB {
 
   /**
    * @description Gets all incoming edges and the objects they connect to.
-   * @param {Identifier} id
+   * @param {string} id
    * @returns {Promise<StixObject[]>}
    * @memberof StigDB
    */
-  public traverseNodeIn(id: Identifier): Promise<StixObject[]> {
+  public traverseNodeIn(id: string): Promise<StixObject[]> {
     return this.traverseNode('MATCH (n)<-[r]-(o) WHERE n.id = $id RETURN r, o', id);
   }
 
   /**
    * @description Gets all outgoing edges and the objects they connect to.
-   * @param {Identifier} id
+   * @param {string} id
    * @returns {Promise<StixObject[]>}
    * @memberof StigDB
    */
-  public traverseNodeOut(id: Identifier): Promise<StixObject[]> {
+  public traverseNodeOut(id: string): Promise<StixObject[]> {
     return this.traverseNode('MATCH (n)-[r]->(o) WHERE n.id = $id RETURN r, o', id);
   }
 
@@ -117,9 +118,9 @@ export class Neo4jStigDB implements StigDB {
    * @returns  Promise<string>
    * @memberof StigDB
    */
-  public uploadBundle(stix: BundleType): Promise<[Set<string>, Set<string>]> {
+  public uploadBundle(stix: STIGBundle): Promise<[Set<string>, Set<string>]> {
     const nodes: StixObject[] = [];
-    const edges: Relationship[] = [];
+    const edges: StixRelationshipObject[] = [];
     for (const obj of stix.objects) {
       (isRelationship(obj) ? edges : nodes).push(obj as any);
     }
@@ -132,12 +133,12 @@ export class Neo4jStigDB implements StigDB {
    * @returns  Promise<string>
    * @memberof StigDB
    */
-  public async updateDB(stix_nodes: StixObject[], stix_edges: Relationship[]): Promise<[Set<string>, Set<string>]> {
+  public async updateDB(stix_nodes: StixObject[], stix_edges: StixRelationshipObject[]): Promise<[Set<string>, Set<string>]> {
     const time = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
     return await this.wrapSession(async (s: Session) => {
       const node_res = await s.executeWrite(async (tx: ManagedTransaction) =>
         Promise.all(stix_nodes.map(async (stix) => {
-          (stix as Core).modified = time;
+          (stix as StixObject).modified = time;
           if (!moment(stix.created).isValid()) {
             stix.created = time;
           }
@@ -147,7 +148,7 @@ export class Neo4jStigDB implements StigDB {
               ? 'MERGE (n:stixnode:`' + stix.type + '` {id:$id})\n'
               : 'MATCH (n:stixnode {id:$id})\n';
 
-            await setProperties(tx, toNeo4j((stix as Core)), cmd);
+            await setProperties(tx, toNeo4j((stix as StixObject)), cmd);
             return stix.id;
           } catch (e) {
             console.error(e); // eslint-disable-line no-console

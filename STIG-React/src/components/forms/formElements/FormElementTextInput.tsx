@@ -1,7 +1,6 @@
-import ButtonIcon from '@/components/elements/ButtonIcon';
 import InfoButton from '@/components/elements/InfoButton';
 import { STIXPropertyLabel } from '@/components/elements/STIXPropertyLabel';
-import { PropertyConfig } from '@/types/schema';
+import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
 import React, { forwardRef, useRef, useState } from 'react';
 
 type Props = {
@@ -27,7 +26,7 @@ type Props = {
   suffix?: string;
   badgeText?: string
 
-  property?: PropertyConfig;
+  property?: SchemaSTIXProperty;
   showTypeSelector?: boolean,
   onTypeChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void,
 };

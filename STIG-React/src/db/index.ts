@@ -1,3 +1,4 @@
 import { StigDB, StigDBBackends } from './dbi';
 
-export { StigDB, StigDBBackends };
+export { StigDB };
+export type { StigDBBackends };

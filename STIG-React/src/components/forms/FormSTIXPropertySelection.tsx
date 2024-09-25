@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import Dropdown from '@/components/core/Dropdown';
-import { PropertyConfig } from '@/types/schema';
+import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
 import FormElementTextInput from './formElements/FormElementTextInput';
 import ButtonBasic from '../elements/ButtonBasic';
 
 type Props = {
-  propertyOptions: PropertyConfig[];
-  setPropertyOptions?: React.Dispatch<React.SetStateAction<PropertyConfig[]>>;
-  selectedProperties: PropertyConfig[];
-  setSelectedProperties: React.Dispatch<React.SetStateAction<PropertyConfig[]>>;
+  propertyOptions: SchemaSTIXProperty[];
+  setPropertyOptions?: React.Dispatch<React.SetStateAction<SchemaSTIXProperty[]>>;
+  selectedProperties: SchemaSTIXProperty[];
+  setSelectedProperties: React.Dispatch<React.SetStateAction<SchemaSTIXProperty[]>>;
   includeAddNew?: boolean;
   size: string
 };
@@ -91,10 +91,10 @@ const FormElementSTIXPropertySelection: React.FC<Props> = ({
                   // Can't add a property with no name
                   if (newPropertyName) {
                     const tempPropertyOptions = [...propertyOptions];
-                    tempPropertyOptions.push({ name: newPropertyName, type: "String" });
+                    tempPropertyOptions.push({ name: newPropertyName, type: "string" });
                     setPropertyOptions(tempPropertyOptions);
                     const tempSelectedProperties = [...selectedProperties];
-                    tempSelectedProperties.push({ name: newPropertyName, type: "String" });
+                    tempSelectedProperties.push({ name: newPropertyName, type: "string" });
                     setSelectedProperties(tempSelectedProperties);
                     setNewPropertyName("");
                   }

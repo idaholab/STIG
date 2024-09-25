@@ -7,7 +7,7 @@ ALL RIGHTS RESERVED
 import cytoscape, { KlayOptions, LayoutOptions, PresetLayoutOptions, RandomLayoutOptions, SpreadLayoutOptions } from 'cytoscape';
 import { IColaLayoutOptions } from './colaLayoutOptions';
 import { useTheme } from '@/contexts/useTheme';
-import { ViewUtilitiesOptions } from '@/types/ViewUtilitiesOptions';
+import { ViewUtilitiesOptions } from '@/types/cytoscapeTypes/ViewUtilitiesOptions';
 
 export const node_style: cytoscape.Stylesheet = {
   selector: '.stix_node',

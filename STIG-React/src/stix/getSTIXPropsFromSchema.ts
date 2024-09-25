@@ -1,9 +1,10 @@
-import { IJSONClassOptions, schema } from "@/types/schema";
+import { SchemaSTIXClass } from "@/types/stixSchemaTypes/SchemaSTIXClass";
+import { schema } from "./schema";
 
-export function getSTIXPropsFromSchema(schemaObject: IJSONClassOptions) {
+export function getSTIXPropsFromSchema(schemaObject: SchemaSTIXClass) {
     let props = schemaObject.properties;
     for (const superClass of schemaObject.superClasses) {
-        const superClassObject = schema.classes.find(c =>
+        const superClassObject = schema.find(c =>
             c.name.replace(/-/g, '') === superClass
         );
         if (superClassObject) {

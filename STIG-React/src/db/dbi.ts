@@ -2,9 +2,9 @@
 import { IDatabaseConfigOptions } from '../storage/database-configuration-storage';
 
 import { Neo4jStigDB } from './neo4j';
-import { Identifier, StixObject } from '@/types/Core';
-import { BundleType } from '@/types/BundleType';
-import { Relationship } from '@/types/Relationship';
+import { StixObject } from '@/types/stixTypes/StixObject';
+import { STIGBundle } from '@/types/STIGBundle';
+import { StixRelationshipObject } from '@/types/stixTypes/StixRelationshipObject';
 
 export type StigDBBackends = 'neo4j';
 
@@ -14,11 +14,11 @@ export abstract class StigDB {
   abstract getName(): string;
   abstract configure(config: IDatabaseConfigOptions): Promise<void>;
   abstract delete(stix: StixObject): Promise<void>;
-  abstract traverseNodeIn(id: Identifier): Promise<StixObject[]>;
-  abstract traverseNodeOut(id: Identifier): Promise<StixObject[]>;
+  abstract traverseNodeIn(id: string): Promise<StixObject[]>;
+  abstract traverseNodeOut(id: string): Promise<StixObject[]>;
   //abstract getDiff(node: StixObject): Promise<diffpatch.Delta | undefined>;
-  abstract uploadBundle(stix: BundleType): Promise<[Set<string>, Set<string>]>;
-  abstract updateDB(stix_nodes: StixObject[], stix_edges: Relationship[]): Promise<[Set<string>, Set<string>]>;
+  abstract uploadBundle(stix: STIGBundle): Promise<[Set<string>, Set<string>]>;
+  abstract updateDB(stix_nodes: StixObject[], stix_edges: StixRelationshipObject[]): Promise<[Set<string>, Set<string>]>;
   abstract executeQuery(query: string): Promise<StixObject[]>;
   abstract close(): void;
   abstract is_closed(): boolean;
