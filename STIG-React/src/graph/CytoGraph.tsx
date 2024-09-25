@@ -228,7 +228,11 @@ const Graph: React.FC = () => {
 
     // Triggered on edit of a node's properties
     useEffect(() => {
-        let elementId = selectedSTIXObject?.id;
+        if (selectedSTIXObject === undefined) {
+            return;
+        }
+
+        let elementId = selectedSTIXObject.id;
         if (selectedSTIXObject?.type === "relationship") {
             elementId = elementId?.replace("relationship--", "");
         }
