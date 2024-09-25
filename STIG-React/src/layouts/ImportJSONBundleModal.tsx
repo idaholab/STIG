@@ -1,13 +1,9 @@
-import { AlertType } from '@/components/elements/AlertComponent';
 import ButtonBasic from '@/components/elements/ButtonBasic';
 import FormElementFileInput from '@/components/forms/formElements/FormElementFileInput';
 import { useNotificationContext } from '@/contexts/NotificationContext';
 import { useStigContext } from '@/contexts/StigContext';
-import { StigSettings } from '@/storage';
-import { BundleType } from '@/types/BundleType';
-import { addToGraph, GraphUtils } from '@/util/GraphUtils';
+import { addToGraph } from '@/util/GraphUtils';
 import React, { useState } from 'react';
-import { Core } from '@/types/Core';
 
 const ImportJSONBundleModal: React.FC = () => {
     const { cyInstance } = useStigContext();

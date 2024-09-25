@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useStigContext } from '@/contexts/StigContext.tsx';
 import { useStixPropsContext } from '../contexts/StixPropsContext.tsx';
-import { IJSONClassOptions, PropertyConfig, schema } from '@/types/schema.ts';
+import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty.ts';
+import { SchemaSTIXClass } from '@/types/stixSchemaTypes/SchemaSTIXClass.ts';
+import { schema } from '@/stix/schema.ts';
 import { getSTIXPropsFromSchema } from '@/stix/getSTIXPropsFromSchema.ts';
 import FormSTIXPropsPanel from '@/components/forms/FormSTIXPropsPanel.tsx';
 import { stencilItems } from '@/components/elements/StencilItems.ts';
 import FormSTIXPropertySelection from '@/components/forms/FormSTIXPropertySelection.tsx';
 import ButtonSTIXJSON from '@/components/elements/ButtonSTIXJSON.tsx';
-import { PropertyDescriptions } from '@/types/PropertyDescriptions.ts';
-
+import { propertyDescriptions } from '@/stix/propertyDescriptions.ts';
 
 const StixPropsPanel: React.FC = () => {
-  const [selectedProperties, setSelectedProperties] = useState<PropertyConfig[]>([]);
+  const [selectedProperties, setSelectedProperties] = useState<SchemaSTIXProperty[]>([]);
   const [showJson, setShowJson] = useState<boolean>(false);
   return (
     <div className={`drawer flex flex-col w-full h-full p-4 overflow-y-scroll scrollbar`}>
@@ -29,45 +30,25 @@ const StixPropsPanel: React.FC = () => {
 };
 
 function PropsPanelHeader({ selectedProperties, setSelectedProperties, setIsShowingJson }: {
-  selectedProperties: PropertyConfig[],
-  setSelectedProperties: React.Dispatch<React.SetStateAction<PropertyConfig[]>>,
+  selectedProperties: SchemaSTIXProperty[],
+  setSelectedProperties: React.Dispatch<React.SetStateAction<SchemaSTIXProperty[]>>,
   setIsShowingJson: React.Dispatch<React.SetStateAction<boolean>>
 }) {
   const { toggleDrawer } = useStigContext();
   const { selectedSTIXObject } = useStixPropsContext();
   const [showJsonPanel, setShowJsonPanel] = useState<boolean>(false);
 
-  /*
-  //TODO: Remove all this related code that grabbed the descriptions from the schema files
-  // Import the STIX object's correct json schema file to later 
-  // get the STIX object type's description
-  const [stixTypeSchema, setSTIXTypeSchema] = useState<any>();
-  const stixObjectType = stencilItems.find(stencilItem => {
-    return stencilItem.id === selectedSTIXObject?.type
-  })?.type ?? "sro";
-  const schemaPath = stixObjectType === "sdo" ? "domain_objects" :
-    stixObjectType === "sco" ? "observables" :
-      stixObjectType === "smo" ? "meta_objects" :
-        "relationships";
-  if (selectedSTIXObject?.type) {
-    import(`../static/jsedit/${schemaPath}/${selectedSTIXObject?.type + '.json'}`)
-      .then(schema => {
-        setSTIXTypeSchema(schema);
-      });
-  }
-  */
-
   // Used to determine which STIX properties the selected STIX object can have
-  const [stixTypeProps, setStixTypeProps] = useState<PropertyConfig[]>([]);
-  const [stixTypeDesc, setStixTypeDesc] = useState<IJSONClassOptions>();
+  const [stixTypeProps, setStixTypeProps] = useState<SchemaSTIXProperty[]>([]);
+  const [stixTypeDesc, setStixTypeDesc] = useState<SchemaSTIXClass>();
   useEffect(() => {
-    const schemaObject = schema.classes.find(c => { return c.name === selectedSTIXObject?.type; });
+    const schemaObject = schema.find(c => { return c.name === selectedSTIXObject?.type; });
     if (typeof schemaObject !== 'object') {
       return;
     }
 
     const properties = getSTIXPropsFromSchema(schemaObject);
-    const propertyDescriptionGroup: any = PropertyDescriptions.find((group) => group.name === selectedSTIXObject?.type);
+    const propertyDescriptionGroup: any = propertyDescriptions.find((group) => group.name === selectedSTIXObject?.type);
     if (propertyDescriptionGroup) {
       properties.forEach((prop) => {
         prop.propertyDescription = propertyDescriptionGroup.properties[prop.name] || undefined;

@@ -1,8 +1,8 @@
 import fileSaver from 'file-saver';
 
-import { BundleType } from '@/types/BundleType';
+import { STIGBundle } from '@/types/STIGBundle';
 
-export function exportGraph(filename: string, bundle: BundleType) {
+export function exportGraph(filename: string, bundle: STIGBundle) {
     if (filename === '') {
         // If it's blank, set the filename to bundle.json
         filename = 'bundle.json';

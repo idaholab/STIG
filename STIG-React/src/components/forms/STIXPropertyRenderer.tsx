@@ -1,6 +1,6 @@
 import { useStigContext } from "@/contexts/StigContext";
 import { StixPropsContextProvider, useStixPropsContext } from "@/contexts/StixPropsContext";
-import { PropertyConfig } from "@/types/schema";
+import { SchemaSTIXProperty } from "@/types/stixSchemaTypes/SchemaSTIXProperty";
 import React from "react";
 import FormElementSelect from "./formElements/FormElementSelect";
 import FormElementTextInput from "./formElements/FormElementTextInput";
@@ -13,7 +13,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
     parentDictionaryProps, setParentDictionaryProps,
     parentSelectedProperties, setParentSelectedProperties
 }: {
-    property: PropertyConfig,
+    property: SchemaSTIXProperty,
     handlePropertyUpdate: (newVal: string | boolean | number | Date | ArrayBuffer | null | undefined,
         propName: string) => void,
     // The remaining properties are only passed in when the STIXPropertyRenderer
@@ -21,10 +21,10 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
     showTypeSelector?: boolean,
     onTypeChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void,
     // Needed so that an dictionary within an dictionary can have its type changed
-    parentDictionaryProps?: PropertyConfig[];
-    setParentDictionaryProps?: React.Dispatch<React.SetStateAction<PropertyConfig[]>>;
-    parentSelectedProperties?: PropertyConfig[];
-    setParentSelectedProperties?: React.Dispatch<React.SetStateAction<PropertyConfig[]>>;
+    parentDictionaryProps?: SchemaSTIXProperty[];
+    setParentDictionaryProps?: React.Dispatch<React.SetStateAction<SchemaSTIXProperty[]>>;
+    parentSelectedProperties?: SchemaSTIXProperty[];
+    setParentSelectedProperties?: React.Dispatch<React.SetStateAction<SchemaSTIXProperty[]>>;
 }) {
     const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
     const { cyInstance } = useStigContext();
@@ -78,12 +78,14 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                         onChange={(event) => {
                             handlePropertyUpdate(event.target.value, property.name);
                             // Get cytoscape element (by id)
-                            let ele = cyInstance?.getElementById(selectedSTIXObject.id.replace("relationship--", ""));
-                            if (ele?.length === 0) {
-                                ele = cyInstance?.getElementById(selectedSTIXObject.id);
+                            if (selectedSTIXObject) {
+                                let ele = cyInstance?.getElementById(selectedSTIXObject.id.replace("relationship--", ""));
+                                if (ele?.length === 0) {
+                                    ele = cyInstance?.getElementById(selectedSTIXObject.id);
+                                }
+                                // Update style for the element
+                                ele?.style('label', event.target.value);
                             }
-                            // Update style for the element
-                            ele?.style('label', event.target.value);
                         }}
                         additionalClasses='dark:bg-gray-900 w-full'
                         includeInfo={true}
@@ -98,7 +100,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
         default:
             // TODO: Make it possible to clear each type of form input
             switch (property.type) {
-                case "String":
+                case "string":
                     return (
                         <>
                             <FormElementTextInput
@@ -122,11 +124,11 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                         </>
                     );
                 //=======LIST================================================================================
-                case "List":
+                case "list":
                     // TODO: Develop way to delete items (and reorganize list, 
                     // clear list, and remove last item?)
                     switch (property.listType) {
-                        case "external_reference":
+                        case "external-reference":
                             return (
                                 <>
                                     <FormElementSTIXList
@@ -147,7 +149,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                                     />
                                 </>
                             )
-                        case "kill_chain_phase":
+                        case "kill-chain-phase":
                             return (
                                 <>
                                     <FormElementSTIXList
@@ -166,7 +168,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                                     />
                                 </>
                             )
-                        case "String":
+                        case "string":
                         default:
                             return (
                                 <>
@@ -190,7 +192,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                             );
                     }
                 //=======END LIST============================================================================
-                case "Boolean":
+                case "boolean":
                     return (
                         <>
                             <FormElementSelect
@@ -213,8 +215,8 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                             />
                         </>
                     );
-                case "Integer":
-                case "Float":
+                case "integer":
+                case "float":
                     return (
                         <>
                             <FormElementTextInput
@@ -247,7 +249,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                             />
                         </>
                     );
-                case "Timestamp":
+                case "timestamp":
                     return (
                         <>
                             <FormElementDatePicker
@@ -268,7 +270,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                             />
                         </>
                     );
-                case "Binary":
+                case "binary":
                     return (
                         <>
                             <FormElementFileInput
@@ -285,7 +287,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                             />
                         </>
                     );
-                case "Dictionary":
+                case "dictionary":
                     return (
                         <StixPropsContextProvider>
                             <FormElementSTIXDictionary

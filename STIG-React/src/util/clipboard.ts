@@ -8,7 +8,7 @@ ALL RIGHTS RESERVED
 import { JSONValue } from 'cytoscape';
 import { StigSettings } from '../storage/stig-settings-storage';
 import { GraphUtils } from './GraphUtils';
-import { Core } from '@/types/Core';
+import { StixObject } from '@/types/stixTypes/StixObject';
 import { SafeStringify } from './SafeStringify';
 
 const clipboard = {
@@ -59,12 +59,12 @@ export function graph_copy(cy: cytoscape.Core): void {
 export function graph_paste(cy: cytoscape.Core): void {
   try {
     const parsed = JSON.parse(clipboard.readText());
-    let objects: Core[];
+    let objects: StixObject[];
     const test_stix = (i: any) => (i instanceof Object && Object.hasOwn(i, 'type') && Object.hasOwn(i, 'created'));
     if (Array.isArray(parsed)) {
       objects = parsed.every(test_stix) ? parsed : [];
     } else if (Object.hasOwn(parsed, 'type') && parsed.type !== 'bundle') {
-      objects = test_stix(parsed) ? [parsed] as Core[] : [];
+      objects = test_stix(parsed) ? [parsed] as StixObject[] : [];
     } else {
       objects = [];
     }

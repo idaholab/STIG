@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import ButtonBasic from '@/components/elements/ButtonBasic';
 import FormElementTextInput from '@/components/forms/formElements/FormElementTextInput';
-import { BundleType } from '@/types/BundleType';
+import { STIGBundle } from '@/types/STIGBundle';
 import { useNotificationContext } from '@/contexts/NotificationContext';
 import { useStigContext } from '@/contexts/StigContext';
 import { exportGraph } from '@/graph/exportGraph';
@@ -33,7 +33,7 @@ const ExportAllModal: React.FC = () => {
                         // Get raw data from all cy elements
                         // Create bundle object
                         const bundle_id = 'bundle--' + uuidv4();
-                        let bundle: BundleType = { type: 'bundle', id: bundle_id, objects: [] } as any;
+                        let bundle: STIGBundle = { type: 'bundle', id: bundle_id, objects: [] } as any;
                         let nodes = cyInstance.$(':visible');
                         nodes = nodes.union(nodes.connectedEdges());
                         

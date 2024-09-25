@@ -1,23 +1,23 @@
-import { s_SchemaType } from "@/types/SchemaType";
+import { SchemaSTIXType } from "@/types/stixSchemaTypes/SchemaSTIXType";
 
-export function inferSTIXType(stixProperty: Object): s_SchemaType {
+export function inferSTIXType(stixProperty: Object): SchemaSTIXType {
   // TODO: Should DateTime be allowed? Binary?
   switch (typeof stixProperty) {
     case "string":
-      return "String";
+      return "string";
     case "boolean":
-      return "Boolean";
+      return "boolean";
     case "number":
       if (Number.isInteger(stixProperty)) {
-        return "Integer";
+        return "integer";
       } else {
-        return "Float";
+        return "float";
       }
     case "object":
       if (Array.isArray(stixProperty)) {
-        return "List";
+        return "list";
       } else {
-        return "Dictionary";
+        return "dictionary";
       }
   }
 }

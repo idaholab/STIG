@@ -1,16 +1,19 @@
 import { stencilItems } from "@/components/elements/StencilItems";
-import { DataSourceType, Identifier, IStixNode, node_img, ObjectMarkingRelationship, StixNodeData, StixType, Timestamp } from "@/types/Core";
+import { DataSourceType } from "@/types/DataSourceType";
+import { CytoscapeNode } from "@/types/cytoscapeTypes/CytoscapeNode";
+import { CytoscapeNodeData } from "@/types/cytoscapeTypes/CytoscapeNodeData";
 import { v4 as uuidv4 } from 'uuid';
-
+import { StixRelationshipObject } from "@/types/stixTypes/StixRelationshipObject";
 
 export const createObjectMarkingRelationship = (
-    source_ref: Identifier,
-    target_ref: Identifier,
-    created: Timestamp,
-    modified: Timestamp
-): ObjectMarkingRelationship => {
+    source_ref: string,
+    target_ref: string,
+    created: string,
+    modified: string
+): StixRelationshipObject => {
     return {
         type: 'relationship',
+        spec_version: '2.1',
         relationship_type: 'applies-to',
         id: `applies-to--${uuidv4()}`,
         source_ref,
@@ -23,10 +26,10 @@ export const createObjectMarkingRelationship = (
 
 
 export const createStixNode = (
-    the_data: StixNodeData,
-    the_type: StixType,
+    the_data: CytoscapeNodeData,
+    the_type: string,
     d_source: DataSourceType
-): IStixNode => {
+): CytoscapeNode => {
     const labelorder = ['name', 'value', 'key', 'path', 'product', 'dst_port', 'command_line', 'type', 'id'];
     let nodelabel: string | undefined;
 
@@ -55,7 +58,7 @@ export const createStixNode = (
         return stencilItem.id === the_type
     })?.alt;
 
-    const data: StixNodeData = {
+    const data: CytoscapeNodeData = {
         id: the_data.id,
         label: displayLabel,
         type: the_type,

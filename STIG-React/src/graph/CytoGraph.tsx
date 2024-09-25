@@ -1,16 +1,14 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 
 import cytoscape from 'cytoscape';
 import { EventContext } from '@/contexts/EventContext';
 import { v4 as uuidv4 } from 'uuid';
 import { useTheme } from '../contexts/useTheme';
 import { compound_style, edge_style, modified_select_style, modified_unselect_style, node_style, select_node_style, view_utils_options } from './graphOptions';
-import { StixNode, StixNodeData } from '@/types/StixNodeData';
+import { CytoscapeNode } from '@/types/cytoscapeTypes/CytoscapeNode';
+import { CytoscapeNodeData } from '@/types/cytoscapeTypes/CytoscapeNodeData';
 import moment from 'moment';
-import { Indicator } from '@/types/Indicator';
-import { ObservedData } from '@/types/ObservedData';
-import { Report } from "@/types/Report";
-import { DataSourceType, StixType } from '@/types/Core';
+import { DataSourceType } from '@/types/DataSourceType';
 import { useStixPropsContext } from '@/contexts/StixPropsContext';
 import { layouts } from './graphOptions';
 import cosebilkent from 'cytoscape-cose-bilkent';
@@ -23,7 +21,6 @@ import cxtmenu from 'cytoscape-cxtmenu';
 import { edgehandles_style, setup_edge_handles } from './edge-handles';
 import { useStigContext } from '@/contexts/StigContext';
 import { setupCtxMenu } from '@/util/GraphUtils';
-
 
 
 cytoscape.use(viewUtilities);
@@ -228,16 +225,18 @@ const Graph: React.FC = () => {
     useEffect(() => {
         let elementId = selectedSTIXObject?.id;
         if(selectedSTIXObject?.type === "relationship") {
-            elementId = elementId.replace("relationship--", "");
+            elementId = elementId?.replace("relationship--", "");
         }
         // If a relationship is created via the application (as opposed to imported), its cytoscape id will be
         // its raw_data id with "relationship--" on the front
-        let cytoElement = cyInstance?.getElementById(elementId);
-        if(cytoElement?.length === 0) {
-            cytoElement = cyInstance?.getElementById(selectedSTIXObject?.id);
+        if (elementId) {
+            let cytoElement = cyInstance?.getElementById(elementId);
+            if(cytoElement?.length === 0 && selectedSTIXObject) {
+                cytoElement = cyInstance?.getElementById(selectedSTIXObject?.id);
+            }
+            if (cytoElement === undefined) { return }
+            cytoElement.data("raw_data", selectedSTIXObject);
         }
-        if (cytoElement === undefined) { return }
-        cytoElement.data("raw_data", selectedSTIXObject);
     }, [selectedSTIXObject]);
 
     const handleDrop = (event: React.DragEvent) => {
@@ -268,20 +267,20 @@ const Graph: React.FC = () => {
         event.preventDefault();
     };
 
-    function handleAddStixNode(label: string, nodeType: StixType, imgUrl: string, position: any, dSource: DataSourceType): StixNode {
-        const opts: StixNodeData = {
+    function handleAddStixNode(label: string, nodeType: string, imgUrl: string, position: any, dSource: DataSourceType): CytoscapeNode {
+        const opts: CytoscapeNodeData = {
             type: nodeType,
             id: nodeType + '--' + uuidv4(),
             created: moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
             spec_version: "2.1"
         };
         if (nodeType === 'indicator') {
-            (opts as Indicator).valid_from = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+            opts.valid_from = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
         } else if (nodeType === 'observed-data') {
-            (opts as ObservedData).first_observed = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
-            (opts as ObservedData).last_observed = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+            opts.first_observed = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+            opts.last_observed = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
         } else if (nodeType === 'report') {
-            (opts as Report).published = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+            opts.published = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
         }
 
         if (nodeType !== 'marking-definition') {
@@ -290,7 +289,7 @@ const Graph: React.FC = () => {
         }
 
         const style: CSSStyleDeclaration = { backgroundImage: imgUrl } as unknown as CSSStyleDeclaration; //node_img[nodeType]
-        let rtnNode: StixNode = { data: opts, style: style, position: position, classes: 'stix_node' };
+        let rtnNode: CytoscapeNode = { data: opts, style: style, position: position, classes: 'stix_node' };
 
         const labelorder = ['name', 'value', 'key', 'path', 'product', 'dst_port', 'command_line', 'type', 'id'];
         let nodelabel: string | undefined;

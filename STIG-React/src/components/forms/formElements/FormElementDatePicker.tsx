@@ -4,7 +4,7 @@ import Flatpickr from "react-flatpickr";
 import flatpickr from "flatpickr";
 import InfoButton from '@/components/elements/InfoButton';
 import { STIXPropertyLabel } from '@/components/elements/STIXPropertyLabel';
-import { PropertyConfig } from '@/types/schema';
+import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
 
 type Props = {
   value?: string | number;
@@ -15,7 +15,7 @@ type Props = {
   infoIcon?: string;
   additionalInfoClasses?: string;
   additionalInputClasses?: string;
-  property?: PropertyConfig;
+  property?: SchemaSTIXProperty;
   showTypeSelector?: boolean;
   onTypeChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void,
   label?: string;

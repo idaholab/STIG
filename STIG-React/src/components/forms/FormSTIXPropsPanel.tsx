@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { PropertyConfig } from '@/types/schema';
+import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
 import FormElementDatePicker from './formElements/FormElementDatePicker';
 import { STIXPropertyRenderer } from './STIXPropertyRenderer';
 import { useStixPropsContext } from '@/contexts/StixPropsContext';
+import { StixObject } from '@/types/stixTypes/StixObject';
 
 export default function FormSTIXPropsPanel({ selectedProperties, showJson }: {
-  selectedProperties: PropertyConfig[],
+  selectedProperties: SchemaSTIXProperty[],
   showJson: boolean
 }) {
   const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
@@ -14,7 +15,7 @@ export default function FormSTIXPropsPanel({ selectedProperties, showJson }: {
     newVal: string | boolean | number | Date | ArrayBuffer | null | undefined | Object | [],
     propName: string
   ) => {
-    const tempSelectedSTIXObject = { ...selectedSTIXObject };
+    const tempSelectedSTIXObject = { ...selectedSTIXObject } as StixObject;
     if (tempSelectedSTIXObject) {
       tempSelectedSTIXObject[propName] = newVal;
     }

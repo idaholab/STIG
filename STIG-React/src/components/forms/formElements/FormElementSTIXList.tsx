@@ -1,18 +1,15 @@
 import React, { useRef, useState } from 'react';
 import FormElementTextInput from './FormElementTextInput';
 import ButtonBasic from '@/components/elements/ButtonBasic';
-import { StixObject } from '@/types/Core';
-import { PropertyConfig } from '@/types/schema';
+import { StixObject } from '@/types/stixTypes/StixObject';
+import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
 import InfoButton from '@/components/elements/InfoButton';
 import { STIXPropertyLabel } from '@/components/elements/STIXPropertyLabel';
 
 type Props = {
   label?: string;
   placeholder?: string;
-  // Had to add the "any" to this typing because VS Code was
-  // not happy with any way I was attempting to check if a property
-  // existed in the StixObject before attempting to use said property.
-  stixObj: StixObject | undefined | any;
+  stixObj: StixObject | undefined;
   setSTIXObj: React.Dispatch<React.SetStateAction<StixObject | undefined>>;
   className?: string;
   disabled?: boolean;
@@ -31,7 +28,7 @@ type Props = {
   btnLink?: string;
   btnOnClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   btnAdditionalClasses?: string;
-  property?: PropertyConfig;
+  property?: SchemaSTIXProperty;
   showTypeSelector?: boolean,
   onTypeChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void,
 };
@@ -109,7 +106,7 @@ const FormElementSTIXList: React.FC<Props> = ({
           color={btnColor}
           link={btnLink}
           onClick={() => {
-            let tempSTIXObj = { ...stixObj };
+            let tempSTIXObj = { ...stixObj } as StixObject;
             if (!tempSTIXObj[property?.name || '']) {
               // Initialize the property array
               tempSTIXObj[property?.name || ''] = [""];

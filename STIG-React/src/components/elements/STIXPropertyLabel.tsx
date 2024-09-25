@@ -1,35 +1,35 @@
-import { s_SchemaType } from "@/types/SchemaType";
+import { SchemaSTIXType } from "@/types/stixSchemaTypes/SchemaSTIXType";
 import FormElementSelect from "../forms/formElements/FormElementSelect";
 import React from "react";
 
 export function STIXPropertyLabel({ propName, propertyType, showTypeSelector, onTypeChange, additionalLabelClasses }: {
     propName: string,
-    propertyType?: s_SchemaType,
+    propertyType?: SchemaSTIXType,
     showTypeSelector?: boolean,
     onTypeChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
     additionalLabelClasses: string
 }) {
     //TODO: see about getting rid of this and just using the options down below
     const stixSchemaToUITypeConverter: any = {
-        "String": "string",
-        "List": "array",
-        "Boolean": "boolean",
-        "Integer": "integer",
-        "Timestamp": "string",
-        "Binary": "string",
-        "Dictionary": "object",
-        "Float": "number",
-        "kill_chain_phase": "object",
-        "external_reference": "object",
-        "granular_marking": "object",
-        "email_mime_part_type": "object",
-        "windows_registry_value_type": "object",
-        "Hashes": "array",
-        "Hex": "string",
-        "Identifier": "string",
-        "open_vocab": "string",
-        "Enum": "string",
-        "x509_v3_extensions_type": "object"
+        "string": "string",
+        "list": "array",
+        "boolean": "boolean",
+        "integer": "integer",
+        "timestamp": "string",
+        "binary": "string",
+        "dictionary": "object",
+        "float": "number",
+        "kill-chain-phase": "object",
+        "external-reference": "object",
+        "granular-marking": "object",
+        "email-mime-part-type": "object",
+        "windows-registry-value-type": "object",
+        "hashes": "array",
+        "hex": "string",
+        "identifier": "string",
+        "open-vocab": "string",
+        "enum": "string",
+        "x509-v3-extensions-type": "object"
     };
     return (
         <>
