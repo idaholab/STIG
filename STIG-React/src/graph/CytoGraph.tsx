@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
-import cytoscape from 'cytoscape';
+import cytoscape, { EventHandler } from 'cytoscape';
 import { EventContext } from '@/contexts/EventContext';
 import { v4 as uuidv4 } from 'uuid';
 import { useTheme } from '../contexts/useTheme';
@@ -73,7 +73,7 @@ const Graph: React.FC = () => {
                 })
                 .update();
         }
-    }, [theme, cyInstance, edgeColorDark, edgeColorLight]);
+    }, [theme, cyInstance, edgeColorDark, edgeColorLight, nodeTextLightColor, nodeTextDarkColor, selectedColor]);
 
     useEffect(() => {
         const handleCustomEvent = (payload: any) => {
@@ -295,6 +295,9 @@ const Graph: React.FC = () => {
         const style: CSSStyleDeclaration = { backgroundImage: imgUrl } as unknown as CSSStyleDeclaration; //node_img[nodeType]
         let rtnNode: StixNode = { data: opts, style: style, position: position, classes: 'stix_node' };
 
+
+
+
         const labelorder = ['name', 'value', 'key', 'path', 'product', 'dst_port', 'command_line', 'type', 'id'];
         let nodelabel: string | undefined;
         if (nodeType === 'marking-definition') {
@@ -313,37 +316,44 @@ const Graph: React.FC = () => {
                 }
             }
         }
-        rtnNode.data.label = label;
+
+        if (nodeType === 'observed-data') {
+            nodelabel = `${label} (Last Observed: ${opts.last_observed})`;
+        }
+
         nodelabel = (nodelabel && nodelabel.length > 60) ? nodelabel.substring(0, 60).concat('...') : nodelabel;
+
+
         const raw_data = {
             ...opts,
             name: nodelabel
         };
         delete raw_data.label;
+
+        rtnNode.data.label = nodelabel;
         rtnNode.data.raw_data = raw_data;
         // rtnNode.data.saved = (dSource === 'DB' || dSource === 'IGNORE');
         return rtnNode;
     };
 
-
-    // TODO: Need to display attack patterns based on object_refs as well as relationships
     function layoutByTimeframe(cy: cytoscape.Core) {
-        const observedDataNodes = cy.nodes().filter(node => node.data('created') && node.data('type') === 'observed-data');
+        const observedDataNodes = cy.nodes().filter(node => node.data('raw_data')?.last_observed && node.data('type') === 'observed-data');
         const relationshipEdges = cy.edges().filter(edge => edge.data('raw_data')?.type === 'relationship');
-        const positionedAttackPatternNodes = new Set(); // Used so we don't position an attack pattern node more than once if multiple observed nodes point to the same attack pattern
+        const positionedAttackPatternNodes = new Set<string>(); // Track positioned node IDs
 
-        observedDataNodes.sort((a, b) => {
-            const createdA = new Date(a.data('created')).getTime();
-            const createdB = new Date(b.data('created')).getTime();
-            return createdA - createdB;
-        });
+        // Sort observed nodes by 'last_observed'
+        observedDataNodes.sort((a, b) => new Date(a.data('raw_data')?.last_observed).getTime() - new Date(b.data('raw_data')?.last_observed).getTime());
 
-        const startX = 0;  // Starting X position
-        const gap = 120;    // Vertical gap between nodes
+        const startX = 0;
+        const gap = 200; // Spacing between nodes
+        const animations: Promise<EventHandler>[] = [];
 
-        const animations = [];
+        let maxYTimeline = 0;
+
         observedDataNodes.forEach((observedNode, index) => {
             const newX = startX + index * gap;
+
+            // Animate
             animations.push(observedNode.animate({
                 position: { x: newX, y: 0 }
             }, {
@@ -351,38 +361,76 @@ const Graph: React.FC = () => {
                 easing: 'ease-in-out'
             }).promiseOn('position'));
 
-            observedNode.position({
-                x: newX,
-                y: 0
-            });
+            observedNode.position({ x: newX, y: 0 });
+            maxYTimeline = Math.max(maxYTimeline, 0);
 
-            let connectedAttackPatternNodes = relationshipEdges.filter(edge => {
-                const sourceIsObserved = edge.data('raw_data')?.source_ref === observedNode.data('id') && cy.getElementById(edge.data('raw_data').target_ref).data('type') === 'attack-pattern';
-                const targetIsObserved = edge.data('raw_data').target_ref === observedNode.data('id') && cy.getElementById(edge.data('raw_data').source_ref).data('type') === 'attack-pattern';
+
+            // Filter the edges to find connected attack-pattern nodes
+            const connectedAttackPatternNodes = relationshipEdges.filter(edge => {
+                const sourceIsObserved = edge.data('raw_data')?.source_ref === observedNode.data('id') &&
+                    cy.getElementById(edge.data('raw_data').target_ref).data('type') === 'attack-pattern';
+                const targetIsObserved = edge.data('raw_data').target_ref === observedNode.data('id') &&
+                    cy.getElementById(edge.data('raw_data').source_ref).data('type') === 'attack-pattern';
                 return sourceIsObserved || targetIsObserved;
+            }).map(edge => {
+                return cy.getElementById(edge.data('raw_data').source_ref === observedNode.data('id')
+                    ? edge.data('raw_data').target_ref
+                    : edge.data('raw_data').source_ref);
             });
 
-            connectedAttackPatternNodes.forEach((edge, attackIndex) => {
-                let attackPatternNode = cy.getElementById(edge.data('raw_data').source_ref === observedNode.data('id') ? edge.data('raw_data').target_ref : edge.data('raw_data').source_ref);
+            // Get attack-pattern nodes from object_refs
+            const objectRefs = observedNode.data('raw_data').object_refs || [];
+            objectRefs.forEach((refId: string) => {
+                const refNode = cy.getElementById(refId);
+                if (refNode.data('type') === 'attack-pattern') {
+                    connectedAttackPatternNodes.push(refNode);
+                }
+            });
 
+            // Deduplicate attack-pattern nodes (avoid positioning the same node multiple times)
+            const uniqueAttackPatternNodes = [...new Set(connectedAttackPatternNodes)];
+
+            // Position each connected attack-pattern node
+            uniqueAttackPatternNodes.forEach((attackPatternNode, attackIndex) => {
+                // Ensure attack-pattern nodes are only positioned once
                 if (!positionedAttackPatternNodes.has(attackPatternNode.id())) {
+                    const newY = 200 + attackIndex * gap;
+
                     animations.push(attackPatternNode.animate({
-                        position: { x: newX, y: 200 + attackIndex * gap }
+                        position: { x: newX, y: newY }
                     }, {
                         duration: 1000,
                         easing: 'ease-in-out'
                     }).promiseOn('position'));
+
+                    attackPatternNode.position({ x: newX, y: newY });
+                    maxYTimeline = Math.max(maxYTimeline, newY);
                     positionedAttackPatternNodes.add(attackPatternNode.id());
                 }
             });
         });
 
-        cy.layout({ name: 'preset' }).run();  // Run layout
+        const bufferSpace = 100;
+        const newYForNonTimelineNodes = maxYTimeline + bufferSpace;
+
+        const nonTimelineNodes = cy.nodes().filter(node => node.data('type') !== 'observed-data' && node.data('type') !== 'attack-pattern');
+        nonTimelineNodes.forEach(nonTimelineNode => {
+            const nodePosition = nonTimelineNode.position();
+
+            animations.push(nonTimelineNode.animate({
+                position: { x: nodePosition.x, y: nodePosition.y + newYForNonTimelineNodes }
+            }, {
+                duration: 1000,
+                easing: 'ease-in-out'
+            }).promiseOn('position'));
+
+            nonTimelineNode.position({ x: nodePosition.x, y: nodePosition.y + newYForNonTimelineNodes });
+
+        });
+
+        // Run the preset layout
+        cy.layout({ name: 'preset' }).run();
     }
-
-
-
-
 
     // Show STIX props panel on node/edge click
     cyInstance?.on('click', 'node, edge', (evt: cytoscape.EventObject) => {

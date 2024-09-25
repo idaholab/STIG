@@ -50,14 +50,17 @@ export const createStixNode = (
     if (nodelabel && nodelabel.length > 60) {
         nodelabel = nodelabel.substring(0, 60).concat('...');
     }
+    if (the_type === 'observed-data') {
+        nodelabel = `${nodelabel} (Last Observed: ${the_data.last_observed})`;
+    }
 
-    const displayLabel = stencilItems.find(stencilItem => {
-        return stencilItem.id === the_type
-    })?.alt;
+    // const displayLabel = stencilItems.find(stencilItem => {
+    //     return stencilItem.id === the_type
+    // })?.alt;
 
     const data: StixNodeData = {
         id: the_data.id,
-        label: displayLabel,
+        label: nodelabel,
         type: the_type,
         level: 1,
         created: the_data.created,
