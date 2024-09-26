@@ -1,13 +1,12 @@
 import React, { createContext, useContext, useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
 
 import { Notification } from '../types/Notification';
 import { AlertType } from '@/components/elements/AlertComponent';
 
 type NotificationContextType = {
-  notifications: Notification[];
+  notification: Notification | undefined;
   addNotification: (text: string, type: AlertType) => void;
-  removeNotification: (id: string) => void;
+  removeNotification: () => void;
 };
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
@@ -25,21 +24,19 @@ type Props = {
 };
 
 export const NotificationContextProvider: React.FC<Props> = ({ children }) => {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notification, setNotification] = useState<Notification>();
 
   const addNotification = (text: string, type: AlertType) => {
-    setNotifications([...notifications, {id: uuidv4(), text: text, type: type}]);
+    setNotification({text: text, type: type});
   }
 
-  const removeNotification = (id: string) => {
-    setNotifications([...notifications].filter(notification => {
-      return notification.id !== id;
-    }));
+  const removeNotification = () => {
+    setNotification(undefined);
   }
 
   return (
     <NotificationContext.Provider value={{ 
-      notifications, addNotification, removeNotification
+      notification, addNotification, removeNotification
      }}>
       {children}
     </NotificationContext.Provider>
