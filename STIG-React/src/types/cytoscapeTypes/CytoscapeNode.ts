@@ -6,6 +6,5 @@ export type CytoscapeNode = cytoscape.ElementDefinition & {
     data_source?: DataSourceType;
     style?: CSSStyleDeclaration;
     saved?: boolean;
-    position: cytoscape.Position;
     classes: string;
 }

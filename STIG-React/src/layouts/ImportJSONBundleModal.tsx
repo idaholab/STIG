@@ -25,9 +25,9 @@ const ImportJSONBundleModal: React.FC = () => {
                 color='btn-primary'
                 additionalClasses={'place-self-end mt-8' + (!selectedFile ? " btn-disabled" : "")}
                 onClick={() => {
-                    if(cyInstance) {
+                    if (cyInstance) {
                         const [numVertificesAdded, numEdgesAdded] = addToGraph(JSON.parse(selectedFile as string), cyInstance);
-                        if(numVertificesAdded < 0 && numEdgesAdded < 0) {
+                        if (numVertificesAdded < 0 && numEdgesAdded < 0) {
                             addNotification("Import failed", "error");
                         } else if (numVertificesAdded === 0 && numEdgesAdded === 0) {
                             addNotification("Imported " + numVertificesAdded + " nodes and " + numEdgesAdded + " edges", "warning");

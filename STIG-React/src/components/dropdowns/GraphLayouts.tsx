@@ -25,14 +25,14 @@ const GraphLayouts: React.FC = () => {
     { name: "klay", display: 'Klay' },
     { name: "random", display: 'Random' },
     { name: "spread", display: 'Spread' },
-    { name: "mitre_timeline", display: 'MITRE Timeline' },
+    { name: "attack_timeline", display: 'Cyber Attack Timeline' },
   ];
 
   return (
     <Dropdown
       title="Graph Layouts"
       includeDropdownArrow
-      additionalOptionClasses={'w-[150px] hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-black dark:hover-text-white'}
+      additionalOptionClasses={'w-[160px] hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-black dark:hover-text-white'}
     >
       {layouts.map((layout) => (
         <li key={layout.name} className='hover:text-black dark:hover:text-white'>
