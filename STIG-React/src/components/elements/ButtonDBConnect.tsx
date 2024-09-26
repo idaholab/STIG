@@ -4,8 +4,7 @@ import ButtonBasic from '../elements/ButtonBasic';
 import { connectToNeo4jDB, disconnectFromNeo4jDB } from '@/data/neo4j-connection';
 import { DBProfile } from '@/types/DBProfile';
 import { editDBConfig } from '@/data/db-profile-storage';
-import { close_db, query, use_db } from '@/util/DbFunctions';
-import { IDatabaseConfigOptions } from '@/storage/database-configuration-storage';
+import { close_db, use_db } from '@/util/DbFunctions';
 
 interface ButtonDBConnectProps {
     dbProfile?: DBProfile;
@@ -71,16 +70,7 @@ const ButtonDBConnect: React.FC<ButtonDBConnectProps> = ({
                             setConnectedDBProfile(dbProfile);
                             dbProfile.LastDBOperationSuccessful = true;
                             editDBConfig(dbProfile);
-                            let conf: IDatabaseConfigOptions = {
-                                host: dbProfile.Host,
-                                db: dbProfile.DatabaseName,
-                                name: dbProfile.ProfileName,
-                                username: dbProfile.Username,
-                                password: dbProfile.Password,
-                                admin_user: dbProfile.Username,
-                                admin_password: dbProfile.Password,
-                            }
-                            await use_db(conf);
+                            await use_db(dbProfile);
                         } else {
                             dbProfile.LastDBOperationSuccessful = false;
                             editDBConfig(dbProfile);

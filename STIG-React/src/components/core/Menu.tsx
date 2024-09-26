@@ -5,7 +5,7 @@ import GraphLayouts from '../dropdowns/GraphLayouts';
 import ContextLayouts from '../dropdowns/ContextLayouts';
 import Import from '../dropdowns/Import';
 import Export from '../dropdowns/Export';
-import DatabaseProfile from '../dropdowns/DatabaseProfile';
+import Database from '../dropdowns/Database';
 
 const Menu: React.FC = () => {
   return (
@@ -17,7 +17,7 @@ const Menu: React.FC = () => {
         <ContextLayouts />
         <Import />
         <Export />
-        <DatabaseProfile />
+        <Database />
       </main>
     </div>
   );

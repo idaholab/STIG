@@ -459,15 +459,23 @@ export function setupCtxMenu(
     } as ContextMenu);
 }
 
-export async function queryToGraph(q: string, cyInstance: cytoscape.Core | undefined){
-    let queryReturn = await query(q);
-    if (!(cyInstance)){return;}
+export async function queryToGraph(q: string, cyInstance: cytoscape.Core | undefined) {
+    if (!(cyInstance)){return [-1,-1];}
     const graph_utils = new GraphUtils(cyInstance);
-    //ATTN: this is objectively silly. If this was all programmed correctly, there wouldn't be a need to cast all these back and forth
-    const coreObjects: StixObject[] = queryReturn.map(obj => obj as StixObject);
-    graph_utils.buildNodes(coreObjects, "GUI");
-    graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
+    
+    try {
+        let queryReturn = await query(q);
+        const [numVerticiesAdded, numEdgesAdded] = graph_utils.buildNodes(queryReturn, "GUI");
+        graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
+
+        return [numVerticiesAdded, numEdgesAdded];
+    } catch (err) {
+        console.warn("[Nodes could not be built] :", err);
+        //TODO: make some sort of meaningful message appear to the user informing them why the nodes couldn't be added
+        return [-1, -1];
+    }
 }
+
 export function addToGraph(pkg: STIGBundle, cyInstance: cytoscape.Core) {
     const graph_utils = new GraphUtils(cyInstance);
     let numVerticiesAdded, numEdgesAdded = 0;

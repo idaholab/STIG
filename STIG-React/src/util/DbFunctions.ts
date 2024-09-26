@@ -3,7 +3,7 @@
 import { StigDB } from "@/db/dbi";
 import { SchemaSTIXClass } from "@/types/stixSchemaTypes/SchemaSTIXClass";
 import { schema } from "@/stix/schema";
-import { IDatabaseConfigOptions } from "@/storage/database-configuration-storage";
+import { DBProfile } from "@/types/DBProfile";
 import { STIGBundle } from "@/types/STIGBundle";
 import { StixObject } from "@/types/stixTypes/StixObject";
 import { StixRelationshipObject } from "@/types/stixTypes/StixRelationshipObject";
@@ -45,7 +45,7 @@ export function close_db(){
 
 }
 
-export async function use_db(config: IDatabaseConfigOptions) {
+export async function use_db(config: DBProfile) {
   currentDB?.close();
   try {
     currentDB = await StigDB.getDB('neo4j', config); 

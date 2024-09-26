@@ -1,6 +1,4 @@
-
-import { IDatabaseConfigOptions } from '../storage/database-configuration-storage';
-
+import { DBProfile } from '@/types/DBProfile';
 import { Neo4jStigDB } from './neo4j';
 import { StixObject } from '@/types/stixTypes/StixObject';
 import { STIGBundle } from '@/types/STIGBundle';
@@ -9,10 +7,10 @@ import { StixRelationshipObject } from '@/types/stixTypes/StixRelationshipObject
 export type StigDBBackends = 'neo4j';
 
 export abstract class StigDB {
-  public config?: IDatabaseConfigOptions;
+  public config?: DBProfile;
 
   abstract getName(): string;
-  abstract configure(config: IDatabaseConfigOptions): Promise<void>;
+  abstract configure(config: DBProfile): Promise<void>;
   abstract delete(stix: StixObject): Promise<void>;
   abstract traverseNodeIn(id: string): Promise<StixObject[]>;
   abstract traverseNodeOut(id: string): Promise<StixObject[]>;
@@ -23,7 +21,7 @@ export abstract class StigDB {
   abstract close(): void;
   abstract is_closed(): boolean;
 
-  public static async getDB(_backend: StigDBBackends, config: IDatabaseConfigOptions): Promise<StigDB> {
+  public static async getDB(_backend: StigDBBackends, config: DBProfile): Promise<StigDB> {
     const db = new Neo4jStigDB();
     await db.configure(config);
     return db;
