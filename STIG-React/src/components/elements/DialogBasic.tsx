@@ -15,6 +15,7 @@ type Props = {
   onSave?: () => void; // Save handler
   onClose?: () => void; // Close handler
   showFormButtons?: boolean; // Show form buttons inside the form
+  disabled?: boolean;
   additionalButtonClasses?: string;
 };
 
@@ -30,6 +31,7 @@ export const DialogBasic: React.FC<Props> = ({
   onSave,
   onClose,
   showFormButtons = true,
+  disabled,
   additionalButtonClasses
 }) => {
   const { theme } = useTheme();
@@ -54,6 +56,7 @@ export const DialogBasic: React.FC<Props> = ({
           label={buttonLabel}
           color={buttonColor}
           onClick={handleOpenDialog}
+          disabled={disabled}
           additionalClasses={`${additionalButtonClasses}`}
         />
       ) : (
@@ -62,6 +65,7 @@ export const DialogBasic: React.FC<Props> = ({
           onClick={handleOpenDialog}
           buttonIcon={buttonIcon}
           buttonSize={buttonSize}
+          disabled={disabled}
         />
       )}
 

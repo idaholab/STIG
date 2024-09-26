@@ -13,10 +13,12 @@ interface ButtonProps {
   tabIndex?: number;
   onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   onKeyDown?: (e: React.KeyboardEvent<HTMLButtonElement>) => void;
+  additionalClasses?: string;
 }
 
 const ButtonIcon: React.FC<ButtonProps> = ({
-  label, buttonIcon, iconText, buttonSize, color, link, title, disabled, tabIndex, onClick, onKeyDown
+  label, buttonIcon, iconText, buttonSize, color, link, 
+  title, disabled, tabIndex, onClick, onKeyDown, additionalClasses
 }) => {
   // Define base classes
   const baseClasses = `btn btn-circle ${color} ${buttonSize} uppercase hover:opacity-100 border-transparent`;
@@ -30,7 +32,7 @@ const ButtonIcon: React.FC<ButtonProps> = ({
   const btnGhostDarkModeClasses = color === 'btn-ghost' ? 'dark:text-gray-300 dark:hover:text-white' : '';
 
   // Combine base classes and conditional classes
-  const btnClass = `${baseClasses} ${lightModeClasses} ${darkModeClasses} ${btnGhostLightModeClasses} ${btnGhostDarkModeClasses}`;
+  const btnClass = `${baseClasses} ${lightModeClasses} ${darkModeClasses} ${btnGhostLightModeClasses} ${btnGhostDarkModeClasses} ${additionalClasses}`;
 
   return (
     <>

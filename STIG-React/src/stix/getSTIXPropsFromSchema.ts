@@ -5,7 +5,7 @@ export function getSTIXPropsFromSchema(schemaObject: SchemaSTIXClass) {
     let props = schemaObject.properties;
     for (const superClass of schemaObject.superClasses) {
         const superClassObject = schema.find(c =>
-            c.name.replace(/-/g, '') === superClass
+            c.name === superClass
         );
         if (superClassObject) {
             props = props.concat(getSTIXPropsFromSchema(superClassObject));

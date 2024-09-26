@@ -28,17 +28,21 @@ const ImportJSONBundleModal: React.FC = () => {
                     if (cyInstance) {
                         const [numVertificesAdded, numEdgesAdded] = addToGraph(JSON.parse(selectedFile as string), cyInstance);
                         if (numVertificesAdded < 0 && numEdgesAdded < 0) {
-                            addNotification("Import failed", "error");
-                        } else if (numVertificesAdded === 0 && numEdgesAdded === 0) {
-                            addNotification("Imported " + numVertificesAdded + " nodes and " + numEdgesAdded + " edges", "warning");
-                        } else {
-                            addNotification("Imported " + numVertificesAdded + " nodes and " + numEdgesAdded + " edges", "success");
+                            if (cyInstance) {
+                                const [numVerticiesAdded, numEdgesAdded] = addToGraph(JSON.parse(selectedFile as string), cyInstance);
+                                if (numVerticiesAdded < 0 && numEdgesAdded < 0) {
+                                    addNotification("Import failed", "error");
+                                } else if (numVerticiesAdded === 0 && numEdgesAdded === 0) {
+                                    addNotification("Imported " + numVerticiesAdded + " node(s) and " + numEdgesAdded + " edge(s)", "warning");
+                                } else {
+                                    addNotification("Imported " + numVerticiesAdded + " node(s) and " + numEdgesAdded + " edge(s)", "success");
+                                }
+                            }
+                            // Close the dialog
+                            const dialogElement = document.getElementById("ImportJSONBundleModal") as HTMLDialogElement;
+                            dialogElement.close();
                         }
                     }
-                    // Close the dialog
-                    const dialogElement = document.getElementById("ImportJSONBundleModal") as HTMLDialogElement;
-                    dialogElement.close();
-                }}
             />
         </div>
     );

@@ -1,5 +1,5 @@
 import neo4j, { Driver, Session, ManagedTransaction } from 'neo4j-driver';
-import { IDatabaseConfigOptions } from '../../storage/database-configuration-storage';
+import { DBProfile } from '@/types/DBProfile';
 import { StigDB } from '../dbi';
 import moment from 'moment';
 import { fromNeo4j, toNeo4j } from './stix2neo';
@@ -19,12 +19,12 @@ function setProperties(tx: ManagedTransaction, stix: Record<string, unknown>, cm
 
 export class Neo4jStigDB implements StigDB {
   private driver?: Driver;
-  public config?: IDatabaseConfigOptions;
+  public config?: DBProfile;
 
-  public async configure(config: IDatabaseConfigOptions) {
+  public async configure(config: DBProfile) {
     await this.close();
     this.config = config;
-    const driver = neo4j.driver(config.host, neo4j.auth.basic(config.username, config.password));
+    const driver = neo4j.driver(config.Host, neo4j.auth.basic(config.Username, config.Password));
     await driver.getServerInfo();
     this.driver = driver;
   }
@@ -37,7 +37,7 @@ export class Neo4jStigDB implements StigDB {
     if (!this.driver) {
       return Promise.reject(new Error('DB driver is not initialized'));
     }
-    const session = this.driver.session(this.config?.db ? { database: this.config?.db } : undefined);
+    const session = this.driver.session(this.config?.DatabaseName ? { database: this.config?.DatabaseName } : undefined);
     try {
       return await cb(session);
     } catch (e: any) {

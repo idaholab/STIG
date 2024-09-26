@@ -4,20 +4,17 @@ import DBProfileModal from '@/layouts/DBProfileModal';
 import Dropdown from '../core/Dropdown';
 import ConnectedDBContext, { ConnectedDBContextType } from '@/contexts/ConnectedDBContext';
 import ButtonDBConnect from '../elements/ButtonDBConnect';
-import { useStigContext } from '@/contexts/StigContext';
-import { queryToGraph } from '@/util/GraphUtils';
+import DBQueryModal from '@/layouts/DBQueryModal';
 
-
-const DatabaseProfile: React.FC = () => {
+const Database: React.FC = () => {
   const {
     savedDBProfiles, connectedDBProfile, setSelectedProfile,
   } = useContext(ConnectedDBContext) as ConnectedDBContextType;
   const [isConnectProcessing, setIsConnectProcessing] = useState(false);
-  const { cyInstance } = useStigContext();
 
   return (
     <Dropdown
-      title="Database Profile"
+      title="Database"
       includeDropdownArrow
     >
       <div className='w-[230px]'>
@@ -88,16 +85,20 @@ const DatabaseProfile: React.FC = () => {
           : null
         }
         <div className="divider dark:divider-neutral my-0"></div>
-        <p className="menu-title text-gray-500 dark:text-gray-400 font-normal py-0">Database Actions:</p>
-        <li className='hover:bg-primary hover:text-white'><a onClick={() => console.log("TODO: pop up the DB modal")}>Query</a></li>
-        <li className='hover:bg-primary hover:text-white'><a onClick={
-          async () => {
-            //NOTE: until I find a better way, I think it is more efficient to make these two queries. -wb
-            queryToGraph("match (n) return n", cyInstance);
-            queryToGraph("match r=()-->() return r limit 10", cyInstance); 
-          }
-        }>TEST: Query All</a></li>
-
+        <p className="menu-title text-gray-500 dark:text-gray-400 font-normal py-0">Actions:</p>
+        <div className='hover:bg-gray-200 dark:hover:bg-gray-700'>
+          <DialogBasic
+            dialogId="DBQueryModal"
+            title="Query Database"
+            buttonColor='btn-ghost'
+            showFormButtons={false}
+            buttonLabel="Query"
+            disabled={!connectedDBProfile}
+            additionalButtonClasses={"btn-sm justify-start hover:bg-transparent"}
+          >
+            <DBQueryModal />
+          </DialogBasic>
+        </div>
       </div>
     </Dropdown>
   );
@@ -105,4 +106,4 @@ const DatabaseProfile: React.FC = () => {
 
 
 
-export default DatabaseProfile;
+export default Database;

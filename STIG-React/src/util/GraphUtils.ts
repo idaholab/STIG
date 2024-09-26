@@ -462,61 +462,71 @@ export function setupCtxMenu(
 export async function queryToGraph(q: string, cyInstance: cytoscape.Core | undefined) {
     let queryReturn = await query(q);
     if (!(cyInstance)) { return; }
-    const graph_utils = new GraphUtils(cyInstance);
-    //ATTN: this is objectively silly. If this was all programmed correctly, there wouldn't be a need to cast all these back and forth
-    const coreObjects: StixObject[] = queryReturn.map(obj => obj as StixObject);
-    graph_utils.buildNodes(coreObjects, "GUI");
-    graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
-}
+    export async function queryToGraph(q: string, cyInstance: cytoscape.Core | undefined) {
+        if (!(cyInstance)) { return [-1, -1]; }
+        const graph_utils = new GraphUtils(cyInstance);
 
-export function addToGraph(pkg: STIGBundle, cyInstance: cytoscape.Core) {
-    const graph_utils = new GraphUtils(cyInstance);
-    let numVerticiesAdded, numEdgesAdded = 0;
-    try {
-        [numVerticiesAdded, numEdgesAdded] = graph_utils.buildNodes(pkg.objects, "GUI");
-    } catch (err) {
-        console.warn("[Nodes could not be built. JSON may be invalid] :", err);
-        //TODO: make some sort of meaningful message appear to the user informing them why the nodes couldn't be added
-        return [-1, -1];
-    }
-
-    if (pkg.metadata) {
-        // Position the nodes
-        for (const node of pkg.metadata) {
-            // Find the element on the graph
-            cyInstance.$id(node.id).animate({
-                position: node.position,
-                duration: 1000,
-                complete: () => cyInstance.fit()
-            });
-        }
-    } else {
-        let canLayout = true;
-
-        // TODO: Add this logic back in for when
-        // defense in depth gets added as a feature?
-        // Check if defense in depth is on
-        // if (cyInstance.nodes(`#${defense.name.replaceAll(' ', '_')}`).length > 0) {
-        //     canLayout = false;
-        //     $('#dd-ctxLayoutDefInDepth').trigger('click');
-        // }
-
-        // TODO: Add this logic back in for when
-        // kill chain gets added as a feature?
-        // // Check if a kill chain is on
-        // killChain['kill-chain'].forEach(kc => {
-        //     // `#ctxLayout${kc.type}`
-        //     if (cy.nodes(`#${kc.type}`).length > 0) {
-        //         canLayout = false;
-        //         $(`#ctxLayout${kc.type}`).trigger('click');
-        //     }
-        // });
-
-        // Only do this if there aren't any defense in depth or kill chain layouts open
-        if (canLayout) {
+        try {
+            let queryReturn = await query(q);
+            const [numVerticiesAdded, numEdgesAdded] = graph_utils.buildNodes(queryReturn, "GUI");
             graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
+
+            return [numVerticiesAdded, numEdgesAdded];
+        } catch (err) {
+            console.warn("[Nodes could not be built] :", err);
+            //TODO: make some sort of meaningful message appear to the user informing them why the nodes couldn't be added
+            return [-1, -1];
         }
     }
 
-    return [numVerticiesAdded, numEdgesAdded];
-}
+    export function addToGraph(pkg: STIGBundle, cyInstance: cytoscape.Core) {
+        const graph_utils = new GraphUtils(cyInstance);
+        let numVerticiesAdded, numEdgesAdded = 0;
+        try {
+            [numVerticiesAdded, numEdgesAdded] = graph_utils.buildNodes(pkg.objects, "GUI");
+        } catch (err) {
+            console.warn("[Nodes could not be built. JSON may be invalid] :", err);
+            //TODO: make some sort of meaningful message appear to the user informing them why the nodes couldn't be added
+            return [-1, -1];
+        }
+
+        if (pkg.metadata) {
+            // Position the nodes
+            for (const node of pkg.metadata) {
+                // Find the element on the graph
+                cyInstance.$id(node.id).animate({
+                    position: node.position,
+                    duration: 1000,
+                    complete: () => cyInstance.fit()
+                });
+            }
+        } else {
+            let canLayout = true;
+
+            // TODO: Add this logic back in for when
+            // defense in depth gets added as a feature?
+            // Check if defense in depth is on
+            // if (cyInstance.nodes(`#${defense.name.replaceAll(' ', '_')}`).length > 0) {
+            //     canLayout = false;
+            //     $('#dd-ctxLayoutDefInDepth').trigger('click');
+            // }
+
+            // TODO: Add this logic back in for when
+            // kill chain gets added as a feature?
+            // // Check if a kill chain is on
+            // killChain['kill-chain'].forEach(kc => {
+            //     // `#ctxLayout${kc.type}`
+            //     if (cy.nodes(`#${kc.type}`).length > 0) {
+            //         canLayout = false;
+            //         $(`#ctxLayout${kc.type}`).trigger('click');
+            //     }
+            // });
+
+            // Only do this if there aren't any defense in depth or kill chain layouts open
+            if (canLayout) {
+                graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
+            }
+        }
+
+        return [numVerticiesAdded, numEdgesAdded];
+    }
