@@ -43,6 +43,7 @@ const ImportJSONBundleModal: React.FC = () => {
                             dialogElement.close();
                         }
                     }
+                }}
             />
         </div>
     );
