@@ -4,7 +4,7 @@ import { SchemaSTIXClass } from "@/types/stixSchemaTypes/SchemaSTIXClass";
 export const schema: SchemaSTIXClass[] = [
   {
     name: 'core',
-    superClasses: ['V'],
+    superClasses: [],
     properties: [
       { name: 'id', type: 'identifier', mandatory: true, notNull: true, },
       { name: 'type', type: 'string', mandatory: true, notNull: true, },
@@ -23,7 +23,7 @@ export const schema: SchemaSTIXClass[] = [
   },
   {
     name: 'cyber-observable-core',
-    superClasses: ['V'],
+    superClasses: [],
     properties: [
       { name: 'id', type: 'identifier', mandatory: true, notNull: true, },
       { name: 'type', type: 'string', mandatory: true, notNull: true, },
@@ -37,7 +37,7 @@ export const schema: SchemaSTIXClass[] = [
   {
     name: 'relationship',
     description: "The Relationship object is used to link together two SDOs in order to describe how they are related to each other.",
-    superClasses: ['E'],
+    superClasses: [],
     properties: [
       { name: 'id', type: 'identifier', mandatory: true, notNull: true, },
       { name: 'type', type: 'string', mandatory: true, notNull: true, },
@@ -64,7 +64,7 @@ export const schema: SchemaSTIXClass[] = [
   {
     name: 'sighting',
     description: "A Sighting denotes the belief that something in CTI (e.g., an indicator, malware, tool, threat actor, etc.) was seen.",
-    superClasses: ['E'],
+    superClasses: [],
     properties: [
       { name: 'id', type: 'identifier', mandatory: true, notNull: true, },
       { name: 'type', type: 'string', mandatory: true, notNull: true, },
@@ -93,7 +93,7 @@ export const schema: SchemaSTIXClass[] = [
   },
   {
     name: 'language-meta-core',
-    superClasses: ['V'],
+    superClasses: [],
     properties: [
       { name: 'id', type: 'string', mandatory: true, notNull: true, },
       { name: 'type', type: 'string', mandatory: true, notNull: true, },
@@ -111,7 +111,7 @@ export const schema: SchemaSTIXClass[] = [
   },
   {
     name: 'marking-meta-core',
-    superClasses: ['V'],
+    superClasses: [],
     properties: [
       { name: 'id', type: 'string', mandatory: true, notNull: true, },
       { name: 'type', type: 'string', mandatory: true, notNull: true, },
@@ -124,7 +124,7 @@ export const schema: SchemaSTIXClass[] = [
     ]
   },
   {
-    name: 'analysis_of',
+    name: 'analysis-of',
     superClasses: ['relationship'],
     properties: [
     ]
@@ -132,7 +132,7 @@ export const schema: SchemaSTIXClass[] = [
   {
     name: 'artifact',
     description: "The Artifact Object permits capturing an array of bytes (8-bits), as a base64-encoded string string, or linking to a file-like payload.",
-    superClasses: ['cyberobservablecore'],
+    superClasses: ['cyber-observable-core'],
     properties: [
       { name: 'mime_type', type: 'string' },
       { name: 'payload_bin', type: 'binary' },
@@ -142,20 +142,6 @@ export const schema: SchemaSTIXClass[] = [
       { name: 'decryption_key', type: 'string' }
     ]
   },
-  // {  // OLD NOT IN SPEC
-  //     name: "asset",
-  //     superClasses: ["core"],
-  //     properties: [
-  //         { name: "category", type: "string",  },
-  //         { name: "category_ext", type: "Embeddedlist",  },
-  //         { name: "compromised", type: "boolean", , default: "False" },
-  //         { name: "description", type: "string",  },
-  //         { name: "kind_of_asset", type: "string",  },
-  //         { name: "name", type: "string", mandatory: true, notNull: true,  },
-  //         { name: "owner_aware", type: "boolean", , default: "False" },
-  //         { name: "technical_characteristics", type: "Embeddedlist",  },
-  //     ],
-  // },
   {
     name: 'attack-pattern',
     description: "Attack Patterns are a type of TTP that describe ways that adversaries attempt to compromise targets.",
@@ -168,7 +154,7 @@ export const schema: SchemaSTIXClass[] = [
     ]
   },
   {
-    name: 'attributed_to',
+    name: 'attributed-to',
     superClasses: ['relationship'],
     properties: [
     ]
@@ -176,7 +162,7 @@ export const schema: SchemaSTIXClass[] = [
   {
     name: 'autonomous-system',
     description: "The AS object represents the properties of an Autonomous Systems (AS).",
-    superClasses: ['cyberobservablecore'],
+    superClasses: ['cyber-observable-core'],
     properties: [
       { name: 'number', type: 'integer', mandatory: true, notNull: true, },
       { name: 'name', type: 'string' },
@@ -184,13 +170,13 @@ export const schema: SchemaSTIXClass[] = [
     ]
   },
   {
-    name: 'based_on',
+    name: 'based-on',
     superClasses: ['relationship'],
     properties: [
     ]
   },
   {
-    name: 'beacons_to',
+    name: 'beacons-to',
     superClasses: ['relationship'],
     properties: [
     ]
@@ -215,7 +201,7 @@ export const schema: SchemaSTIXClass[] = [
     ]
   },
   {
-    name: 'communicates_with',
+    name: 'communicates-with',
     superClasses: ['relationship'],
     properties: [
     ]
@@ -227,7 +213,7 @@ export const schema: SchemaSTIXClass[] = [
     ]
   },
   {
-    name: 'consists_of',
+    name: 'consists-of',
     superClasses: ['relationship'],
     properties: [
     ]
@@ -257,7 +243,7 @@ export const schema: SchemaSTIXClass[] = [
   {
     name: 'directory',
     description: "The Directory Object represents the properties common to a file system directory.",
-    superClasses: ['cyberobservablecore'],
+    superClasses: ['cyber-observable-core'],
     properties: [
       { name: 'path', type: 'string', mandatory: true, notNull: true, },
       { name: 'path_enc', type: 'string' },
@@ -270,7 +256,7 @@ export const schema: SchemaSTIXClass[] = [
   {
     name: 'domain-name',
     description: "The Domain Name represents the properties of a network domain name.",
-    superClasses: ['cyberobservablecore'],
+    superClasses: ['cyber-observable-core'],
     properties: [
       { name: 'value', type: 'string', mandatory: true, notNull: true, },
       { name: 'resolves_to_refs', type: 'list', listType: 'identifier' }
@@ -289,7 +275,7 @@ export const schema: SchemaSTIXClass[] = [
     ]
   },
   {
-    name: 'dynamic_analysis_of',
+    name: 'dynamic-analysis-of',
     superClasses: ['relationship'],
     properties: [
     ]
@@ -297,7 +283,7 @@ export const schema: SchemaSTIXClass[] = [
   {
     name: 'email-addr',
     description: "The Email Address Object represents a single email address.",
-    superClasses: ['cyberobservablecore'],
+    superClasses: ['cyber-observable-core'],
     properties: [
       { name: 'value', type: 'string', mandatory: true, notNull: true, },
       { name: 'display_name', type: 'string' },
@@ -307,7 +293,7 @@ export const schema: SchemaSTIXClass[] = [
   {
     name: 'email-message',
     description: "The Email Message Object represents an instance of an email message.",
-    superClasses: ['cyberobservablecore'],
+    superClasses: ['cyber-observable-core'],
     properties: [
       { name: 'is_multipart', type: 'boolean', mandatory: true, notNull: true, },
       { name: 'date', type: 'timestamp' },
@@ -327,7 +313,7 @@ export const schema: SchemaSTIXClass[] = [
     ]
   },
   {
-    name: 'exfiltrates_to',
+    name: 'exfiltrates-to',
     superClasses: ['relationship'],
     properties: [
     ]
@@ -353,7 +339,7 @@ export const schema: SchemaSTIXClass[] = [
   {
     name: 'file',
     description: "The File Object represents the properties of a file.",
-    superClasses: ['cyberobservablecore'],
+    superClasses: ['cyber-observable-core'],
     properties: [
       { name: 'hashes', type: 'hashes' },
       { name: 'size', type: 'integer', min: 0 },
@@ -472,7 +458,7 @@ export const schema: SchemaSTIXClass[] = [
   {
     name: 'ipv4-addr',
     description: "The IPv4 Address Object represents one or more IPv4 addresses expressed using CIDR notation.",
-    superClasses: ['cyberobservablecore'],
+    superClasses: ['cyber-observable-core'],
     properties: [
       { name: 'value', type: 'string', mandatory: true, notNull: true, },
       { name: 'resolves_to_refs', type: 'list', listType: 'identifier' },
@@ -482,7 +468,7 @@ export const schema: SchemaSTIXClass[] = [
   {
     name: 'ipv6-addr',
     description: "The IPv6 Address Object represents one or more IPv6 addresses expressed using CIDR notation.",
-    superClasses: ['cyberobservablecore'],
+    superClasses: ['cyber-observable-core'],
     properties: [
       { name: 'value', type: 'string', mandatory: true, notNull: true, },
       { name: 'resolves_to_refs', type: 'list', listType: 'identifier' },
@@ -492,7 +478,7 @@ export const schema: SchemaSTIXClass[] = [
   {
     name: 'language-content',
     description: "The language-content object represents text content for STIX Objects represented in languages other than that of the original object.",
-    superClasses: ['languagemetacore'],
+    superClasses: ['language-meta-core'],
     properties: [
       { name: 'object_ref', type: 'string', mandatory: true, notNull: true, },
       { name: 'object_modified', type: 'timestamp' },
@@ -520,7 +506,7 @@ export const schema: SchemaSTIXClass[] = [
   {
     name: 'mac-addr',
     description: "The MAC Address Object represents a single Media Access Control (MAC) address.",
-    superClasses: ['cyberobservablecore'],
+    superClasses: ['cyber-observable-core'],
     properties: [
       { name: 'value', type: 'string', mandatory: true, notNull: true, }
     ]
@@ -571,7 +557,7 @@ export const schema: SchemaSTIXClass[] = [
   {
     name: 'marking-definition',
     description: "The marking-definition object represents a specific marking.",
-    superClasses: ['markingmetacore'],
+    superClasses: ['marking-meta-core'],
     properties: [
       { name: 'name', type: 'string' },
       { name: 'definition_type', type: 'string' },
@@ -587,7 +573,7 @@ export const schema: SchemaSTIXClass[] = [
   {
     name: 'mutex',
     description: "The Mutex Object represents the properties of a mutual exclusion (mutex) object.",
-    superClasses: ['cyberobservablecore'],
+    superClasses: ['cyber-observable-core'],
     properties: [
       { name: 'name', type: 'string', mandatory: true, notNull: true, }
     ]
@@ -595,7 +581,7 @@ export const schema: SchemaSTIXClass[] = [
   {
     name: 'network-traffic',
     description: "The Network Traffic Object represents arbitrary network traffic that originates from a source and is addressed to a destination.",
-    superClasses: ['cyberobservablecore'],
+    superClasses: ['cyber-observable-core'],
     properties: [
       { name: 'start', type: 'timestamp' },
       { name: 'end', type: 'timestamp' },
@@ -650,7 +636,7 @@ export const schema: SchemaSTIXClass[] = [
     ]
   },
   {
-    name: 'originates_from',
+    name: 'originates-from',
     superClasses: ['relationship'],
     properties: [
     ]
@@ -664,7 +650,7 @@ export const schema: SchemaSTIXClass[] = [
   {
     name: 'process',
     description: "The Process Object represents common properties of an instance of a computer program as executed on an operating system.",
-    superClasses: ['cyberobservablecore'],
+    superClasses: ['cyber-observable-core'],
     properties: [
       { name: 'is_hidden', type: 'boolean' },
       { name: 'pid', type: 'integer' },
@@ -680,7 +666,7 @@ export const schema: SchemaSTIXClass[] = [
     ]
   },
   {
-    name: 'related_to',
+    name: 'related-to',
     superClasses: ['relationship'],
     properties: [
     ]
@@ -701,7 +687,7 @@ export const schema: SchemaSTIXClass[] = [
   {
     name: 'software',
     description: "The Software Object represents high-level properties associated with software, including software products.",
-    superClasses: ['cyberobservablecore'],
+    superClasses: ['cyber-observable-core'],
     properties: [
       { name: 'name', type: 'string', mandatory: true, notNull: true, },
       { name: 'cpe', type: 'string' },
@@ -711,7 +697,7 @@ export const schema: SchemaSTIXClass[] = [
     ]
   },
   {
-    name: 'static_analysis_of',
+    name: 'static-analysis-of',
     superClasses: ['relationship'],
     properties: [
     ]
@@ -758,7 +744,7 @@ export const schema: SchemaSTIXClass[] = [
   {
     name: 'url',
     description: "The URL Object represents the properties of a uniform resource locator (URL).",
-    superClasses: ['cyberobservablecore'],
+    superClasses: ['cyber-observable-core'],
     properties: [
       { name: 'value', type: 'string', mandatory: true, notNull: true, }
     ]
@@ -766,7 +752,7 @@ export const schema: SchemaSTIXClass[] = [
   {
     name: 'user-account',
     description: "The User Account Object represents an instance of any type of user account, including but not limited to operating system, device, messaging service, and social media platform accounts.",
-    superClasses: ['cyberobservablecore'],
+    superClasses: ['cyber-observable-core'],
     properties: [
       { name: 'user_id', type: 'string' },
       { name: 'credential', type: 'string' },
@@ -791,7 +777,7 @@ export const schema: SchemaSTIXClass[] = [
     ]
   },
   {
-    name: 'variant_of',
+    name: 'variant-of',
     superClasses: ['relationship'],
     properties: [
     ]
@@ -808,7 +794,7 @@ export const schema: SchemaSTIXClass[] = [
   {
     name: 'windows-registry-key',
     description: "The Registry Key Object represents the properties of a Windows registry key.",
-    superClasses: ['cyberobservablecore'],
+    superClasses: ['cyber-observable-core'],
     properties: [
       { name: 'key', type: 'string' },
       { name: 'values', type: 'list', listType: 'windows-registry-value-type' },
@@ -820,7 +806,7 @@ export const schema: SchemaSTIXClass[] = [
   {
     name: 'x509-certificate',
     description: "The X509 Certificate Object represents the properties of an X.509 certificate.",
-    superClasses: ['cyberobservablecore'],
+    superClasses: ['cyber-observable-core'],
     properties: [
       { name: 'is_self_signed', type: 'boolean' },
       { name: 'hashes', type: 'hashes' },

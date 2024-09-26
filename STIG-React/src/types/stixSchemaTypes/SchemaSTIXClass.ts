@@ -1,8 +1,9 @@
+import { SchemaSTIXClassName } from "./SchemaSTIXClassName";
 import { SchemaSTIXProperty } from "./SchemaSTIXProperty";
 
 export type SchemaSTIXClass = {
-  name: string;
-  superClasses: string[];
+  name: SchemaSTIXClassName;
+  superClasses: SchemaSTIXClassName[];
   description?: string;
   properties: SchemaSTIXProperty[];
 }
