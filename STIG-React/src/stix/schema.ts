@@ -621,7 +621,7 @@ export const schema: SchemaSTIXClass[] = [
       { name: 'first_observed', type: 'timestamp', mandatory: true, notNull: true, },
       { name: 'last_observed', type: 'timestamp', mandatory: true, notNull: true, },
       { name: 'number_observed', type: 'integer', min: 1, mandatory: true, notNull: true, },
-      { name: 'objects_refs', type: 'list', listType: 'identifier' }
+      { name: 'object_refs', type: 'list', listType: 'identifier' }
     ]
   },
   {
