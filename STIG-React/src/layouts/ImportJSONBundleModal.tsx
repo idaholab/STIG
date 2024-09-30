@@ -26,24 +26,20 @@ const ImportJSONBundleModal: React.FC = () => {
                 additionalClasses={'place-self-end mt-8' + (!selectedFile ? " btn-disabled" : "")}
                 onClick={() => {
                     if (cyInstance) {
-                        const [numVertificesAdded, numEdgesAdded] = addToGraph(JSON.parse(selectedFile as string), cyInstance);
-                        if (numVertificesAdded < 0 && numEdgesAdded < 0) {
-                            if (cyInstance) {
-                                const [numVerticiesAdded, numEdgesAdded] = addToGraph(JSON.parse(selectedFile as string), cyInstance);
-                                if (numVerticiesAdded < 0 && numEdgesAdded < 0) {
-                                    addNotification("Import failed", "error");
-                                } else if (numVerticiesAdded === 0 && numEdgesAdded === 0) {
-                                    addNotification("Imported " + numVerticiesAdded + " node(s) and " + numEdgesAdded + " edge(s)", "warning");
-                                } else {
-                                    addNotification("Imported " + numVerticiesAdded + " node(s) and " + numEdgesAdded + " edge(s)", "success");
-                                }
-                            }
-                            // Close the dialog
-                            const dialogElement = document.getElementById("ImportJSONBundleModal") as HTMLDialogElement;
-                            dialogElement.close();
+                        const [numVerticiesAdded, numEdgesAdded] = addToGraph(JSON.parse(selectedFile as string), cyInstance);
+                        if (numVerticiesAdded < 0 && numEdgesAdded < 0) {
+                            addNotification("Import failed", "error");
+                        } else if (numVerticiesAdded === 0 && numEdgesAdded === 0) {
+                            addNotification("Imported " + numVerticiesAdded + " node(s) and " + numEdgesAdded + " edge(s)", "warning");
+                        } else {
+                            addNotification("Imported " + numVerticiesAdded + " node(s) and " + numEdgesAdded + " edge(s)", "success");
                         }
                     }
-                }}
+                    // Close the dialog
+                    const dialogElement = document.getElementById("ImportJSONBundleModal") as HTMLDialogElement;
+                    dialogElement.close();
+                }
+                }
             />
         </div>
     );
