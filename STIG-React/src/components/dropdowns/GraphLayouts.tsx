@@ -15,28 +15,29 @@ const GraphLayouts: React.FC = () => {
   };
 
   const layouts = [
-    "breadthfirst",
-    "circle",
-    "concentric",
-    "cose",
-    "cose_bilkent",
-    "dagre",
-    "grid",
-    "klay",
-    "random",
-    "spread"
+    { name: "breadthfirst", display: 'Breadth First' },
+    { name: "circle", display: 'Circle' },
+    { name: "concentric", display: 'Concentric' },
+    { name: "cose", display: 'Cose' },
+    { name: "cose_bilkent", display: 'Cose Bilkent' },
+    { name: "dagre", display: 'Dagre' },
+    { name: "grid", display: 'Grid' },
+    { name: "klay", display: 'Klay' },
+    { name: "random", display: 'Random' },
+    { name: "spread", display: 'Spread' },
+    { name: "attack_timeline", display: 'Cyber Attack Timeline' },
   ];
 
   return (
     <Dropdown
       title="Graph Layouts"
       includeDropdownArrow
-      additionalOptionClasses={'w-[150px] hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-black dark:hover-text-white'}
+      additionalOptionClasses={'w-[160px] hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-black dark:hover-text-white'}
     >
       {layouts.map((layout) => (
-        <li key={layout} className='hover:text-black dark:hover:text-white'>
-          <a onClick={() => handleLayoutChange(layout)}>
-            {layout}
+        <li key={layout.name} className='hover:text-black dark:hover:text-white'>
+          <a onClick={() => handleLayoutChange(layout.name)}>
+            {layout.display}
           </a>
         </li>
       ))}

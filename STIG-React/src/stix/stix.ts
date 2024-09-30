@@ -4,6 +4,8 @@ import { CytoscapeNode } from "@/types/cytoscapeTypes/CytoscapeNode";
 import { CytoscapeNodeData } from "@/types/cytoscapeTypes/CytoscapeNodeData";
 import { v4 as uuidv4 } from 'uuid';
 import { StixRelationshipObject } from "@/types/stixTypes/StixRelationshipObject";
+import { convertISOToStandardDateFormat } from "@/util/convertISO8601ToStandardDate";
+import moment from "moment";
 
 export const createObjectMarkingRelationship = (
     source_ref: string,
@@ -24,73 +26,73 @@ export const createObjectMarkingRelationship = (
     };
 };
 
-
-export const createStixNode = (
-    the_data: CytoscapeNodeData,
-    the_type: string,
-    d_source: DataSourceType
-): CytoscapeNode => {
-    const labelorder = ['name', 'value', 'key', 'path', 'product', 'dst_port', 'command_line', 'type', 'id'];
-    let nodelabel: string | undefined;
-
-    if (the_type === 'marking-definition') {
-        nodelabel = the_data.name;
-    } else {
-        for (const element of labelorder) {
-            if (Object.prototype.hasOwnProperty.call(the_data, element)) {
-                if (element === 'dst_port') {
-                    const { [element]: nodelabel1, src_port, protocols } = the_data;
-                    nodelabel = src_port.toString().concat(' -> ', nodelabel1.toString(), '/', protocols.toString());
-                } else {
-                    const { [element]: nodelabel1 } = the_data;
-                    nodelabel = nodelabel1;
-                }
-                break;
+const getNodeLabel = (node: CytoscapeNodeData): string | undefined => {
+    let nodelabel: string = '';
+    const labelorder = ['id', 'name', 'value', 'type', 'labels', 'key', 'path', 'product', 'dst_port', 'command_line'];
+    for (const element of labelorder) {
+        if (Object.prototype.hasOwnProperty.call(node, element)) {
+            if (element === 'dst_port') {
+                const { [element]: nodelabel1, src_port, protocols } = node;
+                nodelabel = src_port.toString().concat(' -> ', nodelabel1.toString(), '/', protocols.toString());
             }
+            else if (element === 'labels') {
+                let nodeLabelslabel = (node?.labels && node?.labels?.length > 0) ? node.labels.join(', ') : '';
+                nodelabel = `${nodeLabelslabel ? nodeLabelslabel : node[element]}`;
+            }
+            nodelabel = node[element];
         }
     }
 
-    if (nodelabel && nodelabel.length > 60) {
-        nodelabel = nodelabel.substring(0, 60).concat('...');
+    if (node.type === 'marking-definition' && node?.name) {
+        nodelabel = node.name;
+    }
+    nodelabel = (nodelabel && nodelabel?.length > 60) ? nodelabel.substring(0, 60).concat('...') : nodelabel;
+    if (node.type === 'observed-data') {
+        nodelabel = `${nodelabel} (${convertISOToStandardDateFormat(node.last_observed)})`; // If this gets dupicated then the label is getting saved with the stix when it shouldn't!
     }
 
-    const displayLabel = stencilItems.find(stencilItem => {
-        return stencilItem.id === the_type
-    })?.alt;
+    return nodelabel;
+};
 
-    const data: CytoscapeNodeData = {
-        id: the_data.id,
-        label: displayLabel,
-        type: the_type,
-        level: 1,
-        created: the_data.created,
-        description: the_data.description,
-        saved: d_source === 'DB' || d_source === 'IGNORE',
-        raw_data: the_data,
-        data_source: d_source,
-        name: nodelabel,
-        modified: the_data.modified,
-    };
 
-    const position: cytoscape.Position = {
-        x: 100,
-        y: 100,
-    };
 
-    const nodeImage = stencilItems.find(stencilItem => {
-        return stencilItem.id === the_type
-    })?.imageUrl;
-    const style: CSSStyleDeclaration = {
-        backgroundImage: nodeImage,
-    } as unknown as CSSStyleDeclaration;
+export const createCytoscapeNode = (
+    node: CytoscapeNodeData,
+    dataSourceType: DataSourceType,
+    isNewNode: boolean,
+    imgUrl?: string,
+): CytoscapeNode => {
+    let newCytoscapeNode: CytoscapeNodeData = addStixPropertiesToNode(node, isNewNode);
+    let nodelabel = getNodeLabel(newCytoscapeNode);
+    newCytoscapeNode.label = nodelabel; // All cytoscape nodes need a label. Just not the stix.
 
+    const nodeImage = (imgUrl) ? imgUrl : stencilItems.find(stencilItem => stencilItem.id === node.type)?.imageUrl;
+    const style: CSSStyleDeclaration = { backgroundImage: nodeImage } as unknown as CSSStyleDeclaration;
     const classes = 'stix_node';
-
     return {
-        data,
-        position,
-        style,
-        saved: data.saved,
-        classes,
+        data: newCytoscapeNode,
+        style: style,
+        data_source: dataSourceType,
+        saved: dataSourceType === 'DB' || dataSourceType === 'IGNORE',
+        classes: classes
     };
 };
+
+const addStixPropertiesToNode = (node: CytoscapeNodeData, isNewNode: boolean): CytoscapeNodeData => {
+    let returnedNode: CytoscapeNodeData = { ...node };
+    if (isNewNode) {
+        if (returnedNode.type === 'indicator') {
+            returnedNode.valid_from = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+        } else if (returnedNode.type === 'observed-data') {
+            returnedNode.first_observed = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+            returnedNode.last_observed = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+
+        } else if (returnedNode.type === 'report') {
+            returnedNode.published = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+        }
+    }
+    const raw_data = { ...returnedNode };
+    delete raw_data.label; // Label does not belong in stix data. User can add their own custom labels list
+    returnedNode.raw_data = raw_data;
+    return returnedNode;
+}

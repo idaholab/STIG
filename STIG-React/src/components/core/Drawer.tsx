@@ -20,8 +20,7 @@ const Drawer = () => {
       detail: {
         label,
         type,
-        imageUrl,
-        position: { x: 200, y: 200 },
+        imageUrl
       },
     });
     dispatchEvent('stencilMouseUpEvent', { data: customEvent });

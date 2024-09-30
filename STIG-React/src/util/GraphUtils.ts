@@ -12,7 +12,7 @@ import { CytoscapeRelationshipData } from '@/types/cytoscapeTypes/CytoscapeRelat
 import { createStixRelationship } from './createStixRelationship';
 import { CreatedByRelationshipFactory } from './CreatedByRelationshipFactory';
 import { layouts, LayoutsType } from '@/graph/graphOptions';
-import { createObjectMarkingRelationship, createStixNode } from '../stix/stix';
+import { createObjectMarkingRelationship, createCytoscapeNode } from '../stix/stix';
 import { CollectionArgument } from 'cytoscape';
 import { db_delete, query_incoming, query_outgoing } from './DbFunctions';
 import { StigSettings } from '@/storage/stig-settings-storage';
@@ -36,13 +36,13 @@ export class GraphUtils {
         const to_add: ElementDefinition[] = [];
         const relationships: StixRelationshipObject[] = [];
         const sightings: StixRelationshipObject[] = [];
-        sdos = sdos.sort((a, b) => {
-            const momentA = moment(a.modified).unix();
-            const momentB = moment(b.modified).unix();
-            return momentB - momentA;
-        });
-
         try {
+            sdos = sdos.sort((a, b) => {
+                const momentA = (a && a.modified) ? moment(a.modified)?.unix() : 0;
+                const momentB = (b && b.modified) ? moment(b.modified)?.unix() : 0;
+                return momentB - momentA;
+            });
+
             for (const sdo of sdos) {
                 if (!sdo.id || !sdo.type) {
                     continue;
@@ -50,7 +50,7 @@ export class GraphUtils {
                 if (this.cy.getElementById(sdo.id).length > 0) { continue; }
 
                 if (sdo.type.toLowerCase() !== 'relationship' && sdo.type.toLowerCase() !== 'sighting') {
-                    const st_node = createStixNode(sdo, sdo.type, data_source);
+                    const st_node = createCytoscapeNode(sdo, data_source, false);
                     if (!in_graph.has(st_node.data.id)) {
                         to_add.push(JSON.parse(JSON.stringify(st_node)) as ElementDefinition);
                         in_graph.add(st_node.data.id);
@@ -205,7 +205,7 @@ export class GraphUtils {
 }
 
 export function setupCtxMenu(
-    cy: cytoscape.Core, 
+    cy: cytoscape.Core,
     isDrawerOpen: boolean,
     toggleDrawer: () => void,
     selectedSTIXObject: StixObject | undefined,
@@ -232,9 +232,9 @@ export function setupCtxMenu(
                     // Check if the deleted element is currently selected
                     // and if so, close the property panel and clear
                     // the currently selected object
-                    if(selectedSTIXObject?.id === element.data("id")) {
+                    if (selectedSTIXObject?.id === element.data("id")) {
                         setSelectedSTIXObject(undefined);
-                        if(isDrawerOpen) {
+                        if (isDrawerOpen) {
                             toggleDrawer();
                         }
                     }
@@ -343,9 +343,9 @@ export function setupCtxMenu(
                     const selectedSTIXObjectId = selectedSTIXObject?.id.replace("relationship--", "");
                     // If a relationship is created via the application (as opposed to imported), its cytoscape id will be
                     // its raw_data id with "relationship--" on the front
-                    if(selectedSTIXObjectId === element.data("id") || selectedSTIXObject?.id === element.data("id")) {
+                    if (selectedSTIXObjectId === element.data("id") || selectedSTIXObject?.id === element.data("id")) {
                         setSelectedSTIXObject(undefined);
-                        if(isDrawerOpen) {
+                        if (isDrawerOpen) {
                             toggleDrawer();
                         }
                     }
@@ -439,17 +439,17 @@ export function setupCtxMenu(
                     // If not, close the property panel and clear
                     // the currently selected object
                     let selectedSTIXObjectId = selectedSTIXObject?.id;
-                    if(selectedSTIXObject?.type === "relationship") {
+                    if (selectedSTIXObject?.type === "relationship") {
                         selectedSTIXObjectId = selectedSTIXObjectId?.replace("relationship--", "");
                     }
                     const remainingElementIds = cy.elements().map(element => element.data("id"));
                     // If a relationship is created via the application (as opposed to imported), its cytoscape id will be
                     // its raw_data id with "relationship--" on the front
-                    if((selectedSTIXObjectId && !remainingElementIds.includes(selectedSTIXObjectId)) &&
+                    if ((selectedSTIXObjectId && !remainingElementIds.includes(selectedSTIXObjectId)) &&
                         (selectedSTIXObject?.id && !remainingElementIds.includes(selectedSTIXObject?.id))
                     ) {
                         setSelectedSTIXObject(undefined);
-                        if(isDrawerOpen) {
+                        if (isDrawerOpen) {
                             toggleDrawer();
                         }
                     }
@@ -460,9 +460,9 @@ export function setupCtxMenu(
 }
 
 export async function queryToGraph(q: string, cyInstance: cytoscape.Core | undefined) {
-    if (!(cyInstance)){return [-1,-1];}
+    if (!(cyInstance)) { return [-1, -1]; }
     const graph_utils = new GraphUtils(cyInstance);
-    
+
     try {
         let queryReturn = await query(q);
         const [numVerticiesAdded, numEdgesAdded] = graph_utils.buildNodes(queryReturn, "GUI");
@@ -479,9 +479,9 @@ export async function queryToGraph(q: string, cyInstance: cytoscape.Core | undef
 export function addToGraph(pkg: STIGBundle, cyInstance: cytoscape.Core) {
     const graph_utils = new GraphUtils(cyInstance);
     let numVerticiesAdded, numEdgesAdded = 0;
-    try{
+    try {
         [numVerticiesAdded, numEdgesAdded] = graph_utils.buildNodes(pkg.objects, "GUI");
-    }catch (err){
+    } catch (err) {
         console.warn("[Nodes could not be built. JSON may be invalid] :", err);
         //TODO: make some sort of meaningful message appear to the user informing them why the nodes couldn't be added
         return [-1, -1];
@@ -491,10 +491,10 @@ export function addToGraph(pkg: STIGBundle, cyInstance: cytoscape.Core) {
         // Position the nodes
         for (const node of pkg.metadata) {
             // Find the element on the graph
-            cyInstance.$id(node.id).animate({ 
-                position: node.position, 
-                duration: 1000, 
-                complete: () => cyInstance.fit() 
+            cyInstance.$id(node.id).animate({
+                position: node.position,
+                duration: 1000,
+                complete: () => cyInstance.fit()
             });
         }
     } else {

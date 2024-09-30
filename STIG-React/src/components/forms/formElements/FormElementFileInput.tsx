@@ -33,7 +33,7 @@ const FormElementFileInput: React.FC<Props> = ({
   additionalInputClasses,
   additionalBtnClasses,
   className,
-  includeInfo,
+  includeInfo = false,
   additionalInfoClasses,
   infoIcon,
   infoText,

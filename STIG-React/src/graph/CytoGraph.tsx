@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef } from 'react';
 
-import cytoscape from 'cytoscape';
+import cytoscape, { EventHandler } from 'cytoscape';
 import { EventContext } from '@/contexts/EventContext';
 import { v4 as uuidv4 } from 'uuid';
 import { useTheme } from '../contexts/useTheme';
@@ -16,11 +16,11 @@ import dagre from 'cytoscape-dagre';
 import klay from 'cytoscape-klay';
 import spread from 'cytoscape-spread';
 import viewUtilities from 'cytoscape-view-utilities';
-
 import cxtmenu from 'cytoscape-cxtmenu';
 import { edgehandles_style, setup_edge_handles } from './edge-handles';
 import { useStigContext } from '@/contexts/StigContext';
 import { setupCtxMenu } from '@/util/GraphUtils';
+import { createCytoscapeNode } from '@/stix/stix';
 
 
 cytoscape.use(viewUtilities);
@@ -73,7 +73,7 @@ const Graph: React.FC = () => {
                 })
                 .update();
         }
-    }, [theme, cyInstance, edgeColorDark, edgeColorLight]);
+    }, [theme, cyInstance, edgeColorDark, edgeColorLight, nodeTextLightColor, nodeTextDarkColor, selectedColor]);
 
     useEffect(() => {
         const handleCustomEvent = (payload: any) => {
@@ -129,17 +129,13 @@ const Graph: React.FC = () => {
                     rows: 1,
                 },
             });
-
             const eh = setup_edge_handles(cy);
-            // cy.on('ehcomplete', (event, sourceNode, targetNode, addedEles) => {
-            //     console.log('Edge created:', addedEles);
-            // });
 
             // View Utilities
             try {
                 let viewUtil = cy?.viewUtilities(view_utils_options);
                 if (viewUtil) {
-                    setupCtxMenu(cy, isDrawerOpen, toggleDrawer, 
+                    setupCtxMenu(cy, isDrawerOpen, toggleDrawer,
                         selectedSTIXObject, setSelectedSTIXObject, viewUtil);
                 }
             }
@@ -149,20 +145,11 @@ const Graph: React.FC = () => {
             setCyInstance(cy);
 
             const handleAddNode = (event: CustomEvent) => {
-                const { label, type, imageUrl, position } = event.detail;
-
-                // TODO: Create stix object
-                const node = handleAddStixNode(label, type, imageUrl, position, 'GUI');
+                const { label, type, imageUrl } = event.detail;
+                const node = handleAddNewCytoscapeNode(label, type, imageUrl, 'GUI');
+                node.position = { x: 100, y: 100 };
                 node.group = 'nodes';
-
                 cy?.add(node);
-
-                // cyInstance.add({
-                //     group: 'nodes',
-                //     data: { id, label, image: imageUrl },
-                //     position: position,
-                // });
-                //cyInstance.layout({ name: 'grid' }).run(); // TODO: Change to selected layout...
             };
 
             const handleLayoutChangeEvent = (event: CustomEvent) => {
@@ -170,7 +157,13 @@ const Graph: React.FC = () => {
                 // Select all nodes with no parents or children
                 const orphans = cy.elements(':orphan').filter(':childless');
                 const cyLayout = orphans.layout(layouts[layout]);
-                cyLayout.run();
+
+                if (layout === 'attack_timeline') {
+                    layoutByTimeframe(cy);
+                }
+                else {
+                    cyLayout.run();
+                }
             }
 
             const graphElement = cyContainerRef.current;
@@ -179,18 +172,17 @@ const Graph: React.FC = () => {
             return () => {
                 graphElement.removeEventListener('addNode', handleAddNode as EventListener);
                 graphElement.removeEventListener('changeLayout', handleLayoutChangeEvent as EventListener);
-
             };
         }
     }, []);
 
     useEffect(() => {
-        if(cyInstance) {
+        if (cyInstance) {
             // View Utilities
             try {
                 let viewUtil = cyInstance.viewUtilities(view_utils_options);
                 if (viewUtil) {
-                    setupCtxMenu(cyInstance, isDrawerOpen, toggleDrawer, 
+                    setupCtxMenu(cyInstance, isDrawerOpen, toggleDrawer,
                         selectedSTIXObject, setSelectedSTIXObject, viewUtil);
                 }
             }
@@ -223,15 +215,25 @@ const Graph: React.FC = () => {
 
     // Triggered on edit of a node's properties
     useEffect(() => {
-        let elementId = selectedSTIXObject?.id;
-        if(selectedSTIXObject?.type === "relationship") {
+        if (selectedSTIXObject === undefined) {
+            return;
+        }
+
+        let elementId = selectedSTIXObject.id;
+        if (selectedSTIXObject?.type === "relationship") {
             elementId = elementId?.replace("relationship--", "");
         }
         // If a relationship is created via the application (as opposed to imported), its cytoscape id will be
         // its raw_data id with "relationship--" on the front
+        let cytoElement = cyInstance?.getElementById(elementId);
+        if (cytoElement?.length === 0) {
+            cytoElement = cyInstance?.getElementById(selectedSTIXObject?.id);
+        }
+        if (cytoElement === undefined) { return }
+        cytoElement.data("raw_data", selectedSTIXObject);
         if (elementId) {
             let cytoElement = cyInstance?.getElementById(elementId);
-            if(cytoElement?.length === 0 && selectedSTIXObject) {
+            if (cytoElement?.length === 0 && selectedSTIXObject) {
                 cytoElement = cyInstance?.getElementById(selectedSTIXObject?.id);
             }
             if (cytoElement === undefined) { return }
@@ -240,86 +242,182 @@ const Graph: React.FC = () => {
     }, [selectedSTIXObject]);
 
     const handleDrop = (event: React.DragEvent) => {
+        if (cyInstance === undefined) {
+            return;
+        }
+
         event.preventDefault();
         const label = event.dataTransfer.getData('text');
         const imageUrl = event.dataTransfer.getData('imageUrl');
         const type = event.dataTransfer.getData('type');
-        const position = cyContainerRef.current ? cyContainerRef.current.getBoundingClientRect() : { x: 0, y: 0 };
+        let position = cyContainerRef.current ? cyContainerRef.current.getBoundingClientRect() : { x: 0, y: 0 };
         const x = event.clientX - position.x;
         const y = event.clientY - position.y;
+        const zoom = cyInstance.zoom();
+        const pan = cyInstance.pan();
+        const adjustedX = (x - pan.x) / zoom;
+        const adjustedY = (y - pan.y) / zoom;
 
-        // TODO: Create/Add Stix Node!!!
-        handleAddStixNode
-
-        const customEvent = new CustomEvent('addNode', {
-            detail: {
-                label,
-                type,
-                imageUrl,
-                position: { x, y },
-            },
-        });
-
-        cyContainerRef.current?.dispatchEvent(customEvent);
+        position = { x: adjustedX, y: adjustedY }
+        let newNode = handleAddNewCytoscapeNode(label, type, imageUrl, 'GUI');
+        newNode.position = position;
+        cyInstance?.add(newNode);
     };
 
     const handleDragOver = (event: React.DragEvent) => {
         event.preventDefault();
     };
 
-    function handleAddStixNode(label: string, nodeType: string, imgUrl: string, position: any, dSource: DataSourceType): CytoscapeNode {
-        const opts: CytoscapeNodeData = {
+    function handleAddNewCytoscapeNode(label: string, nodeType: string, imgUrl: string, dSource: DataSourceType): CytoscapeNode {
+        const cytoscapeNode: CytoscapeNodeData = {
             type: nodeType,
             id: nodeType + '--' + uuidv4(),
             created: moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
-            spec_version: "2.1"
+            modified: moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+            spec_version: "2.1",
+            label: label
         };
-        if (nodeType === 'indicator') {
-            opts.valid_from = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
-        } else if (nodeType === 'observed-data') {
-            opts.first_observed = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
-            opts.last_observed = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
-        } else if (nodeType === 'report') {
-            opts.published = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
-        }
-
-        if (nodeType !== 'marking-definition') {
-            opts.name = nodeType;
-            opts.modified = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
-        }
-
-        const style: CSSStyleDeclaration = { backgroundImage: imgUrl } as unknown as CSSStyleDeclaration; //node_img[nodeType]
-        let rtnNode: CytoscapeNode = { data: opts, style: style, position: position, classes: 'stix_node' };
-
-        const labelorder = ['name', 'value', 'key', 'path', 'product', 'dst_port', 'command_line', 'type', 'id'];
-        let nodelabel: string | undefined;
-        if (nodeType === 'marking-definition') {
-            nodelabel = rtnNode.data.name;
-        } else {
-            for (const element of labelorder) {
-                if (Object.prototype.hasOwnProperty.call(rtnNode.data, element)) {
-                    if (element === 'dst_port') {
-                        const { [element]: nodelabel1, src_port, protocols } = rtnNode.data;
-                        nodelabel = src_port.toString().concat(' -> ', nodelabel1.toString(), '/', protocols.toString());
-                    } else {
-                        const { [element]: nodelabel1 } = rtnNode.data;
-                        nodelabel = nodelabel1;
-                    }
-                    break;
-                }
-            }
-        }
-        rtnNode.data.label = label;
-        nodelabel = (nodelabel && nodelabel.length > 60) ? nodelabel.substring(0, 60).concat('...') : nodelabel;
-        const raw_data = {
-            ...opts,
-            name: nodelabel
-        };
-        delete raw_data.label;
-        rtnNode.data.raw_data = raw_data;
-        // rtnNode.data.saved = (dSource === 'DB' || dSource === 'IGNORE');
-        return rtnNode;
+        return createCytoscapeNode(cytoscapeNode, dSource, true, imgUrl);
     };
+
+    function layoutByTimeframe(cy: cytoscape.Core) {
+        const observedDataNodes = cy.nodes().filter(node => node.data('raw_data')?.last_observed && node.data('type') === 'observed-data');
+        const relationshipEdges = cy.edges().filter(edge => edge.data('raw_data')?.type === 'relationship');
+        const positionedAttackPatternNodes = new Set<string>(); // Track positioned node IDs
+        const startX = 0;
+        const gap = 200; // Spacing between nodes
+        const animations: Promise<EventHandler>[] = [];
+        let maxYTimeline = 0;
+
+        observedDataNodes.sort((a, b) => new Date(a.data('raw_data')?.last_observed).getTime() - new Date(b.data('raw_data')?.last_observed).getTime())
+            .forEach((observedNode, index) => {
+                const newX = startX + index * gap;
+
+                // Animate
+                animations.push(observedNode.animate({
+                    position: { x: newX, y: 0 }
+                }, {
+                    duration: 1000,
+                    easing: 'ease-in-out'
+                }).promiseOn('position'));
+
+                observedNode.position({ x: newX, y: 0 });
+                maxYTimeline = Math.max(maxYTimeline, 0);
+
+
+                // Filter the edges to find connected attack-pattern nodes
+                const connectedAttackPatternNodes = relationshipEdges.filter(edge => {
+                    const sourceIsObserved = edge.data('raw_data')?.source_ref === observedNode.data('id') &&
+                        cy.getElementById(edge.data('raw_data').target_ref).data('type') === 'attack-pattern';
+                    const targetIsObserved = edge.data('raw_data').target_ref === observedNode.data('id') &&
+                        cy.getElementById(edge.data('raw_data').source_ref).data('type') === 'attack-pattern';
+                    return sourceIsObserved || targetIsObserved;
+                }).map(edge => {
+                    return cy.getElementById(edge.data('raw_data').source_ref === observedNode.data('id')
+                        ? edge.data('raw_data').target_ref
+                        : edge.data('raw_data').source_ref);
+                });
+
+                // Get attack-pattern nodes from object_refs
+                const objectRefs = observedNode.data('raw_data').object_refs || [];
+                objectRefs.forEach((refId: string) => {
+                    const refNode = cy.getElementById(refId);
+                    if (refNode.data('type') === 'attack-pattern') {
+                        connectedAttackPatternNodes.push(refNode);
+                    }
+                });
+
+                // Deduplicate attack-pattern nodes (avoid positioning the same node multiple times)
+                const uniqueAttackPatternNodes = [...new Set(connectedAttackPatternNodes)];
+
+                // Position each connected attack-pattern node
+                uniqueAttackPatternNodes.forEach((attackPatternNode, attackIndex) => {
+                    // Ensure attack-pattern nodes are only positioned once
+                    if (!positionedAttackPatternNodes.has(attackPatternNode.id())) {
+                        const newY = 200 + attackIndex * gap;
+
+                        animations.push(attackPatternNode.animate({
+                            position: { x: newX, y: newY }
+                        }, {
+                            duration: 1000,
+                            easing: 'ease-in-out'
+                        }).promiseOn('position'));
+
+                        attackPatternNode.position({ x: newX, y: newY });
+                        maxYTimeline = Math.max(maxYTimeline, newY);
+                        positionedAttackPatternNodes.add(attackPatternNode.id());
+                    }
+                });
+            });
+
+        const bufferSpace = 200;
+        const nonTimelineNodes = cy.nodes().filter(node => node.data('type') !== 'observed-data' && node.data('type') !== 'attack-pattern');
+
+        const gridCols = 5; // Number of columns in the grid
+        const gridGapX = 200; // Horizontal gap between nodes in the grid
+        const gridGapY = 200; // Vertical gap between nodes in the grid
+
+        let row = 0;
+        let col = 0;
+
+        nonTimelineNodes.forEach((nonTimelineNode) => {
+            // Calculate new X and Y position in grid format
+            const newX = startX + col * gridGapX;
+            const newY = maxYTimeline + bufferSpace + row * gridGapY;
+
+            // Animate the node to its new position
+            animations.push(nonTimelineNode.animate({
+                position: { x: newX, y: newY }
+            }, {
+                duration: 1000,
+                easing: 'ease-in-out'
+            }).promiseOn('position'));
+
+            nonTimelineNode.position({ x: newX, y: newY });
+
+            // Update column and row for next node
+            col++;
+            if (col >= gridCols) {
+                col = 0;
+                row++;
+            }
+        });
+
+
+
+        // let anyNonTimelineNodeTooClose = false;
+        // nonTimelineNodes.forEach(nonTimelineNode => {
+        //     const currentPos = nonTimelineNode.position();
+        //     if (currentPos.y < (maxYTimeline + bufferSpace)) {
+        //         anyNonTimelineNodeTooClose = true; // If any node is too close, flag it
+        //     }
+        // })
+
+        // if (anyNonTimelineNodeTooClose) {
+        //     const offsetY = maxYTimeline + bufferSpace;
+
+        //     nonTimelineNodes.forEach(nonTimelineNode => {
+        //         const nodePosition = nonTimelineNode.position();
+        //         const newY = nodePosition.y + offsetY;
+
+        //         animations.push(nonTimelineNode.animate({
+        //             position: { x: nodePosition.x, y: newY }
+        //         }, {
+        //             duration: 1000,
+        //             easing: 'ease-in-out'
+        //         }).promiseOn('position'));
+
+        //         nonTimelineNode.position({ x: nodePosition.x, y: newY });
+
+        //     });
+        // }
+        // Run the preset layout
+        cy.layout({ name: 'preset' }).run();
+    }
+
+
+
+
 
     // Show STIX props panel on node/edge click
     cyInstance?.on('click', 'node, edge', (evt: cytoscape.EventObject) => {
@@ -389,7 +487,7 @@ const Graph: React.FC = () => {
             ele.data("raw_data", raw_data);
             ele.data('label', default_relationship);
             //   ele.data('saved', false);
-        } 
+        }
         ele.classes('edge');
     });
 
