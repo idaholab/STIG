@@ -6,9 +6,10 @@ import FormElementTextInput from '@/components/forms/formElements/FormElementTex
 import { STIGBundle } from '@/types/STIGBundle';
 import { useNotificationContext } from '@/contexts/NotificationContext';
 import { useStigContext } from '@/contexts/StigContext';
-import { exportGraph } from '@/graph/exportGraph';
 
-const ExportAllModal: React.FC = () => {
+type Exporter = {exporter: (f: string, cy: cytoscape.Core)=>STIGBundle};
+
+const ExportModal: React.FC<Exporter> = ({exporter}) => {
     const { cyInstance } = useStigContext();
     const { addNotification } = useNotificationContext();
     const [fileName, setFileName] = useState("bundle");
@@ -29,34 +30,9 @@ const ExportAllModal: React.FC = () => {
                 color='btn-primary'
                 additionalClasses={'place-self-end mt-8'}
                 onClick={() => {
-                    if(cyInstance) {
-                        // Get raw data from all cy elements
-                        // Create bundle object
-                        const bundle_id = 'bundle--' + uuidv4();
-                        let bundle: STIGBundle = { type: 'bundle', id: bundle_id, objects: [] } as any;
-                        let nodes = cyInstance.$(':visible');
-                        nodes = nodes.union(nodes.connectedEdges());
-                        
-                        // ATTN: the following logic may actually do nothing at all. If that is the case, this 
-                        // problem can be solved by doing the filter like on the visual edges
-                        // logic to remove null on json export
-                        nodes.each((ele) => {
-                            if (ele.length === 0) {
-                                return;
-                            }
-                            if (ele.data('raw_data') !== undefined) {
-                                bundle.objects.push(ele.data('raw_data'));
-                            }
-                        });
-
-                        // filter out embedded relationship visual edges
-                        bundle.objects = bundle.objects.filter((bundleObj: any) => {
-                            return bundleObj !== "visual_edge";
-                        })
-
-                        exportGraph(fileName, bundle);
-                        
-                        if(bundle.objects.length === 0) {
+                    if (cyInstance) {
+                        let bundle = exporter(fileName, cyInstance);
+                        if (bundle.objects.length === 0) {
                             addNotification(`Exported 0 objects`, "warning");
                         } else {
                             addNotification(`Exported ${bundle.objects.length} objects`, "success");
@@ -74,4 +50,4 @@ const ExportAllModal: React.FC = () => {
     );
 }
 
-export default ExportAllModal;
+export default ExportModal;

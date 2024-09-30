@@ -4,7 +4,7 @@ Copyright 2018 Southern California Edison Company
 ALL RIGHTS RESERVED
  */
 import moment from 'moment';
-import cytoscape, { CollectionElements, CollectionReturnValue, ElementDefinition } from 'cytoscape';
+import cytoscape, { CollectionElements, CollectionReturnValue, ElementDefinition, JSONValue } from 'cytoscape';
 import { DataSourceType } from '@/types/DataSourceType';
 import { StixObject } from '@/types/stixTypes/StixObject';
 import { StixRelationshipObject } from '@/types/stixTypes/StixRelationshipObject';
@@ -21,6 +21,8 @@ import { ContextMenu } from '@/types/cytoscapeTypes/ContextMenu';
 import { getCssVarColor } from './GetCssVarColor';
 import { query } from '@/util/DbFunctions';
 import { STIGBundle } from '@/types/STIGBundle';
+import { v4 as uuidv4 } from 'uuid';
+import { exportGraph } from '@/graph/exportGraph';
 
 
 export class GraphUtils {
@@ -457,6 +459,42 @@ export function setupCtxMenu(
             }
         ]
     } as ContextMenu);
+}
+
+
+export function create_bundle(nodes: CollectionReturnValue): STIGBundle {
+    const bundle_id = 'bundle--' + uuidv4();
+    let bundle: STIGBundle = { type: 'bundle', id: bundle_id, objects: [] } as any;
+    // ATTN: the following logic may actually do nothing at all. If that is the case, this 
+    // problem can be solved by doing the filter like on the visual edges
+    // logic to remove null on json export
+    nodes.each((ele) => {
+        if (ele.length === 0) {
+            return;
+        }
+        if (ele.data('raw_data') !== undefined) {
+            bundle.objects.push(ele.data('raw_data'));
+        }
+    });
+
+    // filter out embedded relationship visual edges
+    bundle.objects = bundle.objects.filter((bundleObj: any) => {
+        return bundleObj !== "visual_edge";
+    })
+    return bundle;
+}
+
+export function exportSelected(fileName: string, cy: cytoscape.Core) {
+    const selected = cy.elements(':selected')
+    let bundle = create_bundle(selected);
+    exportGraph(fileName, bundle);
+    return bundle
+}
+export function exportAll(fileName: string,cy: cytoscape.Core){
+    let allNodes = cy.$(':visible');
+    let bundle = create_bundle(allNodes)
+    exportGraph(fileName, bundle);
+    return bundle
 }
 
 export async function queryToGraph(q: string, cyInstance: cytoscape.Core | undefined) {
