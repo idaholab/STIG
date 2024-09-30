@@ -10,6 +10,7 @@ import FormElementSelect from './FormElementSelect';
 import { StixObject } from '@/types/stixTypes/StixObject';
 import { STIXPropertyRenderer } from '../STIXPropertyRenderer';
 import { STIXPropertyLabel } from '@/components/elements/STIXPropertyLabel';
+import { handlePropertyUpdate } from '@/stix/handlePropertyUpdate';
 
 type Props = {
   dictionary: StixObject;
@@ -62,17 +63,6 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
     tempParentSTIXObject[property?.name || ''] = selectedSTIXObject;
     setParentSTIXObject(tempParentSTIXObject);
   }, [selectedSTIXObject]);
-
-  const handlePropertyUpdate = (
-    newVal: string | boolean | number | Date | ArrayBuffer | null | undefined | [],
-    propName: string
-  ) => {
-    let tempSelectedSTIXObject = { ...selectedSTIXObject } as StixObject;
-    if (tempSelectedSTIXObject) {
-      tempSelectedSTIXObject[propName] = newVal;
-    }
-    setSelectedSTIXObject(tempSelectedSTIXObject);
-  };
 
   const stixUIToSchemaTypeConverter = {
     "string": "string",
@@ -132,7 +122,7 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
         }
         setParentSTIXObject(tempParentSTIXObject);
       } else {
-        handlePropertyUpdate([], propName);
+        handlePropertyUpdate([], propName, selectedSTIXObject, setSelectedSTIXObject);
       }
     } else if (newType === "boolean") {
       // When changing to a boolean, clear the value of the propName
@@ -145,7 +135,7 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
         }
         setParentSTIXObject(tempParentSTIXObject);
       } else {
-        handlePropertyUpdate("", propName);
+        handlePropertyUpdate("", propName, selectedSTIXObject, setSelectedSTIXObject);
       }
     }
   };

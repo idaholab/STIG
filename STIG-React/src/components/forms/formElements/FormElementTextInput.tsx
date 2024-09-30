@@ -29,6 +29,9 @@ type Props = {
   property?: SchemaSTIXProperty;
   showTypeSelector?: boolean,
   onTypeChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void,
+
+  showValidationError?: boolean;
+  validationErrorText?: string;
 };
 
 const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
@@ -56,14 +59,15 @@ const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
   showTypeSelector = false,
   onTypeChange,
   property,
+  showValidationError,
+  validationErrorText
 }, ref) => {
   const [showInfo, setShowInfo] = useState(false);
   const toggleInfo = () => {
     setShowInfo(prevShowInfo => !prevShowInfo);
   };
-
-  const [isHovered, setIsHovered] = useState(false);
   const parentRef = useRef<HTMLDivElement>(null);
+
   return (
     <div className={`formTextInputContainer flex flex-col w-full ${className}`}>
       <STIXPropertyLabel
@@ -132,6 +136,10 @@ const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
 
       {showInfo && includeInfo && infoText && infoText?.length > 0 &&
         <span className={`text-xs p-1 dark:text-orange-300 text-orange-800`}>{infoText}</span>
+      }
+
+      {showValidationError && validationErrorText &&
+        <span className='dark:text-red-300 text-red-700'>{validationErrorText}</span>
       }
     </div>
   );

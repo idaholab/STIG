@@ -8,14 +8,20 @@ import FormElementSTIXList from "./formElements/FormElementSTIXList";
 import FormElementDatePicker from "./formElements/FormElementDatePicker";
 import FormElementFileInput from "./formElements/FormElementFileInput";
 import FormElementSTIXDictionary from "./formElements/FormElementSTIXDictionary";
+import { StixObject } from "@/types/stixTypes/StixObject";
+import { stixIdentifierValidator } from "@/util/stixIdentifierValidator";
 
 export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeSelector, onTypeChange,
     parentDictionaryProps, setParentDictionaryProps,
     parentSelectedProperties, setParentSelectedProperties
 }: {
     property: SchemaSTIXProperty,
-    handlePropertyUpdate: (newVal: string | boolean | number | Date | ArrayBuffer | null | undefined,
-        propName: string) => void,
+    handlePropertyUpdate: (
+        newVal: string | boolean | number | Date | ArrayBuffer | null | undefined,
+        propName: string, 
+        selectedSTIXObject: StixObject | undefined,
+        setSelectedSTIXObject: React.Dispatch<React.SetStateAction<StixObject | undefined>>
+    ) => void,
     // The remaining properties are only passed in when the STIXPropertyRenderer
     // is used from within an dictionary component
     showTypeSelector?: boolean,
@@ -28,13 +34,6 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
 }) {
     const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
     const { cyInstance } = useStigContext();
-
-    const renderDescription = () => {
-        if (property?.propertyDescription) {
-            return <small className="text-gray-600 dark:text-gray-300">{property?.propertyDescription}</small>;
-        }
-        return null;
-    };
 
     switch (property.name) {
         case "created":
@@ -51,7 +50,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                         }
                         options={["2.0", "2.1"]}
                         onChange={(event) => {
-                            handlePropertyUpdate(event.target.value, property.name);
+                            handlePropertyUpdate(event.target.value, property.name, selectedSTIXObject, setSelectedSTIXObject);
                         }}
                         className='mb-2'
                         additionalClasses='dark:bg-gray-900 w-full'
@@ -76,7 +75,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                         // and implement as part of schema.ts or here
                         options={["uses", "targets", "delivers", "related-to", "created-by", "derived-from", "duplicate-of"]}
                         onChange={(event) => {
-                            handlePropertyUpdate(event.target.value, property.name);
+                            handlePropertyUpdate(event.target.value, property.name, selectedSTIXObject, setSelectedSTIXObject);
                             // Get cytoscape element (by id)
                             if (selectedSTIXObject) {
                                 let ele = cyInstance?.getElementById(selectedSTIXObject.id.replace("relationship--", ""));
@@ -100,28 +99,35 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
         default:
             // TODO: Make it possible to clear each type of form input
             switch (property.type) {
+                case "identifier":
                 case "string":
                     return (
-                        <>
-                            <FormElementTextInput
-                                type="text"
-                                value={selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ?
-                                    selectedSTIXObject[property.name]
-                                    : ""
-                                }
-                                onChange={(event) => {
-                                    handlePropertyUpdate(event.target.value, property.name);
-                                }}
-                                disabled={property.name === "id" || property.name === "type" || property.name === "source_ref" || property.name === "target_ref"}
-                                additionalInputClasses='select-sm dark:bg-gray-900'
-                                includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
-                                infoText={property?.propertyDescription}
-                                className="mb-2"
-                                property={property}
-                                showTypeSelector={showTypeSelector}
-                                onTypeChange={onTypeChange}
-                            />
-                        </>
+                        <FormElementTextInput
+                            type="text"
+                            value={selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ?
+                                selectedSTIXObject[property.name]
+                                : ""
+                            }
+                            onChange={(event) => {
+                                handlePropertyUpdate(event.target.value, property.name, selectedSTIXObject, setSelectedSTIXObject);
+                            }}
+                            disabled={property.name === "id" || property.name === "type" || property.name === "source_ref" || property.name === "target_ref"}
+                            additionalInputClasses='select-sm dark:bg-gray-900'
+                            includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
+                            infoText={property?.propertyDescription}
+                            className="mb-2"
+                            property={property}
+                            showTypeSelector={showTypeSelector}
+                            onTypeChange={onTypeChange}
+                            showValidationError={property.type === "identifier" && selectedSTIXObject ? 
+                                !stixIdentifierValidator(selectedSTIXObject[property.name]) 
+                                : false
+                            }
+                            validationErrorText={
+                                `${property.name} is not a valid STIX identifier. 
+                                Double check that it matches the format \"object-type--UUID\".`
+                            }
+                        />
                     );
                 //=======LIST================================================================================
                 case "list":
@@ -203,7 +209,8 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                                 }
                                 options={["true", "false"]}
                                 onChange={(event) => {
-                                    handlePropertyUpdate(event.target.value === "true" ? true : false, property.name);
+                                    handlePropertyUpdate(event.target.value === "true" ? true : false, 
+                                        property.name, selectedSTIXObject, setSelectedSTIXObject);
                                 }}
                                 additionalClasses='dark:bg-gray-900 w-full'
                                 includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
@@ -237,7 +244,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                                             number = property.min;
                                         }
                                     }
-                                    handlePropertyUpdate(number, property.name);
+                                    handlePropertyUpdate(number, property.name, selectedSTIXObject, setSelectedSTIXObject);
                                 }}
                                 additionalInputClasses='select-sm dark:bg-gray-900'
                                 includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
@@ -258,7 +265,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                                     : ""
                                 }
                                 onChange={([date]) => {
-                                    handlePropertyUpdate(date, property.name);
+                                    handlePropertyUpdate(date, property.name, selectedSTIXObject, setSelectedSTIXObject);
                                 }}
                                 className='w-full mb-2'
                                 additionalInputClasses='select-sm w-full'
@@ -276,7 +283,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                             <FormElementFileInput
                                 buttonLabel='Upload'
                                 onFileChange={async (fileVal: string | ArrayBuffer | null | undefined) => {
-                                    handlePropertyUpdate(fileVal, property.name);
+                                    handlePropertyUpdate(fileVal, property.name, selectedSTIXObject, setSelectedSTIXObject);
                                 }}
                                 parsedFileType='url'
                                 additionalInputClasses='input-sm'

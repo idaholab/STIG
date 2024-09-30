@@ -3,24 +3,13 @@ import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
 import FormElementDatePicker from './formElements/FormElementDatePicker';
 import { STIXPropertyRenderer } from './STIXPropertyRenderer';
 import { useStixPropsContext } from '@/contexts/StixPropsContext';
-import { StixObject } from '@/types/stixTypes/StixObject';
+import { handlePropertyUpdate } from '@/stix/handlePropertyUpdate';
 
 export default function FormSTIXPropsPanel({ selectedProperties, showJson }: {
   selectedProperties: SchemaSTIXProperty[],
   showJson: boolean
 }) {
   const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
-
-  const handlePropertyUpdate = (
-    newVal: string | boolean | number | Date | ArrayBuffer | null | undefined | Object | [],
-    propName: string
-  ) => {
-    const tempSelectedSTIXObject = { ...selectedSTIXObject } as StixObject;
-    if (tempSelectedSTIXObject) {
-      tempSelectedSTIXObject[propName] = newVal;
-    }
-    setSelectedSTIXObject(tempSelectedSTIXObject);
-  };
 
   const [jsonText, setJsonText] = useState<string>('');
   const handleJsonChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -64,7 +53,7 @@ export default function FormSTIXPropsPanel({ selectedProperties, showJson }: {
                 : ""
               }
               onChange={([date]) => {
-                handlePropertyUpdate(date, "created");
+                handlePropertyUpdate(date, "created", selectedSTIXObject, setSelectedSTIXObject);
               }}
               className='flex flex-auto'
               additionalInputClasses='select-sm px-2 w-full'
@@ -79,7 +68,7 @@ export default function FormSTIXPropsPanel({ selectedProperties, showJson }: {
                 : ""
               }
               onChange={([date]) => {
-                handlePropertyUpdate(date, "modified");
+                handlePropertyUpdate(date, "modified", selectedSTIXObject, setSelectedSTIXObject);
               }}
               className='flex flex-auto'
               additionalInputClasses='select-sm px-2 w-full'
