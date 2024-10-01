@@ -47,35 +47,45 @@ export default function FormSTIXPropsPanel({ selectedProperties, showJson }: {
         :
         <>
           <div className='flex gap-4 mb-2'>
-            <FormElementDatePicker
-              value={selectedSTIXObject && selectedSTIXObject["created"] !== undefined ?
-                selectedSTIXObject["created"]
-                : ""
-              }
-              onChange={([date]) => {
-                handlePropertyUpdate(date, "created", selectedSTIXObject, setSelectedSTIXObject);
-              }}
-              className='flex flex-auto'
-              additionalInputClasses='select-sm px-2 w-full'
-              includeInfo={true}
-              infoText={'The date this object was created'}
-              label={'created'}
-            />
+            {selectedProperties.find(selectedProperty =>
+              selectedProperty.name === "created"
+            ) ?
+              <FormElementDatePicker
+                value={selectedSTIXObject && selectedSTIXObject["created"] !== undefined ?
+                  selectedSTIXObject["created"]
+                  : ""
+                }
+                onChange={([date]) => {
+                  handlePropertyUpdate(date, "created", selectedSTIXObject, setSelectedSTIXObject);
+                }}
+                className='flex flex-auto'
+                additionalInputClasses='select-sm px-2 w-full'
+                includeInfo={true}
+                infoText={'The date this object was created'}
+                label={'created'}
+              />
+              : null
+            }
 
-            <FormElementDatePicker
-              value={selectedSTIXObject && selectedSTIXObject["modified"] !== undefined ?
-                selectedSTIXObject["modified"]
-                : ""
-              }
-              onChange={([date]) => {
-                handlePropertyUpdate(date, "modified", selectedSTIXObject, setSelectedSTIXObject);
-              }}
-              className='flex flex-auto'
-              additionalInputClasses='select-sm px-2 w-full'
-              includeInfo={true}
-              infoText={'The date this object was modified'}
-              label={'modified'}
-            />
+            {selectedProperties.find(selectedProperty =>
+              selectedProperty.name === "modified"
+            ) ?
+              <FormElementDatePicker
+                value={selectedSTIXObject && selectedSTIXObject["modified"] !== undefined ?
+                  selectedSTIXObject["modified"]
+                  : ""
+                }
+                onChange={([date]) => {
+                  handlePropertyUpdate(date, "modified", selectedSTIXObject, setSelectedSTIXObject);
+                }}
+                className='flex flex-auto'
+                additionalInputClasses='select-sm px-2 w-full'
+                includeInfo={true}
+                infoText={'The date this object was modified'}
+                label={'modified'}
+              />
+              : null
+            }
           </div>
 
           {selectedProperties.map((selectedProperty, i) =>

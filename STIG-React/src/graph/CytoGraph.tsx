@@ -21,6 +21,7 @@ import { edgehandles_style, setup_edge_handles } from './edge-handles';
 import { useStigContext } from '@/contexts/StigContext';
 import { setupCtxMenu } from '@/util/GraphUtils';
 import { createCytoscapeNode } from '@/stix/stix';
+import { stencilItems } from '@/components/elements/StencilItems';
 
 
 cytoscape.use(viewUtilities);
@@ -269,11 +270,20 @@ const Graph: React.FC = () => {
     };
 
     function handleAddNewCytoscapeNode(label: string, nodeType: string, imgUrl: string, dSource: DataSourceType): CytoscapeNode {
+        // Will be 'sco', 'sdo', or 'smo'
+        const stixObjectCategory = stencilItems.find(stencilItem => stencilItem.id === nodeType)?.type;
+        
         const cytoscapeNode: CytoscapeNodeData = {
             type: nodeType,
             id: nodeType + '--' + uuidv4(),
-            created: moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
-            modified: moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+            // SCOs do not have the created property
+            created: stixObjectCategory !== 'sco' ? 
+                moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]') 
+                : undefined,
+            // SCOs and Marking Definitions do not have the modified property
+            modified: stixObjectCategory !== 'sco' && nodeType !== "marking-definition" ? 
+                moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
+                : undefined,
             spec_version: "2.1",
             label: label
         };
