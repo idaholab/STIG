@@ -11,6 +11,9 @@ import FormSTIXPropertySelection from '@/components/forms/FormSTIXPropertySelect
 import ButtonSTIXJSON from '@/components/elements/ButtonSTIXJSON.tsx';
 import { propertyDescriptions } from '@/stix/propertyDescriptions.ts';
 import { getSTIXPropDescriptions } from '@/stix/getSTIXPropDescriptions.ts';
+import ButtonBasic from '@/components/elements/ButtonBasic.tsx';
+import ExportModal from './ExportModals.tsx';
+import { exportSelected } from '@/util/GraphUtils.ts';
 
 const StixPropsPanel: React.FC = () => {
   const [selectedProperties, setSelectedProperties] = useState<SchemaSTIXProperty[]>([]);
@@ -26,9 +29,33 @@ const StixPropsPanel: React.FC = () => {
         selectedProperties={selectedProperties}
         showJson={showJson}
       />
+      <SaveButtons/>
     </div>
   );
 };
+
+function SaveButtons(){
+  return (
+    <>
+    <div className='place-self-end mt-8 flex gap-2 mb-4'>
+    <ButtonBasic
+        label="Save to NEO4J"
+        // color='btn-sm'
+        additionalClasses='h-[48px] btn-sm '
+      ></ButtonBasic>
+      <ButtonBasic
+        label="Save JSON"
+        color='btn-primary'
+        additionalClasses='h-[48px]'
+        onClick={savetojson}
+      ></ButtonBasic>
+    </div>
+    </>
+  )
+}
+function savetojson(){
+  return (<><ExportModal exporter={exportSelected}/></>)
+}
 
 function PropsPanelHeader({ selectedProperties, setSelectedProperties, setIsShowingJson }: {
   selectedProperties: SchemaSTIXProperty[],
