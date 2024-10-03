@@ -1,16 +1,23 @@
+import React, { useEffect, useState } from "react";
+
 import { useStigContext } from "@/contexts/StigContext";
 import { StixPropsContextProvider, useStixPropsContext } from "@/contexts/StixPropsContext";
-import { SchemaSTIXProperty } from "@/types/stixSchemaTypes/SchemaSTIXProperty";
-import React from "react";
+
+import ButtonBasic from "../elements/ButtonBasic";
 import FormElementSelect from "./formElements/FormElementSelect";
 import FormElementTextInput from "./formElements/FormElementTextInput";
 import FormElementSTIXList from "./formElements/FormElementSTIXList";
 import FormElementDatePicker from "./formElements/FormElementDatePicker";
 import FormElementFileInput from "./formElements/FormElementFileInput";
 import FormElementSTIXDictionary from "./formElements/FormElementSTIXDictionary";
+
+import { SchemaSTIXProperty } from "@/types/stixSchemaTypes/SchemaSTIXProperty";
 import { StixObject } from "@/types/stixTypes/StixObject";
-import { stixIdentifierValidator } from "@/util/stixIdentifierValidator";
+
 import { enum_options } from "@/stix/enumOptions";
+import { open_vocab_options } from "@/stix/openVocabOptions";
+
+import { stixIdentifierValidator } from "@/util/stixIdentifierValidator";
 
 export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeSelector, onTypeChange,
   parentDictionaryProps, setParentDictionaryProps,
@@ -130,25 +137,82 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
             </StixPropsContextProvider>
           );
         case "enum":
+        case "open-vocab":
+          const [customValueSelected, setCustomValueSelected] = useState(
+            property.openVocabType && selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ? 
+              !open_vocab_options[property.openVocabType].includes(selectedSTIXObject[property.name]) ?
+                true : false 
+              : false
+            );
+          useEffect(() => {
+            // Reset customValueSelected if the selectedSTIXObject changes
+            setCustomValueSelected(
+              property.openVocabType && selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ? 
+                !open_vocab_options[property.openVocabType].includes(selectedSTIXObject[property.name]) ?
+                  true : false 
+                : false
+              );
+          }, [selectedSTIXObject, property]);
           return (
-            <FormElementSelect
-              placeholder=''
-              value={selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ?
-                selectedSTIXObject[property.name]
-                : ""
+            <>
+              {!customValueSelected && 
+                <FormElementSelect
+                  placeholder=''
+                  value={selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ?
+                    selectedSTIXObject[property.name]
+                    : ""
+                  }
+                  options={property.openVocabType ? [...open_vocab_options[property.openVocabType], "Custom Value"] : 
+                    property.enumType ? enum_options[property.enumType] : []}
+                  onChange={(event) => {
+                    if(event.target.value === "Custom Value") {
+                      setCustomValueSelected(true);
+                    } else {
+                      setCustomValueSelected(false);
+                      handlePropertyUpdate(event.target.value, property.name, selectedSTIXObject, setSelectedSTIXObject);
+                    }
+                  }}
+                  additionalClasses='dark:bg-gray-900 w-full'
+                  includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
+                  infoText={property?.propertyDescription}
+                  property={property}
+                  showTypeSelector={showTypeSelector}
+                  onTypeChange={onTypeChange}
+                  className='mb-2'
+                />
               }
-              options={property.enumType ? enum_options[property.enumType] : []}
-              onChange={(event) => {
-                handlePropertyUpdate(event.target.value, property.name, selectedSTIXObject, setSelectedSTIXObject);
-              }}
-              additionalClasses='dark:bg-gray-900 w-full'
-              includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
-              infoText={property?.propertyDescription}
-              property={property}
-              showTypeSelector={showTypeSelector}
-              onTypeChange={onTypeChange}
-              className='mb-2'
-            />
+              {customValueSelected &&
+                <>
+                  <p>{property.name}</p>
+                  <div className="flex justify-between">
+                    <p className="ml-4 pr-4 mb-2">{`Custom ${property?.name} Value`}</p>
+                    <ButtonBasic
+                      label="Switch to suggested value"
+                      color="btn-secondary"
+                      onClick={() => {
+                        setCustomValueSelected(false);
+                        handlePropertyUpdate(undefined, property.name, selectedSTIXObject, setSelectedSTIXObject);
+                      }}
+                      additionalClasses="btn-xs"
+                    />
+                  </div>
+                  <FormElementTextInput
+                    type="text"
+                    value={selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ?
+                      selectedSTIXObject[property.name]
+                      : ""
+                    }
+                    onChange={(event) => {
+                      handlePropertyUpdate(event.target.value, property.name, selectedSTIXObject, setSelectedSTIXObject);
+                    }}
+                    additionalInputClasses='select-sm dark:bg-gray-900'
+                    includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
+                    infoText={property?.propertyDescription}
+                    className="ml-4 pr-4 mb-2"
+                  />
+                </>
+              }
+            </>
           );
         case "float":
         case "integer":

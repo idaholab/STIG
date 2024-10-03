@@ -1,343 +1,370 @@
-// These enums contain the options that will
+// These variables contain the options that will
 // populate the various open-vocab selection lists
 // for the openVocabTypes in schema.ts
 
-enum account_type_ov {
-  facebook = "facebook",
-  ldap = "ldap",
-  nis = "nis",
-  openid = "openid",
-  radius = "radius",
-  skype = "skype",
-  tacacs = "tacacs",
-  twitter = "twitter",
-  unix = "unix",
-  windows_local = "windows-local",
-  windows_domain = "windows-domain",
-}
+const account_type_ov = [
+  "facebook",
+  "ldap",
+  "nis",
+  "openid",
+  "radius",
+  "skype",
+  "tacacs",
+  "twitter",
+  "unix",
+  "windows-local",
+  "windows-domain"
+];
 
-enum attack_motivation_ov {
-  accidental = "accidental",
-  coercion = "coercion",
-  dominance = "dominance",
-  ideology = "ideology",
-  notoriety = "notoriety",
-  organizational_gain = "organizational-gain",
-  personal_gain = "personal-gain",
-  personal_satisfaction = "personal-satisfaction",
-  revenge = "revenge",
-  unpredictable = "unpredictable",
-}
+const attack_motivation_ov = [
+  "accidental",
+  "coercion",
+  "dominance",
+  "ideology",
+  "notoriety",
+  "organizational-gain",
+  "personal-gain",
+  "personal-satisfaction",
+  "revenge",
+  "unpredictable"
+];
 
-enum attack_resource_level_ov {
-  individual = "individual",
-  club = "club",
-  contest = "contest",
-  team = "team",
-  organization = "organization",
-  government = "government",
-}
+const attack_resource_level_ov = [
+  "individual",
+  "club",
+  "contest",
+  "team",
+  "organization",
+  "government"
+];
 
-enum grouping_context_ov {
-  suspicious_activity = "suspicious-activity",
-  malware_analysis = "malware-analysis",
-  unspecified = "unspecified",
-}
+const grouping_context_ov = [
+  "suspicious-activity",
+  "malware-analysis",
+  "unspecified"
+];
 
-enum hash_algorithm_ov {
-  MD5 = "MD5",
-  SHA_1 = "SHA-1",
-  SHA_256 = "SHA-256",
-  SHA_512 = "SHA-512",
-  SHA3_256 = "SHA3-256",
-  SHA3_512 = "SHA3-512",
-  SSDEEP = "SSDEEP",
-  TLSH = "TLSH",
-}
+const hash_algorithm_ov = [
+  "MD5",
+  "SHA-1",
+  "SHA-256",
+  "SHA-512",
+  "SHA3-256",
+  "SHA3-512",
+  "SSDEEP",
+  "TLSH"
+];
 
-enum identity_class_ov {
-  individual = "individual",
-  group = "group",
-  system = "system",
-  organization = "organization",
-  class = "class",
-  unknown = "unknown",
-}
+const identity_class_ov = [
+  "individual",
+  "group",
+  "system",
+  "organization",
+  "class",
+  "unknown"
+];
 
-enum implementation_language_ov {
-  applescript = "applescript",
-  bash = "bash",
-  c = "c",
-  cpp = "c++",
-  c_sharp = "c#",
-  go = "go",
-  java = "java",
-  javascript = "javascript",
-  lua = "lua",
-  objective_c = "objective-c",
-  perl = "perl",
-  php = "php",
-  powershell = "powershell",
-  python = "python",
-  ruby = "ruby",
-  scala = "scala",
-  swift = "swift",
-  typescript = "typescript",
-  visual_basic = "visual-basic",
-  x86_32 = "x86-32",
-  x86_64 = "x86-64",
-}
+const implementation_language_ov = [
+  "applescript",
+  "bash",
+  "c",
+  "c++",
+  "c#",
+  "go",
+  "java",
+  "javascript",
+  "lua",
+  "objective-c",
+  "perl",
+  "php",
+  "powershell",
+  "python",
+  "ruby",
+  "scala",
+  "swift",
+  "typescript",
+  "visual-basic",
+  "x86-32",
+  "x86-64"
+];
 
-enum indicator_type_ov {
-  anomalous_activity = "anomalous-activity",
-  anonymization = "anonymization",
-  benign = "benign",
-  compromised = "compromised",
-  malicious_activity = "malicious-activity",
-  attribution = "attribution",
-  unknown = "unknown",
-}
+const indicator_type_ov = [
+  "anomalous-activity",
+  "anonymization",
+  "benign",
+  "compromised",
+  "malicious-activity",
+  "attribution",
+  "unknown"
+];
 
-enum industry_sector_ov {
-  agriculture = "agriculture",
-  aerospace = "aerospace",
-  automotive = "automotive",
-  chemical = "chemical",
-  commercial = "commercial",
-  communications = "communications",
-  construction = "construction",
-  defense = "defense",
-  education = "education",
-  energy = "energy",
-  entertainment = "entertainment",
-  financial_services = "financial-services",
-  government = "government ",
-  emergency_services = "emergency-services",
-  government_local = "government-local",
-  government_national = "government-national",
-  government_public_services = "government-public-services",
-  government_regional = "government-regional",
-  healthcare = "healthcare",
-  hospitality_leisure = "hospitality-leisure",
-  infrastructure = "infrastructure ",
-  dams = "dams",
-  nuclear = "nuclear",
-  water = "water",
-  insurance = "insurance",
-  manufacturing = "manufacturing",
-  mining = "mining",
-  non_profit = "non-profit",
-  pharmaceuticals = "pharmaceuticals",
-  retail = "retail",
-  technology = "technology",
-  telecommunications = "telecommunications",
-  transportation = "transportation",
-  utilities = "utilities",
-}
+const industry_sector_ov = [
+  "agriculture",
+  "aerospace",
+  "automotive",
+  "chemical",
+  "commercial",
+  "communications",
+  "construction",
+  "defense",
+  "education",
+  "energy",
+  "entertainment",
+  "financial-services",
+  "government ",
+  "emergency-services",
+  "government-local",
+  "government-national",
+  "government-public-services",
+  "government-regional",
+  "healthcare",
+  "hospitality-leisure",
+  "infrastructure ",
+  "dams",
+  "nuclear",
+  "water",
+  "insurance",
+  "manufacturing",
+  "mining",
+  "non-profit",
+  "pharmaceuticals",
+  "retail",
+  "technology",
+  "telecommunications",
+  "transportation",
+  "utilities"
+];
 
-enum infrastructure_type_ov {
-  amplification = "amplification",
-  anonymization = "anonymization",
-  botnet = "botnet",
-  command_and_control = "command-and-control",
-  exfiltration = "exfiltration",
-  hosting_malware = "hosting-malware",
-  hosting_target_lists = "hosting-target-lists",
-  phishing = "phishing",
-  reconnaissance = "reconnaissance",
-  staging = "staging",
-  unknown = "unknown",
-}
+const infrastructure_type_ov = [
+  "amplification",
+  "anonymization",
+  "botnet",
+  "command-and-control",
+  "exfiltration",
+  "hosting-malware",
+  "hosting-target-lists",
+  "phishing",
+  "reconnaissance",
+  "staging",
+  "unknown"
+];
 
-enum malware_result_ov {
-  malicious = "malicious",
-  suspicious = "suspicious",
-  benign = "benign ",
-  unknown = "unknown",
-}
+const malware_result_ov = [
+  "malicious",
+  "suspicious",
+  "benign ",
+  "unknown"
+];
 
-enum malware_capabilities_ov {
-  accesses_remote_machines = "accesses-remote-machines",
-  anti_debugging = "anti-debugging",
-  anti_disassembly = "anti-disassembly",
-  anti_emulation = "anti-emulation",
-  anti_memory_forensics = "anti-memory-forensics",
-  anti_sandbox = "anti-sandbox",
-  anti_vm = "anti-vm",
-  captures_input_peripherals = "captures-input-peripherals",
-  captures_output_peripherals = "captures-output-peripherals",
-  captures_system_state_data = "captures-system-state-data",
-  cleans_traces_of_infection = "cleans-traces-of-infection",
-  commits_fraud = "commits-fraud",
-  communicates_with_c2 = "communicates-with-c2",
-  compromises_data_availability = "compromises-data-availability",
-  compromises_data_integrity = "compromises-data-integrity",
-  compromises_system_availability = "compromises-system-availability",
-  controls_local_machine = "controls-local-machine",
-  degrades_security_software = "degrades-security-software",
-  degrades_system_updates = "degrades-system-updates",
-  determines_c2_server = "determines-c2-server",
-  emails_spam = "emails-spam",
-  escalates_privileges = "escalates-privileges",
-  evades_av = "evades-av",
-  exfiltrates_data = "exfiltrates-data",
-  fingerprints_host = "fingerprints-host",
-  hides_artifacts = "hides-artifacts",
-  hides_executing_code = "hides-executing-code",
-  infects_files = "infects-files",
-  infects_remote_machines = "infects-remote-machines",
-  installs_other_components = "installs-other-components",
-  persists_after_system_reboot = "persists-after-system-reboot",
-  prevents_artifact_access = "prevents-artifact-access",
-  prevents_artifact_deletion = "prevents-artifact-deletion",
-  probes_network_environment = "probes-network-environment",
-  self_modifies = "self-modifies",
-  steals_authentication_credentials = "steals-authentication-credentials",
-  violates_system_operational_integrity = "violates-system-operational-integrity",
-}
+const malware_capabilities_ov = [
+  "accesses-remote-machines",
+  "anti-debugging",
+  "anti-disassembly",
+  "anti-emulation",
+  "anti-memory-forensics",
+  "anti-sandbox",
+  "anti-vm",
+  "captures-input-peripherals",
+  "captures-output-peripherals",
+  "captures-system-state-data",
+  "cleans-traces-of-infection",
+  "commits-fraud",
+  "communicates-with-c2",
+  "compromises-data-availability",
+  "compromises-data-integrity",
+  "compromises-system-availability",
+  "controls-local-machine",
+  "degrades-security-software",
+  "degrades-system-updates",
+  "determines-c2-server",
+  "emails-spam",
+  "escalates-privileges",
+  "evades-av",
+  "exfiltrates-data",
+  "fingerprints-host",
+  "hides-artifacts",
+  "hides-executing-code",
+  "infects-files",
+  "infects-remote-machines",
+  "installs-other-components",
+  "persists-after-system-reboot",
+  "prevents-artifact-access",
+  "prevents-artifact-deletion",
+  "probes-network-environment",
+  "self-modifies",
+  "steals-authentication-credentials",
+  "violates-system-operational-integrity"
+];
 
-enum malware_type_ov {
-  adware = "adware",
-  backdoor = "backdoor",
-  bot = "bot",
-  bootkit = "bootkit",
-  ddos = "ddos",
-  downloader = "downloader",
-  dropper = "dropper",
-  exploit_kit = "exploit-kit",
-  keylogger = "keylogger",
-  ransomware = "ransomware",
-  remote_access_trojan = "remote-access-trojan",
-  resource_exploitation = "resource-exploitation",
-  rogue_security_software = "rogue-security-software",
-  rootkit = "rootkit",
-  screen_capture = "screen-capture",
-  spyware = "spyware",
-  trojan = "trojan",
-  unknown = "unknown",
-  virus = "virus",
-  webshell = "webshell",
-  wiper = "wiper",
-  worm = "worm",
-}
+const malware_type_ov = [
+  "adware",
+  "backdoor",
+  "bot",
+  "bootkit",
+  "ddos",
+  "downloader",
+  "dropper",
+  "exploit-kit",
+  "keylogger",
+  "ransomware",
+  "remote-access-trojan",
+  "resource-exploitation",
+  "rogue-security-software",
+  "rootkit",
+  "screen-capture",
+  "spyware",
+  "trojan",
+  "unknown",
+  "virus",
+  "webshell",
+  "wiper",
+  "worm"
+];
 
-enum pattern_type_ov {
-  stix = "stix",
-  pcre = "pcre",
-  sigma = "sigma",
-  snort = "snort",
-  suricata = "suricata",
-  yara = "yara",
-}
+const pattern_type_ov = [
+  "stix",
+  "pcre",
+  "sigma",
+  "snort",
+  "suricata",
+  "yara"
+];
 
-enum processor_architecture_ov {
-  alpha = "alpha",
-  arm = "arm",
-  ia_64 = "ia-64",
-  mips = "mips",
-  powerpc = "powerpc",
-  sparc = "sparc",
-  x86 = "x86",
-  x86_64 = "x86-64",
-}
+const processor_architecture_ov = [
+  "alpha",
+  "arm",
+  "ia-64",
+  "mips",
+  "powerpc",
+  "sparc",
+  "x86",
+  "x86-64"
+];
 
-enum region_ov {
-  africa = "africa ",
-  eastern_africa = "eastern-africa",
-  middle_africa = "middle-africa",
-  northern_africa = "northern-africa",
-  southern_africa = "southern-africa",
-  western_africa = "western-africa",
-  americas = "americas ",
-  caribbean = "caribbean",
-  central_america = "central-america",
-  latin_america_caribbean = "latin-america-caribbean",
-  northern_america = "northern-america",
-  south_america = "south-america",
-  asia = "asia ",
-  central_asia = "central-asia",
-  eastern_asia = "eastern-asia",
-  southern_asia = "southern-asia",
-  south_eastern_asia = "south-eastern-asia",
-  western_asia = "western-asia",
-  europe = "europe ",
-  eastern_europe = "eastern-europe",
-  northern_europe = "northern-europe",
-  southern_europe = "southern-europe",
-  western_europe = "western-europe",
-  oceania = "oceania ",
-  antarctica = "antarctica",
-  australia_new_zealand = "australia-new-zealand",
-  melanesia = "melanesia",
-  micronesia = "micronesia",
-  polynesia = "polynesia",
-}
+const region_ov = [
+  "africa ",
+  "eastern-africa",
+  "middle-africa",
+  "northern-africa",
+  "southern-africa",
+  "western-africa",
+  "americas",
+  "caribbean",
+  "central-america",
+  "latin-america-caribbean",
+  "northern-america",
+  "south-america",
+  "asia ",
+  "central-asia",
+  "eastern-asia",
+  "southern-asia",
+  "south-eastern-asia",
+  "western-asia",
+  "europe ",
+  "eastern-europe",
+  "northern-europe",
+  "southern-europe",
+  "western-europe",
+  "oceania",
+  "antarctica",
+  "australia-new-zealand",
+  "melanesia",
+  "micronesia",
+  "polynesia"
+];
 
-enum report_type_ov {
-  attack_pattern = "attack-pattern",
-  campaign = "campaign",
-  identity = "identity",
-  indicator = "indicator",
-  intrusion_set = "intrusion-set",
-  malware = "malware",
-  observed_data = "observed-data",
-  threat_actor = "threat-actor",
-  threat_report = "threat-report",
-  tool = "tool",
-  vulnerability = "vulnerability",
-}
+const report_type_ov = [
+  "attack-pattern",
+  "campaign",
+  "identity",
+  "indicator",
+  "intrusion-set",
+  "malware",
+  "observed-data",
+  "threat-actor",
+  "threat-report",
+  "tool",
+  "vulnerability"
+];
 
-enum threat_actor_type_ov {
-  activist = "activist",
-  competitor = "competitor",
-  crime_syndicate = "crime-syndicate",
-  criminal = "criminal",
-  hacker = "hacker",
-  insider_accidental = "insider-accidental",
-  insider_disgruntled = "insider-disgruntled",
-  nation_state = "nation-state",
-  sensationalist = "sensationalist",
-  spy = "spy",
-  terrorist = "terrorist",
-  unknown = "unknown",
-}
+const threat_actor_type_ov = [
+  "activist",
+  "competitor",
+  "crime-syndicate",
+  "criminal",
+  "hacker",
+  "insider-accidental",
+  "insider-disgruntled",
+  "nation-state",
+  "sensationalist",
+  "spy",
+  "terrorist",
+  "unknown"
+];
 
-enum threat_actor_role_ov {
-  agent = "agent",
-  director = "director",
-  independent = "independent",
-  infrastructure_architect = "infrastructure-architect",
-  infrastructure_operator = "infrastructure-operator",
-  malware_author = "malware-author",
-  sponsor = "sponsor",
-}
+const threat_actor_role_ov = [
+  "agent",
+  "director",
+  "independent",
+  "infrastructure-architect",
+  "infrastructure-operator",
+  "malware-author",
+  "sponsor"
+];
 
-enum threat_actor_sophistication_ov {
-  none = "none",
-  minimal = "minimal",
-  intermediate = "intermediate",
-  advanced = "advanced",
-  expert = "expert",
-  innovator = "innovator",
-  strategic = "strategic",
-}
+const threat_actor_sophistication_ov = [
+  "none",
+  "minimal",
+  "intermediate",
+  "advanced",
+  "expert",
+  "innovator",
+  "strategic"
+];
 
-enum tool_type_ov {
-  denial_of_service = "denial-of-service",
-  exploitation = "exploitation",
-  information_gathering = "information-gathering",
-  network_capture = "network-capture",
-  credential_exploitation = "credential-exploitation",
-  remote_access = "remote-access",
-  vulnerability_scanning = "vulnerability-scanning",
-  unknown = "unknown",
-}
+const tool_type_ov = [
+  "denial-of-service",
+  "exploitation",
+  "information-gathering",
+  "network-capture",
+  "credential-exploitation",
+  "remote-access",
+  "vulnerability-scanning",
+  "unknown"
+];
 
-// TODO: Uncomment once windows_pebinary_type_ov gets 
+// TODO: Uncomment once windows-pebinary-type-ov gets 
 // referenced in schema.ts
 
-// enum windows_pebinary_type_ov {
-//   dll = "dll",
-//   exe = "exe",
-//   sys = "sys",
-// }
+// const windows_pebinary_type_ov = [
+//   "dll",
+//   "exe",
+//   "sys"
+// ];
+
+export const open_vocab_options = {
+  "account-type-ov": account_type_ov,
+  "attack-motivation-ov": attack_motivation_ov,
+  "attack-resource-level-ov": attack_resource_level_ov,
+  "grouping-context-ov": grouping_context_ov,
+  "hash-algorithm-ov": hash_algorithm_ov,
+  "identity-class-ov": identity_class_ov,
+  "implementation-language-ov": implementation_language_ov,
+  "indicator-type-ov": indicator_type_ov,
+  "industry-sector-ov": industry_sector_ov,
+  "infrastructure-type-ov": infrastructure_type_ov,
+  "malware-result-ov": malware_result_ov,
+  "malware-capabilities-ov": malware_capabilities_ov,
+  "malware-type-ov": malware_type_ov,
+  "pattern-type-ov": pattern_type_ov,
+  "processor-architecture-ov": processor_architecture_ov,
+  "region-ov": region_ov,
+  "report-type-ov": report_type_ov,
+  "threat-actor-type-ov": threat_actor_type_ov,
+  "threat-actor-role-ov": threat_actor_role_ov,
+  "threat-actor-sophistication-ov": threat_actor_sophistication_ov,
+  "tool-type-ov": tool_type_ov,
+  // TODO: Uncomment once windows-pebinary-type-ov gets 
+  // referenced in schema.ts
+  // "windows-pebinary-type-ov": windows_pebinary_type_ov
+}
