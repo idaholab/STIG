@@ -3,6 +3,7 @@ import { SchemaSTIXPropertyDescription } from "../types/stixSchemaTypes/SchemaST
 export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     {
         name: 'core',
+        superClasses: [],
         properties: {
             type: "The type property identifies the type of STIX Object (SDO, Relationship Object, etc). The value of the type field MUST be one of the types defined by a STIX Object (e.g., indicator).",
             spec_version: "The version of the STIX specification used to represent this object.",
@@ -22,6 +23,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'cyber-observable-core',
+        superClasses: [],
         properties: {
             type: "Indicates that this object is an Observable Object. The value of this property MUST be a valid Observable Object type name, but to allow for custom objects this has been removed from the schema.",
             spec_version: "The version of the STIX specification used to represent the content in this cyber-observable.",
@@ -34,6 +36,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'relationship',
+        superClasses: ['core'],
         properties: {
             type: "The type of this object, which MUST be the literal `relationship`.",
             relationship_type: "The name used to identify the type of relationship.",
@@ -46,6 +49,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'sighting',
+        superClasses: [],
         properties: {
             type: "The type of this object, which MUST be the literal `sighting`.",
             description: "A description that provides more details and context about the Sighting.",
@@ -60,15 +64,29 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'language-meta-core',
+        superClasses: [],
         properties: {
             type: "The type of this object, which MUST be the literal `language-content`.",
+            spec_version: "The version of the STIX specification used to represent this object.",
+            id: "The id property universally and uniquely identifies this object.",
+            created_by_ref: "The ID of the Source object that describes who created this object.",
+            labels: "The labels property specifies a set of terms used to describe this object.",
+            created: "The created property represents the time at which the first version of this object was created. The timstamp value MUST be precise to the nearest millisecond.",
+            modified: "The modified property represents the time that this particular version of the object was modified. The timstamp value MUST be precise to the nearest millisecond.",
+            revoked: "The revoked property indicates whether the object has been revoked.",
+            confidence: "Identifies the confidence that the creator has in the correctness of their data.",
+            external_references: "A list of external references which refers to non-STIX information.",
+            object_marking_refs: "The list of marking-definition objects to be applied to this object.",
+            granular_markings: "The set of granular markings that apply to this object.",
         }
     },
     {
         name: 'marking-meta-core',
+        superClasses: [],
         properties: {
             type: "The type of this object, which MUST be the literal `marking-definition`.",
             spec_version: "The version of the STIX specification used to represent this object.",
+            id: "The id property universally and uniquely identifies this object.",
             name: "A name used to identify the Marking Definition.",
             created_by_ref: "The created_by_ref property specifies the ID of the identity object that describes the entity that created this Marking Definition.",
             created: "The created property represents the time at which the first version of this Marking Definition object was created.",
@@ -80,6 +98,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'artifact',
+        superClasses: ['cyber-observable-core'],
         properties: {
             type: "The value of this property MUST be `artifact`.",
             mime_type: "The value of this property MUST be a valid MIME type as specified in the IANA Media Types registry.",
@@ -92,6 +111,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'attack-pattern',
+        superClasses: ['core'],
         properties: {
             type: "The type of this object, which MUST be the literal `attack-pattern`.",
             aliases: "Alternative names used to identify this Attack Pattern.",
@@ -102,6 +122,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'autonomous-system',
+        superClasses: ['cyber-observable-core'],
         properties: {
             type: "The value of this property MUST be `autonomous-system`.",
             number: "Specifies the number assigned to the AS. Such assignments are typically performed by a Regional Internet Registries (RIR).",
@@ -111,6 +132,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'campaign',
+        superClasses: ['core'],
         properties: {
             type: "The type of this object, which MUST be the literal `campaign`.",
             name: "The name used to identify the Campaign.",
@@ -123,6 +145,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'course-of-action',
+        superClasses: ['core'],
         properties: {
             type: "The type of this object, which MUST be the literal `course-of-action`.",
             name: "The name used to identify the Course of Action.",
@@ -131,6 +154,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'directory',
+        superClasses: ['cyber-observable-core'],
         properties: {
             type: "The value of this property MUST be `directory`.",
             path: "Specifies the path, as originally observed, to the directory on the file system.",
@@ -143,6 +167,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'domain-name',
+        superClasses: ['cyber-observable-core'],
         properties: {
             type: "The value of this property MUST be `domain-name`.",
             value: "Specifies the value of the domain name.",
@@ -151,6 +176,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'email-addr',
+        superClasses: ['cyber-observable-core'],
         properties: {
             type: "The value of this property MUST be `email-addr`.",
             value: "Specifies a single email address. This MUST not include the display name.",
@@ -160,6 +186,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'email-message',
+        superClasses: ['cyber-observable-core'],
         properties: {
             type: "The value of this property MUST be `email-message`.",
             date: "Specifies the date/time that the email message was sent.",
@@ -174,10 +201,13 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
             received_lines: "Specifies one or more Received header fields that may be included in the email headers.",
             additional_header_fields: "Specifies any other header fields found in the email message, as a dictionary.",
             raw_email_ref: "Specifies the raw binary contents of the email message, including both the headers and body, as a reference to an Artifact Object.",
+            is_multipart: "Indicates whether the email body contains multiple MIME parts.",
+            body: "Specifies a string containing the email body. This field MAY only be used if is_multipart is false."
         }
     },
     {
         name: 'extension-definition',
+        superClasses: ['core'],
         properties: {
             type: "The type of this object, which MUST be the literal `extension-definition`.",
             name: "A name used for display purposes during execution, development, or debugging.",
@@ -190,6 +220,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'file',
+        superClasses: ['cyber-observable-core'],
         properties: {
             type: "The value of this property MUST be `file`.",
             extensions: "The File Object defines the following extensions. In addition to these, producers MAY create their own. Extensions: ntfs-ext, raster-image-ext, pdf-ext, archive-ext, windows-pebinary-ext",
@@ -209,6 +240,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'grouping',
+        superClasses: ['core'],
         properties: {
             type: "The type of this object, which MUST be the literal `grouping`.",
             name: "A name used to identify the Grouping.",
@@ -219,6 +251,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'identity',
+        superClasses: ['core'],
         properties: {
             type: "The type of this object, which MUST be the literal `identity`.",
             roles: "The list of roles that this Identity performs (e.g., CEO, Domain Administrators, Doctors, Hospital, or Retailer). No open vocabulary is yet defined for this property.",
@@ -231,6 +264,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'indicator',
+        superClasses: ['core'],
         properties: {
             type: "The type of this object, which MUST be the literal `indicator`.",
             indicator_types: "This field is an Open Vocabulary that specifies the type of indicator. Open vocab - indicator-type-ov",
@@ -246,6 +280,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'infrastructure',
+        superClasses: ['core'],
         properties: {
             type: "The type of this object, which MUST be the literal `infrastructure`.",
             name: "The name used to identify the Infrastructure.",
@@ -259,6 +294,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'intrusion-set',
+        superClasses: ['core'],
         properties: {
             type: "The type of this object, which MUST be the literal `intrusion-set`.",
             name: "The name used to identify the Intrusion Set.",
@@ -274,6 +310,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'ipv4-addr',
+        superClasses: ['cyber-observable-core'],
         properties: {
             type: "The value of this property MUST be `ipv4-addr`.",
             value: "Specifies one or more IPv4 addresses expressed using CIDR notation.",
@@ -283,6 +320,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'ipv6-addr',
+        superClasses: ['cyber-observable-core'],
         properties: {
             type: "The value of this property MUST be `ipv6-addr`.",
             value: "Specifies one or more IPv6 addresses expressed using CIDR notation.",
@@ -292,6 +330,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'language-content',
+        superClasses: ['language-meta-core'],
         properties: {
             object_ref: "Identifies the object that this Language Content applies to.",
             object_modified: "Identifies the modified time of the object that this Language Content applies to.",
@@ -300,6 +339,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'location',
+        superClasses: ['core'],
         properties: {
             type: "The type of this object, which MUST be the literal `location`.",
             description: "A textual description of the Location.",
@@ -317,6 +357,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'mac-addr',
+        superClasses: ['cyber-observable-core'],
         properties: {
             type: "The value of this property MUST be `mac-addr`.",
             value: "Specifies one or more mac addresses expressed using CIDR notation.",
@@ -324,6 +365,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'malware',
+        superClasses: ['core'],
         properties: {
             type: "The type of this object, which MUST be the literal `malware`.",
             aliases: "Alternative names used to identify this Malware or Malware family.",
@@ -338,10 +380,12 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
             name: "The name used to identify the Malware.",
             description: "Provides more context and details about the Malware object.",
             kill_chain_phases: "The list of kill chain phases for which this Malware instance can be used.",
+            is_family: "Whether the object represents a malware family (if true) or a malware instance (if false)."
         }
     },
     {
         name: 'malware-analysis',
+        superClasses: ['core'],
         properties: {
             type: "The type of this object, which MUST be the literal `malware-analysis`.",
             product: "The name of the analysis engine or product that was used for this analysis.",
@@ -364,6 +408,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'marking-definition',
+        superClasses: ['marking-meta-core'],
         properties: {
             name: "A name used to identify this TLP Marking Definition.",
             definition_type: "The definition_type property identifies the type of Marking Definition.",
@@ -372,6 +417,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'mutex',
+        superClasses: ['cyber-observable-core'],
         properties: {
             type: "The value of this property MUST be `mutex`.",
             name: "Specifies the name of the mutex object.",
@@ -379,6 +425,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'network-traffic',
+        superClasses: ['cyber-observable-core'],
         properties: {
             type: "The value of this property MUST be `network-traffic`.",
             extensions: "The Network Traffic Object defines the following extensions. In addition to these, producers MAY create their own. Extensions: http-ext, tcp-ext, icmp-ext, socket-ext",
@@ -398,10 +445,12 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
             dst_payload_ref: "Specifies the bytes sent from the source to the destination.",
             encapsulates_refs: "Links to other network-traffic objects encapsulated by a network-traffic.",
             encapsulated_by_ref: "Links to another network-traffic object which encapsulates this object.",
+            is_active: "Indicates whether the network traffic is still ongoing."
         }
     },
     {
         name: 'note',
+        superClasses: ['core'],
         properties: {
             type: "The type of this object, which MUST be the literal `note`.",
             abstract: "A brief summary of the note.",
@@ -412,6 +461,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'observed-data',
+        superClasses: ['core'],
         properties: {
             type: "The type of this object, which MUST be the literal `observed-data`.",
             first_observed: "The beginning of the time window that the data was observed during.",
@@ -423,6 +473,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'opinion',
+        superClasses: ['core'],
         properties: {
             type: "The type of this object, which MUST be the literal `opinion`.",
             explanation: "An explanation of why the producer has this Opinion.",
@@ -433,6 +484,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'process',
+        superClasses: ['cyber-observable-core'],
         properties: {
             type: "The value of this property MUST be `process`.",
             extensions: "The Process Object defines the following extensions. In addition to these, producers MAY create their own. Extensions: windows-process-ext, windows-service-ext.",
@@ -451,6 +503,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'report',
+        superClasses: ['core'],
         properties: {
             type: "The type of this object, which MUST be the literal `report`.",
             report_types: "This field is an Open Vocabulary that specifies the primary subject of this report. The suggested values for this field are in report-type-ov.",
@@ -462,6 +515,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'software',
+        superClasses: ['cyber-observable-core'],
         properties: {
             type: "The value of this property MUST be `software`.",
             name: "Specifies the name of the software.",
@@ -474,6 +528,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'threat-actor',
+        superClasses: ['core'],
         properties: {
             type: "The type of this object, which MUST be the literal `threat-actor`.",
             threat_actor_types: "This field specifies the type of threat actor. Open Vocab - threat-actor-type-ov",
@@ -493,6 +548,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'tool',
+        superClasses: ['core'],
         properties: {
             type: "The type of this object, which MUST be the literal `tool`.",
             aliases: "Alternative names used to identify this Tool.",
@@ -505,13 +561,37 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'url',
+        superClasses: ['cyber-observable-core'],
         properties: {
             type: "The value of this property MUST be `url`.",
             value: "Specifies the value of the URL.",
         }
     },
     {
+        name: 'user-account',
+        superClasses: ['cyber-observable-core'],
+        properties: {
+            type: "The value of this property MUST be `user-account`.",
+            extensions: "The User Account Object defines the following extensions. In addition to these, producers MAY create their own. Extensions: unix-account-ext.",
+            user_id: "Specifies the identifier of the account.",
+            credential: "Specifies a cleartext credential. This is only intended to be used in capturing metadata from malware analysis (e.g., a hard-coded domain administrator password that the malware attempts to use for lateral movement) and SHOULD NOT be used for sharing of PII.",
+            account_login: "Specifies the account login string, used in cases where the user_id property specifies something other than what a user would type when they login.",
+            account_type: "Specifies the type of the account. This is an open vocabulary and values SHOULD come from the account-type-ov vocabulary.",
+            display_name: "Specifies the display name of the account, to be shown in user interfaces, if applicable.",
+            is_service_account: "Indicates that the account is associated with a network service or system process (daemon), not a specific individual.",
+            is_privileged: "Specifies that the account has elevated privileges (i.e., in the case of root on Unix or the Windows Administrator account).",
+            can_escalate_privs: "Specifies that the account has the ability to escalate privileges (i.e., in the case of sudo on Unix or a Windows Domain Admin account).",
+            is_disabled: "Specifies if the account is disabled.",
+            account_created: "Specifies when the account was created.",
+            account_expires: "Specifies the expiration date of the account.",
+            credential_last_changed: "Specifies when the account credential was last changed.",
+            account_first_login: "Specifies when the account was first accessed.",
+            account_last_login: "Specifies when the account was last accessed."
+        }
+    },
+    {
         name: 'vulnerability',
+        superClasses: ['core'],
         properties: {
             type: "The type of this object, which MUST be the literal `vulnerability`.",
             name: "The name used to identify the Vulnerability.",
@@ -520,6 +600,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'windows-registry-key',
+        superClasses: ['cyber-observable-core'],
         properties: {
             type: "The value of this property MUST be `windows-registry-key`.",
             key: "Specifies the full registry key including the hive.",
@@ -531,6 +612,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'x509-certificate',
+        superClasses: ['cyber-observable-core'],
         properties: {
             type: "The value of this property MUST be `x509-certificate`.",
             is_self_signed: "Specifies whether the certificate is self-signed, i.e., whether it is signed by the same entity whose identity it certifies.",
@@ -550,6 +632,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'windows-registry-value-type',
+        superClasses: [],
         properties: {
             name: "Specifies the name of the registry value. For specifying the default value in a registry key, an empty string MUST be used.",
             data: "Specifies the data contained in the registry value.",
@@ -558,6 +641,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'kill-chain-phase',
+        superClasses: [],
         properties: {
             kill_chain_name: "The name of the kill chain. The value of this property SHOULD be all lowercase and SHOULD use hyphens instead of spaces or underscores as word separators.",
             phase_name: "The name of the phase in the kill chain. The value of this property SHOULD be all lowercase and SHOULD use hyphens instead of spaces or underscores as word separators.",
@@ -565,6 +649,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
     },
     {
         name: 'x509-v3-extensions-type',
+        superClasses: [],
         properties: {
             basic_constraints: "Specifies a multi-valued extension which indicates whether a certificate is a CA certificate.",
             name_constraints: "Specifies a namespace within which all subject names in subsequent certificates in a certification path MUST be located.",

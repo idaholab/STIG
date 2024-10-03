@@ -24,6 +24,13 @@ export default function FormSTIXPropsPanel({ selectedProperties, showJson }: {
     }
   };
 
+  const createdProperty = selectedProperties.find(selectedProperty =>
+    selectedProperty.name === "created"
+  );
+  const modifiedProperty = selectedProperties.find(selectedProperty =>
+    selectedProperty.name === "modified"
+  );
+
   // When stixTypeProps gets set for the object or changes
   // when clicking on a different object, update the selectedProperties
   useEffect(() => {
@@ -47,9 +54,7 @@ export default function FormSTIXPropsPanel({ selectedProperties, showJson }: {
         :
         <>
           <div className='flex gap-4 mb-2'>
-            {selectedProperties.find(selectedProperty =>
-              selectedProperty.name === "created"
-            ) ?
+            {createdProperty ?
               <FormElementDatePicker
                 value={selectedSTIXObject && selectedSTIXObject["created"] !== undefined ?
                   selectedSTIXObject["created"]
@@ -58,18 +63,16 @@ export default function FormSTIXPropsPanel({ selectedProperties, showJson }: {
                 onChange={([date]) => {
                   handlePropertyUpdate(date, "created", selectedSTIXObject, setSelectedSTIXObject);
                 }}
-                className='flex flex-auto'
-                additionalInputClasses='select-sm px-2 w-full'
-                includeInfo={true}
-                infoText={'The date this object was created'}
+                className={'flex flex-auto' + (modifiedProperty ? " max-w-[50%]" : "")}
+                additionalInputClasses={"select-sm px-2 w-full"}
+                includeInfo={!!createdProperty.propertyDescription && createdProperty.propertyDescription?.length > 0}
+                infoText={createdProperty.propertyDescription}
                 label={'created'}
               />
               : null
             }
 
-            {selectedProperties.find(selectedProperty =>
-              selectedProperty.name === "modified"
-            ) ?
+            {modifiedProperty ?
               <FormElementDatePicker
                 value={selectedSTIXObject && selectedSTIXObject["modified"] !== undefined ?
                   selectedSTIXObject["modified"]
@@ -78,10 +81,10 @@ export default function FormSTIXPropsPanel({ selectedProperties, showJson }: {
                 onChange={([date]) => {
                   handlePropertyUpdate(date, "modified", selectedSTIXObject, setSelectedSTIXObject);
                 }}
-                className='flex flex-auto'
+                className={'flex flex-auto' + (createdProperty ? " max-w-[50%]" : "")}
                 additionalInputClasses='select-sm px-2 w-full'
-                includeInfo={true}
-                infoText={'The date this object was modified'}
+                includeInfo={!!modifiedProperty.propertyDescription && modifiedProperty.propertyDescription?.length > 0}
+                infoText={modifiedProperty.propertyDescription}
                 label={'modified'}
               />
               : null

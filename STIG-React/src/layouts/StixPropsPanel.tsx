@@ -10,6 +10,7 @@ import { stencilItems } from '@/components/elements/StencilItems.ts';
 import FormSTIXPropertySelection from '@/components/forms/FormSTIXPropertySelection.tsx';
 import ButtonSTIXJSON from '@/components/elements/ButtonSTIXJSON.tsx';
 import { propertyDescriptions } from '@/stix/propertyDescriptions.ts';
+import { getSTIXPropDescriptions } from '@/stix/getSTIXPropDescriptions.ts';
 
 const StixPropsPanel: React.FC = () => {
   const [selectedProperties, setSelectedProperties] = useState<SchemaSTIXProperty[]>([]);
@@ -48,10 +49,11 @@ function PropsPanelHeader({ selectedProperties, setSelectedProperties, setIsShow
     }
 
     const properties = getSTIXPropsFromSchema(schemaObject);
-    const propertyDescriptionGroup: any = propertyDescriptions.find((group) => group.name === selectedSTIXObject?.type);
-    if (propertyDescriptionGroup) {
+    const propertyDescriptionObject = propertyDescriptions.find((group) => group.name === selectedSTIXObject?.type);
+    if(propertyDescriptionObject) {
+      const propertyDescriptions = getSTIXPropDescriptions(propertyDescriptionObject);
       properties.forEach((prop) => {
-        prop.propertyDescription = propertyDescriptionGroup.properties[prop.name] || undefined;
+        prop.propertyDescription = propertyDescriptions[prop.name] || undefined;
       });
     }
 

@@ -52,13 +52,14 @@ export const schema: SchemaSTIXClass[] = [
       { name: 'external_references', type: 'list', listType: 'external-reference' },
       { name: 'object_marking_refs', type: 'list', listType: 'identifier' },
       { name: 'granular_markings', type: 'list', listType: 'granular-marking' },
+      { name: 'extensions', type: 'dictionary' },
       // The following are not specified in the core of relationships, but all relationships require these so including here.
       { name: 'relationship_type', type: 'string', mandatory: true, notNull: true, },
       { name: 'description', type: 'string' },
       { name: 'source_ref', type: 'identifier', mandatory: true, notNull: true, },
       { name: 'target_ref', type: 'identifier', mandatory: true, notNull: true, },
       { name: 'start_time', type: 'timestamp' },
-      { name: 'end_time', type: 'timestamp' }
+      { name: 'stop_time', type: 'timestamp' }
     ]
   },
   {
@@ -231,7 +232,7 @@ export const schema: SchemaSTIXClass[] = [
     properties: [
       { name: 'name', type: 'string', mandatory: true, notNull: true, },
       { name: 'description', type: 'string' },
-      { name: 'action', type: 'string' }, //ATTN: This is reserved, but not currently implemented in the spec
+      // { name: 'action', type: 'string' }, //ATTN: This is reserved, but not currently implemented in the spec
     ]
   },
   {
