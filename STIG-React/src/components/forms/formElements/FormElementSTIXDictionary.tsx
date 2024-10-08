@@ -9,7 +9,7 @@ import { SchemaSTIXType } from '@/types/stixSchemaTypes/SchemaSTIXType';
 import FormElementSelect from './FormElementSelect';
 import { StixObject } from '@/types/stixTypes/StixObject';
 import { STIXPropertyRenderer } from '../STIXPropertyRenderer';
-import { STIXPropertyLabel } from '@/components/elements/STIXPropertyLabel';
+import STIXPropertyLabel from '@/components/elements/STIXPropertyLabel';
 import { handlePropertyUpdate } from '@/stix/handlePropertyUpdate';
 
 type Props = {
@@ -21,10 +21,8 @@ type Props = {
   setParentDictionaryProps?: React.Dispatch<React.SetStateAction<SchemaSTIXProperty[]>>;
   parentSelectedProperties?: SchemaSTIXProperty[];
   setParentSelectedProperties?: React.Dispatch<React.SetStateAction<SchemaSTIXProperty[]>>;
-  className?: string;
-  property?: SchemaSTIXProperty;
-  showTypeSelector?: boolean,
-  onTypeChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void,
+  property: SchemaSTIXProperty;
+  showTypeSelector?: boolean;
 };
 
 const FormElementSTIXDictionary: React.FC<Props> = ({
@@ -35,10 +33,8 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
   setParentDictionaryProps: setParentDictionaryProps,
   parentSelectedProperties,
   setParentSelectedProperties,
-  className,
   property,
-  showTypeSelector,
-  onTypeChange,
+  showTypeSelector
 }) => {
   const [localSelectedProperties, setLocalSelectedProperties] = useState<SchemaSTIXProperty[]>([]);
   const [localDictionaryProps, setLocalDictionaryProps] = useState<SchemaSTIXProperty[]>([]);
@@ -174,7 +170,6 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
           propName={property ? property?.name : ''}
           propertyType={property ? property.type : undefined}
           showTypeSelector={showTypeSelector}
-          onTypeChange={onTypeChange}
           additionalLabelClasses='mr-2'
         />
         {showTypeSelector ?

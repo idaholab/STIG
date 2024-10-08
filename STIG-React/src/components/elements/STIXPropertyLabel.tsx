@@ -1,14 +1,27 @@
 import { SchemaSTIXType } from "@/types/stixSchemaTypes/SchemaSTIXType";
 import FormElementSelect from "../forms/formElements/FormElementSelect";
-import React from "react";
+import React, { forwardRef, useRef, useState } from "react";
+import InfoButton from "./InfoButton";
 
-export function STIXPropertyLabel({ propName, propertyType, showTypeSelector, onTypeChange, additionalLabelClasses }: {
-    propName: string,
-    propertyType?: SchemaSTIXType,
-    showTypeSelector?: boolean,
+type Props = {
+    propName: string;
+    propertyType?: SchemaSTIXType;
+    showTypeSelector?: boolean;
     onTypeChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-    additionalLabelClasses: string
-}) {
+    additionalLabelClasses: string;
+    includeInfo?: boolean;
+    infoText?: string;
+}
+
+const STIXPropertyLabel = forwardRef<HTMLParagraphElement, Props>(({ 
+    propName, 
+    propertyType, 
+    showTypeSelector, 
+    onTypeChange, 
+    additionalLabelClasses,
+    includeInfo = false,
+    infoText
+}, ref) => {
     //TODO: see about getting rid of this and just using the options down below
     const stixSchemaToUITypeConverter: any = {
         "string": "string",
@@ -31,11 +44,17 @@ export function STIXPropertyLabel({ propName, propertyType, showTypeSelector, on
         "enum": "string",
         "x509-v3-extensions-type": "object"
     };
+    const [showInfo, setShowInfo] = useState(false);
+    const toggleInfo = () => {
+        setShowInfo(prevShowInfo => !prevShowInfo);
+    };
+    const parentRef = useRef<HTMLDivElement>(null);
+
     return (
         <>
             {propName &&
-                <div className='flex items-center mb-1'>
-                    <p className={`${additionalLabelClasses}`}>{propName}</p>
+                <div className='flex items-center mb-1' ref={parentRef}>
+                    <p ref={ref} className={`${additionalLabelClasses}`}>{propName}</p>
                     {showTypeSelector && propertyType && onTypeChange ?
                         <FormElementSelect
                             options={["array", "string", "integer", "boolean", "number", "object"]}
@@ -46,8 +65,20 @@ export function STIXPropertyLabel({ propName, propertyType, showTypeSelector, on
                         />
                         : null
                     }
+                    <InfoButton
+                        visible={includeInfo}
+                        toggleInfo={toggleInfo}
+                        parentRef={parentRef}
+                    />
                 </div>
+            }
+            {showInfo && includeInfo && infoText && infoText?.length > 0 &&
+                <span className={`text-xs p-1 dark:text-orange-300 text-orange-800`}>{infoText}</span>
             }
         </>
     );
-}
+});
+
+STIXPropertyLabel.displayName = "STIXPropertyLabel"; //relates to ref somehow
+
+export default STIXPropertyLabel;

@@ -3,13 +3,14 @@ import React, { useEffect, useState } from "react";
 import { useStigContext } from "@/contexts/StigContext";
 import { StixPropsContextProvider, useStixPropsContext } from "@/contexts/StixPropsContext";
 
-import ButtonBasic from "../elements/ButtonBasic";
 import FormElementSelect from "./formElements/FormElementSelect";
 import FormElementTextInput from "./formElements/FormElementTextInput";
 import FormElementSTIXList from "./formElements/FormElementSTIXList";
 import FormElementDatePicker from "./formElements/FormElementDatePicker";
 import FormElementFileInput from "./formElements/FormElementFileInput";
 import FormElementSTIXDictionary from "./formElements/FormElementSTIXDictionary";
+import FormElementSelectOther from "./formElements/FormElementSelectOther";
+import FormElementSTIXHashes from "./formElements/FormElementSTIXHashes";
 
 import { SchemaSTIXProperty } from "@/types/stixSchemaTypes/SchemaSTIXProperty";
 import { StixObject } from "@/types/stixTypes/StixObject";
@@ -42,6 +43,23 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
 }) {
   const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
   const { cyInstance } = useStigContext();
+
+  // Used for open-vocab properties
+  const [customValueSelected, setCustomValueSelected] = useState(
+    property.openVocabType && selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ? 
+      !open_vocab_options[property.openVocabType].includes(selectedSTIXObject[property.name]) ?
+        true : false 
+      : false
+    );
+  useEffect(() => {
+    // Reset customValueSelected if the selectedSTIXObject changes
+    setCustomValueSelected(
+      property.openVocabType && selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ? 
+        !open_vocab_options[property.openVocabType].includes(selectedSTIXObject[property.name]) ?
+          true : false 
+        : false
+      );
+  }, [selectedSTIXObject, property]);
 
   switch (property.name) {
     case "created":
@@ -124,95 +142,50 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
             <StixPropsContextProvider>
               <FormElementSTIXDictionary
                 dictionary={selectedSTIXObject ? selectedSTIXObject[property.name] : undefined}
-                showTypeSelector={showTypeSelector}
                 parentSTIXObject={selectedSTIXObject}
                 setParentSTIXObject={setSelectedSTIXObject}
                 parentDictionaryProps={parentDictionaryProps}
                 setParentDictionaryProps={setParentDictionaryProps}
                 parentSelectedProperties={parentSelectedProperties}
                 setParentSelectedProperties={setParentSelectedProperties}
-                className='mb-2'
                 property={property}
+                showTypeSelector={showTypeSelector}
               />
             </StixPropsContextProvider>
           );
         case "enum":
         case "open-vocab":
-          const [customValueSelected, setCustomValueSelected] = useState(
-            property.openVocabType && selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ? 
-              !open_vocab_options[property.openVocabType].includes(selectedSTIXObject[property.name]) ?
-                true : false 
-              : false
-            );
-          useEffect(() => {
-            // Reset customValueSelected if the selectedSTIXObject changes
-            setCustomValueSelected(
-              property.openVocabType && selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ? 
-                !open_vocab_options[property.openVocabType].includes(selectedSTIXObject[property.name]) ?
-                  true : false 
-                : false
-              );
-          }, [selectedSTIXObject, property]);
           return (
-            <>
-              {!customValueSelected && 
-                <FormElementSelect
-                  placeholder=''
-                  value={selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ?
-                    selectedSTIXObject[property.name]
-                    : ""
-                  }
-                  options={property.openVocabType ? [...open_vocab_options[property.openVocabType], "Custom Value"] : 
-                    property.enumType ? enum_options[property.enumType] : []}
-                  onChange={(event) => {
-                    if(event.target.value === "Custom Value") {
-                      setCustomValueSelected(true);
-                    } else {
-                      setCustomValueSelected(false);
-                      handlePropertyUpdate(event.target.value, property.name, selectedSTIXObject, setSelectedSTIXObject);
-                    }
-                  }}
-                  additionalClasses='dark:bg-gray-900 w-full'
-                  includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
-                  infoText={property?.propertyDescription}
-                  property={property}
-                  showTypeSelector={showTypeSelector}
-                  onTypeChange={onTypeChange}
-                  className='mb-2'
-                />
+            <FormElementSelectOther
+              placeholder=''
+              value={selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ?
+                selectedSTIXObject[property.name]
+                : ""
               }
-              {customValueSelected &&
-                <>
-                  <p>{property.name}</p>
-                  <div className="flex justify-between">
-                    <p className="ml-4 pr-4 mb-2">{`Custom ${property?.name} Value`}</p>
-                    <ButtonBasic
-                      label="Switch to suggested value"
-                      color="btn-secondary"
-                      onClick={() => {
-                        setCustomValueSelected(false);
-                        handlePropertyUpdate(undefined, property.name, selectedSTIXObject, setSelectedSTIXObject);
-                      }}
-                      additionalClasses="btn-xs"
-                    />
-                  </div>
-                  <FormElementTextInput
-                    type="text"
-                    value={selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ?
-                      selectedSTIXObject[property.name]
-                      : ""
-                    }
-                    onChange={(event) => {
-                      handlePropertyUpdate(event.target.value, property.name, selectedSTIXObject, setSelectedSTIXObject);
-                    }}
-                    additionalInputClasses='select-sm dark:bg-gray-900'
-                    includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
-                    infoText={property?.propertyDescription}
-                    className="ml-4 pr-4 mb-2"
-                  />
-                </>
-              }
-            </>
+              options={property.openVocabType ? open_vocab_options[property.openVocabType] : 
+                property.enumType ? enum_options[property.enumType] : []}
+              onSelect={(event) => {
+                handlePropertyUpdate(event.target.value, property.name, selectedSTIXObject, setSelectedSTIXObject);
+              }}
+              onInputChange={(event) => {
+                handlePropertyUpdate(event.target.value, property.name, selectedSTIXObject, setSelectedSTIXObject);
+              }}
+              onSwitchToSuggested={() => {
+                handlePropertyUpdate(undefined, property.name, selectedSTIXObject, setSelectedSTIXObject);
+              }}
+              className="mb-2"
+              inputClassName="pl-2 mb-2"
+              includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
+              infoText={property?.propertyDescription}
+              additionalClasses="dark:bg-gray-900 w-full"
+              additionalInputClasses="select-sm dark:bg-gray-900"
+              property={property}
+              customValueSelected={customValueSelected}
+              setCustomValueSelected={setCustomValueSelected}
+              isOtherAnOption={property.openVocabType ? true : false}
+              otherOptionText="Custom Value"
+              otherOptionLabel={`Custom ${property?.name} Value`}
+            />
           );
         case "float":
         case "integer":
@@ -244,6 +217,12 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
               showTypeSelector={showTypeSelector}
               onTypeChange={onTypeChange}
               className='mb-2'
+            />
+          );
+        case "hashes":
+          return (
+            <FormElementSTIXHashes
+              property={property}
             />
           );
         case "identifier":
@@ -288,8 +267,8 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
               return (
                 <FormElementSTIXList
                   label="item"
-                  stixObj={selectedSTIXObject}       //NOTE: what does this provide?
-                  setSTIXObj={setSelectedSTIXObject} //NOTE: what does this provide?
+                  stixObj={selectedSTIXObject}
+                  setSTIXObj={setSelectedSTIXObject}
                   className='mb-2'
                   additionalInputClasses='select-sm dark:bg-gray-900'
                   additionalLabelClasses='ml-6 mr-5 w-20'

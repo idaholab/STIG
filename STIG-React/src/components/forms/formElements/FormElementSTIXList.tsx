@@ -4,7 +4,7 @@ import ButtonBasic from '@/components/elements/ButtonBasic';
 import { StixObject } from '@/types/stixTypes/StixObject';
 import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
 import InfoButton from '@/components/elements/InfoButton';
-import { STIXPropertyLabel } from '@/components/elements/STIXPropertyLabel';
+import STIXPropertyLabel from '@/components/elements/STIXPropertyLabel';
 
 type Props = {
   label?: string;

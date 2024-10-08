@@ -73,7 +73,7 @@ export default function FormDatabaseConnect({ selectedProfile, setSelectedProfil
         includeInfo={true}
         infoText='Type of database. Only currently supported type is Neo4j'
         additionalInfoClasses='tooltip-left'
-        additionalClasses={'w-full'}
+        additionalClasses={'w-full dark:bg-gray-900'}
       />
       <FormElementTextInput
         label="Host *"

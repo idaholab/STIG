@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import ButtonBasic from '../../elements/ButtonBasic.tsx';
 import InfoButton from '@/components/elements/InfoButton.tsx';
 import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty.ts';
-import { STIXPropertyLabel } from '@/components/elements/STIXPropertyLabel.tsx';
+import STIXPropertyLabel from '@/components/elements/STIXPropertyLabel.tsx';
 
 type Props = {
   placeholder?: string;
@@ -118,7 +118,8 @@ const FormElementFileInput: React.FC<Props> = ({
         <InfoButton
           visible={includeInfo}
           toggleInfo={toggleInfo}
-          additionalInfoClasses={`${additionalInfoClasses}`}
+          additionalInfoClasses={`absolute top-0 right-0 ${additionalInfoClasses}`}
+          additionalStyle={{ transform: 'translate(50%, -50%)' }}
           parentRef={parentRef}
           infoIcon={infoIcon}
         />

@@ -1,6 +1,6 @@
 // React
 import InfoButton from '@/components/elements/InfoButton';
-import { STIXPropertyLabel } from '@/components/elements/STIXPropertyLabel';
+import STIXPropertyLabel from '@/components/elements/STIXPropertyLabel';
 import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
 import React, { useRef, useState } from 'react';
 
@@ -68,8 +68,6 @@ const FormElementSelect: React.FC<Props> = ({
           dark:placeholder-gray-300 
           border
           border-gray-500
-          bg-gray-100
-          dark:bg-gray-900 
           ${disabled ? 'cursor-not-allowed opacity-30' : undefined}
           ${additionalClasses}
         `}
@@ -89,7 +87,8 @@ const FormElementSelect: React.FC<Props> = ({
         <InfoButton
           visible={includeInfo}
           toggleInfo={toggleInfo}
-          additionalInfoClasses={`${additionalInfoClasses}`}
+          additionalInfoClasses={`absolute top-0 right-0 ${additionalInfoClasses}`}
+          additionalStyle={{ transform: 'translate(50%, -50%)' }}
           parentRef={parentRef}
         />
       </div>

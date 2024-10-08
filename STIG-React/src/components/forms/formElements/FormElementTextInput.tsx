@@ -1,5 +1,5 @@
 import InfoButton from '@/components/elements/InfoButton';
-import { STIXPropertyLabel } from '@/components/elements/STIXPropertyLabel';
+import STIXPropertyLabel from '@/components/elements/STIXPropertyLabel';
 import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
 import React, { forwardRef, useRef, useState } from 'react';
 
@@ -125,7 +125,8 @@ const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
         <InfoButton
           visible={includeInfo}
           toggleInfo={toggleInfo}
-          additionalInfoClasses={`${additionalInfoClasses}`}
+          additionalInfoClasses={`absolute top-0 right-0 ${additionalInfoClasses}`}
+          additionalStyle={{ transform: 'translate(50%, -50%)' }}
           parentRef={parentRef}
         />
       </div>

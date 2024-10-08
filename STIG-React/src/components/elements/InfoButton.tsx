@@ -6,6 +6,7 @@ type InfoButtonProps = {
     infoIcon?: string;
     toggleInfo: () => void;
     additionalInfoClasses?: string;
+    additionalStyle?: React.CSSProperties;
     parentRef: React.RefObject<HTMLDivElement>;
 }
 
@@ -14,7 +15,8 @@ const FloatingInfoButton: React.FC<InfoButtonProps> = ({
     infoIcon = 'info_outline',
     toggleInfo,
     additionalInfoClasses = '',
-    parentRef
+    additionalStyle,
+    parentRef,
 }) => {
     const [isVisible, setIsVisible] = useState(false);
 
@@ -44,8 +46,8 @@ const FloatingInfoButton: React.FC<InfoButtonProps> = ({
         <>
             {visible ? (
                 <div
-                    className={`absolute top-0 right-0 transition-opacity duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}  ${additionalInfoClasses}`}
-                    style={{ transform: 'translate(50%, -50%)' }}
+                    className={`transition-opacity duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}  ${additionalInfoClasses}`}
+                    style={additionalStyle}
                 >
                     <ButtonIcon
                         color="btn-ghost"
