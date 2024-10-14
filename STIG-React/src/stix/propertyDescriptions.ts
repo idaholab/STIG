@@ -202,7 +202,8 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
             additional_header_fields: "Specifies any other header fields found in the email message, as a dictionary.",
             raw_email_ref: "Specifies the raw binary contents of the email message, including both the headers and body, as a reference to an Artifact Object.",
             is_multipart: "Indicates whether the email body contains multiple MIME parts.",
-            body: "Specifies a string containing the email body. This field MAY only be used if is_multipart is false."
+            body: "Specifies a string containing the email body. This field MAY only be used if is_multipart is false.",
+            body_multipart: "Specifies a list of the MIME parts that make up the email body. This property MAY only be used if is_multipart is true."
         }
     },
     {

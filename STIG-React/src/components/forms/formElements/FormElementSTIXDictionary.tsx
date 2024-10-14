@@ -158,19 +158,19 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
       return;
     }
     const selectedSTIXObjectJSONString = { ...selectedSTIXObject };
-    // delete selectedSTIXObjectJSONString.raw_data;
-    // delete selectedSTIXObjectJSONString.label;
     setJsonText(JSON.stringify(selectedSTIXObjectJSONString, null, 2));
   }, [selectedSTIXObject]);
 
   return (
     <>
-      <div className={`flex gap-2 items-center`}>
+      <div className={`flex ${showTypeSelector ? "gap-2 items-center" : "flex-col"}`}>
         <STIXPropertyLabel
           propName={property ? property?.name : ''}
           propertyType={property ? property.type : undefined}
           showTypeSelector={showTypeSelector}
           additionalLabelClasses='mr-2'
+          includeInfo={!!property.propertyDescription && property.propertyDescription?.length > 0}
+          infoText={property.propertyDescription}
         />
         {showTypeSelector ?
           <FormElementSelect

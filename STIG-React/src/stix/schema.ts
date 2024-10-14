@@ -527,7 +527,7 @@ export const schema: SchemaSTIXClass[] = [
       { name: 'last_seen', type: 'timestamp' },
       { name: 'operating_system_refs', type: 'list', listType: 'identifier' },
       { name: 'architecture_execution_envs', type: 'list', listType: 'open-vocab', openVocabType: 'processor-architecture-ov' },
-      { name: 'implementaion_languages', type: 'list', listType: 'open-vocab', openVocabType: 'implementation-language-ov' },
+      { name: 'implementation_languages', type: 'list', listType: 'open-vocab', openVocabType: 'implementation-language-ov' },
       { name: 'capabilities', type: 'list', listType: 'open-vocab', openVocabType: 'malware-capabilities-ov' },
       { name: 'sample_refs', type: 'list', listType: 'identifier' }
     ]

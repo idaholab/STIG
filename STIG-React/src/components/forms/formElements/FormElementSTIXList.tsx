@@ -1,9 +1,8 @@
-import React, { useRef, useState } from 'react';
+import React from 'react';
 import FormElementTextInput from './FormElementTextInput';
 import ButtonBasic from '@/components/elements/ButtonBasic';
 import { StixObject } from '@/types/stixTypes/StixObject';
 import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
-import InfoButton from '@/components/elements/InfoButton';
 import STIXPropertyLabel from '@/components/elements/STIXPropertyLabel';
 
 type Props = {
@@ -56,12 +55,6 @@ const FormElementSTIXList: React.FC<Props> = ({
   showTypeSelector,
   onTypeChange,
 }) => {
-  const [showInfo, setShowInfo] = useState(false);
-  const toggleInfo = () => {
-    setShowInfo(prevShowInfo => !prevShowInfo);
-  };
-  const parentRef = useRef<HTMLDivElement>(null);
-
   return (
     <div className={`flex flex-col ${className}`}>
       <STIXPropertyLabel
@@ -70,8 +63,10 @@ const FormElementSTIXList: React.FC<Props> = ({
         showTypeSelector={showTypeSelector}
         onTypeChange={onTypeChange}
         additionalLabelClasses={'mr-2'}
+        includeInfo={includeInfo}
+        infoText={infoText}
       />
-      <div className={`flex flex-col items-center w-full ml-2`} ref={parentRef} >
+      <div className={`flex flex-col items-center w-full ml-2`} >
         {stixObj && stixObj[property?.name || ''] ?
           stixObj[property?.name || ''].map((listItem: string, i: number) =>
             <FormElementTextInput
@@ -118,16 +113,6 @@ const FormElementSTIXList: React.FC<Props> = ({
           additionalClasses={btnAdditionalClasses}
         />
       </div>
-      <InfoButton
-        visible={includeInfo}
-        toggleInfo={toggleInfo}
-        additionalInfoClasses={`${additionalInfoClasses}`}
-        parentRef={parentRef}
-      />
-      {
-        showInfo && includeInfo && infoText && infoText?.length > 0 &&
-        <span className="text-xs p-1 dark:text-orange-300 text-orange-800">{infoText}</span>
-      }
     </div>
   );
 };

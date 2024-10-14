@@ -84,10 +84,10 @@ const FormElementSTIXHash: React.FC<Props> = ({
           setSelectedSTIXObject(tempSTIXObj);
         }}
         className="pl-2 mb-2"
-        disabled={!hashAlgName && !selectedSTIXObject[property.name][hashAlgName]}
         includeInfo={false}
         additionalInputClasses="select-sm dark:bg-gray-900"
         additionalLabelClasses="ml-6 mr-5 w-20"
+        disabled={!hashAlgName && !selectedSTIXObject[property.name][hashAlgName]}
         showValidationError={!stixHashKeyValidator(hashAlgName)}
         validationErrorText={
           `The hash key is not valid. 

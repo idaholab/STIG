@@ -275,8 +275,8 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                   btnLabel="+ Item"
                   btnColor="btn-primary"
                   btnAdditionalClasses='btn-sm ml-6'
-                  includeInfo={false}
-                  infoText={property?.propertyDescription}
+                  includeInfo={!!property.propertyDescription && property.propertyDescription?.length > 0}
+                  infoText={property.propertyDescription}
                   property={property}
                   showTypeSelector={showTypeSelector}
                   onTypeChange={onTypeChange}
@@ -294,6 +294,8 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                   btnLabel="+ Item"
                   btnColor="btn-primary"
                   btnAdditionalClasses='btn-sm ml-6'
+                  includeInfo={!!property.propertyDescription && property.propertyDescription?.length > 0}
+                  infoText={property.propertyDescription}
                   property={property}
                   showTypeSelector={showTypeSelector}
                   onTypeChange={onTypeChange}
@@ -312,8 +314,8 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                   btnLabel="+ Item"
                   btnColor="btn-primary"
                   btnAdditionalClasses='btn-sm ml-6'
-                  includeInfo={false}
-                  infoText={property?.propertyDescription}
+                  includeInfo={!!property.propertyDescription && property.propertyDescription?.length > 0}
+                  infoText={property.propertyDescription}
                   property={property}
                   showTypeSelector={showTypeSelector}
                   onTypeChange={onTypeChange}

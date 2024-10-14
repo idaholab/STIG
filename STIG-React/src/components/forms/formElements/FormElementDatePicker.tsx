@@ -71,7 +71,7 @@ const FormElementDatePicker: React.FC<Props> = ({
       </div>
       {
         showInfo && includeInfo && infoText && infoText?.length > 0 &&
-        <span className="text-xs p-1 dark:text-orange-300 text-orange-800">{infoText}</span>
+        <span className="text-xs py-1 dark:text-orange-300 text-orange-800">{infoText}</span>
       }
     </div>
   );
