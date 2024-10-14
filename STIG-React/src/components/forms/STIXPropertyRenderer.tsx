@@ -262,6 +262,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
           // TODO: Develop way to delete items (and reorganize list, 
           // clear list, and remove last item?)
           const addNewItemLabel = property.listType === "identifier" ? "+ Identifier" 
+            : property.listType === "kill-chain-phase" ? "+ Kill Chain Phase"
             : "+ Item";
           return (
             <FormElementSTIXList

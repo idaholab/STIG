@@ -24,7 +24,7 @@ const FormElementSTIXHashes: React.FC<Props> = ({
         includeInfo
         infoText={property.propertyDescription}
       />
-      <div className={`flex flex-col items-center w-full ml-2`} >
+      <div className={`flex flex-col items-center w-full ml-2 pr-2`} >
         {selectedSTIXObject && selectedSTIXObject[property.name] ?
           Object.keys(selectedSTIXObject[property.name]).map(
             (hashAlgName: string, i: number) =>

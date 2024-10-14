@@ -6,6 +6,8 @@ import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
 import STIXPropertyLabel from '@/components/elements/STIXPropertyLabel';
 import { useStixPropsContext } from '@/contexts/StixPropsContext';
 import { stixIdentifierValidator } from '@/util/stixIdentifierValidator';
+import FormElementSTIXKillChainPhase from './FormElementSTIXKillChainPhase';
+import { KillChainPhase } from '@/types/stixTypes/KillChainPhase';
 
 type Props = {
   btnLabel: string | React.JSX.Element;
@@ -25,42 +27,51 @@ const FormElementSTIXList: React.FC<Props> = ({
   return (
     <div className="flex flex-col mb-2">
       <STIXPropertyLabel
-        propName={property ? property?.name : ''}
-        propertyType={property?.type || undefined}
+        propName={property.name}
+        propertyType={property.type}
         showTypeSelector={showTypeSelector}
         onTypeChange={onTypeChange}
         additionalLabelClasses={'mr-2'}
         includeInfo={!!property.propertyDescription && property.propertyDescription?.length > 0}
         infoText={property.propertyDescription}
       />
-      <div className={`flex flex-col items-center w-full`} >
-        {selectedSTIXObject && selectedSTIXObject[property?.name || ''] ?
-          selectedSTIXObject[property?.name || ''].map((listItem: string, i: number) =>
-            <FormElementTextInput
-              key={i}
-              type="text"
-              value={listItem}
-              onChange={(event) => {
-                let tempSTIXObj = { ...selectedSTIXObject };
-                if (tempSTIXObj) {
-                  tempSTIXObj[property?.name || ''][i] = event.target.value;
+      <div className={`flex flex-col items-center w-full ml-4 pr-4`} >
+        { selectedSTIXObject && selectedSTIXObject[property.name] ?
+          property.listType === "kill-chain-phase" ? 
+            selectedSTIXObject[property.name].map((listItem: KillChainPhase, i: number) =>
+              <FormElementSTIXKillChainPhase
+                key={i}
+                killChainPhase={listItem}
+                killChainPhaseIndex={i}
+                property={property}
+              />
+            )
+          : selectedSTIXObject[property.name].map((listItem: string, i: number) =>
+              <FormElementTextInput
+                key={i}
+                type="text"
+                value={listItem}
+                onChange={(event) => {
+                  let tempSTIXObj = { ...selectedSTIXObject };
+                  if (tempSTIXObj) {
+                    tempSTIXObj[property.name][i] = event.target.value;
+                  }
+                  setSelectedSTIXObject(tempSTIXObj);
+                }}
+                className="mb-2"
+                includeInfo={false}
+                additionalInputClasses="select-sm dark:bg-gray-900"
+                additionalLabelClasses="ml-6 mr-5 w-20"
+                showValidationError={property.listType === "identifier" && selectedSTIXObject ?
+                  !stixIdentifierValidator(listItem)
+                  : false
                 }
-                setSelectedSTIXObject(tempSTIXObj);
-              }}
-              className="mb-2"
-              includeInfo={false}
-              additionalInputClasses="select-sm dark:bg-gray-900"
-              additionalLabelClasses="ml-6 mr-5 w-20"
-              showValidationError={property.listType === "identifier" && selectedSTIXObject ?
-                !stixIdentifierValidator(listItem)
-                : false
-              }
-              validationErrorText={
-                `The identifier is not valid. 
-                Double check that it matches the format \"object-type--UUID\".`
-              }
-            />
-          )
+                validationErrorText={
+                  `The identifier is not valid. 
+                  Double check that it matches the format \"object-type--UUID\".`
+                }
+              />
+            )
           : null
         }
         <ButtonBasic
@@ -68,11 +79,19 @@ const FormElementSTIXList: React.FC<Props> = ({
           color="btn-primary"
           onClick={() => {
             let tempSTIXObj = { ...selectedSTIXObject } as StixObject;
-            if (!tempSTIXObj[property?.name || '']) {
+            if (!tempSTIXObj[property.name]) {
               // Initialize the property array
-              tempSTIXObj[property?.name || ''] = [""];
+              if(property.listType === "kill-chain-phase") {
+                tempSTIXObj[property.name] = [{kill_chain_name: "", phase_name: ""}];
+              } else {
+                tempSTIXObj[property.name] = [""];
+              }
             } else {
-              tempSTIXObj[property?.name || ''].push("");
+              if(property.listType === "kill-chain-phase") {
+                tempSTIXObj[property.name].push({kill_chain_name: "", phase_name: ""});
+              } else {
+                tempSTIXObj[property.name].push("");
+              }
             }
             setSelectedSTIXObject(tempSTIXObj);
           }}
