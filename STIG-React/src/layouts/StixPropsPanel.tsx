@@ -13,11 +13,16 @@ import { propertyDescriptions } from '@/stix/propertyDescriptions.ts';
 import { getSTIXPropDescriptions } from '@/stix/getSTIXPropDescriptions.ts';
 import ButtonBasic from '@/components/elements/ButtonBasic.tsx';
 import ExportModal from './ExportModals.tsx';
-import { exportSelected } from '@/util/GraphUtils.ts';
+import { exportAll, exportObject, exportSelected } from '@/util/GraphUtils.ts';
+import { commit } from '@/util/DbFunctions.ts';
+import { StixObject } from '@/types/stixTypes/StixObject.ts';
+import { StixRelationshipObject } from '@/types/stixTypes/StixRelationshipObject.ts';
 
 const StixPropsPanel: React.FC = () => {
   const [selectedProperties, setSelectedProperties] = useState<SchemaSTIXProperty[]>([]);
   const [showJson, setShowJson] = useState<boolean>(false);
+  const { selectedSTIXObject } = useStixPropsContext();
+
   return (
     <div className={`drawer flex flex-col w-full h-full p-4 overflow-y-scroll scrollbar`}>
       <PropsPanelHeader
@@ -29,12 +34,16 @@ const StixPropsPanel: React.FC = () => {
         selectedProperties={selectedProperties}
         showJson={showJson}
       />
-      <SaveButtons/>
+      <SaveButtons selected={selectedSTIXObject}/>
     </div>
   );
 };
 
-function SaveButtons(){
+type SaveButton = {selected: StixObject| StixRelationshipObject | undefined};
+
+const SaveButtons: React.FC<SaveButton> = ({selected})=>{
+  const saverNeo4j = ()=>{savetoNeo4j(selected)};
+  const saverJson = ()=>{savetojson(selected)};
   return (
     <>
     <div className='place-self-end mt-8 flex gap-2 mb-4'>
@@ -42,19 +51,34 @@ function SaveButtons(){
         label="Save to NEO4J"
         // color='btn-sm'
         additionalClasses='h-[48px] btn-sm '
+        onClick={saverNeo4j}
       ></ButtonBasic>
       <ButtonBasic
         label="Save JSON"
         color='btn-primary'
         additionalClasses='h-[48px]'
-        onClick={savetojson}
+        onClick={saverJson}
       ></ButtonBasic>
     </div>
     </>
   )
 }
-function savetojson(){
-  return (<><ExportModal exporter={exportSelected}/></>)
+function savetoNeo4j(props: any){
+  try{
+    if (props !== undefined){
+      (async ()=>{
+        props.type !== "relationship" ? await commit([props],[]) : await commit([],[props]);
+      })();
+    }else{
+      console.warn("attempted to submit object to Neo4j, but it is undefined");
+    }
+  }catch(err){
+    console.error(err);
+  }
+}
+function savetojson(obj: StixObject | StixRelationshipObject | undefined){
+  // return (<><ExportModal exporter={exportSelected}/></>)
+  if (obj!==undefined){exportObject(obj);}
 }
 
 function PropsPanelHeader({ selectedProperties, setSelectedProperties, setIsShowingJson }: {
