@@ -6,7 +6,7 @@ export type SchemaSTIXClassName =
   "language-meta-core" | "marking-meta-core" | 
 
   // Top-level propertyDescriptions.ts classes:
-  "granular-marking" | "kill-chain-phase" | 
+  "external-reference" | "granular-marking" | "kill-chain-phase" | 
   "windows-registry-value-type" | "x509-v3-extensions-type" |
 
   // Children schema.ts/propertyDescriptions.ts classes:

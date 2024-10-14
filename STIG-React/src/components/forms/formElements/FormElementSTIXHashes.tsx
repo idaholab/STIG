@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ButtonBasic from '@/components/elements/ButtonBasic';
 import { StixObject } from '@/types/stixTypes/StixObject';
 import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
@@ -8,12 +8,41 @@ import { useStixPropsContext } from '@/contexts/StixPropsContext';
 
 type Props = {
   property: SchemaSTIXProperty;
+  // The following are only needed when a property
+  // of type hashes is within a list
+  parentPropertyName?: string;
+  parentPropertyIndex?: number;
+  parentSTIXObject?: StixObject | undefined;
+  setParentSTIXObject?: React.Dispatch<React.SetStateAction<StixObject | undefined>>;
 };
 
 const FormElementSTIXHashes: React.FC<Props> = ({
-  property
+  property,
+  parentPropertyName,
+  parentPropertyIndex,
+  parentSTIXObject,
+  setParentSTIXObject
 }) => {
   const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
+
+  // Update the child STIX object (the one containing the hashes
+  // property) when its parent changes
+  useEffect(() => {
+    if(parentSTIXObject && parentPropertyName && parentPropertyIndex !== undefined) {
+      setSelectedSTIXObject(parentSTIXObject[parentPropertyName][parentPropertyIndex]);
+    }
+  }, [parentSTIXObject]);
+
+  // Update the parent STIX object when its child 
+  // (the one containing the hashes property) changes
+  useEffect(() => {
+    if (parentPropertyName && parentPropertyIndex !== undefined && 
+      parentSTIXObject && setParentSTIXObject && selectedSTIXObject) {
+      const tempParentSTIXObject = { ...parentSTIXObject } as StixObject;
+      tempParentSTIXObject[parentPropertyName][parentPropertyIndex] = selectedSTIXObject;
+      setParentSTIXObject(tempParentSTIXObject);
+    }
+  }, [selectedSTIXObject]);
 
   return (
     <div className="flex flex-col">

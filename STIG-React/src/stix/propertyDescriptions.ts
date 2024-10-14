@@ -641,6 +641,17 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
         }
     },
     {
+        name: 'external-reference',
+        superClasses: [],
+        properties: {
+            description: "A human readable description",
+            url: "A URL reference to an external resource.",
+            hashes: "Specifies a dictionary of hashes for the file.",
+            source_name: "The source within which the external-reference is defined (system, registry, organization, etc.)",
+            external_id: "An identifier for the external reference content."
+        }
+    },
+    {
         name: 'granular-marking',
         superClasses: [],
         properties: {

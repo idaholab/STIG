@@ -10,6 +10,8 @@ import FormElementSTIXKillChainPhase from './FormElementSTIXKillChainPhase';
 import { KillChainPhase } from '@/types/stixTypes/KillChainPhase';
 import { GranularMarking } from '@/types/stixTypes/GranularMarking';
 import FormElementSTIXGranularMarking from './FormElementSTIXGranularMarking';
+import { ExternalReference } from '@/types/stixTypes/ExternalReference';
+import FormElementSTIXExternalReference from './FormElementSTIXExternalReference';
 
 type Props = {
   btnLabel: string | React.JSX.Element;
@@ -68,12 +70,12 @@ const FormElementSTIXList: React.FC<Props> = ({
       />
       <div className={`flex flex-col items-center w-full ml-4 pr-4`} >
         { selectedSTIXObject && selectedSTIXObject[property.name] ?
-          property.listType === "kill-chain-phase" ? 
-            selectedSTIXObject[property.name].map((listItem: KillChainPhase, i: number) =>
-              <FormElementSTIXKillChainPhase
+          property.listType === "external-reference" ?
+            selectedSTIXObject[property.name].map((listItem: ExternalReference, i: number) => 
+              <FormElementSTIXExternalReference
                 key={i}
-                killChainPhase={listItem}
-                killChainPhaseIndex={i}
+                externalReference={listItem}
+                externalReferenceIndex={i}
                 property={property}
               />
             )
@@ -83,6 +85,15 @@ const FormElementSTIXList: React.FC<Props> = ({
                 key={i}
                 granularMarking={listItem}
                 granularMarkingIndex={i}
+                property={property}
+              />
+            )
+          : property.listType === "kill-chain-phase" ? 
+            selectedSTIXObject[property.name].map((listItem: KillChainPhase, i: number) =>
+              <FormElementSTIXKillChainPhase
+                key={i}
+                killChainPhase={listItem}
+                killChainPhaseIndex={i}
                 property={property}
               />
             )
@@ -122,25 +133,31 @@ const FormElementSTIXList: React.FC<Props> = ({
             if (!tempSTIXObj[property.name]) {
               // Initialize the property array
               switch (property.listType) {
-                case "kill-chain-phase": 
-                  tempSTIXObj[property.name] = [{kill_chain_name: "", phase_name: ""}];
+                case "external-reference":
+                  tempSTIXObj[property.name] = [{source_name: ""}];
                   break;
                 case "granular-marking":
                   tempSTIXObj[property.name] = [{selectors: []}];
                   break;
+                case "kill-chain-phase": 
+                  tempSTIXObj[property.name] = [{kill_chain_name: "", phase_name: ""}];
+                  break;
                 default: 
-                    tempSTIXObj[property.name] = [""];
+                  tempSTIXObj[property.name] = [""];
               }
             } else {
               switch (property.listType) {
-                case "kill-chain-phase":
-                  tempSTIXObj[property.name].push({kill_chain_name: "", phase_name: ""});
+                case "external-reference":
+                  tempSTIXObj[property.name].push({source_name: ""});
                   break;
                 case "granular-marking":
                   tempSTIXObj[property.name].push({selectors: []});
                   break;
+                case "kill-chain-phase":
+                  tempSTIXObj[property.name].push({kill_chain_name: "", phase_name: ""});
+                  break;
                 default:
-                    tempSTIXObj[property.name].push("");
+                  tempSTIXObj[property.name].push("");
               }
             }
             setSelectedSTIXObject(tempSTIXObj);
