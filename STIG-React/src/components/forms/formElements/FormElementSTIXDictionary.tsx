@@ -209,8 +209,7 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
           <div className='form-stix-json flex h-full w-full mb-4'>
             <textarea
               rows={10}
-              style={{ whiteSpace: 'pre', overflow: 'auto' }}
-              className="flex flex-grow p-2 font-mono scrollbar h-full w-full rounded bg-gray-100 dark:bg-gray-900"
+              className="jsonEditor flex flex-grow p-2 scrollbar h-full w-full rounded bg-gray-100 dark:bg-gray-900"
               onChange={handleJsonChange}
               value={jsonText}
             />

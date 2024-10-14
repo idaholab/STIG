@@ -263,6 +263,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
           // clear list, and remove last item?)
           const addNewItemLabel = property.listType === "identifier" ? "+ Identifier" 
             : property.listType === "kill-chain-phase" ? "+ Kill Chain Phase"
+            : property.listType === "granular-marking" ? "+ Granular Marking"
             : "+ Item";
           return (
             <FormElementSTIXList

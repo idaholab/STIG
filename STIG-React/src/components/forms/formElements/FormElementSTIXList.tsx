@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import FormElementTextInput from './FormElementTextInput';
 import ButtonBasic from '@/components/elements/ButtonBasic';
 import { StixObject } from '@/types/stixTypes/StixObject';
@@ -8,12 +8,20 @@ import { useStixPropsContext } from '@/contexts/StixPropsContext';
 import { stixIdentifierValidator } from '@/util/stixIdentifierValidator';
 import FormElementSTIXKillChainPhase from './FormElementSTIXKillChainPhase';
 import { KillChainPhase } from '@/types/stixTypes/KillChainPhase';
+import { GranularMarking } from '@/types/stixTypes/GranularMarking';
+import FormElementSTIXGranularMarking from './FormElementSTIXGranularMarking';
 
 type Props = {
   btnLabel: string | React.JSX.Element;
   property: SchemaSTIXProperty;
   showTypeSelector?: boolean;
   onTypeChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  // The following are only needed when a list is 
+  // within a list
+  parentPropertyName?: string;
+  parentPropertyIndex?: number;
+  parentSTIXObject?: StixObject | undefined;
+  setParentSTIXObject?: React.Dispatch<React.SetStateAction<StixObject | undefined>>;
 };
 
 const FormElementSTIXList: React.FC<Props> = ({
@@ -21,8 +29,31 @@ const FormElementSTIXList: React.FC<Props> = ({
   property,
   showTypeSelector,
   onTypeChange,
+  parentPropertyName,
+  parentPropertyIndex,
+  parentSTIXObject,
+  setParentSTIXObject
 }) => {
   const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
+
+  // Update the child STIX object (the one containing the list 
+  // property) when its parent changes
+  useEffect(() => {
+    if(parentSTIXObject && parentPropertyName && parentPropertyIndex !== undefined) {
+      setSelectedSTIXObject(parentSTIXObject[parentPropertyName][parentPropertyIndex]);
+    }
+  }, [parentSTIXObject]);
+
+  // Update the parent STIX object when its child
+  // (the one containing the list property) changes
+  useEffect(() => {
+    if (parentPropertyName && parentPropertyIndex !== undefined && 
+      parentSTIXObject && setParentSTIXObject && selectedSTIXObject) {
+      const tempParentSTIXObject = { ...parentSTIXObject } as StixObject;
+      tempParentSTIXObject[parentPropertyName][parentPropertyIndex] = selectedSTIXObject;
+      setParentSTIXObject(tempParentSTIXObject);
+    }
+  }, [selectedSTIXObject]);
 
   return (
     <div className="flex flex-col mb-2">
@@ -43,6 +74,15 @@ const FormElementSTIXList: React.FC<Props> = ({
                 key={i}
                 killChainPhase={listItem}
                 killChainPhaseIndex={i}
+                property={property}
+              />
+            )
+          : property.listType === "granular-marking" ?
+            selectedSTIXObject[property.name].map((listItem: GranularMarking, i: number) => 
+              <FormElementSTIXGranularMarking
+                key={i}
+                granularMarking={listItem}
+                granularMarkingIndex={i}
                 property={property}
               />
             )
@@ -81,16 +121,26 @@ const FormElementSTIXList: React.FC<Props> = ({
             let tempSTIXObj = { ...selectedSTIXObject } as StixObject;
             if (!tempSTIXObj[property.name]) {
               // Initialize the property array
-              if(property.listType === "kill-chain-phase") {
-                tempSTIXObj[property.name] = [{kill_chain_name: "", phase_name: ""}];
-              } else {
-                tempSTIXObj[property.name] = [""];
+              switch (property.listType) {
+                case "kill-chain-phase": 
+                  tempSTIXObj[property.name] = [{kill_chain_name: "", phase_name: ""}];
+                  break;
+                case "granular-marking":
+                  tempSTIXObj[property.name] = [{selectors: []}];
+                  break;
+                default: 
+                    tempSTIXObj[property.name] = [""];
               }
             } else {
-              if(property.listType === "kill-chain-phase") {
-                tempSTIXObj[property.name].push({kill_chain_name: "", phase_name: ""});
-              } else {
-                tempSTIXObj[property.name].push("");
+              switch (property.listType) {
+                case "kill-chain-phase":
+                  tempSTIXObj[property.name].push({kill_chain_name: "", phase_name: ""});
+                  break;
+                case "granular-marking":
+                  tempSTIXObj[property.name].push({selectors: []});
+                  break;
+                default:
+                    tempSTIXObj[property.name].push("");
               }
             }
             setSelectedSTIXObject(tempSTIXObj);

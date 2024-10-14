@@ -45,8 +45,7 @@ export default function FormSTIXPropsPanel({ selectedProperties, showJson }: {
       {showJson ?
         <div className='form-stix-json flex flex-auto h-full w-full'>
           <textarea
-            style={{ whiteSpace: 'pre', overflow: 'auto' }}
-            className="flex flex-grow p-2 font-mono scrollbar h-full w-full rounded bg-gray-100 dark:bg-gray-900"
+            className="jsonEditor flex flex-grow p-2 scrollbar h-full w-full rounded bg-gray-100 dark:bg-gray-900"
             onChange={handleJsonChange}
             value={jsonText}
           />

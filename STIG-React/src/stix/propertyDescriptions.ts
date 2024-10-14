@@ -641,6 +641,15 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
         }
     },
     {
+        name: 'granular-marking',
+        superClasses: [],
+        properties: {
+            selectors: "A list of selectors for content contained within the STIX object in which this property appears.",
+            lang: "Identifies the language of the text identified by this marking.",
+            marking_ref: "The marking_ref property specifies the ID of the marking-defintion object that describes the marking."
+        }
+    },
+    {
         name: 'kill-chain-phase',
         superClasses: [],
         properties: {

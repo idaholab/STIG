@@ -192,6 +192,12 @@ body,
   min-height: unset !important;
 }
 
+.jsonEditor {
+  white-space: pre;
+  overflow: auto;
+  font-family: monospace;
+}
+
 .scrollbar {
   overflow-y: auto;
   overflow-x: hidden;
