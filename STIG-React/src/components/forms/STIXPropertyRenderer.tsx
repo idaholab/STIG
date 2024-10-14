@@ -254,75 +254,23 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
               }
               validationErrorText={
                 `${property.name} is not a valid STIX identifier. 
-                                Double check that it matches the format \"object-type--UUID\".`
+                Double check that it matches the format \"object-type--UUID\".`
               }
             />
           );
-        //=======LIST================================================================================
         case "list":
           // TODO: Develop way to delete items (and reorganize list, 
           // clear list, and remove last item?)
-          switch (property.listType) {
-            case "external-reference":
-              return (
-                <FormElementSTIXList
-                  label="item"
-                  stixObj={selectedSTIXObject}
-                  setSTIXObj={setSelectedSTIXObject}
-                  className='mb-2'
-                  additionalInputClasses='select-sm dark:bg-gray-900'
-                  additionalLabelClasses='ml-6 mr-5 w-20'
-                  btnLabel="+ Item"
-                  btnColor="btn-primary"
-                  btnAdditionalClasses='btn-sm ml-6'
-                  includeInfo={!!property.propertyDescription && property.propertyDescription?.length > 0}
-                  infoText={property.propertyDescription}
-                  property={property}
-                  showTypeSelector={showTypeSelector}
-                  onTypeChange={onTypeChange}
-                />
-              )
-            case "kill-chain-phase":
-              return (
-                <FormElementSTIXList
-                  label="kill-chain-phase "
-                  stixObj={selectedSTIXObject}
-                  setSTIXObj={setSelectedSTIXObject}
-                  className='mb-2'
-                  additionalInputClasses='select-sm dark:bg-gray-900'
-                  additionalLabelClasses='ml-6 mr-5 w-20'
-                  btnLabel="+ Item"
-                  btnColor="btn-primary"
-                  btnAdditionalClasses='btn-sm ml-6'
-                  includeInfo={!!property.propertyDescription && property.propertyDescription?.length > 0}
-                  infoText={property.propertyDescription}
-                  property={property}
-                  showTypeSelector={showTypeSelector}
-                  onTypeChange={onTypeChange}
-                />
-              )
-            case "string":
-            default:
-              return (
-                <FormElementSTIXList
-                  label="item "
-                  stixObj={selectedSTIXObject}
-                  setSTIXObj={setSelectedSTIXObject}
-                  className='mb-2'
-                  additionalInputClasses='select-sm dark:bg-gray-900'
-                  additionalLabelClasses='ml-6 mr-5 w-20'
-                  btnLabel="+ Item"
-                  btnColor="btn-primary"
-                  btnAdditionalClasses='btn-sm ml-6'
-                  includeInfo={!!property.propertyDescription && property.propertyDescription?.length > 0}
-                  infoText={property.propertyDescription}
-                  property={property}
-                  showTypeSelector={showTypeSelector}
-                  onTypeChange={onTypeChange}
-                />
-              );
-          }
-        //=======END LIST============================================================================
+          const addNewItemLabel = property.listType === "identifier" ? "+ Identifier" 
+            : "+ Item";
+          return (
+            <FormElementSTIXList
+              btnLabel={addNewItemLabel}
+              property={property}
+              showTypeSelector={showTypeSelector}
+              onTypeChange={onTypeChange}
+            />
+          );
         case "timestamp":
           return (
             <FormElementDatePicker

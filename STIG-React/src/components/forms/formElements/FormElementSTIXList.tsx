@@ -4,113 +4,79 @@ import ButtonBasic from '@/components/elements/ButtonBasic';
 import { StixObject } from '@/types/stixTypes/StixObject';
 import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
 import STIXPropertyLabel from '@/components/elements/STIXPropertyLabel';
+import { useStixPropsContext } from '@/contexts/StixPropsContext';
+import { stixIdentifierValidator } from '@/util/stixIdentifierValidator';
 
 type Props = {
-  label?: string;
-  placeholder?: string;
-  stixObj: StixObject | undefined;
-  setSTIXObj: React.Dispatch<React.SetStateAction<StixObject | undefined>>;
-  className?: string;
-  disabled?: boolean;
-  includeInfo?: boolean;
-  infoText?: string;
-  includeX?: boolean;
-  onX?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-  additionalInputClasses?: string;
-  additionalInfoClasses?: string;
-  additionalXClasses?: string;
-  additionalLabelClasses?: string;
-
-  // Add new element button props
   btnLabel: string | React.JSX.Element;
-  btnColor?: 'btn-primary' | 'btn-secondary' | 'btn-neutral' | 'btn-ghost';
-  btnLink?: string;
-  btnOnClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-  btnAdditionalClasses?: string;
-  property?: SchemaSTIXProperty;
-  showTypeSelector?: boolean,
-  onTypeChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void,
+  property: SchemaSTIXProperty;
+  showTypeSelector?: boolean;
+  onTypeChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 };
 
 const FormElementSTIXList: React.FC<Props> = ({
-  label,
-  placeholder,
-  stixObj,
-  setSTIXObj,
-  className,
-  disabled,
-  includeInfo,
-  infoText,
-  includeX,
-  onX,
-  additionalInputClasses,
-  additionalInfoClasses,
-  additionalXClasses,
-  additionalLabelClasses,
   btnLabel,
-  btnColor,
-  btnLink,
-  btnAdditionalClasses,
   property,
   showTypeSelector,
   onTypeChange,
 }) => {
+  const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
+
   return (
-    <div className={`flex flex-col ${className}`}>
+    <div className="flex flex-col mb-2">
       <STIXPropertyLabel
         propName={property ? property?.name : ''}
         propertyType={property?.type || undefined}
         showTypeSelector={showTypeSelector}
         onTypeChange={onTypeChange}
         additionalLabelClasses={'mr-2'}
-        includeInfo={includeInfo}
-        infoText={infoText}
+        includeInfo={!!property.propertyDescription && property.propertyDescription?.length > 0}
+        infoText={property.propertyDescription}
       />
-      <div className={`flex flex-col items-center w-full ml-2`} >
-        {stixObj && stixObj[property?.name || ''] ?
-          stixObj[property?.name || ''].map((listItem: string, i: number) =>
+      <div className={`flex flex-col items-center w-full`} >
+        {selectedSTIXObject && selectedSTIXObject[property?.name || ''] ?
+          selectedSTIXObject[property?.name || ''].map((listItem: string, i: number) =>
             <FormElementTextInput
               key={i}
-              label={label ? label + (i + 1) : undefined}
-              placeholder={placeholder ? placeholder + (i + 1) : undefined}
               type="text"
               value={listItem}
               onChange={(event) => {
-                let tempSTIXObj = { ...stixObj };
+                let tempSTIXObj = { ...selectedSTIXObject };
                 if (tempSTIXObj) {
                   tempSTIXObj[property?.name || ''][i] = event.target.value;
                 }
-                setSTIXObj(tempSTIXObj);
+                setSelectedSTIXObject(tempSTIXObj);
               }}
-              className={`mb-2 ${className}`}
-              disabled={disabled}
-              includeInfo={includeInfo}
-              infoText={infoText}
-              includeX={includeX}
-              onX={onX}
-              additionalInputClasses={`${additionalInputClasses}`}
-              additionalInfoClasses={`${additionalInfoClasses}`}
-              additionalXClasses={`${additionalXClasses}`}
-              additionalLabelClasses={`${additionalLabelClasses}`}
+              className="mb-2"
+              includeInfo={false}
+              additionalInputClasses="select-sm dark:bg-gray-900"
+              additionalLabelClasses="ml-6 mr-5 w-20"
+              showValidationError={property.listType === "identifier" && selectedSTIXObject ?
+                !stixIdentifierValidator(listItem)
+                : false
+              }
+              validationErrorText={
+                `The identifier is not valid. 
+                Double check that it matches the format \"object-type--UUID\".`
+              }
             />
           )
           : null
         }
         <ButtonBasic
           label={btnLabel}
-          color={btnColor}
-          link={btnLink}
+          color="btn-primary"
           onClick={() => {
-            let tempSTIXObj = { ...stixObj } as StixObject;
+            let tempSTIXObj = { ...selectedSTIXObject } as StixObject;
             if (!tempSTIXObj[property?.name || '']) {
               // Initialize the property array
               tempSTIXObj[property?.name || ''] = [""];
             } else {
               tempSTIXObj[property?.name || ''].push("");
             }
-            setSTIXObj(tempSTIXObj);
+            setSelectedSTIXObject(tempSTIXObj);
           }}
-          additionalClasses={btnAdditionalClasses}
+          additionalClasses="btn-sm ml-6"
         />
       </div>
     </div>

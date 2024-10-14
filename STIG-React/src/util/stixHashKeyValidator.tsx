@@ -8,6 +8,8 @@ export function stixHashKeyValidator(hashKey: string) {
   if (hashKey.length < 3 || hashKey.length > 250) {
     return false;
   }
+  // Check that they key is only made up of the 
+  // characters a-z, A-Z, 0-9, -, and _
   if (hashKey.match(/^[a-zA-Z0-9\-_]+$/)) {
     return true;
   } else {
