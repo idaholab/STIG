@@ -484,11 +484,13 @@ export function create_bundle(nodes: CollectionReturnValue): STIGBundle {
     return bundle;
 }
 
-export function exportObject(obj: StixObject | StixRelationshipObject){
+export function exportObject(fileName: string, cy: cytoscape.Core, obj: StixObject | StixRelationshipObject | undefined){
     const bundle_id = 'bundle--' + uuidv4();
     let bundle: STIGBundle = { type: 'bundle', id: bundle_id, objects: [] } as any;
-    bundle.objects.push(obj);
-    exportGraph(obj.id, bundle);
+    if (obj !== undefined){
+        bundle.objects.push(obj);
+        exportGraph(fileName, bundle);
+    }
     return bundle;
 }
 export function exportSelected(fileName: string, cy: cytoscape.Core) {

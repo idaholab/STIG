@@ -6,7 +6,7 @@ interface ToastProps {
 
 const Toast: React.FC<ToastProps> = ({ children }) => {
     return (
-        <div className="toast">
+        <div className="toast z-50">
             {children}
         </div>
     );
