@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 
+import FormElementEmailMIMEPart from './FormElementSTIXEmailMIMEPart';
 import FormElementSTIXExternalReference from './FormElementSTIXExternalReference';
 import FormElementSelectOther from './FormElementSelectOther';
 import FormElementSTIXGranularMarking from './FormElementSTIXGranularMarking';
@@ -15,6 +16,7 @@ import { open_vocab_options } from '@/stix/openVocabOptions';
 import { enum_options } from '@/stix/enumOptions';
 import { handlePropertyUpdate } from '@/stix/handlePropertyUpdate';
 
+import { EmailMIMEPartType } from '@/types/stixTypes/EmailMIMEPartType';
 import { ExternalReference } from '@/types/stixTypes/ExternalReference';
 import { GranularMarking } from '@/types/stixTypes/GranularMarking';
 import { KillChainPhase } from '@/types/stixTypes/KillChainPhase';
@@ -79,7 +81,16 @@ const FormElementSTIXList: React.FC<Props> = ({
       />
       <div className={`flex flex-col items-center w-full ml-4 pr-4`} >
         { selectedSTIXObject && selectedSTIXObject[property.name] ?
-          property.listType === "enum" || property.listType === "open-vocab" ?
+          property.listType === "email-mime-part-type" ?
+            selectedSTIXObject[property.name].map((listItem: EmailMIMEPartType, i: number) => 
+            <FormElementEmailMIMEPart
+              key={i}
+              emailMIMEPart={listItem}
+              emailMIMEPartIndex={i}
+              property={property}
+            />
+          )
+          : property.listType === "enum" || property.listType === "open-vocab" ?
           selectedSTIXObject[property.name].map((listItem: string, i:number) => 
             <FormElementSelectOther
               key={i}
@@ -169,6 +180,9 @@ const FormElementSTIXList: React.FC<Props> = ({
             if (!tempSTIXObj[property.name]) {
               // Initialize the property array
               switch (property.listType) {
+                case "email-mime-part-type":
+                  tempSTIXObj[property.name] = [{}];
+                  break;
                 case "external-reference":
                   tempSTIXObj[property.name] = [{source_name: ""}];
                   break;
@@ -183,6 +197,9 @@ const FormElementSTIXList: React.FC<Props> = ({
               }
             } else {
               switch (property.listType) {
+                case "email-mime-part-type":
+                  tempSTIXObj[property.name].push({});
+                  break;
                 case "external-reference":
                   tempSTIXObj[property.name].push({source_name: ""});
                   break;
