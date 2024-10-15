@@ -11,7 +11,7 @@ import { StixRelationshipObject } from '@/types/stixTypes/StixRelationshipObject
 
 type Exporter = { 
     exporter: (f: string, cy: cytoscape.Core, object: StixObject | StixRelationshipObject | undefined) => STIGBundle, 
-    object: StixObject | StixRelationshipObject | undefined
+    object?: StixObject | StixRelationshipObject | undefined
 };
 
 const ExportModal: React.FC<Exporter> = ({ exporter, object }) => {
