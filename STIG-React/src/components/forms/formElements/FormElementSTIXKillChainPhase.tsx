@@ -5,6 +5,7 @@ import { useStixPropsContext } from '@/contexts/StixPropsContext';
 import { KillChainPhase } from '@/types/stixTypes/KillChainPhase';
 import { propertyDescriptions } from '@/stix/propertyDescriptions';
 import { getSTIXPropDescriptions } from '@/stix/getSTIXPropDescriptions';
+import { handlePropertyUpdate } from '@/stix/handlePropertyUpdate';
 
 type Props = {
   killChainPhase: KillChainPhase;
@@ -32,14 +33,13 @@ const FormElementSTIXKillChainPhase: React.FC<Props> = ({
         type="text"
         value={killChainPhase.kill_chain_name}
         onChange={(event) => {
-          let tempSTIXObj = { ...selectedSTIXObject };
-          if (tempSTIXObj) {
-            tempSTIXObj[property.name][killChainPhaseIndex] = {
+          handlePropertyUpdate(
+            {
               "kill_chain_name": event.target.value,
               "phase_name": killChainPhase.phase_name
-            };
-          }
-          setSelectedSTIXObject(tempSTIXObj);
+            }, 
+            property.name, selectedSTIXObject, setSelectedSTIXObject, killChainPhaseIndex
+          );
         }}
         includeInfo={killChainPropDescriptions.kill_chain_name ? true : false}
         infoText={killChainPropDescriptions.kill_chain_name}
@@ -51,14 +51,13 @@ const FormElementSTIXKillChainPhase: React.FC<Props> = ({
         type="text"
         value={killChainPhase.phase_name}
         onChange={(event) => {
-          let tempSTIXObj = { ...selectedSTIXObject };
-          if (tempSTIXObj) {
-            tempSTIXObj[property.name][killChainPhaseIndex] = {
+          handlePropertyUpdate(
+            {
               "kill_chain_name": killChainPhase.kill_chain_name,
               "phase_name": event.target.value
-            };
-          }
-          setSelectedSTIXObject(tempSTIXObj);
+            },
+            property.name, selectedSTIXObject, setSelectedSTIXObject, killChainPhaseIndex
+          );
         }}
         className="mb-2"
         includeInfo={killChainPropDescriptions.phase_name ? true : false}

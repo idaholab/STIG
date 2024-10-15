@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 import { useStigContext } from "@/contexts/StigContext";
 import { StixPropsContextProvider, useStixPropsContext } from "@/contexts/StixPropsContext";
@@ -13,24 +13,18 @@ import FormElementSelectOther from "./formElements/FormElementSelectOther";
 import FormElementSTIXHashes from "./formElements/FormElementSTIXHashes";
 
 import { SchemaSTIXProperty } from "@/types/stixSchemaTypes/SchemaSTIXProperty";
-import { StixObject } from "@/types/stixTypes/StixObject";
 
 import { enum_options } from "@/stix/enumOptions";
+import { handlePropertyUpdate } from "@/stix/handlePropertyUpdate";
 import { open_vocab_options } from "@/stix/openVocabOptions";
 
 import { stixIdentifierValidator } from "@/util/stixIdentifierValidator";
 
-export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeSelector, onTypeChange,
+export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
   parentDictionaryProps, setParentDictionaryProps,
   parentSelectedProperties, setParentSelectedProperties
 }: {
   property: SchemaSTIXProperty,
-  handlePropertyUpdate: (
-    newVal: string | boolean | number | Date | ArrayBuffer | null | undefined,
-    propName: string,
-    selectedSTIXObject: StixObject | undefined,
-    setSelectedSTIXObject: React.Dispatch<React.SetStateAction<StixObject | undefined>>
-  ) => void,
   // The remaining properties are only passed in when the STIXPropertyRenderer
   // is used from within an dictionary component
   showTypeSelector?: boolean,
@@ -43,23 +37,6 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
 }) {
   const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
   const { cyInstance } = useStigContext();
-
-  // Used for open-vocab properties
-  const [customValueSelected, setCustomValueSelected] = useState(
-    property.openVocabType && selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ? 
-      !open_vocab_options[property.openVocabType].includes(selectedSTIXObject[property.name]) ?
-        true : false 
-      : false
-    );
-  useEffect(() => {
-    // Reset customValueSelected if the selectedSTIXObject changes
-    setCustomValueSelected(
-      property.openVocabType && selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ? 
-        !open_vocab_options[property.openVocabType].includes(selectedSTIXObject[property.name]) ?
-          true : false 
-        : false
-      );
-  }, [selectedSTIXObject, property]);
 
   switch (property.name) {
     case "created":
@@ -180,10 +157,8 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
               additionalClasses="dark:bg-gray-900 w-full"
               additionalInputClasses="select-sm dark:bg-gray-900"
               property={property}
-              customValueSelected={customValueSelected}
-              setCustomValueSelected={setCustomValueSelected}
               isOtherAnOption={property.openVocabType ? true : false}
-              otherOptionText="Custom Value"
+              otherOptionText="Other"
               otherOptionLabel={`Custom ${property?.name} Value`}
             />
           );

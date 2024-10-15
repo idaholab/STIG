@@ -4,11 +4,18 @@ export const handlePropertyUpdate = (
   newVal: string | boolean | number | Date | ArrayBuffer | null | undefined | Object | [],
   propName: string,
   selectedSTIXObject: StixObject | undefined,
-  setSelectedSTIXObject: React.Dispatch<React.SetStateAction<StixObject | undefined>>
+  setSelectedSTIXObject: React.Dispatch<React.SetStateAction<StixObject | undefined>>,
+  // Pass a prop index in for updating a value
+  // inside a list or hash
+  propIndex?: number | string
 ) => {
-  const tempSelectedSTIXObject = { ...selectedSTIXObject } as StixObject;
-  if (tempSelectedSTIXObject) {
-    tempSelectedSTIXObject[propName] = newVal;
+  if (selectedSTIXObject) {
+    const tempSelectedSTIXObject = { ...selectedSTIXObject };
+    if (propIndex !== undefined) {
+      tempSelectedSTIXObject[propName][propIndex] = newVal;
+    } else {
+      tempSelectedSTIXObject[propName] = newVal;
+    }
+    setSelectedSTIXObject(tempSelectedSTIXObject);
   }
-  setSelectedSTIXObject(tempSelectedSTIXObject);
 };

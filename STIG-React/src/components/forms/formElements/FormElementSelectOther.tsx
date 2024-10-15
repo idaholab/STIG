@@ -1,5 +1,5 @@
 import { SchemaSTIXProperty } from "@/types/stixSchemaTypes/SchemaSTIXProperty";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import FormElementSelect from "./FormElementSelect";
 import ButtonBasic from "@/components/elements/ButtonBasic";
 import FormElementTextInput from "./FormElementTextInput";
@@ -19,8 +19,6 @@ type Props = {
   additionalClasses?: string;
   additionalInputClasses?: string;
   property?: SchemaSTIXProperty,
-  customValueSelected: boolean,
-  setCustomValueSelected: React.Dispatch<React.SetStateAction<boolean>>,
   isOtherAnOption: boolean,
   otherOptionText: string,
   otherOptionLabel: string
@@ -41,19 +39,33 @@ const FormElementSelectOther: React.FC<Props> = ({
   additionalClasses,
   additionalInputClasses,
   property,
-  customValueSelected,
-  setCustomValueSelected,
   isOtherAnOption,
   otherOptionText,
   otherOptionLabel
 }) => {
+  const [customValueSelected, setCustomValueSelected] = useState(
+    isOtherAnOption && value ?
+      !options.includes(value)
+      : false
+  );
+
+  useEffect(() => {
+    // Reset customValueSelected if isOtherAnOption or value changes.
+    // Needed so that customValueSelected changes when switching
+    // between objects.
+    setCustomValueSelected(isOtherAnOption && value ?
+      !options.includes(value)
+      : false
+    );
+  }, [isOtherAnOption, value]);
+
   return (
     <>
       {!customValueSelected &&
         <FormElementSelect
           placeholder={placeholder}
           label={label}
-          value={value}
+          value={value !== "" || customValueSelected ? value : placeholder}
           options={isOtherAnOption ? [...options, otherOptionText] : options}
           onChange={(event) => {
             if (event.target.value === otherOptionText) {

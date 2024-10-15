@@ -1,17 +1,27 @@
 import React, { useEffect } from 'react';
-import FormElementTextInput from './FormElementTextInput';
-import ButtonBasic from '@/components/elements/ButtonBasic';
-import { StixObject } from '@/types/stixTypes/StixObject';
-import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
-import STIXPropertyLabel from '@/components/elements/STIXPropertyLabel';
-import { useStixPropsContext } from '@/contexts/StixPropsContext';
-import { stixIdentifierValidator } from '@/util/stixIdentifierValidator';
-import FormElementSTIXKillChainPhase from './FormElementSTIXKillChainPhase';
-import { KillChainPhase } from '@/types/stixTypes/KillChainPhase';
-import { GranularMarking } from '@/types/stixTypes/GranularMarking';
-import FormElementSTIXGranularMarking from './FormElementSTIXGranularMarking';
-import { ExternalReference } from '@/types/stixTypes/ExternalReference';
+
 import FormElementSTIXExternalReference from './FormElementSTIXExternalReference';
+import FormElementSelectOther from './FormElementSelectOther';
+import FormElementSTIXGranularMarking from './FormElementSTIXGranularMarking';
+import FormElementSTIXKillChainPhase from './FormElementSTIXKillChainPhase';
+import FormElementTextInput from './FormElementTextInput';
+
+import ButtonBasic from '@/components/elements/ButtonBasic';
+import STIXPropertyLabel from '@/components/elements/STIXPropertyLabel';
+
+import { useStixPropsContext } from '@/contexts/StixPropsContext';
+
+import { open_vocab_options } from '@/stix/openVocabOptions';
+import { enum_options } from '@/stix/enumOptions';
+import { handlePropertyUpdate } from '@/stix/handlePropertyUpdate';
+
+import { ExternalReference } from '@/types/stixTypes/ExternalReference';
+import { GranularMarking } from '@/types/stixTypes/GranularMarking';
+import { KillChainPhase } from '@/types/stixTypes/KillChainPhase';
+import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
+import { StixObject } from '@/types/stixTypes/StixObject';
+
+import { stixIdentifierValidator } from '@/util/stixIdentifierValidator';
 
 type Props = {
   btnLabel: string | React.JSX.Element;
@@ -51,9 +61,8 @@ const FormElementSTIXList: React.FC<Props> = ({
   useEffect(() => {
     if (parentPropertyName && parentPropertyIndex !== undefined && 
       parentSTIXObject && setParentSTIXObject && selectedSTIXObject) {
-      const tempParentSTIXObject = { ...parentSTIXObject } as StixObject;
-      tempParentSTIXObject[parentPropertyName][parentPropertyIndex] = selectedSTIXObject;
-      setParentSTIXObject(tempParentSTIXObject);
+      handlePropertyUpdate(selectedSTIXObject, parentPropertyName, 
+        parentSTIXObject, setParentSTIXObject, parentPropertyIndex);
     }
   }, [selectedSTIXObject]);
 
@@ -70,7 +79,37 @@ const FormElementSTIXList: React.FC<Props> = ({
       />
       <div className={`flex flex-col items-center w-full ml-4 pr-4`} >
         { selectedSTIXObject && selectedSTIXObject[property.name] ?
-          property.listType === "external-reference" ?
+          property.listType === "enum" || property.listType === "open-vocab" ?
+          selectedSTIXObject[property.name].map((listItem: string, i:number) => 
+            <FormElementSelectOther
+              key={i}
+              placeholder=''
+              value={listItem}
+              options={property.openVocabType ? open_vocab_options[property.openVocabType] : 
+                property.enumType ? enum_options[property.enumType] : []}
+              onSelect={(event) => {
+                handlePropertyUpdate(event.target.value, property.name, 
+                  selectedSTIXObject, setSelectedSTIXObject, i);
+              }}
+              onInputChange={(event) => {
+                handlePropertyUpdate(event.target.value, property.name, 
+                  selectedSTIXObject, setSelectedSTIXObject, i);
+              }}
+              onSwitchToSuggested={() => {
+                handlePropertyUpdate("", property.name, 
+                  selectedSTIXObject, setSelectedSTIXObject, i);
+              }}
+              className="mb-2"
+              inputClassName="mb-2"
+              includeInfo={false}
+              additionalClasses="dark:bg-gray-900 w-full"
+              additionalInputClasses="select-sm dark:bg-gray-900"
+              isOtherAnOption={property.openVocabType ? true : false}
+              otherOptionText="Other"
+              otherOptionLabel={`Custom ${property?.name} Value`}
+            />
+          )
+          : property.listType === "external-reference" ?
             selectedSTIXObject[property.name].map((listItem: ExternalReference, i: number) => 
               <FormElementSTIXExternalReference
                 key={i}
@@ -103,11 +142,8 @@ const FormElementSTIXList: React.FC<Props> = ({
                 type="text"
                 value={listItem}
                 onChange={(event) => {
-                  let tempSTIXObj = { ...selectedSTIXObject };
-                  if (tempSTIXObj) {
-                    tempSTIXObj[property.name][i] = event.target.value;
-                  }
-                  setSelectedSTIXObject(tempSTIXObj);
+                  handlePropertyUpdate(event.target.value, property.name, 
+                    selectedSTIXObject, setSelectedSTIXObject, i);
                 }}
                 className="mb-2"
                 includeInfo={false}
