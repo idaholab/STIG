@@ -28,7 +28,7 @@ export const createObjectMarkingRelationship = (
 
 const getNodeLabel = (node: CytoscapeNodeData): string | undefined => {
     let nodelabel: string = '';
-    const labelorder = ['id', 'name', 'value', 'type', 'labels', 'key', 'path', 'product', 'dst_port', 'command_line'];
+    const labelorder = ['name', 'value', 'labels', 'key', 'path', 'product', 'dst_port', 'command_line', 'type', 'id'];
     for (const element of labelorder) {
         if (Object.prototype.hasOwnProperty.call(node, element)) {
             if (element === 'dst_port') {
@@ -40,6 +40,7 @@ const getNodeLabel = (node: CytoscapeNodeData): string | undefined => {
                 nodelabel = `${nodeLabelslabel ? nodeLabelslabel : node[element]}`;
             }
             nodelabel = node[element];
+            break;
         }
     }
 

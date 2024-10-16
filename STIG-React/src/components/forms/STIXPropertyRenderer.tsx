@@ -29,7 +29,8 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
     newVal: string | boolean | number | Date | ArrayBuffer | null | undefined,
     propName: string,
     selectedSTIXObject: StixObject | undefined,
-    setSelectedSTIXObject: React.Dispatch<React.SetStateAction<StixObject | undefined>>
+    setSelectedSTIXObject: React.Dispatch<React.SetStateAction<StixObject | undefined>>,
+    cy?: cytoscape.Core
   ) => void,
   // The remaining properties are only passed in when the STIXPropertyRenderer
   // is used from within an dictionary component
@@ -46,19 +47,19 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
 
   // Used for open-vocab properties
   const [customValueSelected, setCustomValueSelected] = useState(
-    property.openVocabType && selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ? 
+    property.openVocabType && selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ?
       !open_vocab_options[property.openVocabType].includes(selectedSTIXObject[property.name]) ?
-        true : false 
+        true : false
       : false
-    );
+  );
   useEffect(() => {
     // Reset customValueSelected if the selectedSTIXObject changes
     setCustomValueSelected(
-      property.openVocabType && selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ? 
+      property.openVocabType && selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ?
         !open_vocab_options[property.openVocabType].includes(selectedSTIXObject[property.name]) ?
-          true : false 
+          true : false
         : false
-      );
+    );
   }, [selectedSTIXObject, property]);
 
   switch (property.name) {
@@ -162,7 +163,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                 selectedSTIXObject[property.name]
                 : ""
               }
-              options={property.openVocabType ? open_vocab_options[property.openVocabType] : 
+              options={property.openVocabType ? open_vocab_options[property.openVocabType] :
                 property.enumType ? enum_options[property.enumType] : []}
               onSelect={(event) => {
                 handlePropertyUpdate(event.target.value, property.name, selectedSTIXObject, setSelectedSTIXObject);
@@ -235,7 +236,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
                 : ""
               }
               onChange={(event) => {
-                handlePropertyUpdate(event.target.value, property.name, selectedSTIXObject, setSelectedSTIXObject);
+                handlePropertyUpdate(event.target.value, property.name, selectedSTIXObject, setSelectedSTIXObject, cyInstance);
               }}
               disabled={property.name === "id" || property.name === "type" ||
                 property.name === "source_ref" || property.name === "target_ref" ||
@@ -261,12 +262,12 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
         case "list":
           // TODO: Develop way to delete items (and reorganize list, 
           // clear list, and remove last item?)
-          const addNewItemLabel = 
+          const addNewItemLabel =
             property.listType === "external-reference" ? "+ External Reference"
-            : property.listType === "granular-marking" ? "+ Granular Marking"
-            : property.listType === "identifier" ? "+ Identifier" 
-            : property.listType === "kill-chain-phase" ? "+ Kill Chain Phase"
-            : "+ Item";
+              : property.listType === "granular-marking" ? "+ Granular Marking"
+                : property.listType === "identifier" ? "+ Identifier"
+                  : property.listType === "kill-chain-phase" ? "+ Kill Chain Phase"
+                    : "+ Item";
           return (
             <FormElementSTIXList
               btnLabel={addNewItemLabel}
