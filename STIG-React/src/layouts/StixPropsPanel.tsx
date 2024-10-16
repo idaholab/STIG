@@ -11,10 +11,12 @@ import FormSTIXPropertySelection from '@/components/forms/FormSTIXPropertySelect
 import ButtonSTIXJSON from '@/components/elements/ButtonSTIXJSON.tsx';
 import { propertyDescriptions } from '@/stix/propertyDescriptions.ts';
 import { getSTIXPropDescriptions } from '@/stix/getSTIXPropDescriptions.ts';
+import SaveButtons from '@/components/elements/SaveButtons.tsx';
 
 const StixPropsPanel: React.FC = () => {
   const [selectedProperties, setSelectedProperties] = useState<SchemaSTIXProperty[]>([]);
   const [showJson, setShowJson] = useState<boolean>(false);
+
   return (
     <div className={`drawer flex flex-col w-full h-full p-4 overflow-y-scroll scrollbar`}>
       <PropsPanelHeader
@@ -26,6 +28,7 @@ const StixPropsPanel: React.FC = () => {
         selectedProperties={selectedProperties}
         showJson={showJson}
       />
+      <SaveButtons />
     </div>
   );
 };
@@ -50,7 +53,7 @@ function PropsPanelHeader({ selectedProperties, setSelectedProperties, setIsShow
 
     const properties = getSTIXPropsFromSchema(schemaObject);
     const propertyDescriptionObject = propertyDescriptions.find((group) => group.name === selectedSTIXObject?.type);
-    if(propertyDescriptionObject) {
+    if (propertyDescriptionObject) {
       const propertyDescriptions = getSTIXPropDescriptions(propertyDescriptionObject);
       properties.forEach((prop) => {
         prop.propertyDescription = propertyDescriptions[prop.name] || undefined;
@@ -71,7 +74,7 @@ function PropsPanelHeader({ selectedProperties, setSelectedProperties, setIsShow
     setShowJsonPanel(isShowingJson);
     setIsShowingJson(isShowingJson)
   }
-  if (JSON.stringify(selectedSTIXObject)=="\"visual_edge\""){
+  if (JSON.stringify(selectedSTIXObject) == "\"visual_edge\"") {
     console.error("TODO: please make it so clicking visual edges doesn't pop up the property panel");
     return;
   }

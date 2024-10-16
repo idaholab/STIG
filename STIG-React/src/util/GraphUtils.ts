@@ -484,6 +484,15 @@ export function create_bundle(nodes: CollectionReturnValue): STIGBundle {
     return bundle;
 }
 
+export function exportObject(fileName: string, cy: cytoscape.Core, obj: StixObject | StixRelationshipObject | undefined){
+    const bundle_id = 'bundle--' + uuidv4();
+    let bundle: STIGBundle = { type: 'bundle', id: bundle_id, objects: [] } as any;
+    if (obj !== undefined){
+        bundle.objects.push(obj);
+        exportGraph(fileName, bundle);
+    }
+    return bundle;
+}
 export function exportSelected(fileName: string, cy: cytoscape.Core) {
     const selected = cy.elements(':selected')
     let bundle = create_bundle(selected);
