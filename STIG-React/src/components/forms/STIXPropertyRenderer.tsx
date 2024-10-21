@@ -18,6 +18,7 @@ import { enum_options } from "@/stix/enumOptions";
 import { handlePropertyUpdate } from "@/stix/handlePropertyUpdate";
 import { open_vocab_options } from "@/stix/openVocabOptions";
 
+import { stixHexValidator } from "@/util/stixHexValidator";
 import { stixIdentifierValidator } from "@/util/stixIdentifierValidator";
 
 export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
@@ -200,6 +201,7 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
               property={property}
             />
           );
+        case "hex":
         case "identifier":
         case "string":
           return (
@@ -223,13 +225,22 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
               property={property}
               showTypeSelector={showTypeSelector}
               onTypeChange={onTypeChange}
-              showValidationError={property.type === "identifier" && selectedSTIXObject ?
-                !stixIdentifierValidator(selectedSTIXObject[property.name])
+              showValidationError={
+                selectedSTIXObject ? 
+                  property.type === "hex" ?
+                    !stixHexValidator(selectedSTIXObject[property.name])
+                  : property.type === "identifier" ?
+                    !stixIdentifierValidator(selectedSTIXObject[property.name])
+                  : false
                 : false
               }
               validationErrorText={
-                `${property.name} is not a valid STIX identifier. 
-                Double check that it matches the format \"object-type--UUID\".`
+                property.type === "hex" ?
+                  `${property.name} is not a valid STIX hex value. 
+                  Double check that it contains an even number of hexadecimal characters
+                  (0-9 and lowercase a-f).`
+                : `${property.name} is not a valid STIX identifier. 
+                  Double check that it matches the format \"object-type--UUID\".`
               }
             />
           );
