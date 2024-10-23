@@ -12,14 +12,18 @@ import { StixRelationshipObject } from '@/types/stixTypes/StixRelationshipObject
 import { CollectionReturnValue, EdgeCollection, NodeCollection, SingularElementArgument } from 'cytoscape';
 import { AlertType } from '../elements/AlertComponent';
 import { useNotificationContext } from '@/contexts/NotificationContext';
+import ButtonBasic from '../elements/ButtonBasic';
+import { useStixPropsContext } from '@/contexts/StixPropsContext';
 
 const Database: React.FC = () => {
   const {
     savedDBProfiles, connectedDBProfile, setSelectedProfile,
   } = useContext(ConnectedDBContext) as ConnectedDBContextType;
   const [isConnectProcessing, setIsConnectProcessing] = useState(false);
-  const { cyInstance } = useStigContext();
+  const { cyInstance, isDrawerOpen, toggleDrawer } = useStigContext();
   const { addNotification } = useNotificationContext();
+  const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
+
   return (
     <Dropdown
       title="Database"
@@ -102,14 +106,35 @@ const Database: React.FC = () => {
             showFormButtons={false}
             buttonLabel="Query"
             disabled={!connectedDBProfile}
-            additionalButtonClasses={"btn-sm justify-start hover:bg-transparent"}
+            additionalButtonClasses={"btn-sm justify-start hover:bg-transparent btn-block"}
           >
             <DBQueryModal />
           </DialogBasic>
         </div>
-        <li className='hover:bg-primary hover:text-white'><a onClick={() => { commitAllNodes(cyInstance, addNotification) }}>Commit All Nodes</a></li>
-        <li className='hover:bg-primary hover:text-white'><a onClick={() => { commitSelectedNodes(cyInstance, addNotification) }}>Commit Selected Nodes</a></li>
-        <li className='hover:bg-primary hover:text-white'><a onClick={() => { deleteSelectedNodes(cyInstance, addNotification) }}>Delete Selected Nodes</a></li>
+        <div className='hover:bg-gray-200 dark:hover:bg-gray-700'>
+          <ButtonBasic
+            label="Commit All Nodes"
+            additionalClasses='btn-sm btn-ghost justify-start hover:bg-transparent btn-block'
+            onClick={() => { commitAllNodes(cyInstance, addNotification) }}
+            disabled={!connectedDBProfile}
+          ></ButtonBasic>
+        </div>
+        <div className='hover:bg-gray-200 dark:hover:bg-gray-700'>
+          <ButtonBasic
+            label="Commit Selected Nodes"
+            additionalClasses='btn-sm btn-ghost justify-start hover:bg-transparent btn-block'
+            onClick={() => { commitSelectedNodes(cyInstance, addNotification) }}
+            disabled={!connectedDBProfile}
+          ></ButtonBasic>
+        </div>
+        <div className='hover:bg-gray-200 dark:hover:bg-gray-700'>
+          <ButtonBasic
+            label="Delete Selected Nodes"
+            additionalClasses='btn-sm btn-ghost justify-start hover:bg-transparent btn-block'
+            onClick={() => { deleteSelectedNodes(cyInstance, addNotification, selectedSTIXObject, setSelectedSTIXObject, isDrawerOpen, toggleDrawer) }}
+            disabled={!connectedDBProfile}
+          ></ButtonBasic>
+        </div>
       </div>
     </Dropdown>
   );
@@ -134,7 +159,7 @@ function submitter(nodes: NodeCollection, edges: EdgeCollection, addNotification
     let set = await commit(stix_nodes, stix_edges);
     let objs = set[0].size; let rels = set[1].size;
     let toastType: AlertType = (objs + rels > 0) ? "success" : "warning";
-    addNotification(`Submitted ${objs} node(s) and ${rels} edge(s)`, toastType);
+    addNotification(`Submitted ${objs}/${stix_nodes.length} node(s) and ${rels}/${stix_edges.length} edge(s)`, toastType);
   })();
 }
 function commitAllNodes(cy: cytoscape.Core | undefined, addNotification: any) {
@@ -153,20 +178,45 @@ function commitSelectedNodes(cy: cytoscape.Core | undefined, addNotification: an
   }
   return ''
 }
-function deleteSelectedNodes(cy: cytoscape.Core | undefined, addNotification: any) {
+function deleteSelectedNodes(
+  cy: cytoscape.Core | undefined,
+  addNotification: any,
+  selectedSTIXObject: StixObject | undefined,
+  setSelectedSTIXObject: React.Dispatch<React.SetStateAction<StixObject | undefined>>,
+  isDrawerOpen: boolean,
+  toggleDrawer: () => void,
+) {
+
   if (cy !== undefined) {
-    const selected: CollectionReturnValue = cy.$(':selected');
+    const selected: NodeCollection = cy.nodes(':selected');
     const vis: CollectionReturnValue = cy.$(':visible');
     const edges: EdgeCollection = selected.edgesWith(vis);
-
     // Delete incoming/outgoing edges first.
-    edges.forEach((ele) => { cy.remove(ele); });
-
+    edges.forEach((ele) => {
+      const selectedSTIXObjectId = selectedSTIXObject?.id.replace("relationship--", "");
+      if (selectedSTIXObjectId === ele.data("id") || selectedSTIXObject?.id === ele.data("id")) {
+        setSelectedSTIXObject(undefined);
+        if (isDrawerOpen) {
+          toggleDrawer();
+        }
+      }
+      cy.remove(ele); 
+    });
     selected.forEach((ele) => {
       // deleting a node deletes the edges connected to it as well
       void db_delete(ele.data('raw_data'));
       cy.remove(ele);
+
+      const selectedSTIXObjectId = selectedSTIXObject?.id.replace("relationship--", "");
+      if (selectedSTIXObjectId === ele.data("id") || selectedSTIXObject?.id === ele.data("id")) {
+        setSelectedSTIXObject(undefined);
+        if (isDrawerOpen) {
+          toggleDrawer();
+        }
+      }
     });
+    addNotification(`Deleted ${selected.length} object(s) and ${edges.length} edge(s) from database`, 'success');
+
   }
   return ''
 }

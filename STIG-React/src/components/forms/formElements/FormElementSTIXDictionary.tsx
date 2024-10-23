@@ -220,7 +220,6 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
           <STIXPropertyRenderer
             key={i}
             property={selectedProperty}
-            handlePropertyUpdate={handlePropertyUpdate}
             showTypeSelector
             onTypeChange={(event) => {
               handlePropertyTypeChange(selectedProperty.name, event.target.value as UIPropertyType);

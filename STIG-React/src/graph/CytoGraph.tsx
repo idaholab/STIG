@@ -272,21 +272,20 @@ const Graph: React.FC = () => {
     function handleAddNewCytoscapeNode(label: string, nodeType: string, imgUrl: string, dSource: DataSourceType): CytoscapeNode {
         // Will be 'sco', 'sdo', or 'smo'
         const stixObjectCategory = stencilItems.find(stencilItem => stencilItem.id === nodeType)?.type;
-        
+
         const cytoscapeNode: CytoscapeNodeData = {
             type: nodeType,
             id: nodeType + '--' + uuidv4(),
-            // SCOs do not have the created property
-            created: stixObjectCategory !== 'sco' ? 
-                moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]') 
-                : undefined,
-            // SCOs and Marking Definitions do not have the modified property
-            modified: stixObjectCategory !== 'sco' && nodeType !== "marking-definition" ? 
-                moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
-                : undefined,
             spec_version: "2.1",
             label: label
         };
+        // SCOs do not have the created or modified property
+        if (stixObjectCategory !== 'sco'){
+            cytoscapeNode.created = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+            if (nodeType !== "marking-definition"){
+                cytoscapeNode.modified = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]') 
+            }
+        }
         return createCytoscapeNode(cytoscapeNode, dSource, true, imgUrl);
     };
 

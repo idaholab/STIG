@@ -94,7 +94,6 @@ export default function FormSTIXPropsPanel({ selectedProperties, showJson }: {
             <STIXPropertyRenderer
               key={i}
               property={selectedProperty}
-              handlePropertyUpdate={handlePropertyUpdate}
             />
           )}
         </>

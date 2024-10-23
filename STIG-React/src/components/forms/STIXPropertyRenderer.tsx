@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 import { useStigContext } from "@/contexts/StigContext";
 import { StixPropsContextProvider, useStixPropsContext } from "@/contexts/StixPropsContext";
@@ -11,27 +11,22 @@ import FormElementFileInput from "./formElements/FormElementFileInput";
 import FormElementSTIXDictionary from "./formElements/FormElementSTIXDictionary";
 import FormElementSelectOther from "./formElements/FormElementSelectOther";
 import FormElementSTIXHashes from "./formElements/FormElementSTIXHashes";
+import FormElementSTIXX509V3Extensions from "./formElements/FormElementSTIXX509V3Extensions";
 
 import { SchemaSTIXProperty } from "@/types/stixSchemaTypes/SchemaSTIXProperty";
-import { StixObject } from "@/types/stixTypes/StixObject";
 
 import { enum_options } from "@/stix/enumOptions";
+import { handlePropertyUpdate } from "@/stix/handlePropertyUpdate";
 import { open_vocab_options } from "@/stix/openVocabOptions";
 
+import { stixHexValidator } from "@/util/stixHexValidator";
 import { stixIdentifierValidator } from "@/util/stixIdentifierValidator";
 
-export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeSelector, onTypeChange,
+export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
   parentDictionaryProps, setParentDictionaryProps,
   parentSelectedProperties, setParentSelectedProperties
 }: {
   property: SchemaSTIXProperty,
-  handlePropertyUpdate: (
-    newVal: string | boolean | number | Date | ArrayBuffer | null | undefined,
-    propName: string,
-    selectedSTIXObject: StixObject | undefined,
-    setSelectedSTIXObject: React.Dispatch<React.SetStateAction<StixObject | undefined>>,
-    cy?: cytoscape.Core
-  ) => void,
   // The remaining properties are only passed in when the STIXPropertyRenderer
   // is used from within an dictionary component
   showTypeSelector?: boolean,
@@ -44,23 +39,6 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
 }) {
   const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
   const { cyInstance } = useStigContext();
-
-  // Used for open-vocab properties
-  const [customValueSelected, setCustomValueSelected] = useState(
-    property.openVocabType && selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ?
-      !open_vocab_options[property.openVocabType].includes(selectedSTIXObject[property.name]) ?
-        true : false
-      : false
-  );
-  useEffect(() => {
-    // Reset customValueSelected if the selectedSTIXObject changes
-    setCustomValueSelected(
-      property.openVocabType && selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ?
-        !open_vocab_options[property.openVocabType].includes(selectedSTIXObject[property.name]) ?
-          true : false
-        : false
-    );
-  }, [selectedSTIXObject, property]);
 
   switch (property.name) {
     case "created":
@@ -181,10 +159,8 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
               additionalClasses="dark:bg-gray-900 w-full"
               additionalInputClasses="select-sm dark:bg-gray-900"
               property={property}
-              customValueSelected={customValueSelected}
-              setCustomValueSelected={setCustomValueSelected}
               isOtherAnOption={property.openVocabType ? true : false}
-              otherOptionText="Custom Value"
+              otherOptionText="Other"
               otherOptionLabel={`Custom ${property?.name} Value`}
             />
           );
@@ -226,6 +202,7 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
               property={property}
             />
           );
+        case "hex":
         case "identifier":
         case "string":
           return (
@@ -249,25 +226,36 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
               property={property}
               showTypeSelector={showTypeSelector}
               onTypeChange={onTypeChange}
-              showValidationError={property.type === "identifier" && selectedSTIXObject ?
-                !stixIdentifierValidator(selectedSTIXObject[property.name])
+              showValidationError={
+                selectedSTIXObject ? 
+                  property.type === "hex" ?
+                    !stixHexValidator(selectedSTIXObject[property.name])
+                  : property.type === "identifier" ?
+                    !stixIdentifierValidator(selectedSTIXObject[property.name])
+                  : false
                 : false
               }
               validationErrorText={
-                `${property.name} is not a valid STIX identifier. 
-                Double check that it matches the format \"object-type--UUID\".`
+                property.type === "hex" ?
+                  `${property.name} is not a valid STIX hex value. 
+                  Double check that it contains an even number of hexadecimal characters
+                  (0-9 and lowercase a-f).`
+                : `${property.name} is not a valid STIX identifier. 
+                  Double check that it matches the format \"object-type--UUID\".`
               }
             />
           );
         case "list":
           // TODO: Develop way to delete items (and reorganize list, 
           // clear list, and remove last item?)
-          const addNewItemLabel =
-            property.listType === "external-reference" ? "+ External Reference"
-              : property.listType === "granular-marking" ? "+ Granular Marking"
-                : property.listType === "identifier" ? "+ Identifier"
-                  : property.listType === "kill-chain-phase" ? "+ Kill Chain Phase"
-                    : "+ Item";
+          const addNewItemLabel = 
+            property.listType === "email-mime-part-type" ? "+ Email MIME Component"
+            : property.listType === "external-reference" ? "+ External Reference"
+            : property.listType === "granular-marking" ? "+ Granular Marking"
+            : property.listType === "identifier" ? "+ Identifier" 
+            : property.listType === "kill-chain-phase" ? "+ Kill Chain Phase"
+            : property.listType === "windows-registry-value-type" ? "+ Windows Registry Key Value"
+            : "+ Item";
           return (
             <FormElementSTIXList
               btnLabel={addNewItemLabel}
@@ -293,6 +281,12 @@ export function STIXPropertyRenderer({ property, handlePropertyUpdate, showTypeS
               property={property}
               showTypeSelector={showTypeSelector}
               onTypeChange={onTypeChange}
+            />
+          );
+        case "x509-v3-extensions-type":
+          return (
+            <FormElementSTIXX509V3Extensions
+              property={property}
             />
           );
       }

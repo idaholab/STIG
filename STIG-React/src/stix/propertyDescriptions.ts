@@ -641,6 +641,16 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
         }
     },
     {
+        name: 'email-mime-part-type',
+        superClasses: [],
+        properties: {
+            body: "Specifies the contents of the MIME part if the content_type is not provided OR starts with text/",
+            body_raw_ref: "Specifies the contents of non-textual MIME parts, that is those whose content_type does not start with text/, as a reference to an Artifact Object or File Object.",
+            content_type: "Specifies the value of the 'Content-Type' header field of the MIME part.",
+            content_disposition: "Specifies the value of the 'Content-Disposition' header field of the MIME part."
+        }
+    },
+    {
         name: 'external-reference',
         superClasses: [],
         properties: {

@@ -58,9 +58,11 @@ export async function commitBundle(bundle: STIGBundle): Promise<[Set<string>, Se
   return wrapReturn(bundle, () => [new Set(), new Set()], b => currentDB.uploadBundle(b));
 }
 
-export async function commit(nodes: StixObject[], edges: StixRelationshipObject[]): Promise<[Set<string>, Set<string>]> {
-  if (!nodes.every(checkProps) || !edges.every(checkProps)) throw new Error('Invalid stix');
-  const pair: [StixObject[], StixRelationshipObject[]] = [nodes, edges];
+export async function commit(nodes: StixObject[], edges: StixRelationshipObject[]): (Promise<[Set<string>, Set<string>]>) {
+  // if (!nodes.every(checkProps) || !edges.every(checkProps)) throw new Error('Invalid stix');
+  const filteredNodes = nodes.filter(checkProps);
+  const filteredEdges = edges.filter(checkProps);
+  const pair: [StixObject[], StixRelationshipObject[]] = [filteredNodes, filteredEdges];
   return wrapReturn(pair, () => [new Set(), new Set()], ([n, e]) => currentDB.updateDB(n, e));
 }
 

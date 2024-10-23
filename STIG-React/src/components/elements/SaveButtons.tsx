@@ -28,7 +28,7 @@ const SaveButtons: React.FC = () => {
             let toastType: AlertType = (objs + rels > 0) ? "success" : "warning";
             addNotification(`Submitted ${objs} node(s) and ${rels} edge(s)`, toastType);
           } catch (err) {
-            addNotification((err as Error).message, "error");
+            addNotification((err as Error).message, "warning");
           }
         })();
       } else {

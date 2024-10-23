@@ -17,10 +17,8 @@ type Exporter = {
 const ExportModal: React.FC<Exporter> = ({ exporter, object }) => {
     const { cyInstance } = useStigContext();
     const { addNotification } = useNotificationContext();
-    let [fileName, setFileName] = useState("bundle");
-    if (object !== undefined){
-        fileName = object.id;
-    }
+    let state = object!==undefined ? object.id : "bundle";
+    let [fileName, setFileName] = useState(state);
     
     return (
         <div className='h-full grid'>
@@ -28,6 +26,7 @@ const ExportModal: React.FC<Exporter> = ({ exporter, object }) => {
                 label="File Name"
                 value={fileName}
                 type="text"
+                includeInfo={false}
                 onChange={(event) => setFileName(event.target.value)}
                 additionalInputClasses='input-md'
                 additionalLabelClasses='w-48'
