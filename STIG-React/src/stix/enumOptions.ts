@@ -47,7 +47,7 @@ const opinion_enum = [
 ];
 
 // TODO Uncomment once windows-integrity-level-enum,
-// windows-registry-datatype-enum, windows-service-start-type-enum,
+// windows-service-start-type-enum,
 // windows-service-type-enum, windows-service-status-enum
 // get referenced in schema.ts
 
@@ -58,22 +58,22 @@ const opinion_enum = [
 //   "system"
 // ];
 
-// const windows_registry_datatype_enum = [
-//   "REG_NONE",
-//   "REG_SZ",
-//   "REG_EXPAND_SZ",
-//   "REG_BINARY",
-//   "REG_DWORD",
-//   "REG_DWORD_BIG_ENDIAN",
-//   "REG_DWORD_LITTLE_ENDIAN",
-//   "REG_LINK",
-//   "REG_MULTI_SZ",
-//   "REG_RESOURCE_LIST",
-//   "REG_FULL_RESOURCE_DESCRIPTION",
-//   "REG_RESOURCE_REQUIREMENTS_LIST",
-//   "REG_QWORD",
-//   "REG_INVALID_TYPE"
-// ];
+const windows_registry_datatype_enum = [
+  "REG_NONE",
+  "REG_SZ",
+  "REG_EXPAND_SZ",
+  "REG_BINARY",
+  "REG_DWORD",
+  "REG_DWORD_BIG_ENDIAN",
+  "REG_DWORD_LITTLE_ENDIAN",
+  "REG_LINK",
+  "REG_MULTI_SZ",
+  "REG_RESOURCE_LIST",
+  "REG_FULL_RESOURCE_DESCRIPTION",
+  "REG_RESOURCE_REQUIREMENTS_LIST",
+  "REG_QWORD",
+  "REG_INVALID_TYPE"
+];
 
 // const windows_service_start_type_enum = [
 //   "SERVICE_AUTO_START",
@@ -113,7 +113,7 @@ export const enum_options = {
   // windows-service-type-enum, windows-service-status-enum
   // get referenced in schema.ts
   // "windows-integrity-level-enum": windows_integrity_level_enum,
-  // "windows-registry-datatype-enum": windows_registry_datatype_enum,
+  "windows-registry-datatype-enum": windows_registry_datatype_enum,
   // "windows-service-start-type-enum": windows_service_start_type_enum,
   // "windows-service-type-enum": windows_service_type_enum,
   // "windows-service-status-enum": windows_service_status_enum

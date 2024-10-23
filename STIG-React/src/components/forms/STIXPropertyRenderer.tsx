@@ -253,6 +253,7 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
             : property.listType === "granular-marking" ? "+ Granular Marking"
             : property.listType === "identifier" ? "+ Identifier" 
             : property.listType === "kill-chain-phase" ? "+ Kill Chain Phase"
+            : property.listType === "windows-registry-value-type" ? "+ Windows Registry Key Value"
             : "+ Item";
           return (
             <FormElementSTIXList
