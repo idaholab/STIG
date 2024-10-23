@@ -9,7 +9,7 @@ import Database from '../dropdowns/Database';
 
 const Menu: React.FC = () => {
   return (
-    <div className="join dark:bg-gray-950 border border-black dark:border-transparent">
+    <div className="join dark:bg-neutralc-950 bg-neutralc-200 border-transparent">
       <main>
         <Graph />
         <Edit />

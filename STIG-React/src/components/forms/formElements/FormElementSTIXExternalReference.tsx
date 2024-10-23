@@ -21,12 +21,12 @@ const FormElementSTIXExternalReference: React.FC<Props> = ({
   const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
 
   const externalReferenceDescription = propertyDescriptions.find((group) => group.name === property.listType);
-  let externalReferencePropDescriptions:{[propName: string]: string} = {};
-  if(externalReferenceDescription) {
+  let externalReferencePropDescriptions: { [propName: string]: string } = {};
+  if (externalReferenceDescription) {
     externalReferencePropDescriptions = getSTIXPropDescriptions(externalReferenceDescription);
   }
 
-  return ( selectedSTIXObject &&
+  return (selectedSTIXObject &&
     <div className='w-full'>
       <FormElementTextInput
         label="source_name"
@@ -38,7 +38,7 @@ const FormElementSTIXExternalReference: React.FC<Props> = ({
             // Use a temp variable here so that
             // the required source_name property can
             // temporarily be deleted
-            const tempExternalReference:Partial<ExternalReference> = externalReference;
+            const tempExternalReference: Partial<ExternalReference> = externalReference;
             delete tempExternalReference.source_name;
             tempSTIXObj[property.name][externalReferenceIndex] = {
               "source_name": event.target.value,
@@ -49,7 +49,7 @@ const FormElementSTIXExternalReference: React.FC<Props> = ({
         }}
         includeInfo={externalReferencePropDescriptions.source_name ? true : false}
         infoText={externalReferencePropDescriptions.source_name}
-        additionalInputClasses="select-sm dark:bg-gray-900"
+        additionalInputClasses="select-sm dark:bg-neutralc-900"
         additionalLabelClasses="ml-6 mr-5 w-20"
       />
       <FormElementTextInput
@@ -69,7 +69,7 @@ const FormElementSTIXExternalReference: React.FC<Props> = ({
         }}
         includeInfo={externalReferencePropDescriptions.description ? true : false}
         infoText={externalReferencePropDescriptions.description}
-        additionalInputClasses="select-sm dark:bg-gray-900"
+        additionalInputClasses="select-sm dark:bg-neutralc-900"
         additionalLabelClasses="ml-6 mr-5 w-20"
       />
       <FormElementTextInput
@@ -89,7 +89,7 @@ const FormElementSTIXExternalReference: React.FC<Props> = ({
         }}
         includeInfo={externalReferencePropDescriptions.url ? true : false}
         infoText={externalReferencePropDescriptions.url}
-        additionalInputClasses="select-sm dark:bg-gray-900"
+        additionalInputClasses="select-sm dark:bg-neutralc-900"
         additionalLabelClasses="ml-6 mr-5 w-20"
       />
       <StixPropsContextProvider>
@@ -123,7 +123,7 @@ const FormElementSTIXExternalReference: React.FC<Props> = ({
         className="mb-2"
         includeInfo={externalReferencePropDescriptions.external_id ? true : false}
         infoText={externalReferencePropDescriptions.external_id}
-        additionalInputClasses="select-sm dark:bg-gray-900"
+        additionalInputClasses="select-sm dark:bg-neutralc-900"
         additionalLabelClasses="ml-6 mr-5 w-20"
       />
     </div>

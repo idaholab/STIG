@@ -6,10 +6,8 @@ const ContextLayouts: React.FC = () => {
     <Dropdown
       title="Context Layouts"
       includeDropdownArrow
-      additionalOptionClasses={'hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-black dark:hover-text-white'}
+      additionalOptionClasses={'hover:text-black hover:text-white dark:hover:bg-primary hover:bg-primary'}
     >
-      {/* <li className='hover:bg-primary hover:text-white'><a>Option 1</a></li>
-      <li className='hover:bg-primary hover:text-white'><a>Option 2</a></li> */}
     </Dropdown>
   );
 };

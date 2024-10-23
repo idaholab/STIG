@@ -11,9 +11,9 @@ const Export: React.FC = () => {
     <Dropdown
       title="Export"
       includeDropdownArrow
-      additionalOptionClasses={'hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-black dark:hover-text-white'}
+      additionalOptionClasses={'hover:text-black hover:text-white dark:hover:bg-primary hover:bg-primary'}
     >
-      <li className='hover:bg-primary hover:text-white w-28'>
+      <li className='w-28'>
         <DialogBasic
           dialogId="ExportAllModal"
           title="Export All Elements to File"
@@ -22,11 +22,11 @@ const Export: React.FC = () => {
           buttonLabel="All"
           additionalButtonClasses={"btn-sm justify-start"}
         >
-          <ExportModal exporter={exportAll}/>
+          <ExportModal exporter={exportAll} />
         </DialogBasic>
       </li>
 
-     <li className='hover:bg-primary hover:text-white w-28'>
+      <li className='w-28'>
         <DialogBasic
           dialogId="ExportSelectedModal"
           title="Export Selected Elements to File"
@@ -35,7 +35,7 @@ const Export: React.FC = () => {
           buttonLabel="Selected"
           additionalButtonClasses={"btn-sm justify-start"}
         >
-          <ExportModal exporter={exportSelected}/>
+          <ExportModal exporter={exportSelected} />
         </DialogBasic>
       </li>
     </Dropdown>

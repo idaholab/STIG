@@ -47,12 +47,11 @@ const StencilLibrary: React.FC<StencilLibraryProps> = ({ type, onAddNode, search
                     ))
                     :
                     (isPanelOpen &&
-                        <AlertComponent alertText={`Warning: No ${type.toUpperCase()}s match the filter text`} alertType="warning" className='' />
+                        <AlertComponent alertText={`Warning: No ${type.toUpperCase()}s match the filter text`} alertType="warning" className='dark:text-white' />
                     )
                 }
             </div>
         </ul>
     );
 };
-
 export default StencilLibrary;

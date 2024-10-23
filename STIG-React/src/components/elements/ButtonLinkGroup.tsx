@@ -42,7 +42,7 @@ const ButtonLinkGroup: React.FC<ButtonProps> = ({ baseRoute, actions }) => {
     <div className="join gap-0 dark:gap-0.5">
       {actions.map((action, index) => {
         const isMatch = selectedButton === index;
-        const color = isMatch ? 'btn-primary' : 'btn-secondary';
+        const color = isMatch ? 'btn-primary' : 'btn-neutralc';
         const additionalClasses = !isMatch ? 'dark:!border-none' : '';
 
         return (
@@ -50,7 +50,7 @@ const ButtonLinkGroup: React.FC<ButtonProps> = ({ baseRoute, actions }) => {
             key={index}
             label={action.label}
             link={action.link}
-            color={color}
+            type={color}
             additionalClasses={`join-item ${additionalClasses}`}
           />
         );

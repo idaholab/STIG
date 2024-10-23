@@ -1,4 +1,5 @@
 // React
+import AlertComponent from '@/components/elements/AlertComponent';
 import InfoButton from '@/components/elements/InfoButton';
 import STIXPropertyLabel from '@/components/elements/STIXPropertyLabel';
 import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
@@ -63,11 +64,11 @@ const FormElementSelect: React.FC<Props> = ({
           select
           select-bordered
           select-sm
-          bg-gray-100
-          placeholder-gray-500
-          dark:placeholder-gray-300 
+          bg-neutralc-100
+          placeholder-neutralc-500
+          dark:placeholder-neutralc-300 
           border
-          border-gray-500
+          border-neutralc-500
           ${disabled ? 'cursor-not-allowed opacity-30' : undefined}
           ${additionalClasses}
         `}
@@ -93,7 +94,7 @@ const FormElementSelect: React.FC<Props> = ({
         />
       </div>
       {showInfo && includeInfo && infoText && infoText?.length > 0 &&
-        <span className="text-xs py-1 dark:text-orange-300 text-orange-800">{infoText}</span>
+        <AlertComponent alertText={infoText || ''} alertType={'info'} userClosable={false} className={'!mx-0 !my-1 !py-1 !px-2 text-xs'}></AlertComponent>
       }
     </div>
   );

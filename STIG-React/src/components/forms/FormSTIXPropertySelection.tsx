@@ -34,17 +34,17 @@ const FormElementSTIXPropertySelection: React.FC<Props> = ({
     <Dropdown
       title="Properties"
       includeDropdownArrow
-      additionalClasses={`flex items-center bg-white dark:bg-gray-900 border border-black dark:border-transparent rounded-md ${buttonContainerSize}`}
+      additionalClasses={`flex items-center bg-white dark:bg-neutralc-900 border border-black dark:border-transparent rounded-md ${buttonContainerSize}`}
       additionalButtonClasses={`${buttonSize}`}
     >
       <div className="relative">
         <div className={`max-h-60 overflow-y-scroll scrollbar w-60 ${includeAddNew ? 'mb-8' : ''} `}>
           {propertyOptions?.map((prop, i) =>
-            <label key={i} className="label cursor-pointer dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-800 text-gray-700 hover:text-black hover:bg-gray-200">
+            <label key={i} className="label cursor-pointer dark:text-neutralc-300 dark:hover:text-white dark:hover:bg-neutralc-800 text-neutralc-700 hover:text-black hover:bg-neutralc-200">
               <span className="mr-2">{prop.name}</span>
               <input
                 type="checkbox"
-                className="checkbox checkbox-primary hover:checkbox-secondary"
+                className="checkbox checkbox-primary hover:checkbox-neutralc"
                 checked={selectedProperties.find(selectedProperty => selectedProperty.name === prop.name) ? true : false}
                 disabled={prop.mandatory}
                 onChange={(event) => {
@@ -74,7 +74,7 @@ const FormElementSTIXPropertySelection: React.FC<Props> = ({
                 placeholder="Property name..."
                 value={newPropertyName}
                 onChange={(event) => { setNewPropertyName(event.target.value) }}
-                additionalInputClasses='bg-secondary dark:bg-secondary p-2 dark:placeholder:text-gray-100 placeholder:text-gray-900 dark:text-white text-black btn-xs'
+                additionalInputClasses='bg-neutralc dark:bg-neutralc p-2 dark:placeholder:text-neutralc-100 placeholder:text-neutralc-900 dark:text-white text-black btn-xs'
                 includeInfo={false}
               />
               <ButtonBasic
@@ -84,7 +84,7 @@ const FormElementSTIXPropertySelection: React.FC<Props> = ({
                     <span>Add</span>
                   </div>
                 }
-                color={'btn-primary'}
+                type={'btn-primary'}
                 additionalClasses='btn-xs'
                 disabled={newPropertyName === undefined || newPropertyName === ''}
                 onClick={() => {

@@ -4,151 +4,112 @@
 
 @layer base {
   :root {
-    /* Accent Colors (blue) */
-    --color-accent-rgb-50: 226, 245, 254;
-    --color-accent-rgb-100: 183, 230, 252;
-    --color-accent-rgb-200: 137, 214, 250;
-    --color-accent-rgb-300: 95, 197, 246;
-    --color-accent-rgb-400: 70, 185, 244;
-    --color-accent-rgb-500: 57, 172, 242;
-    --color-accent-rgb-600: 53, 158, 226;
-    --color-accent-rgb-700: 48, 139, 206;
-    --color-accent-rgb-800: 44, 122, 186;
-    /* main */
-    --color-accent-rgb-900: 36, 90, 151;
+    --color-white-rgb: 255 255 255;
+    --color-black-rgb: 0 0 0;
 
-    --color-accent-hex-50: #e2f5fe;
-    --color-accent-hex-100: #b7e6fc;
-    --color-accent-hex-200: #89d6fa;
-    --color-accent-hex-300: #5fc5f6;
-    --color-accent-hex-400: #46b9f4;
-    --color-accent-hex-500: #39acf2;
-    --color-accent-hex-600: #359ee2;
-    --color-accent-hex-700: #308bce;
-    --color-accent-hex-800: #2c7aba;
-    /* main */
-    --color-accent-hex-900: #245a97;
+    /* 50: #f2f7fd; */
+      --color-primary-rgb-50: 242 247 253;
+      /* 100: #e5eef9; */
+      --color-primary-rgb-100: 229 238 249;
+      /* 200: #c4dcf3; */
+      --color-primary-rgb-200: 196 220 243;
+      /* 300: #90c0e9; */
+      --color-primary-rgb-300: 144 192 233;
+      /* 400: #559fdb; */
+      --color-primary-rgb-400: 85 159 219;
+      /* Primary main 500: #2c7aba;*/
+      --color-primary-rgb-500: 44 122 186;
+      /* 600: #2067a9; */
+      --color-primary-rgb-600: 32 103 169;
+      /* 700: #1b5389; */
+      --color-primary-rgb-700: 27 83 137;
+      /* 800: #1a4772; */
+      --color-primary-rgb-800: 26 71 114;
+      /* 900: #1b3c5f; */
+      --color-primary-rgb-900: 27 60 95;
+      /* 950: #12273f; */
+      --color-primary-rgb-950: 18 39 63;
+      /* 1000: #09121F; */
+      --color-primary-rgb-1000: 9 18 31;
 
-    /* Primary (gray) */
-    --color-primary-dark-rgb-50: 249, 250, 251;
-    --color-primary-dark-rgb-100: 243, 244, 246;
-    --color-primary-dark-rgb-200: 229, 231, 235;
-    --color-primary-dark-rgb-300: 209, 213, 219;
-    --color-primary-dark-rgb-400: 156, 163, 175;
-    --color-primary-dark-rgb-500: 107, 114, 128;
-    --color-primary-dark-rgb-600: 75, 85, 99;
-    --color-primary-dark-rgb-700: 55, 65, 81;
-    --color-primary-dark-rgb-800: 31, 41, 55;
-    --color-primary-dark-rgb-900: 17, 24, 39;
-    --color-primary-dark-rgb-950: 3, 7, 18;
-    --color-primary-dark-rgb-75: 246 247 248;
-    --color-primary-dark-rgb-150: 236 237 240;
-    --color-primary-dark-rgb-925: 10 16 29;
+      /* Info #2c7aba; */
+      --color-info-rgb: var(--color-primary-rgb-500);
+      /* Info Light #e5eef9 */
+      --color-info-light-rgb: var(--color-primary-rgb-200);
+      /* Info Dark #1a4772 */
+      --color-info-dark-rgb: var(--color-primary-rgb-800);
+
+      /* Error #dc2626; */
+      --color-error-rgb: 220 38 38;
+      /* Error Light #fecaca */
+      --color-error-light-rgb: 254 202 202;
+      /* Error Dark #7f1d1d */
+      --color-error-dark-rgb: 127 29 29;
     
-    --color-primary-dark-hex-50: #f9fafb;
-    --color-primary-dark-hex-100: #f3f4f6;
-    --color-primary-dark-hex-200: #e5e7eb;
-    --color-primary-dark-hex-300: #d1d5db;
-    --color-primary-dark-hex-400: #9ca3af;
-    --color-primary-dark-hex-500: #6b7280;
-    --color-primary-dark-hex-600: #4b5563;
-    --color-primary-dark-hex-700: #374151;
-    --color-primary-dark-hex-800: #1f2937;
-    --color-primary-dark-hex-900: #111827;
-    --color-primary-dark-hex-950: #030712;
+      /* Success #22c55e */
+      --color-success-rgb: 34 197 94;
+      /* Success Light #dcfce7 */
+      --color-success-light-rgb: 220 252 231;
+      /* Success Dark #166534 */
+      --color-success-dark-rgb: 22 101 52;
+    
+      /* Warning #f97316 */
+      --color-warning-rgb: 249 115 22;
+      /* Warning Light #fed7aa */
+      --color-warning-light-rgb: 254 215 170;
+      /* Warning Dark: #ea580c */
+      --color-warning-dark-rgb: 234 88 12;
 
-    --color-primary-dark-hex-75: #f6f7f8;
-    --color-primary-dark-hex-150: #ecedf0;
-    --color-primary-dark-hex-925: #0d162b;
+      /* Neutral Colors Light (tailwind slate) */
+      /* Neutral 50: #f8fafc */
+      --color-neutral-rgb-50: 248 250 252;
+      /* Neutral 75: #f5f8fb */
+      --color-neutral-rgb-75: 245 248 251;
+      /* Neutral 100: #f1f5f9 */
+      --color-neutral-rgb-100: 241 245 249;
+      /* Neutral 150: #dee5ed */
+      --color-neutral-rgb-150: 222 229 237;
+      /* Neutral 200: #e2e8f0 */
+      --color-neutral-rgb-200: 226 232 240;
+      /* Neutral 300: #cbd5e1 */
+      --color-neutral-rgb-300: 203 213 225;
+      /* Neutral 400: #94a3b8 */
+      --color-neutral-rgb-400: 148 163 184;
+      /* Neutral 500: #64748b */
+      --color-neutral-rgb-500: 100 116 139;
+      /* Neutral 600: #475569 */
+      --color-neutral-rgb-600: 71 85 105;
+      /* Neutral 700: #334155 */
+      --color-neutral-rgb-700: 51 65 85;
+      /* Neutral 800: #1e293b */
+      --color-neutral-rgb-800: 30 41 59;
+      /* Neutral 900: #0f172a */
+      --color-neutral-rgb-900: 15 23 42;
+      /* Neutral 925: #080f21 */
+      --color-neutral-rgb-925: 8 15 33;
+      /* Neutral 950: #020617 */
+      --color-neutral-rgb-950: 2 6 23;
+      /* Neutral 1000: #00000b */
+      --color-neutral-rgb-1000: 0 0 11;
 
-    /* Reds */
-    --color-red-rgb-50: 254, 242, 242;
-    --color-red-rgb-100: 254, 226, 226;
-    --color-red-rgb-200: 254, 202, 202;
-    --color-red-rgb-300: 252, 165 165;
-    --color-red-rgb-400: 248, 113, 113;
-    --color-red-rgb-500: 239, 68, 68;
-    --color-red-rgb-600: 220, 38, 38;
-    --color-red-rgb-700: 185, 28, 28;
-    --color-red-rgb-800: 153, 27, 27;
-    --color-red-rgb-900: 124, 45, 18;
-    --color-red-rgb-950: 69, 10, 10;
-    --color-red-hex-50: #fef2f2;
-    --color-red-hex-100: #fee2e2;
-    --color-red-hex-200: #fecaca;
-    --color-red-hex-300: #fca5a5;
-    --color-red-hex-400: #f87171;
-    --color-red-hex-500: #ef4444;
-    --color-red-hex-600: #dc2626;
-    --color-red-hex-700: #b91c1c;
-    --color-red-hex-800: #991b1b;
-    --color-red-hex-900: #7c2d12;
-    --color-red-hex-950: #450a0a;
+      /* Selected #a68b02 */
+      --color-selected-rgb: var(--color-warning-rgb);
 
-    /* Greens */
-    --color-green-rgb-50: 240, 253, 244;
-    --color-green-rgb-100: 220, 252, 231;
-    --color-green-rgb-200: 187, 247, 208;
-    --color-green-rgb-300: 134, 239, 172;
-    --color-green-rgb-400: 74, 222, 128;
-    --color-green-rgb-500: 34, 197, 94;
-    --color-green-rgb-600: 22, 163, 74;
-    --color-green-rgb-700: 21, 128, 61;
-    --color-green-rgb-800: 22, 101, 52;
-    --color-green-rgb-900: 20, 83, 45;
-    --color-green-rgb-950: 5, 46, 22;
-    --color-green-hex-50: #f0fdf4;
-    --color-green-hex-100: #dcfce7;
-    --color-green-hex-200: #bbf7d0;
-    --color-green-hex-300: #86efac;
-    --color-green-hex-400: #4ade80;
-    --color-green-hex-500: #22c55e;
-    --color-green-hex-600: #16a34a;
-    --color-green-hex-700: #15803d;
-    --color-green-hex-800: #166534;
-    --color-green-hex-900: #14532d;
-    --color-green-hex-950: #052e16;
+    --node-text-color: var(--color-neutral-rgb-800);
+    --edge-text-color: var(--color-neutral-rgb-800);
+    --edge-target-arrow-color: var(--color-neutral-rgb-400);
+    --edge-color: var(--color-neutral-rgb-400);
+    
+    --node-handle-color: var(--edge-color);
+    --selected-node-color: var(--color-selected-rgb);
+    --selected-edge-color: var(--color-selected-rgb);
 
-    /* Oranges */
-    --color-orange-rgb-50: 255, 247, 237;
-    --color-orange-rgb-100: 255, 27, 213;
-    --color-orange-rgb-200: 254, 215, 170;
-    --color-orange-rgb-300: 253, 186, 116;
-    --color-orange-rgb-400: 251, 146, 60;
-    --color-orange-rgb-500: 249, 115, 22;
-    --color-orange-rgb-600: 234, 88, 12;
-    --color-orange-rgb-700: 194, 65, 12;
-    --color-orange-rgb-800: 154, 52, 18;
-    --color-orange-rgb-900: 124, 45, 18;
-    --color-orange-rgb-950: 67, 20, 7;
-    --color-orange-hex-50: #fff7ed;
-    --color-orange-hex-100: #ffedd5;
-    --color-orange-hex-200: #fed7aa;
-    --color-orange-hex-300: #fdba74;
-    --color-orange-hex-400: #fb923c;
-    --color-orange-hex-500: #f97316;
-    --color-orange-hex-600: #ea580c;
-    --color-orange-hex-700: #c2410c;
-    --color-orange-hex-800: #9a3412;
-    --color-orange-hex-900: #7c2d12;
-    --color-orange-hex-950: #431407;
-
-    --edge-dark-color:var(--color-primary-dark-hex-400);
-    --edge-light-color: var(--color-primary-dark-hex-600);
-    --arrow-dark-color: var(--color-primary-dark-hex-400);
-    --arrow-light-color: var(--color-primary-dark-hex-600);
-    --selected-node-border-color:var(--color-orange-hex-300);
-
-    --context-menu-node-background: rgba(var(--color-primary-dark-rgb-950), 0.85);
-    --context-menu-node-active-background: rgba(var(--color-accent-rgb-900), 0.95);
-    --context-menu-edge-background: rgba(var(--color-primary-dark-rgb-950), 0.85);
-    --context-menu-edge-active-background: rgba(var(--color-accent-rgb-900), 0.95);
-    --context-menu-core-background: rgba(var(--color-accent-rgb-800), 0.85);
-    --context-menu-core-active-background: rgba(var(--color-primary-dark-rgb-950), 0.95);
-
-    /* 44 122 186; */
-    --color-scrollbar-track-light: var(--color-primary-dark-hex-300);
-    --color-scrollbar-track-dark: var(--color-primary-dark-hex-800);
+    --context-menu-node-background: var(--color-neutral-rgb-950) 0.85;
+    --context-menu-node-active-background: var(--color-primary-rgb-900) 0.95;
+    --context-menu-edge-background: var(--color-neutral-rgb-950) 0.85;
+    --context-menu-edge-active-background: var(--color-primary-rgb-900) 0.95;
+    --context-menu-core-background: var(--color-primary-rgb-800) 0.85;
+    --context-menu-core-active-background: var(--color-neutral-rgb-950) 0.95;
 
     color-scheme: light dark;
     font-synthesis: none;
@@ -159,16 +120,54 @@
 }
 
 [data-theme='dark'] {
-  background-color: var(--color-primary-dark-hex-800);
+  /* Selected #a68b02 */
+  --color-selected-rgb: 255 255 0;
+
+  /* Neutral Colors Dark (tailwind gray) */
+  /* Neutral 50: #f9fafb */
+  --color-neutral-rgb-50: 249 250 251;
+  /* Neutral 75: #f6f7f9 */
+  --color-neutral-rgb-75: 246 247 249;
+  /* Neutral 100: #f3f4f6 */
+  --color-neutral-rgb-100: 243 244 246;
+  /* Neutral 150: #ecedf0 */
+  --color-neutral-rgb-150: 236 237 240;
+  /* Neutral 200: #e5e7eb */
+  --color-neutral-rgb-200: 229 231 235;
+  /* Neutral 300: #d1d5db */
+  --color-neutral-rgb-300: 209 213 219;
+  /* Neutral 400: #9ca3af */
+  --color-neutral-rgb-400: 156 163 175;
+  /* Neutral 500: #6b7280 */
+  --color-neutral-rgb-500: 107 114 128;
+  /* Neutral 600: #4b5563 */
+  --color-neutral-rgb-600: 75 85 99;
+  /* Neutral 700: #374151 */
+  --color-neutral-rgb-700: 55 65 81;
+  /* Neutral 800: #1f2937 */
+  --color-neutral-rgb-800: 31 41 55;
+  /* Neutral 900: #111827 */
+  --color-neutral-rgb-900: 17 24 39;
+  /* Neutral 925: #0A101C */
+  --color-neutral-rgb-925: 10 16 28;
+  /* Neutral 950: #030712 */
+  --color-neutral-rgb-950: 3 7 18;
+  /* Neutral 1000: #000008 */
+  --color-neutral-rgb-1000: 0 0 8;
+
+  --node-text-color: var(--color-neutral-rgb-200);
+  --edge-text-color: var(--color-neutral-rgb-200);
+  --edge-target-arrow-color: var(--color-neutral-rgb-400);
+  --edge-color: var(--color-neutral-rgb-400);
+  
+  --node-handle-color: var(--edge-color);
+  --selected-node-color: var(--color-selected-rgb);
+  --selected-edge-color: var(--color-selected-rgb);
+
+  --context-menu-edge-background: var(--color-selected-rgb) 0.85;
+  --context-menu-edge-active-background: var(--color-neutral-rgb-950) 0.95;
 }
 
-:root {
-  color-scheme: light dark;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
 
 html,
 body,
@@ -180,11 +179,50 @@ body,
   box-sizing: border-box;
   font-family: 'Source Sans Pro';
   font-weight: 500;
+  /* color: rgb(var(--color-neutral-rgb-900)); */
 }
 
 #root > div {
   height: 100%;
 }
+
+
+@layer components {
+  [data-theme='dark'] {
+    background-color: rgb(var(--color-neutral-rgb-800));
+    color: rgb(var(--color-neutral-rgb-100));
+
+    /* Scroll Track */
+    ::-webkit-scrollbar-track {
+        background: rgb(var(--color-neutral-rgb-1000));
+      }
+  }
+
+  /* Scroll Track */
+  ::-webkit-scrollbar-track {
+    background: rgb(var(--color-neutral-rgb-300));
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--color-primary-rgb-700));
+  }
+
+
+.btn-primary {
+  background-color: rgb(var(--color-primary-rgb-500));
+  color: rgb(var(--color-neutral-rgb-100));
+}
+
+.btn-primary.inactive {
+  background-color: rgb(var(--color-primary-rgb-800));
+  color: rgb(var(--color-neutral-rgb-100));
+}
+
+.btn-primary:hover,
+.btn-primary.inactive:hover {
+  background-color: rgb(var(--color-primary-rgb-900));
+  color: white;
+}
+
 
 .logo-btn{
   height: 35px !important;
@@ -201,47 +239,19 @@ body,
 .scrollbar {
   overflow-y: auto;
   overflow-x: hidden;
-  scrollbar-color: rgb(var(--color-accent-rgb-600) / 1) rgba(0,0,0,0);
+  scrollbar-color: rgb(var(--color-primary-rgb-600) / 1) rgba(0,0,0,0);
   scrollbar-width: thin;
 }
 
 .dark .scrollbar {
-  scrollbar-color: rgb(var(--color-accent-rgb-600) / 1) rgba(0,0,0,0);
+  scrollbar-color: rgb(var(--color-primary-rgb-600) / 1) rgba(0,0,0,0);
 }
-
-/* These hover effects apply when the div containing the scrollbar is hovered, not when the scrollbar
-itself is hovered */
-/* .scrollbar:hover {
-  scrollbar-color: rgb(var(--color-accent-rgb-900) / 1) rgba(0,0,0,0);
-}
-
-.dark .scrollbar:hover {
-  scrollbar-color: rgb(var(--color-accent-rgb-900) / 1) rgba(0,0,0,0);
-} */
 
 /* Uncertain why scrollbar customization isn't working??!!... */
 .scrollbar ::-webkit-scrollbar {
   width: 10px;
 }
-
-/* Track */
-.scrollbar ::-webkit-scrollbar-track {
-  background: rgb(var(--color-accent-800) / 1);
-}
-
-.scrollbar .dark ::-webkit-scrollbar-track {
-  background: rgb(var(--color-scrollbar-track-dark) / 1);
-}
   
-/* Handle */
-.scrollbar ::-webkit-scrollbar-thumb {
-  background: rgb(var(--color-accent-800) / 1); 
-}
-  
-/* Handle on hover */
-.scrollbar ::-webkit-scrollbar-thumb:hover {
-  background: rgb(var(--color-accent-900) / 1);
-}
 
 .page-component {
   max-height: calc(100vh - 48px);
@@ -255,10 +265,6 @@ ul .stencil-list::before {
   background-color: transparent;
 }
 
-code {
-  background: rgb(var(--color-primary-dark-200) / 1); 
-  padding: 5px;
-}
 
 .card-responsive-value {
   font-size: clamp(1rem, 3.75rem, 3.75rem); /* Adjust the 3.75rem middle value as needed. clamp(min, preferred, max) */
@@ -369,14 +375,14 @@ svg {
 /* *********************************************************************** */
 .ag-theme-material.ag-theme-material.dark {
   --ag-foreground-color: white;
-  --ag-background-color: var(--color-primary-dark-hex-700);
-  --ag-odd-row-background-color: rgb(var(--color-primary-dark-rgb-600));
+  --ag-background-color: rgb(var(--color-neutral-rgb-700));
+  --ag-odd-row-background-color: rgb(var(--color-neutral-rgb-600));
   --ag-header-foreground-color: white;
-  --ag-header-background-color: var(--color-primary-dark-hex-800);
-  --ag-header-column-resize-handle-color: var(--color-primary-dark-hex-950);
-  --ag-header-cell-hover-background-color: var(--color-primary-dark-hex-700);
+  --ag-header-background-color: rgb(var(--color-neutral-rgb-800));
+  --ag-header-column-resize-handle-color: rgb(var(--color-neutral-rgb-950));
+  --ag-header-cell-hover-background-color: rgb(var(--color-neutral-rgb-700));
   --ag-header-cell-hover-foreground-color: white;
-  --ag-selected-row-background-color:rgb(var(--color-primary-dark-rgb-800));
+  --ag-selected-row-background-color:rgb(var(--color-neutral-rgb-800));
   --ag-borders: none;
   --ag-font-size: 14px;
   --ag-font-family: 'Roboto', sans-serif;
@@ -391,17 +397,17 @@ svg {
 .ag-theme-material.ag-theme-material.dark .ag-row-hover::before,
 .ag-theme-material.ag-theme-material.dark .ag-row-hover {
     color: white;
-    background-color: rgb(var(--color-primary-dark-rgb-800));
+    background-color: rgb(var(--color-neutral-rgb-800));
 }
 
 .ag-theme-material.ag-theme-material.dark .ag-row-focus.ag-row-hover::before {
     color: white;
-    background-color: rgb(var(--color-primary-dark-rgb-900));
+    background-color: rgb(var(--color-neutral-rgb-900));
 }
 
 .ag-theme-material.ag-theme-material.dark .ag-row-focus {
   color: white;
-  background-color: rgb(var(--color-primary-dark-rgb-800));
+  background-color: rgb(var(--color-neutral-rgb-800));
 }
 
 .ag-theme-material.ag-theme-material.dark .ag-row-no-focus {
@@ -425,13 +431,13 @@ svg {
 .ag-theme-material.ag-theme-material {
   --ag-foreground-color: black;
   --ag-background-color: white;
-  --ag-odd-row-background-color: rgb(var(--color-primary-dark-rgb-100));
+  --ag-odd-row-background-color: rgb(var(--color-neutral-rgb-100));
   --ag-header-foreground-color: black;
-  --ag-header-background-color: var(--color-primary-dark-hex-200);
-  --ag-header-column-resize-handle-color: var(--color-primary-dark-hex-50);
-  --ag-header-cell-hover-background-color: var(--color-primary-dark-hex-300);
+  --ag-header-background-color: rgb(var(--color-neutral-rgb-200));
+  --ag-header-column-resize-handle-color: rgb(var(--color-neutral-rgb-50));
+  --ag-header-cell-hover-background-color: rgb(var(--color-neutral-rgb-300));
   --ag-header-cell-hover-foreground-color: black;
-  --ag-selected-row-background-color: rgb(var(--color-primary-dark-rgb-200));
+  --ag-selected-row-background-color: rgb(var(--color-neutral-rgb-200));
   --ag-borders: none;
   --ag-font-size: 14px;
   --ag-font-family: 'Roboto', sans-serif;
@@ -446,17 +452,17 @@ svg {
 .ag-theme-material.ag-theme-material .ag-row-hover::before,
 .ag-theme-material.ag-theme-material .ag-row-hover {
   color: black;
-  background-color: rgb(var(--color-primary-dark-rgb-200));
+  background-color: rgb(var(--color-neutral-rgb-200));
 }
 
 .ag-theme-material.ag-theme-material .ag-row-focus.ag-row-hover::before {
   color: black;
-  background-color: rgb(var(--color-primary-dark-rgb-100));
+  background-color: rgb(var(--color-neutral-rgb-100));
 }
 
 .ag-theme-material.ag-theme-material .ag-row-focus {
   color: black;
-  background-color: rgb(var(--color-primary-dark-rgb-200));
+  background-color: rgb(var(--color-neutral-rgb-200));
 }
 
 .ag-theme-material.ag-theme-material .ag-row,
@@ -536,11 +542,11 @@ body,
 
 
 .dark .flatpickr-calendar {
-  background-color: var(--color-primary-dark-hex-200);
+  background-color: rgb(var(--color-neutral-rgb-200));
 
 }
 .light .flatpickr-calendar {
-  background-color: var(--color-primary-dark-hex-800);
+  background-color: rgb(var(--color-neutral-rgb-800));
 }
 
 .dark .flatpickr-day,
@@ -550,8 +556,8 @@ body,
 .dark span.flatpickr-weekday,
 .dark .flatpickr-time input,
 .dark .flatpickr-time .numInputWrapper span.arrowUp:after {
-  color: var(--color-primary-dark-hex-800);
-  fill: var(--color-primary-dark-hex-800);
+  color: rgb(var(--color-neutral-rgb-800));
+  fill: rgb(var(--color-neutral-rgb-800));
 }
 
 .light .flatpickr-day,
@@ -561,16 +567,22 @@ body,
 .light span.flatpickr-weekday,
 .light .flatpickr-time input,
 .light .flatpickr-time .numInputWrapper span.arrowUp:after {
-  color: var(--color-primary-dark-hex-200);
-  fill: var(--color-primary-dark-hex-200);
+  color: rgb(var(--color-neutral-rgb-200));
+  fill: rgb(var(--color-neutral-rgb-200));
 }
 
 
 .light .flatpickr-time input:hover,
 .light .flatpickr-time input:focus {
-background-color: var(--color-primary-dark-hex-600);
+background-color: rgb(var(--color-neutral-rgb-600));
 }
 
 .light .numInputWrapper span.arrowUp:after {
   /* border-bottom: green; */
+}
+
+
+.cursor-not-allowed123 {
+  cursor: not-allowed!important;
+}
 }

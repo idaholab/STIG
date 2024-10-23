@@ -75,12 +75,12 @@ const Drawer = () => {
   }, []);
 
   return (
-    <aside className={`flex bg-gray-300 dark:bg-gray-950 text-base-content transition-all max-w-[281px]`} style={{ height: accordionContainerHeight }}>
+    <aside className={`flex bg-neutralc-300 dark:bg-neutralc-950 text-base-content transition-all max-w-[281px]`} style={{ height: accordionContainerHeight }}>
       <div className="flex flex-col justify-between  w-full h-full overflow-hidden relative">
         <div className={`mt-4 flex items-center ${isPanelOpen ? 'justify-end' : 'justify-center'}`}>
           <button
             onClick={() => toggleDrawer(!isPanelOpen)}
-            className="flex items-center justify-center w-12 h-12 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+            className="flex items-center justify-center w-12 h-12 rounded-lg hover:bg-neutralc-200 dark:hover:bg-neutralc-700 transition"
             aria-label={isPanelOpen ? "Collapse drawer" : "Expand drawer"}
           >
             <span className="material-icons text-xl">
@@ -107,7 +107,7 @@ const Drawer = () => {
               badgeText={stencilFilterText?.length > 0 ? 'Stencils are Filtered!' : undefined}
             />
           ) : (
-            <button onClick={handleFilterIconClick} className="flex items-center justify-center w-12 h-12 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition" aria-label="Expand drawer">
+            <button onClick={handleFilterIconClick} className="flex items-center justify-center w-12 h-12 rounded-lg hover:bg-neutralc-200 dark:hover:bg-neutralc-700 transition" aria-label="Expand drawer">
               <span className="material-icons text-xl">filter_alt</span>
             </button>
           )}
@@ -136,7 +136,7 @@ const Drawer = () => {
         </div>
 
         {isPanelOpen && (
-          <div className="flex justify-center w-full py-2 absolute z-50 bottom-0 dark:bg-gray-950 bg-gray-300">
+          <div className="flex justify-center w-full py-2 absolute z-50 bottom-0 dark:bg-neutralc-950 bg-neutralc-300">
             <span className="copyright-box">©{new Date().getFullYear()} Idaho National Laboratory</span>
           </div>
         )}

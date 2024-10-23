@@ -6,7 +6,7 @@ const Edit: React.FC = () => {
     <Dropdown
       title="Edit"
       includeDropdownArrow
-      additionalOptionClasses={'hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-black dark:hover-text-white'}
+      additionalOptionClasses={'hover:text-black hover:text-white dark:hover:bg-primary hover:bg-primary'}
     >
       {/* <li className='hover:bg-primary hover:text-white'><a>Undo</a></li>
       <li className='hover:bg-primary hover:text-white'><a>Redo</a></li>

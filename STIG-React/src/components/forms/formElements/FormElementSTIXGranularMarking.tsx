@@ -21,12 +21,12 @@ const FormElementSTIXGranularMarking: React.FC<Props> = ({
   const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
 
   const granularMarkingDescription = propertyDescriptions.find((group) => group.name === property.listType);
-  let granularMarkingPropDescriptions:{[propName: string]: string} = {};
-  if(granularMarkingDescription) {
+  let granularMarkingPropDescriptions: { [propName: string]: string } = {};
+  if (granularMarkingDescription) {
     granularMarkingPropDescriptions = getSTIXPropDescriptions(granularMarkingDescription);
   }
 
-  return ( selectedSTIXObject &&
+  return (selectedSTIXObject &&
     <div className='w-full'>
       <FormElementTextInput
         label="lang"
@@ -45,7 +45,7 @@ const FormElementSTIXGranularMarking: React.FC<Props> = ({
         }}
         includeInfo={granularMarkingPropDescriptions.lang ? true : false}
         infoText={granularMarkingPropDescriptions.lang}
-        additionalInputClasses="select-sm dark:bg-gray-900"
+        additionalInputClasses="select-sm dark:bg-neutralc-900"
         additionalLabelClasses="ml-6 mr-5 w-20"
       />
       <FormElementTextInput
@@ -66,7 +66,7 @@ const FormElementSTIXGranularMarking: React.FC<Props> = ({
         className="mb-2"
         includeInfo={granularMarkingPropDescriptions.marking_ref ? true : false}
         infoText={granularMarkingPropDescriptions.marking_ref}
-        additionalInputClasses="select-sm dark:bg-gray-900"
+        additionalInputClasses="select-sm dark:bg-neutralc-900"
         additionalLabelClasses="ml-6 mr-5 w-20"
       />
       <StixPropsContextProvider>

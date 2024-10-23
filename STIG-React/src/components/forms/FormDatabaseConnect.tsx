@@ -73,7 +73,7 @@ export default function FormDatabaseConnect({ selectedProfile, setSelectedProfil
         includeInfo={true}
         infoText='Type of database. Only currently supported type is Neo4j'
         additionalInfoClasses='tooltip-left'
-        additionalClasses={'w-full dark:bg-gray-900'}
+        additionalClasses={'w-full dark:bg-neutralc-900'}
       />
       <FormElementTextInput
         label="Host *"
@@ -151,7 +151,7 @@ export default function FormDatabaseConnect({ selectedProfile, setSelectedProfil
           />
           <ButtonBasic
             label="Save"
-            color="btn-primary"
+            type="btn-primary"
             additionalClasses={"btn-sm mt-2" +
               (inDBDeleteProcess || (selectedProfile && selectedProfile.Id === connectedDBProfile?.Id) ||
                 isFormSubmitting ?
@@ -197,7 +197,7 @@ export default function FormDatabaseConnect({ selectedProfile, setSelectedProfil
         </span>
       </div>
 
-      <p className="flex justify-end dark:text-red-300 text-red-700 mt-2 h-[20px]">
+      <p className="flex justify-end dark:text-error-light text-error-dark mt-2 h-[20px]">
         {!isFormComplete ? 'Please complete all the required information.' : undefined}
       </p>
 

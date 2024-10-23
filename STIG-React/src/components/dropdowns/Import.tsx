@@ -8,7 +8,7 @@ const Import: React.FC = () => {
     <Dropdown
       title="Import"
       includeDropdownArrow
-      // hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-black dark:hover-text-white
+      // hover:bg-neutralc-200 dark:hover:bg-neutralc-700 hover:text-black dark:hover-text-white
       additionalOptionClasses={'w-[120px]  '}
       additionalClasses={''}
     >
@@ -19,7 +19,7 @@ const Import: React.FC = () => {
           buttonColor='btn-ghost'
           showFormButtons={false}
           buttonLabel="JSON Bundle"
-          additionalButtonClasses={"btn-sm justify-start hover:text-black dark:hover:text-white dark:hover:bg-gray-600 hover:bg-gray-200 w-full rounded-[4px]"}
+          additionalButtonClasses={"btn-sm justify-start w-full rounded-[4px] hover:text-black hover:text-white dark:hover:bg-primary hover:bg-primary"}
         >
           <ImportJSONBundleModal />
         </DialogBasic>

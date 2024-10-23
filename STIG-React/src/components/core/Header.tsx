@@ -29,7 +29,7 @@ const Header: React.FC<Props> = () => {
         <ButtonIcon
           title="Show/Hide Graph Properties"
           buttonIcon="more_vert"
-          color="btn-primary"
+          type="btn-primary"
           onClick={toggleDrawer}
           disabled={!selectedSTIXObject}
         />

@@ -3,6 +3,7 @@ import ButtonBasic from '../../elements/ButtonBasic.tsx';
 import InfoButton from '@/components/elements/InfoButton.tsx';
 import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty.ts';
 import STIXPropertyLabel from '@/components/elements/STIXPropertyLabel.tsx';
+import AlertComponent from '@/components/elements/AlertComponent.tsx';
 
 type Props = {
   placeholder?: string;
@@ -93,10 +94,10 @@ const FormElementFileInput: React.FC<Props> = ({
           className={`
           input
           input-bordered
-          input-secondary
+          input-neutralc
           w-full
-          bg-gray-100
-          dark:bg-gray-900
+          bg-neutralc-100
+          dark:bg-neutralc-900
           ${additionalInputClasses}
           mr-1
         `}
@@ -111,7 +112,7 @@ const FormElementFileInput: React.FC<Props> = ({
         />
         <ButtonBasic
           label={buttonLabel}
-          color={'btn-secondary'}
+          type={'btn-neutralc'}
           additionalClasses={`${additionalBtnClasses}`}
           onClick={handleButtonClick}
         />
@@ -124,9 +125,8 @@ const FormElementFileInput: React.FC<Props> = ({
           infoIcon={infoIcon}
         />
       </div>
-      {
-        showInfo && includeInfo && infoText && infoText?.length > 0 &&
-        <span className="text-xs py-1 dark:text-orange-300 text-orange-800">{infoText}</span>
+      {showInfo && includeInfo && infoText && infoText?.length > 0 &&
+        <AlertComponent alertText={infoText || ''} alertType={'info'} userClosable={false} className={'!mx-0 !my-1 !py-1 !px-2 text-xs'}></AlertComponent>
       }
     </div>
   );

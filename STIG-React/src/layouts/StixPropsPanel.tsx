@@ -90,7 +90,7 @@ function PropsPanelHeader({ selectedProperties, setSelectedProperties, setIsShow
           }
         </h1>
         <button
-          className="btn border-none text-gray-900 dark:text-gray-100 shadow-none"
+          className="btn border-none text-neutralc-900 dark:text-neutralc-100 shadow-none"
           onClick={toggleDrawer}
         >
           <span className="material-icons">close</span>

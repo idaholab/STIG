@@ -2,44 +2,26 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 interface ButtonProps {
-  /**
-   * Button contents
-   */
   label: string | React.JSX.Element;
-  /**
-   * What is the background color? Use classes.
-   */
-  color?: 'btn-primary' | 'btn-secondary' | 'btn-neutral' | 'btn-ghost';
-  /**
-   * Optional link
-   */
+  type?: 'btn-primary' | 'btn-neutralc' | 'btn-ghost';
   link?: string;
-  /**
-   * Optional click handler
-   */
   onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-  /**
-   * Optional additional classes
-   */
   additionalClasses?: string;
-  /**
-   * Disable the button
-   */
   disabled?: boolean;
 }
 
-const ButtonBasic: React.FC<ButtonProps> = ({ label, color, link, onClick, additionalClasses, disabled }) => {
-  // Define base classes
-  const baseClasses = `btn ${color} uppercase hover:opacity-100`;
+const ButtonBasic: React.FC<ButtonProps> = ({ label, type, link, onClick, additionalClasses, disabled }) => {
+  // const baseClasses = `btn ${type} uppercase hover:opacity-100`;
+  // const lightModeClasses = type === 'btn-neutralc' ? 'border border-solid border-primary text-primary hover:text-primary' : '';
+  // const darkModeClasses = type === 'btn-neutralc' ? 'dark:border dark:border-solid dark:!border-neutralc-400 dark:hover:!border-white dark:text-neutralc-300 dark:hover:text-white dark:hover:bg-neutralc-950' : '';
+  // const disabledClass = (disabled === true) ? 'cursor-not-allowed dark:!text-neutralc-400 dark:!bg-neutralc-500 !text-neutralc-400 !bg-neutralc-300 ' : '';
+  // const btnClass = `${baseClasses} ${lightModeClasses} ${darkModeClasses} ${additionalClasses} ${disabledClass}`;
 
-  // Define conditional light mode classes
-  const lightModeClasses = color === 'btn-secondary' ? 'border border-solid !border-primary text-primary hover:text-primary' : '';
-
-  // Define conditional dark mode classes
-  const darkModeClasses = color === 'btn-secondary' ? 'dark:border dark:border-solid dark:!border-gray-400 dark:text-gray-300 dark:hover:text-white' : '';
-
-  // Combine base classes and conditional classes
-  const btnClass = `${baseClasses} ${lightModeClasses} ${darkModeClasses} ${additionalClasses}`;
+  const baseClasses = `btn ${type} uppercase hover:opacity-100`;
+  const lightModeClasses = type === 'btn-neutralc' ? 'border border-solid border-primary text-primary hover:text-primary' : '';
+  const darkModeClasses = type === 'btn-neutralc' ? 'dark:border dark:border-solid dark:!border-neutralc-400 dark:hover:!border-white dark:text-neutralc-300 dark:hover:text-white dark:hover:bg-neutralc-950' : '';
+  const disabledClass = disabled ? 'cursor-not-allowed !text-neutralc-400 !bg-neutralc-300 dark:!text-neutralc-400 dark:!bg-neutralc-500' : '';
+  const btnClass = `${baseClasses} ${lightModeClasses} ${darkModeClasses} ${additionalClasses} ${disabledClass}`;
 
   return (
     <>

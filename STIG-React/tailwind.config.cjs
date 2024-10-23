@@ -1,6 +1,7 @@
 const colors = require('tailwindcss/colors');
 
 module.exports = {
+  purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
   darkMode: "class",
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
@@ -11,59 +12,61 @@ module.exports = {
         },
       },
       colors: {
-        accent: {
-          50: 'var(--color-accent-hex-50)',
-          100: 'var(--color-accent-hex-100)',
-          200: 'var(--color-accent-hex-200)',
-          300: 'var(--color-accent-hex-300)',
-          400: 'var(--color-accent-hex-400)',
-          500: 'var(--color-accent-hex-500)',
-          600: 'var(--color-accent-hex-600)',
-          700: 'var(--color-accent-hex-700)',
-          800: 'var(--color-accent-hex-800)',
-          900: 'var(--color-accent-hex-900)',
-          // 1000: '#966124'
+        primary: {
+          50: 'rgb(var(--color-primary-rgb-50))',
+          100: 'rgb(var(--color-primary-rgb-100))',
+          200: 'rgb(var(--color-primary-rgb-200))',
+          300: 'rgb(var(--color-primary-rgb-300))',
+          400: 'rgb(var(--color-primary-rgb-400))',
+          500: 'rgb(var(--color-primary-rgb-500))',
+          600: 'rgb(var(--color-primary-rgb-600))',
+          700: 'rgb(var(--color-primary-rgb-700))',
+          800: 'rgb(var(--color-primary-rgb-800))',
+          900: 'rgb(var(--color-primary-rgb-900))',
+          1000: 'rgb(var(--color-primary-rgb-1000))',
+          DEFAULT: 'rgb(var(--color-primary-rgb-500))',
         },
-        red: {
-          50: 'var(--color-red-hex-50)',
-          100: 'var(--color-red-hex-100)',
-          200: 'var(--color-red-hex-200)',
-          300: 'var(--color-red-hex-300)',
-          400: 'var(--color-red-hex-400)',
-          500: 'var(--color-red-hex-500)',
-          600: 'var(--color-red-hex-600)',
-          700: 'var(--color-red-hex-700)',
-          800: 'var(--color-red-hex-800)',
-          900: 'var(--color-red-hex-900)',
+        neutralc: {
+          50: 'rgb(var(--color-neutral-rgb-50))',
+          75: 'rgb(var(--color-neutral-rgb-75))',
+          100: 'rgb(var(--color-neutral-rgb-100))',
+          150: 'rgb(var(--color-neutral-rgb-150))',
+          200: 'rgb(var(--color-neutral-rgb-200))',
+          300: 'rgb(var(--color-neutral-rgb-300))',
+          400: 'rgb(var(--color-neutral-rgb-400))',
+          500: 'rgb(var(--color-neutral-rgb-500))',
+          600: 'rgb(var(--color-neutral-rgb-600))',
+          700: 'rgb(var(--color-neutral-rgb-700))',
+          800: 'rgb(var(--color-neutral-rgb-800))',
+          900: 'rgb(var(--color-neutral-rgb-900))',
+          925: 'rgb(var(--color-neutral-rgb-925))',
+          950: 'rgb(var(--color-neutral-rgb-950))',
+          1000: 'rgb(var(--color-neutral-rgb-1000))',
+          DEFAULT: 'rgb(var(--color-neutral-rgb-500))',
         },
-        "gray-75": "#f6f7f8",
-        "gray-150": "#ecedf0",
-        "gray-925": "#0d162b",
-        // gray: {
-        //   75: 'var(--color-primary-dark-hex-75)',
-        //   150: 'var(--color-primary-dark-hex-150)',
-        //   925: 'var(--color-primary-dark-hex-925)'
-        // },
-        // orange: {
-        //   50: 'var(--color-orange-hex-50)',
-        //   100: 'var(--color-orange-hex-100)',
-        //   200: 'var(--color-orange-hex-200)',
-        //   300: 'var(--color-orange-hex-300)',
-        //   400: 'var(--color-orange-hex-400)',
-        //   500: 'var(--color-orange-hex-500)',
-        //   600: 'var(--color-orange-hex-600)',
-        //   700: 'var(--color-orange-hex-700)',
-        //   800: 'var(--color-orange-hex-800)',
-        //   900: 'var(--color-orange-hex-900)',
-        // },
+        info: {
+          light: 'rgb(var(--color-info-light-rgb))',
+          dark: 'rgb(var(--color-info-dark-rgb))',
+          default: 'rgb(var(--color-info-rgb))',
+        },
+        error: {
+          light: 'rgb(var(--color-error-light-rgb))',
+          dark: 'rgb(var(--color-error-dark-rgb))',
+          DEFAULT: 'rgb(var(--color-error-rgb))',
+        },
+        success: {
+          light: 'rgb(var(--color-success-light-rgb))',
+          dark: 'rgb(var(--color-success-dark-rgb))',
+          DEFAULT: 'rgb(var(--color-success-rgb))',
+        },
+        warning: {
+          light: 'rgb(var(--color-warning-light-rgb))',
+          dark: 'rgb(var(--color-warning-dark-rgb))',
+          DEFAULT: 'rgb(var(--color-warning-rgb))',
+        },
       },
     },
-    // colors: {
-    //   //transparent: 'transparent',
-    //   //primary: 'rgb(var(--color-accent-800) / <alpha-value>)',
-    //   //gray: colors.gray,
-    //   // slate: colors.slate
-    // },
+
     fontFamily: {
       'sans': ['source sans pro'],
       'body': ['source sans pro']
@@ -103,14 +106,11 @@ module.exports = {
           "primary": '#2c7aba',
           "primary-focus": "",
           "primary-content": "#ffffff",
-          "secondary": '#f3f4f6',
-          "secondary-focus": "",
-          "secondary-content": "#000000",
-          "neutral": '#9ca3af',
-          "neutral-focus": "",
-          "neutral-content": "#ffffff",
-          "base-content": "#333",
-          "error": '#b91c1c',
+          'primary-inactive': '#1e4a85',
+          'neutral': '#64748b',
+          'warning': '#fed7aa',
+          'error': '#fecaca',
+          'info': '#c4dcf3'
         },
       },
       {
@@ -120,14 +120,11 @@ module.exports = {
           "primary": '#2c7aba',
           "primary-focus": "",
           "primary-content": "#ffffff",
-          "secondary": '#111827',
-          "secondary-focus": "",
-          "secondary-content": "#ffffff",
-          "neutral": '#3f3f3f',
-          "neutral-focus": "",
-          "neutral-content": "#ffffff",
-          "base-content": "#ddd",
-          "error": '#b91c1c'
+          'primary-inactive': '#1e4a85',
+          'warning': '#ea580c',
+          'neutral': '#6b7280',
+          'error': '#7f1d1d',
+          'info': '#1a4772'
         },
       },
     ],
@@ -136,4 +133,9 @@ module.exports = {
     require("@tailwindcss/typography"),
     require("daisyui")
   ],
+  variants: {
+    extend: {
+      backgroundColor: ['hover', 'focus'],
+    },
+  },
 };

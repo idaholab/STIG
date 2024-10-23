@@ -19,7 +19,7 @@ const FormElementSTIXHash: React.FC<Props> = ({
 }) => {
   const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
 
-  return ( selectedSTIXObject &&
+  return (selectedSTIXObject &&
     <div className='w-full'>
       <FormElementSelectOther
         placeholder='Select Hash Algorithm'
@@ -39,7 +39,7 @@ const FormElementSTIXHash: React.FC<Props> = ({
         }}
         inputClassName="pl-2 mb-2"
         includeInfo={false}
-        additionalClasses="bg-transparent dark:bg-gray-700 border-none"
+        additionalClasses="bg-transparent dark:bg-neutralc-700 border-none"
         additionalInputClasses="select-sm bg-transparent dark:bg-transparent"
         isOtherAnOption={true}
         otherOptionText="Other"
@@ -49,12 +49,12 @@ const FormElementSTIXHash: React.FC<Props> = ({
         type="text"
         value={selectedSTIXObject[property.name][hashAlgName]}
         onChange={(event) => {
-          handlePropertyUpdate(event.target.value, property.name, 
+          handlePropertyUpdate(event.target.value, property.name,
             selectedSTIXObject, setSelectedSTIXObject, hashAlgName);
         }}
         className="pl-2 mb-2"
         includeInfo={false}
-        additionalInputClasses="select-sm dark:bg-gray-900"
+        additionalInputClasses="select-sm dark:bg-neutralc-900"
         additionalLabelClasses="ml-6 mr-5 w-20"
         disabled={!hashAlgName && !selectedSTIXObject[property.name][hashAlgName]}
         showValidationError={!stixHashKeyValidator(hashAlgName)}

@@ -4,31 +4,168 @@ Copyright 2018 Southern California Edison Company
 ALL RIGHTS RESERVED
  */
 
-import cytoscape, { KlayOptions, LayoutOptions, PresetLayoutOptions, RandomLayoutOptions, SpreadLayoutOptions } from 'cytoscape';
+import cytoscape, { Css, KlayOptions, LayoutOptions, PresetLayoutOptions, RandomLayoutOptions, SpreadLayoutOptions, StylesheetStyle } from 'cytoscape';
 import { IColaLayoutOptions } from './colaLayoutOptions';
 import { useTheme } from '@/contexts/useTheme';
 import { ViewUtilitiesOptions } from '@/types/cytoscapeTypes/ViewUtilitiesOptions';
+import { getCssRGBVarColor } from '@/util/GetCssVarColor';
 
-export const node_style: cytoscape.Stylesheet = {
-  selector: '.stix_node',
-  style: {
-    'color': 'white',
-    'font-size': 14,
-    'text-margin-y': -8,
 
+
+export const updateNodeStyle = (cy: cytoscape.Core) => {
+  const nodeStyle: StylesheetStyle | undefined = generateNodeStyle().find(style => style.selector === '.stix_node');
+  if (nodeStyle && nodeStyle.style) {
+    cy.style()
+      .selector('.stix_node')
+      .style(nodeStyle.style as Css.Node)
+      .update();
+  }
+};
+export const generateNodeStyle = (): StylesheetStyle[] => {
+  const nodeTextColor = getCssRGBVarColor('--node-text-color');
+  //const nodeBorderColor = getCssRGBVarColor('--node-border-color');
+  const style: Css.Node = {
     content: 'data(label)',
     shape: 'roundrectangle',
     width: 77,
     height: 77,
+    'color': nodeTextColor,
+    'border-opacity': 0,
+    'border-width': 0,
+    'text-background-opacity': 0,
+    //'border-color': nodeBorderColor,
+    'font-size': 14,
+    'text-margin-y': -8,
     'min-zoomed-font-size': 10,
     'text-wrap': 'wrap',
     'background-fit': 'cover',
     'overlay-opacity': 0,
     'text-max-width': '120',
-
-    // "border-width":5
-  } // as cytoscape.Css.Node,
+  };
+  return [{
+    selector: '.stix_node',
+    style: style
+  }];
 };
+
+export const updateEdgeStyle = (cy: cytoscape.Core) => {
+  const edgeStyle: StylesheetStyle | undefined = generateEdgeStyle().find(style => style.selector === 'edge');
+  if (edgeStyle && edgeStyle.style) {
+    cy.style()
+      .selector('edge')
+      .style(edgeStyle.style as Css.Edge)
+      .update();
+  }
+};
+export const generateEdgeStyle = (): StylesheetStyle[] => {
+  const edgeTextColor = getCssRGBVarColor('--edge-text-color');
+  const targetArrowColor = getCssRGBVarColor('--edge-target-arrow-color');
+  const edgeColor = getCssRGBVarColor('--edge-color');
+  const style: Css.Edge = {
+    events: 'yes',
+    label: 'data(label)',
+    width: 2,
+    'color': edgeTextColor,
+    'text-background-opacity': 0,
+    'target-arrow-color': targetArrowColor,
+    'line-color': edgeColor,
+    'line-style': 'solid',
+    'target-arrow-shape': 'triangle',
+    'source-arrow-shape': 'none',
+    'source-arrow-fill': 'hollow',
+    'text-margin-x': -10,
+    'text-margin-y': -10,
+    'min-zoomed-font-size': 10,
+    'text-rotation': 'autorotate',
+    'arrow-scale': 2,
+    'target-distance-from-node': 5,
+    'source-distance-from-node': 5,
+    'curve-style': 'bezier',
+    'control-point-distances': '-20 -20',
+    'control-point-weights': '0.25 0.75',
+  };
+  return [{
+    selector: 'edge',
+    style: style
+  }];
+};
+
+export const updateNodeSelectedStyle = (cy: cytoscape.Core) => {
+  const selectedStyle: StylesheetStyle | undefined = generateNodeSelectedStyle().find(style => style.selector === '.stix_node:selected');
+  if (selectedStyle && selectedStyle.style) {
+    cy.style()
+      .selector('.stix_node:selected')
+      .style(selectedStyle.style as Css.Node)
+      .update();
+  }
+};
+export const generateNodeSelectedStyle = (): StylesheetStyle[] => {
+  const selectedColor = getCssRGBVarColor('--selected-node-color');
+  const style: Css.Node = {
+    'border-color': selectedColor,
+    'border-width': 4,
+    'border-opacity': 1,
+  };
+  return [{
+    selector: '.stix_node:selected',
+    style: style
+  }];
+};
+
+export const updateEdgeSelectedStyle = (cy: cytoscape.Core) => {
+  const selectedStyle: StylesheetStyle | undefined = generateEdgeSelectedStyle().find(style => style.selector === 'edge:selected');
+  if (selectedStyle && selectedStyle.style) {
+    cy.style()
+      .selector('edge:selected')
+      .style(selectedStyle.style as Css.Edge)
+      .update();
+  }
+};
+export const generateEdgeSelectedStyle = (): StylesheetStyle[] => {
+  const selectedColor = getCssRGBVarColor('--selected-edge-color');
+  const style: Css.Edge = {
+    'target-arrow-color': selectedColor,
+    'source-arrow-color': selectedColor,
+    'line-color': selectedColor,
+  };
+  return [{
+    selector: 'edge:selected',
+    style: style
+  }];
+};
+
+export const generateEdgeHandlesStyle = (): StylesheetStyle[] => {
+  const handleBackgroundColor = getCssRGBVarColor('--node-handle-color');
+  const nodeEdgeHandleStyles: Css.Node = {
+    'background-color': handleBackgroundColor,
+    width: 12,
+    height: 12,
+    shape: 'roundrectangle',
+    'overlay-opacity': 0,
+    'border-width': 0,
+    'border-opacity': 0,
+  };
+  return [{
+    selector: '.eh-handle',
+    style: nodeEdgeHandleStyles
+  }];
+};
+
+export const updateEdgeHandlesStyle = (cy: cytoscape.Core) => {
+  const handleStyle: StylesheetStyle | undefined = generateEdgeHandlesStyle().find(style => style.selector === '.eh-handle');
+  if (handleStyle && handleStyle.style) {
+    cy.style()
+      .selector('.eh-handle')
+      .style(handleStyle.style as Css.Node)
+      .update();
+  }
+};
+
+
+
+
+
+
 
 export const compound_style: cytoscape.Stylesheet = {
   selector: ':parent',
@@ -38,38 +175,6 @@ export const compound_style: cytoscape.Stylesheet = {
   }
 };
 
-export const edge_style: cytoscape.Stylesheet = {
-  selector: '.edge',
-  style: {
-    events: 'yes',
-    label: 'data(label)',
-    width: 2,
-    'target-arrow-shape': 'triangle',
-    'arrow-scale': 2,
-    'target-distance-from-node': 5,
-    'curve-style': 'bezier',
-    'control-point-distances': '-20 -20',
-    'control-point-weights': '0.25 0.75',
-    'text-rotation': 'autorotate',
-    'text-valign': 'top',
-    'text-margin-x': 7,
-    'min-zoomed-font-size': 10,
-    'overlay-opacity': 0,
-    'line-color': '#9ca3af',
-    'target-arrow-color': '#9ca3af',
-  } // as cytoscape.Css.Edge,
-};
-
-export const select_node_style: cytoscape.Stylesheet = {
-  selector: ':selected',
-  style: {
-    'border-width': 4,
-    'border-style': 'solid',
-    'border-color': 'purple',
-    'target-arrow-color': 'purple',
-    'line-color': 'purple',
-  }
-};
 
 export const modified_unselect_style: cytoscape.Stylesheet = {
   selector: '.stix_node[!saved]',
@@ -83,41 +188,20 @@ export const modified_select_style: cytoscape.Stylesheet = {
   selector: ':selected[?saved_]',
   style: {
     'border-width': 4
-    // 'border-style': 'double',
-    // 'line-color': '#FF8141',
-    // 'target-arrow-color': '#FF8141',
-    // 'border-color': '#FF8141',
   }
 };
 
 export const view_utils_options: ViewUtilitiesOptions = {
   node: {
     highlighted: {
-      'border-color': '#1E90FF',
-      'border-style': 'solid'
-      // 'background-image-opacity': 0
-    }, // styles for when nodes are highlighted.
-    unhighlighted: { // styles for when nodes are unhighlighted.
-      opacity: 1,
-      'text-opacity': 1,
-      'background-opacity': 1,
-      'background-image-opacity': 1
+    },
+    unhighlighted: {
     }
   },
   edge: {
     highlighted: {
-      'target-arrow-shape': 'triangle',
-      'border-color': '#1E90FF',
-      'border-style': 'solid',
-      'curve-style': 'bezier'
-    }, // styles for when edges are highlighted.
-    unhighlighted: { // styles for when edges are unhighlighted.
-      'border-opacity': 1,
-      'text-opacity': 1,
-      'background-opacity': 1,
-      'target-arrow-shape': 'triangle',
-      'source-arrow-shape': 'triangle',
-      'curve-style': 'bezier'
+    },
+    unhighlighted: {
     }
   },
   searchBy: ['name']

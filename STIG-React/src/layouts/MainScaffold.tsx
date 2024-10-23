@@ -58,17 +58,17 @@ const MainScaffold: React.FC<Props> = ({ children }) => {
 
               {isDrawerOpen && (
                 <div
-                  className={`dark:bg-gray-700 bg-gray-200 h-full shadow-xl transition-transform duration-300 relative `}
+                  className={`dark:bg-neutralc-700 bg-neutralc-200 h-full shadow-xl transition-transform duration-300 relative `}
                   style={{ width: panelWidth }}
                 >
                   <StixPropsPanel />
                   {/* Handle */}
                   <div
                     onMouseDown={handleMouseDown}
-                    className="absolute left-0 top-0 h-full cursor-ew-resize flex items-center justify-center dark:bg-gray-700"
+                    className="absolute left-0 top-0 h-full cursor-ew-resize flex items-center justify-center dark:bg-neutralc-700"
                     style={{ width: '8px', zIndex: 100 }}
                   >
-                    <div className="w-1 h-8 bg-gray-500 dark:bg-gray-500 rounded-full hover:dark:bg-gray-400 hover:bg-gray-700"></div>
+                    <div className="w-1 h-8 bg-neutralc-500 dark:bg-neutralc-500 rounded-full hover:dark:bg-neutralc-400 hover:bg-neutralc-700"></div>
                   </div>
                 </div>
               )}

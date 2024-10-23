@@ -65,7 +65,7 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
               ele?.style('label', event.target.value);
             }
           }}
-          additionalClasses='dark:bg-gray-900 w-full'
+          additionalClasses='dark:bg-neutralc-900 w-full'
           includeInfo={true}
           infoText={property?.propertyDescription}
           property={property}
@@ -105,7 +105,7 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
                 handlePropertyUpdate(event.target.value === "true" ? true : false,
                   property.name, selectedSTIXObject, setSelectedSTIXObject);
               }}
-              additionalClasses='dark:bg-gray-900 w-full'
+              additionalClasses='dark:bg-neutralc-900 w-full'
               includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
               infoText={property?.propertyDescription}
               property={property}
@@ -139,7 +139,7 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
                 selectedSTIXObject[property.name]
                 : ""
               }
-              options={property.openVocabType ? open_vocab_options[property.openVocabType] : 
+              options={property.openVocabType ? open_vocab_options[property.openVocabType] :
                 property.enumType ? enum_options[property.enumType] : []}
               onSelect={(event) => {
                 handlePropertyUpdate(event.target.value, property.name, selectedSTIXObject, setSelectedSTIXObject);
@@ -154,8 +154,8 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
               inputClassName="pl-2 mb-2"
               includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
               infoText={property?.propertyDescription}
-              additionalClasses="dark:bg-gray-900 w-full"
-              additionalInputClasses="select-sm dark:bg-gray-900"
+              additionalClasses="dark:bg-neutralc-900 w-full"
+              additionalInputClasses="select-sm dark:bg-neutralc-900"
               property={property}
               isOtherAnOption={property.openVocabType ? true : false}
               otherOptionText="Other"
@@ -185,7 +185,7 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
                 }
                 handlePropertyUpdate(number, property.name, selectedSTIXObject, setSelectedSTIXObject);
               }}
-              additionalInputClasses='select-sm dark:bg-gray-900'
+              additionalInputClasses='select-sm dark:bg-neutralc-900'
               includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
               infoText={property?.propertyDescription}
               property={property}
@@ -216,7 +216,7 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
                 property.name === "source_ref" || property.name === "target_ref" ||
                 property.name === "spec_version"
               }
-              additionalInputClasses='select-sm dark:bg-gray-900'
+              additionalInputClasses='select-sm dark:bg-neutralc-900'
               includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
               infoText={property?.propertyDescription}
               className="mb-2"
@@ -236,13 +236,13 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
         case "list":
           // TODO: Develop way to delete items (and reorganize list, 
           // clear list, and remove last item?)
-          const addNewItemLabel = 
+          const addNewItemLabel =
             property.listType === "email-mime-part-type" ? "+ Email MIME Component"
-            : property.listType === "external-reference" ? "+ External Reference"
-            : property.listType === "granular-marking" ? "+ Granular Marking"
-            : property.listType === "identifier" ? "+ Identifier" 
-            : property.listType === "kill-chain-phase" ? "+ Kill Chain Phase"
-            : "+ Item";
+              : property.listType === "external-reference" ? "+ External Reference"
+                : property.listType === "granular-marking" ? "+ Granular Marking"
+                  : property.listType === "identifier" ? "+ Identifier"
+                    : property.listType === "kill-chain-phase" ? "+ Kill Chain Phase"
+                      : "+ Item";
           return (
             <FormElementSTIXList
               btnLabel={addNewItemLabel}
