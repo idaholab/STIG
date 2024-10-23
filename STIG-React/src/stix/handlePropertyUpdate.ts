@@ -12,6 +12,11 @@ export const handlePropertyUpdate = (
   if (selectedSTIXObject) {
     const tempSelectedSTIXObject = { ...selectedSTIXObject };
     if (propIndex !== undefined) {
+      // If the object being indexed does not already
+      // exist, initialize it
+      if (!selectedSTIXObject[propName]) {
+        tempSelectedSTIXObject[propName] = {};
+      }
       tempSelectedSTIXObject[propName][propIndex] = newVal;
     } else {
       tempSelectedSTIXObject[propName] = newVal;

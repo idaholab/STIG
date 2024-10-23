@@ -11,6 +11,7 @@ import FormElementFileInput from "./formElements/FormElementFileInput";
 import FormElementSTIXDictionary from "./formElements/FormElementSTIXDictionary";
 import FormElementSelectOther from "./formElements/FormElementSelectOther";
 import FormElementSTIXHashes from "./formElements/FormElementSTIXHashes";
+import FormElementSTIXX509V3Extensions from "./formElements/FormElementSTIXX509V3Extensions";
 
 import { SchemaSTIXProperty } from "@/types/stixSchemaTypes/SchemaSTIXProperty";
 
@@ -280,6 +281,12 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
               property={property}
               showTypeSelector={showTypeSelector}
               onTypeChange={onTypeChange}
+            />
+          );
+        case "x509-v3-extensions-type":
+          return (
+            <FormElementSTIXX509V3Extensions
+              property={property}
             />
           );
       }
