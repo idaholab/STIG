@@ -85,7 +85,7 @@ const FormElementSelectOther: React.FC<Props> = ({
       {customValueSelected &&
         <>
           <p>{property?.name}</p>
-          <div className="flex flex-auto justify-between items-center mb-2 w-full">
+          <div className={`flex justify-between items-center w-full ${inputClassName}`}>
             <p className="">{otherOptionLabel}</p>
             <ButtonBasic
               label="switch to suggested value"
