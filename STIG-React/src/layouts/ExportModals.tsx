@@ -9,17 +9,17 @@ import { useStigContext } from '@/contexts/StigContext';
 import { StixObject } from '@/types/stixTypes/StixObject';
 import { StixRelationshipObject } from '@/types/stixTypes/StixRelationshipObject';
 
-type Exporter = { 
-    exporter: (f: string, cy: cytoscape.Core, object: StixObject | StixRelationshipObject | undefined) => STIGBundle, 
+type Exporter = {
+    exporter: (f: string, cy: cytoscape.Core, object: StixObject | StixRelationshipObject | undefined) => STIGBundle,
     object?: StixObject | StixRelationshipObject | undefined
 };
 
 const ExportModal: React.FC<Exporter> = ({ exporter, object }) => {
     const { cyInstance } = useStigContext();
     const { addNotification } = useNotificationContext();
-    let state = object!==undefined ? object.id : "bundle";
+    let state = object !== undefined ? object.id : "bundle";
     let [fileName, setFileName] = useState(state);
-    
+
     return (
         <div className='h-full grid'>
             <FormElementTextInput
@@ -34,7 +34,7 @@ const ExportModal: React.FC<Exporter> = ({ exporter, object }) => {
             />
             <ButtonBasic
                 label="Export"
-                color='btn-primary'
+                type='btn-primary'
                 additionalClasses={'place-self-end mt-8'}
                 onClick={() => {
                     if (cyInstance) {

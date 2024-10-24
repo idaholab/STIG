@@ -50,7 +50,7 @@ const FormElementDatePicker: React.FC<Props> = ({
         onTypeChange={onTypeChange}
         additionalLabelClasses='mr-2'
       />
-      <div ref={parentRef} className={`relative group flex items-center w-full`}>
+      <div ref={parentRef} className={`relative group flex items-center w-full border border-neutralc-500 rounded`}>
         <Flatpickr
           className={`input dark:bg-neutralc-900 bg-neutralc-100 ${additionalInputClasses}`}
           data-enable-time

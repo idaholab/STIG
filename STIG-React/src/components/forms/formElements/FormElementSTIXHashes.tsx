@@ -28,7 +28,7 @@ const FormElementSTIXHashes: React.FC<Props> = ({
   // Update the child STIX object (the one containing the hashes
   // property) when its parent changes
   useEffect(() => {
-    if(parentSTIXObject && parentPropertyName && parentPropertyIndex !== undefined) {
+    if (parentSTIXObject && parentPropertyName && parentPropertyIndex !== undefined) {
       setSelectedSTIXObject(parentSTIXObject[parentPropertyName][parentPropertyIndex]);
     }
   }, [parentSTIXObject]);
@@ -36,7 +36,7 @@ const FormElementSTIXHashes: React.FC<Props> = ({
   // Update the parent STIX object when its child 
   // (the one containing the hashes property) changes
   useEffect(() => {
-    if (parentPropertyName && parentPropertyIndex !== undefined && 
+    if (parentPropertyName && parentPropertyIndex !== undefined &&
       parentSTIXObject && setParentSTIXObject && selectedSTIXObject) {
       const tempParentSTIXObject = { ...parentSTIXObject } as StixObject;
       tempParentSTIXObject[parentPropertyName][parentPropertyIndex] = selectedSTIXObject;
@@ -67,16 +67,16 @@ const FormElementSTIXHashes: React.FC<Props> = ({
         }
         <ButtonBasic
           label="+ Hash"
-          color="btn-primary"
+          type="btn-primary"
           onClick={() => {
             let tempSTIXObj = { ...selectedSTIXObject } as StixObject;
             if (!tempSTIXObj[property.name]) {
               // Initialize the property array
-              tempSTIXObj[property.name] = {"" : ""};
+              tempSTIXObj[property.name] = { "": "" };
             } else {
               tempSTIXObj[property.name] = {
-                ...tempSTIXObj[property.name], 
-                "":""
+                ...tempSTIXObj[property.name],
+                "": ""
               };
             }
             setSelectedSTIXObject(tempSTIXObj);

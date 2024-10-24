@@ -99,43 +99,53 @@ const Database: React.FC = () => {
         <div className="divider divider-neutral my-0"></div>
         <p className="menu-title text-neutralc-500 dark:text-neutralc-300 font-normal py-2 ">Actions:</p>
         {/* NOTE: Had to put cursor-not-allowed here because the DialogBasic covers it on the button */}
-        <div className={`hover:text-black hover:text-white dark:hover:bg-primary hover:bg-primary ${!connectedDBProfile ? 'cursor-not-allowed' : ''}`}>
-          <DialogBasic
-            dialogId="DBQueryModal"
-            title="Query Database"
-            buttonColor='btn-ghost'
-            showFormButtons={false}
-            buttonLabel="Query"
-            disabled={!connectedDBProfile}
-            additionalButtonClasses={`btn-sm justify-start hover:bg-transparent btn-block !bg-transparent ml-4 `}
-          >
-            <DBQueryModal />
-          </DialogBasic>
-        </div>
-        <div className='hover:bg-gray-200 dark:hover:bg-gray-700'>
-          <ButtonBasic
-            label="Commit All Nodes"
-            additionalClasses='btn-sm btn-ghost justify-start hover:bg-transparent btn-block'
-            onClick={() => { commitAllNodes(cyInstance, addNotification) }}
-            disabled={!connectedDBProfile}
-          ></ButtonBasic>
-        </div>
-        <div className='hover:bg-gray-200 dark:hover:bg-gray-700'>
-          <ButtonBasic
-            label="Commit Selected Nodes"
-            additionalClasses='btn-sm btn-ghost justify-start hover:bg-transparent btn-block'
-            onClick={() => { commitSelectedNodes(cyInstance, addNotification) }}
-            disabled={!connectedDBProfile}
-          ></ButtonBasic>
-        </div>
-        <div className='hover:bg-gray-200 dark:hover:bg-gray-700'>
-          <ButtonBasic
-            label="Delete Selected Nodes"
-            additionalClasses='btn-sm btn-ghost justify-start hover:bg-transparent btn-block'
-            onClick={() => { deleteSelectedNodes(cyInstance, addNotification, selectedSTIXObject, setSelectedSTIXObject, isDrawerOpen, toggleDrawer) }}
-            disabled={!connectedDBProfile}
-          ></ButtonBasic>
-        </div>
+        <ul>
+          <div className={`${!connectedDBProfile ? 'cursor-not-allowed' : ''}`} title={`${!connectedDBProfile ? 'Database not connected.' : ''}`}>
+
+            <div className='hover:text-white hover:bg-primary'>
+              <DialogBasic
+                dialogId="DBQueryModal"
+                title="Query Database"
+                buttonColor='btn-ghost'
+                showFormButtons={false}
+                buttonLabel="Query"
+                disabled={!connectedDBProfile}
+                additionalButtonClasses={`btn-sm ml-1`}
+              >
+                <DBQueryModal />
+              </DialogBasic>
+            </div>
+
+            <div className='hover:text-white hover:bg-primary' >
+              <ButtonBasic
+                label="Commit All Nodes"
+                type='btn-ghost'
+                additionalClasses='btn-sm ml-1'
+                onClick={() => { commitAllNodes(cyInstance, addNotification) }}
+                disabled={!connectedDBProfile}
+              />
+            </div>
+
+            <div className='hover:text-white hover:bg-primary'>
+              <ButtonBasic
+                type='btn-ghost'
+                label="Commit Selected Nodes"
+                additionalClasses='btn-sm ml-1'
+                onClick={() => { commitSelectedNodes(cyInstance, addNotification) }}
+                disabled={!connectedDBProfile}
+              />
+            </div>
+            <div className='hover:text-white hover:bg-primary'>
+              <ButtonBasic
+                type='btn-ghost'
+                label="Delete Selected Nodes"
+                additionalClasses='btn-sm ml-1'
+                onClick={() => { deleteSelectedNodes(cyInstance, addNotification, selectedSTIXObject, setSelectedSTIXObject, isDrawerOpen, toggleDrawer) }}
+                disabled={!connectedDBProfile}
+              />
+            </div>
+          </div>
+        </ul>
       </div>
     </Dropdown>
   );
