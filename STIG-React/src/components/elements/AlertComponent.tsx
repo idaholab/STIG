@@ -3,7 +3,7 @@ import ButtonIcon from './ButtonIcon';
 
 export type AlertType = 'info' | 'success' | 'warning' | 'error';
 
-interface AlertComponentProps {
+type AlertComponentProps = {
     alertText: string;
     alertType: AlertType;
     className?: string;
@@ -18,7 +18,7 @@ const alertIcons: Record<AlertType, string> = {
     error: 'error',
 };
 
-const AlertComponent: React.FC<AlertComponentProps> = ({ 
+const AlertComponent: React.FC<AlertComponentProps> = ({
     alertText, alertType, className, userClosable, onClose
 }) => {
     const alertClasses: Record<AlertType, string> = {
@@ -37,7 +37,7 @@ const AlertComponent: React.FC<AlertComponentProps> = ({
             {userClosable ?
                 <ButtonIcon
                     buttonIcon='close'
-                    color={alertIcon !== "error" ? "text-black" : "text-white"}
+                    type={'btn-neutralc'}
                     buttonSize='btn-xs'
                     onClick={onClose}
                 />

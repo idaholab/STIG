@@ -1,3 +1,4 @@
+import AlertComponent from '@/components/elements/AlertComponent';
 import InfoButton from '@/components/elements/InfoButton';
 import STIXPropertyLabel from '@/components/elements/STIXPropertyLabel';
 import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
@@ -79,7 +80,7 @@ const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
       />
       <div ref={parentRef} className={`relative group flex items-center w-full `}>
         {prefix && (
-          <span className="absolute inset-y-0 left-1 flex items-center text-gray-400 dark:text-gray-400">
+          <span className="absolute inset-y-0 left-1 flex items-center text-neutralc-400 dark:text-neutralc-400">
             <span className="material-icons">{prefix}</span>
           </span>
         )}
@@ -97,11 +98,11 @@ const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
           w-full
           rounded-md
           border
-          border-gray-500
-          bg-gray-100
-          dark:bg-gray-900
-          placeholder-gray-500
-          dark:placeholder-gray-300
+          border-neutralc-500
+          bg-neutralc-100
+          dark:bg-neutralc-900
+          placeholder-neutralc-500
+          dark:placeholder-neutralc-300
           ${disabled ? 'cursor-not-allowed opacity-30' : undefined}
           ${additionalInputClasses}
         `}
@@ -110,7 +111,7 @@ const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
         {includeX && value && (
           <button
             type="button"
-            className={`material-icons absolute right-2 dark:text-gray-300 text-gray-500 hover:text-black ${additionalXClasses}`}
+            className={`material-icons absolute right-2 dark:text-neutralc-300 text-neutralc-500 hover:text-black ${additionalXClasses}`}
             onClick={onX}
             title='Clear'>
             close
@@ -132,15 +133,15 @@ const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
       </div>
 
       {badgeText && badgeText?.length > 0 &&
-        <div className="mt-2 badge dark:bg-orange-600 dark:text-orange-50 bg-orange-200 text-orange-900">{badgeText}</div>
+        <AlertComponent alertText={infoText || ''} alertType={'warning'} userClosable={false} className={'!mx-0 !my-1 !py-1 !px-2 text-xs dark:text-white'}></AlertComponent>
       }
 
       {showInfo && includeInfo && infoText && infoText?.length > 0 &&
-        <span className={`text-xs py-1 dark:text-orange-300 text-orange-800`}>{infoText}</span>
+        <AlertComponent alertText={infoText || ''} alertType={'info'} userClosable={false} className={'!mx-0 !my-1 !py-1 !px-2 text-xs'}></AlertComponent>
       }
 
       {showValidationError && validationErrorText &&
-        <span className='dark:text-red-300 text-red-700'>{validationErrorText}</span>
+        <AlertComponent alertText={validationErrorText || ''} alertType={'error'} userClosable={false} className={'!mx-0 !my-1 !py-1 !px-2 text-xs'}></AlertComponent>
       }
     </div>
   );

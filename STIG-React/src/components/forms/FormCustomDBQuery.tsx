@@ -27,12 +27,12 @@ export default function FormCustomDBQuery() {
       <div className='flex justify-end'>
         <ButtonBasic
           label="Query"
-          color="btn-primary"
+          type="btn-primary"
           additionalClasses={"btn-sm mt-2"}
           disabled={!customQuery}
           onClick={async () => {
             const [numVerticiesAdded, numEdgesAdded] = await queryToGraph(customQuery, cyInstance);
-            if(numVerticiesAdded < 0 && numEdgesAdded < 0) {
+            if (numVerticiesAdded < 0 && numEdgesAdded < 0) {
               addNotification("Import failed", "error");
             } else if (numVerticiesAdded === 0 && numEdgesAdded === 0) {
               addNotification("Imported " + numVerticiesAdded + " node(s) and " + numEdgesAdded + " edge(s)", "warning");

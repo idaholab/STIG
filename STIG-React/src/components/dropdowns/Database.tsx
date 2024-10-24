@@ -31,7 +31,7 @@ const Database: React.FC = () => {
     >
       <div className='w-[230px]'>
         <div className='grid'>
-          <p className="menu-title text-gray-500 dark:text-gray-400 font-normal py-0">Profile:</p>
+          <p className="menu-title text-neutralc-500 dark:text-neutralc-300 font-normal py-0">Profile:</p>
           <div className={savedDBProfiles.length ? 'col-start-2 justify-self-end' : 'grid'}>
             <DialogBasic
               dialogId="DBProfileModal"
@@ -61,7 +61,7 @@ const Database: React.FC = () => {
           <ul>
             {savedDBProfiles.map(dbProfile => {
               return (
-                <li key={dbProfile.Id} className='grid hover:bg-gray-200 dark:hover:bg-gray-700 group h-[40px]'>
+                <li key={dbProfile.Id} className='grid hover:bg-primary hover:text-white group h-[40px]'>
                   <a
                     className='py-1 pr-1 self-center hover:bg-transparent'
                     onClick={() => {
@@ -82,10 +82,10 @@ const Database: React.FC = () => {
                       {dbProfile.ProfileName}
                     </div>
                   </a>
-                  <span className='col-start-2 justify-self-end hover:text-white pl-1 hover:bg-transparent'>
+                  <span className='col-start-2 justify-self-end hover:text-white pl-1'>
                     <ButtonDBConnect
                       dbProfile={dbProfile}
-                      additionalButtonClasses='btn-xs hidden group-hover:flex bg-primary text-white !border-white'
+                      additionalButtonClasses='btn-xs hidden group-hover:flex bg-neutralc-950 hover:bg-neutralc-950 !text-neutralc-200 hover:!text-white !border-white '
                       isConnectProcessing={isConnectProcessing}
                       setIsConnectProcessing={setIsConnectProcessing}
                     />
@@ -96,9 +96,10 @@ const Database: React.FC = () => {
           </ul>
           : null
         }
-        <div className="divider dark:divider-neutral my-0"></div>
-        <p className="menu-title text-gray-500 dark:text-gray-400 font-normal py-0">Actions:</p>
-        <div className='hover:bg-gray-200 dark:hover:bg-gray-700'>
+        <div className="divider divider-neutral my-0"></div>
+        <p className="menu-title text-neutralc-500 dark:text-neutralc-300 font-normal py-2 ">Actions:</p>
+        {/* NOTE: Had to put cursor-not-allowed here because the DialogBasic covers it on the button */}
+        <div className={`hover:text-black hover:text-white dark:hover:bg-primary hover:bg-primary ${!connectedDBProfile ? 'cursor-not-allowed' : ''}`}>
           <DialogBasic
             dialogId="DBQueryModal"
             title="Query Database"
@@ -106,7 +107,7 @@ const Database: React.FC = () => {
             showFormButtons={false}
             buttonLabel="Query"
             disabled={!connectedDBProfile}
-            additionalButtonClasses={"btn-sm justify-start hover:bg-transparent btn-block"}
+            additionalButtonClasses={`btn-sm justify-start hover:bg-transparent btn-block !bg-transparent ml-4 `}
           >
             <DBQueryModal />
           </DialogBasic>
@@ -200,7 +201,7 @@ function deleteSelectedNodes(
           toggleDrawer();
         }
       }
-      cy.remove(ele); 
+      cy.remove(ele);
     });
     selected.forEach((ele) => {
       // deleting a node deletes the edges connected to it as well

@@ -12,7 +12,7 @@ const ButtonClearGraph: React.FC = () => {
         const clearGraphEvent = new CustomEvent('clearGraph');
         dispatchEvent('clearGraphClickEvent', { data: clearGraphEvent });
       }}
-      color='btn-secondary'
+      type='btn-neutralc'
     />
   );
 };

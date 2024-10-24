@@ -89,7 +89,7 @@ const FormElementSelectOther: React.FC<Props> = ({
             <p className="ml-2 pr-4 mb-2">{otherOptionLabel}</p>
             <ButtonBasic
               label="Switch to suggested value"
-              color="btn-secondary"
+              type="btn-neutralc"
               onClick={() => {
                 setCustomValueSelected(false);
                 onSwitchToSuggested();

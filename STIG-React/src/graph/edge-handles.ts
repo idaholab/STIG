@@ -90,51 +90,6 @@ const defaults: cytoscapeEdgehandles.EdgeHandlesOptions = {
   }
 };
 
-
-export const edgehandles_style: cytoscape.Stylesheet[] = [{
-  selector: '.eh-handle',
-  style: {
-    'background-color': 'yellow', //'var(--color-orange-hex-300)'??? Why doesn't the var work
-    width: 12,
-    height: 12,
-    shape: 'roundrectangle',
-    'overlay-opacity': 0,
-    'border-width': 12, // makes the handle easier to hit
-    'border-opacity': 0,
-  }
-},
-  // {
-  //   selector: '.eh-hover',
-  //   style: {
-  //     'background-color': 'green'
-  //   }
-  // },
-  // {
-  //   selector: '.eh-source',
-  //   style: {
-  //     'border-width': 5,
-  //     'border-color': 'blue'
-  //   }
-  // },
-  // {
-  //   selector: '.eh-target',
-  //   style: {
-  //     'border-width': 5,
-  //     'border-color': 'purple'
-  //   }
-  // },
-  // {
-  //   selector: '.eh-preview, .eh-ghost-edge',
-  //   style: {
-  //     'background-color': 'black',
-  //     'line-color': 'yellow',
-  //     'target-arrow-color': 'yellow',
-  //     'source-arrow-color': 'yellow'
-  //   }
-  // }
-];
-
 export function setup_edge_handles(cy: cytoscape.Core) {
-  const eh = cy.edgehandles(defaults);
-  return eh;
+  return cy.edgehandles(defaults);
 }

@@ -6,7 +6,7 @@ import { readDBQueryStorage } from '@/data/db-query-storage';
 import ButtonIcon from '@/components/elements/ButtonIcon';
 import AlertComponent from '@/components/elements/AlertComponent';
 
-export default function DBQueryHistory({inQueryDeleteProcess, setInQueryDeleteProcess,
+export default function DBQueryHistory({ inQueryDeleteProcess, setInQueryDeleteProcess,
   setQueryToDelteId
 }: {
   inQueryDeleteProcess: boolean,
@@ -24,18 +24,18 @@ export default function DBQueryHistory({inQueryDeleteProcess, setInQueryDeletePr
       <div className='scrollbar h-[425px]'>
         {savedQueries.length ?
           savedQueries.map(savedQuery => {
-            return(
-              <div 
-                key={savedQuery.id} 
+            return (
+              <div
+                key={savedQuery.id}
                 className='
                   flex 
                   items-center
                   justify-between
                   rounded-md
                   border
-                  border-gray-500
-                  bg-gray-100
-                  dark:bg-gray-900
+                  border-neutralc-500
+                  bg-neutralc-100
+                  dark:bg-neutralc-900
                   m-1
                   pl-2
                   h-12
@@ -46,11 +46,11 @@ export default function DBQueryHistory({inQueryDeleteProcess, setInQueryDeletePr
                 <div>
                   <ButtonIcon
                     buttonIcon="play_arrow"
-                    color="btn-ghost"
+                    type="btn-ghost"
                     disabled={inQueryDeleteProcess}
                     onClick={async () => {
                       const [numVerticiesAdded, numEdgesAdded] = await queryToGraph(savedQuery.query, cyInstance);
-                      if(numVerticiesAdded < 0 && numEdgesAdded < 0) {
+                      if (numVerticiesAdded < 0 && numEdgesAdded < 0) {
                         addNotification("Import failed", "error");
                       } else if (numVerticiesAdded === 0 && numEdgesAdded === 0) {
                         addNotification("Imported " + numVerticiesAdded + " node(s) and " + numEdgesAdded + " edge(s)", "warning");
@@ -61,17 +61,17 @@ export default function DBQueryHistory({inQueryDeleteProcess, setInQueryDeletePr
                       const dialogElement = document.getElementById("DBQueryModal") as HTMLDialogElement;
                       dialogElement.close();
                     }}
-                    additionalClasses="hidden group-hover:inline"
+                    additionalClasses="hidden group-hover:inline hover:!text-success !text-success-dark"
                   />
                   <ButtonIcon
                     buttonIcon="delete"
-                    color="text-red-600"
+                    type="btn-ghost"
                     disabled={inQueryDeleteProcess}
                     onClick={() => {
                       setInQueryDeleteProcess(true);
                       setQueryToDelteId(savedQuery.id);
                     }}
-                    additionalClasses="hidden group-hover:inline"
+                    additionalClasses="hidden group-hover:inline hover:!text-error !text-error-dark"
                   />
                 </div>
               </div>

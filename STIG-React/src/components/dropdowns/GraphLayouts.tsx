@@ -32,10 +32,9 @@ const GraphLayouts: React.FC = () => {
     <Dropdown
       title="Graph Layouts"
       includeDropdownArrow
-      additionalOptionClasses={'w-[160px] hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-black dark:hover-text-white'}
-    >
+      additionalOptionClasses={'w-[160px] hover:text-black hover:text-white dark:hover:bg-primary hover:bg-primary'}>
       {layouts.map((layout) => (
-        <li key={layout.name} className='hover:text-black dark:hover:text-white'>
+        <li key={layout.name}>
           <a onClick={() => handleLayoutChange(layout.name)}>
             {layout.display}
           </a>

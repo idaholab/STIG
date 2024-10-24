@@ -4,7 +4,7 @@ import cytoscape, { EventHandler } from 'cytoscape';
 import { EventContext } from '@/contexts/EventContext';
 import { v4 as uuidv4 } from 'uuid';
 import { useTheme } from '../contexts/useTheme';
-import { compound_style, edge_style, modified_select_style, modified_unselect_style, node_style, select_node_style, view_utils_options } from './graphOptions';
+import { compound_style, modified_select_style, modified_unselect_style, updateEdgeHandlesStyle, updateEdgeSelectedStyle, updateEdgeStyle, updateNodeSelectedStyle, updateNodeStyle, view_utils_options } from './graphOptions';
 import { CytoscapeNode } from '@/types/cytoscapeTypes/CytoscapeNode';
 import { CytoscapeNodeData } from '@/types/cytoscapeTypes/CytoscapeNodeData';
 import moment from 'moment';
@@ -17,11 +17,11 @@ import klay from 'cytoscape-klay';
 import spread from 'cytoscape-spread';
 import viewUtilities from 'cytoscape-view-utilities';
 import cxtmenu from 'cytoscape-cxtmenu';
-import { edgehandles_style, setup_edge_handles } from './edge-handles';
 import { useStigContext } from '@/contexts/StigContext';
 import { setupCtxMenu } from '@/util/GraphUtils';
 import { createCytoscapeNode } from '@/stix/stix';
 import { stencilItems } from '@/components/elements/StencilItems';
+import { setup_edge_handles } from './edge-handles';
 
 
 cytoscape.use(viewUtilities);
@@ -37,44 +37,19 @@ const Graph: React.FC = () => {
     const cyContainerRef = useRef<HTMLDivElement>(null);
     const { addEventListener, removeEventListener } = useContext(EventContext);
     const { theme, toggleTheme } = useTheme();
-    const nodeTextLightColor: string = getComputedStyle(document.documentElement).getPropertyValue('--color-primary-dark-hex-100');
-    const nodeTextDarkColor: string = getComputedStyle(document.documentElement).getPropertyValue('--color-primary-dark-hex-900');
-    const selectedColor = getComputedStyle(document.documentElement).getPropertyValue('--selected-node-border-color');
-    const edgeColorDark = getComputedStyle(document.documentElement).getPropertyValue('--edge-dark-color');
-    const edgeColorLight = getComputedStyle(document.documentElement).getPropertyValue('--edge-light-color');
     const { cyInstance, setCyInstance, isDrawerOpen, toggleDrawer } = useStigContext();
     const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
 
+    // Dynamically updates the styles on the nodes and edges
     useEffect(() => {
-        if (cyInstance) {
-            cyInstance.style()
-                .selector('node')
-                .style({
-                    'color': theme === 'dark' ? nodeTextLightColor : nodeTextDarkColor,
-                    //'text-outline-color': theme === 'dark' ? '#fff' : '#000',
-                    'text-background-opacity': 0,
-                    'target-arrow-color': theme === 'dark' ? edgeColorDark : edgeColorLight,
-                    'line-color': theme === 'dark' ? edgeColorDark : edgeColorLight,
-                })
-                .selector('edge')
-                .style({
-                    'color': theme === 'dark' ? nodeTextLightColor : nodeTextDarkColor,
-                    'target-arrow-color': theme === 'dark' ? edgeColorDark : edgeColorLight,
-                    'line-color': theme === 'dark' ? edgeColorDark : edgeColorLight,
-                })
-                .selector(':selected')
-                .style({
-                    'border-color': selectedColor.trim(),
-                    'target-arrow-color': selectedColor.trim(),
-                    'line-color': selectedColor.trim(),
-                })
-                .selector('.eh-handle')
-                .style({
-                    'background-color': theme === 'dark' ? edgeColorDark : edgeColorLight,
-                })
-                .update();
+        if (cyContainerRef.current && cyInstance) {
+            updateNodeStyle(cyInstance);
+            updateNodeSelectedStyle(cyInstance);
+            updateEdgeStyle(cyInstance);
+            updateEdgeSelectedStyle(cyInstance);
+            updateEdgeHandlesStyle(cyInstance);
         }
-    }, [theme, cyInstance, edgeColorDark, edgeColorLight, nodeTextLightColor, nodeTextDarkColor, selectedColor]);
+    }, [theme, cyInstance]);
 
     useEffect(() => {
         const handleCustomEvent = (payload: any) => {
@@ -124,13 +99,13 @@ const Graph: React.FC = () => {
         if (cyContainerRef.current) {
             let cy = cytoscape({
                 container: cyContainerRef.current,
-                style: [node_style, compound_style, edge_style, select_node_style, modified_select_style, modified_unselect_style, ...edgehandles_style],
+                style: [compound_style, modified_select_style, modified_unselect_style],
                 layout: {
                     name: 'grid',
                     rows: 1,
                 },
             });
-            const eh = setup_edge_handles(cy);
+            setup_edge_handles(cy);
 
             // View Utilities
             try {
@@ -176,6 +151,8 @@ const Graph: React.FC = () => {
             };
         }
     }, []);
+
+
 
     useEffect(() => {
         if (cyInstance) {
@@ -276,14 +253,22 @@ const Graph: React.FC = () => {
         const cytoscapeNode: CytoscapeNodeData = {
             type: nodeType,
             id: nodeType + '--' + uuidv4(),
+            // SCOs do not have the created property
+            created: stixObjectCategory !== 'sco' ?
+                moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
+                : undefined,
+            // SCOs and Marking Definitions do not have the modified property
+            modified: stixObjectCategory !== 'sco' && nodeType !== "marking-definition" ?
+                moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
+                : undefined,
             spec_version: "2.1",
             label: label
         };
         // SCOs do not have the created or modified property
-        if (stixObjectCategory !== 'sco'){
+        if (stixObjectCategory !== 'sco') {
             cytoscapeNode.created = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
-            if (nodeType !== "marking-definition"){
-                cytoscapeNode.modified = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]') 
+            if (nodeType !== "marking-definition") {
+                cytoscapeNode.modified = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
             }
         }
         return createCytoscapeNode(cytoscapeNode, dSource, true, imgUrl);

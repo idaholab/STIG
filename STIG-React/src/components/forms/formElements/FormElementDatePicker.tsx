@@ -5,6 +5,7 @@ import flatpickr from "flatpickr";
 import InfoButton from '@/components/elements/InfoButton';
 import STIXPropertyLabel from '@/components/elements/STIXPropertyLabel';
 import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
+import AlertComponent from '@/components/elements/AlertComponent';
 
 type Props = {
   value?: string | number;
@@ -51,7 +52,7 @@ const FormElementDatePicker: React.FC<Props> = ({
       />
       <div ref={parentRef} className={`relative group flex items-center w-full`}>
         <Flatpickr
-          className={`input dark:bg-gray-900 bg-gray-100 ${additionalInputClasses}`}
+          className={`input dark:bg-neutralc-900 bg-neutralc-100 ${additionalInputClasses}`}
           data-enable-time
           options={{
             time_24hr: true,
@@ -71,7 +72,7 @@ const FormElementDatePicker: React.FC<Props> = ({
       </div>
       {
         showInfo && includeInfo && infoText && infoText?.length > 0 &&
-        <span className="text-xs py-1 dark:text-orange-300 text-orange-800">{infoText}</span>
+        <AlertComponent alertText={infoText || ''} alertType={'info'} userClosable={false} className={'!mx-0 !my-1 !py-1 !px-2 text-xs'}></AlertComponent>
       }
     </div>
   );

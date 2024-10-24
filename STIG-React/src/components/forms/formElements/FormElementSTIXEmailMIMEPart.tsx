@@ -21,12 +21,12 @@ const FormElementEmailMIMEPart: React.FC<Props> = ({
   const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
 
   const emailMIMEPartDescription = propertyDescriptions.find((group) => group.name === property.listType);
-  let emailMIMEPartPropDescriptions:{[propName: string]: string} = {};
-  if(emailMIMEPartDescription) {
+  let emailMIMEPartPropDescriptions: { [propName: string]: string } = {};
+  if (emailMIMEPartDescription) {
     emailMIMEPartPropDescriptions = getSTIXPropDescriptions(emailMIMEPartDescription);
   }
 
-  return ( selectedSTIXObject &&
+  return (selectedSTIXObject &&
     <div className='w-full'>
       <FormElementTextInput
         label="body"
@@ -34,7 +34,7 @@ const FormElementEmailMIMEPart: React.FC<Props> = ({
         value={emailMIMEPart.body ?? ""}
         onChange={(event) => {
           const tempSTIXObj = { ...selectedSTIXObject }
-          if(tempSTIXObj) {
+          if (tempSTIXObj) {
             delete emailMIMEPart.body;
             tempSTIXObj[property.name][emailMIMEPartIndex] = {
               "body": event.target.value,
@@ -45,7 +45,7 @@ const FormElementEmailMIMEPart: React.FC<Props> = ({
         }}
         includeInfo={emailMIMEPartPropDescriptions.body ? true : false}
         infoText={emailMIMEPartPropDescriptions.body}
-        additionalInputClasses="select-sm dark:bg-gray-900"
+        additionalInputClasses="select-sm dark:bg-neutralc-900"
         additionalLabelClasses="ml-6 mr-5 w-20"
       />
       <FormElementTextInput
@@ -54,7 +54,7 @@ const FormElementEmailMIMEPart: React.FC<Props> = ({
         value={emailMIMEPart.body_raw_ref ?? ""}
         onChange={(event) => {
           const tempSTIXObj = { ...selectedSTIXObject }
-          if(tempSTIXObj) {
+          if (tempSTIXObj) {
             delete emailMIMEPart.body_raw_ref;
             tempSTIXObj[property.name][emailMIMEPartIndex] = {
               "body_raw_ref": event.target.value,
@@ -65,9 +65,9 @@ const FormElementEmailMIMEPart: React.FC<Props> = ({
         }}
         includeInfo={emailMIMEPartPropDescriptions.body_raw_ref ? true : false}
         infoText={emailMIMEPartPropDescriptions.body_raw_ref}
-        additionalInputClasses="select-sm dark:bg-gray-900"
+        additionalInputClasses="select-sm dark:bg-neutralc-900"
         additionalLabelClasses="ml-6 mr-5 w-20"
-        showValidationError={ emailMIMEPart.body_raw_ref ?
+        showValidationError={emailMIMEPart.body_raw_ref ?
           !stixIdentifierValidator(emailMIMEPart.body_raw_ref)
           : false
         }
@@ -82,7 +82,7 @@ const FormElementEmailMIMEPart: React.FC<Props> = ({
         value={emailMIMEPart.content_type ?? ""}
         onChange={(event) => {
           const tempSTIXObj = { ...selectedSTIXObject }
-          if(tempSTIXObj) {
+          if (tempSTIXObj) {
             delete emailMIMEPart.content_type;
             tempSTIXObj[property.name][emailMIMEPartIndex] = {
               "content_type": event.target.value,
@@ -93,7 +93,7 @@ const FormElementEmailMIMEPart: React.FC<Props> = ({
         }}
         includeInfo={emailMIMEPartPropDescriptions.content_type ? true : false}
         infoText={emailMIMEPartPropDescriptions.content_type}
-        additionalInputClasses="select-sm dark:bg-gray-900"
+        additionalInputClasses="select-sm dark:bg-neutralc-900"
         additionalLabelClasses="ml-6 mr-5 w-20"
       />
       <FormElementTextInput
@@ -102,7 +102,7 @@ const FormElementEmailMIMEPart: React.FC<Props> = ({
         value={emailMIMEPart.content_disposition ?? ""}
         onChange={(event) => {
           const tempSTIXObj = { ...selectedSTIXObject }
-          if(tempSTIXObj) {
+          if (tempSTIXObj) {
             delete emailMIMEPart.content_disposition;
             tempSTIXObj[property.name][emailMIMEPartIndex] = {
               "content_disposition": event.target.value,
@@ -114,7 +114,7 @@ const FormElementEmailMIMEPart: React.FC<Props> = ({
         includeInfo={emailMIMEPartPropDescriptions.content_disposition ? true : false}
         infoText={emailMIMEPartPropDescriptions.content_disposition}
         className='mb-2'
-        additionalInputClasses="select-sm dark:bg-gray-900"
+        additionalInputClasses="select-sm dark:bg-neutralc-900"
         additionalLabelClasses="ml-6 mr-5 w-20"
       />
     </div>

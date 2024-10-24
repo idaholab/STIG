@@ -7,7 +7,7 @@ type Props = {
   children?: React.ReactNode;
   dialogId: string;
   title?: string;
-  buttonColor?: 'btn-primary' | 'btn-secondary' | 'btn-ghost';
+  buttonColor?: 'btn-primary' | 'btn-neutralc' | 'btn-ghost';
   buttonType?: 'text' | 'icon'; // Optional button type
   buttonLabel?: string | React.JSX.Element; // Optional button label for text button
   buttonIcon?: string; // Optional icon from https://fonts.google.com/icons
@@ -54,14 +54,14 @@ export const DialogBasic: React.FC<Props> = ({
       {buttonType === 'text' ? (
         <ButtonBasic
           label={buttonLabel}
-          color={buttonColor}
+          type={buttonColor}
           onClick={handleOpenDialog}
           disabled={disabled}
           additionalClasses={`${additionalButtonClasses}`}
         />
       ) : (
         <ButtonIcon
-          color={buttonColor}
+          type={buttonColor}
           onClick={handleOpenDialog}
           buttonIcon={buttonIcon}
           buttonSize={buttonSize}
@@ -73,12 +73,7 @@ export const DialogBasic: React.FC<Props> = ({
         id={dialogId}
         className="modal"
       >
-        <div
-          className={
-            `modal-box max-w-[1000px] min-w-none p-12 shadow-md-gray-light
-            ${theme === 'dark' ? 'bg-gray-700 text-gray-100' : 'bg-gray-200 text-gray-900'}`
-          }
-        >
+        <div className={`modal-box max-w-[1000px] max-h-[615px] min-w-none p-12 shadow-md-neutralc-900 dark:bg-neutralc-700 dark:text-neutralc-100 bg-neutralc-200 text-neutralc-900 `}>
           <div className='flex justify-between items-center'>
             <h2 className="text-2xl mb-8 align-middle">{title}</h2>
             <div className="-mr-4 mb-8">
@@ -86,7 +81,7 @@ export const DialogBasic: React.FC<Props> = ({
                 buttonSize={buttonSize}
                 label={'Close'}
                 buttonIcon={'close'}
-                color={'btn-ghost'}
+                type={'btn-ghost'}
                 onClick={handleCloseDialog}
               />
             </div>
@@ -98,12 +93,12 @@ export const DialogBasic: React.FC<Props> = ({
             <div className="flex justify-end pt-4 space-x-2">
               <ButtonBasic
                 label="Cancel"
-                color="btn-secondary"
+                type="btn-neutralc"
                 onClick={handleCloseDialog}
               />
               <ButtonBasic
                 label="Save"
-                color="btn-primary"
+                type="btn-primary"
                 onClick={onSave}
               />
             </div>

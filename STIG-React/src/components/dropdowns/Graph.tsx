@@ -18,7 +18,7 @@ const Graph: React.FC = () => {
     <Dropdown
       title="Graph"
       includeDropdownArrow
-      additionalOptionClasses={'hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-black dark:hover-text-white'}
+      additionalOptionClasses={'w-[220px] hover:text-black hover:text-white dark:hover:bg-primary hover:bg-primary'}
     >
       {/* <li className='hover:bg-primary hover:text-white'><a>Copy Selected Elements</a></li>
       <li className='hover:bg-primary hover:text-white'><a>Cut Selected Elements</a></li>
@@ -27,11 +27,11 @@ const Graph: React.FC = () => {
       <li className='hover:bg-primary hover:text-white'><a>Delete Selected from Database</a></li>
       <li className='hover:bg-primary hover:text-white'><a>Select All Elements</a></li>
       <li className='hover:bg-primary hover:text-white'><a>Invert Selection</a></li>*/}
-      <li className='hover:bg-primary hover:text-white'><a onClick={() => {
+      <li><a onClick={() => {
         r_isVisible = !r_isVisible;
         toggleRelationships(cyInstance, r_isVisible);
       }}>Toggle STIX Relationships</a></li>
-      <li className='hover:bg-primary hover:text-white'><a onClick={() => {
+      <li><a onClick={() => {
         v_isVisible = !v_isVisible;
         toggleEmbeddedRelationships(cyInstance, v_isVisible);
       }}>Toggle Embedded Relationships</a></li>
@@ -44,18 +44,18 @@ const Graph: React.FC = () => {
 
 function toggleRelationships(cy: cytoscape.Core | undefined, makeVisible: boolean) {
   if (cy == undefined) { return; }
-  let rels = cy.edges().filter((ele)=>{return ele?.data('raw_data')!='visual_edge';});
+  let rels = cy.edges().filter((ele) => { return ele?.data('raw_data') != 'visual_edge'; });
   makeVisible ? cy.viewUtilities(view_utils_options).show(rels) : cy.viewUtilities(view_utils_options).hide(rels)
 }
 function toggleEmbeddedRelationships(cy: cytoscape.Core | undefined, makeVisible: boolean) {
   if (cy == undefined) { return; }
   //find all visual edges (embedded relationships)
-  let embed_rels = cy.edges().filter((ele)=>{return ele?.data('raw_data')=='visual_edge';});
+  let embed_rels = cy.edges().filter((ele) => { return ele?.data('raw_data') == 'visual_edge'; });
   //toggle the embedded relationships, making them if necessary
-  if (makeVisible){
+  if (makeVisible) {
     cy.viewUtilities(view_utils_options).show(embed_rels);
     makeEmbeddedRelationships(cy);
-  }else{
+  } else {
     cy.viewUtilities(view_utils_options).hide(embed_rels);
   }
 }
@@ -143,7 +143,7 @@ function makeEmbeddedRelationships(cy: cytoscape.Core) {
 function add_visual_edge(field: string[] | string, objID: string) {
   let visualEdgeElemDefs: ElementDefinition[] = [];
   if (field !== undefined) {
-    
+
     const f_addVisualEdge = (refID: string) => {
       //NOTE: this ensures that the UUID of the visual_edge is repeatable
       const salt: string[] = [refID, objID]

@@ -67,7 +67,7 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
               ele?.style('label', event.target.value);
             }
           }}
-          additionalClasses='dark:bg-gray-900 w-full'
+          additionalClasses='dark:bg-neutralc-900 w-full'
           includeInfo={true}
           infoText={property?.propertyDescription}
           property={property}
@@ -107,7 +107,7 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
                 handlePropertyUpdate(event.target.value === "true" ? true : false,
                   property.name, selectedSTIXObject, setSelectedSTIXObject);
               }}
-              additionalClasses='dark:bg-gray-900 w-full'
+              additionalClasses='dark:bg-neutralc-900 w-full'
               includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
               infoText={property?.propertyDescription}
               property={property}
@@ -156,8 +156,8 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
               inputClassName="pl-2 mb-2"
               includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
               infoText={property?.propertyDescription}
-              additionalClasses="dark:bg-gray-900 w-full"
-              additionalInputClasses="select-sm dark:bg-gray-900"
+              additionalClasses="dark:bg-neutralc-900 w-full"
+              additionalInputClasses="select-sm dark:bg-neutralc-900"
               property={property}
               isOtherAnOption={property.openVocabType ? true : false}
               otherOptionText="Other"
@@ -187,7 +187,7 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
                 }
                 handlePropertyUpdate(number, property.name, selectedSTIXObject, setSelectedSTIXObject);
               }}
-              additionalInputClasses='select-sm dark:bg-gray-900'
+              additionalInputClasses='select-sm dark:bg-neutralc-900'
               includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
               infoText={property?.propertyDescription}
               property={property}
@@ -219,7 +219,7 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
                 property.name === "source_ref" || property.name === "target_ref" ||
                 property.name === "spec_version"
               }
-              additionalInputClasses='select-sm dark:bg-gray-900'
+              additionalInputClasses='select-sm dark:bg-neutralc-900'
               includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
               infoText={property?.propertyDescription}
               className="mb-2"
@@ -227,20 +227,20 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
               showTypeSelector={showTypeSelector}
               onTypeChange={onTypeChange}
               showValidationError={
-                selectedSTIXObject ? 
+                selectedSTIXObject ?
                   property.type === "hex" ?
                     !stixHexValidator(selectedSTIXObject[property.name])
-                  : property.type === "identifier" ?
-                    !stixIdentifierValidator(selectedSTIXObject[property.name])
+                    : property.type === "identifier" ?
+                      !stixIdentifierValidator(selectedSTIXObject[property.name])
+                      : false
                   : false
-                : false
               }
               validationErrorText={
                 property.type === "hex" ?
                   `${property.name} is not a valid STIX hex value. 
                   Double check that it contains an even number of hexadecimal characters
                   (0-9 and lowercase a-f).`
-                : `${property.name} is not a valid STIX identifier. 
+                  : `${property.name} is not a valid STIX identifier. 
                   Double check that it matches the format \"object-type--UUID\".`
               }
             />
@@ -248,14 +248,14 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
         case "list":
           // TODO: Develop way to delete items (and reorganize list, 
           // clear list, and remove last item?)
-          const addNewItemLabel = 
+          const addNewItemLabel =
             property.listType === "email-mime-part-type" ? "+ Email MIME Component"
-            : property.listType === "external-reference" ? "+ External Reference"
-            : property.listType === "granular-marking" ? "+ Granular Marking"
-            : property.listType === "identifier" ? "+ Identifier" 
-            : property.listType === "kill-chain-phase" ? "+ Kill Chain Phase"
-            : property.listType === "windows-registry-value-type" ? "+ Windows Registry Key Value"
-            : "+ Item";
+              : property.listType === "external-reference" ? "+ External Reference"
+                : property.listType === "granular-marking" ? "+ Granular Marking"
+                  : property.listType === "identifier" ? "+ Identifier"
+                    : property.listType === "kill-chain-phase" ? "+ Kill Chain Phase"
+                      : property.listType === "windows-registry-value-type" ? "+ Windows Registry Key Value"
+                        : "+ Item";
           return (
             <FormElementSTIXList
               btnLabel={addNewItemLabel}

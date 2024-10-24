@@ -18,7 +18,7 @@ import { db_delete, query_incoming, query_outgoing } from './DbFunctions';
 import { StigSettings } from '@/storage/stig-settings-storage';
 import { graph_copy } from './clipboard';
 import { ContextMenu } from '@/types/cytoscapeTypes/ContextMenu';
-import { getCssVarColor } from './GetCssVarColor';
+import { getCssRGBVarColor, getCssVarColor } from './GetCssVarColor';
 import { query } from '@/util/DbFunctions';
 import { STIGBundle } from '@/types/STIGBundle';
 import { v4 as uuidv4 } from 'uuid';
@@ -215,14 +215,14 @@ export function setupCtxMenu(
     view_util?: any
 ): void {
     const graph_utils = new GraphUtils(cy);
-    //const menuBackground = theme === 'dark' ? getCssVarColor('--context-menu-background-dark') : getCssVarColor('--context-menu-background-light');
 
+    // NOTE: For some reason the styles can't be changed once instantiated so light/dark mode changes won't impact the initial colors!
     // itemColor
     cy.cxtmenu({
         menuRadius: () => { return 120 },
-        selector: 'node',
-        fillColor: getCssVarColor('--context-menu-node-background'),
-        activeFillColor: getCssVarColor('--context-menu-node-active-background'),
+        selector: '.stix_node',
+        fillColor: getCssRGBVarColor('--context-menu-node-background'),
+        activeFillColor: getCssRGBVarColor('--context-menu-node-active-background'),
         spotlightPadding: 20,
         itemTextShadowColor: 'transparent',
         outsideMenuCancel: 10,
@@ -350,8 +350,8 @@ export function setupCtxMenu(
     cy.cxtmenu({
         selector: 'edge',
         menuRadius: () => { return 120 },
-        fillColor: getCssVarColor('--context-menu-edge-background'),
-        activeFillColor: getCssVarColor('--context-menu-edge-active-background'),
+        fillColor: getCssRGBVarColor('--context-menu-edge-background'),
+        activeFillColor: getCssRGBVarColor('--context-menu-edge-active-background'),
         outsideMenuCancel: 10,
         commands: [
             {
@@ -424,8 +424,8 @@ export function setupCtxMenu(
     cy.cxtmenu({
         menuRadius: () => { return 130 },
         selector: 'core',
-        fillColor: getCssVarColor('--context-menu-core-background'),
-        activeFillColor: getCssVarColor('--context-menu-core-active-background'),
+        fillColor: getCssRGBVarColor('--context-menu-core-background'),
+        activeFillColor: getCssRGBVarColor('--context-menu-core-active-background'),
         outsideMenuCancel: 10,
         commands: [
             {

@@ -4,11 +4,11 @@ import ButtonBasic from './ButtonBasic';
 type Props = {
   showJson: boolean;
   setIsShowingJson: React.Dispatch<React.SetStateAction<boolean>>;
-  color?: 'btn-primary' | 'btn-secondary' | 'btn-neutral' | 'btn-ghost';
+  type?: 'btn-primary' | 'btn-neutralc' | 'btn-ghost';
   size: 'standard' | 'small'
 };
 
-const ButtonSTIXJSON: React.FC<Props> = ({ showJson, setIsShowingJson, color, size }) => {
+const ButtonSTIXJSON: React.FC<Props> = ({ showJson, setIsShowingJson, type: color, size }) => {
   function toggleJSONPropertyView() {
     setIsShowingJson(!showJson)
   }
@@ -20,7 +20,7 @@ const ButtonSTIXJSON: React.FC<Props> = ({ showJson, setIsShowingJson, color, si
   }, [size]);
 
   return (
-    <ButtonBasic label={!showJson ? 'VIEW JSON' : 'VIEW FORM'} color={color ? color : 'btn-primary'} additionalClasses={`${buttonSize}`} onClick={toggleJSONPropertyView}></ButtonBasic>
+    <ButtonBasic label={!showJson ? 'VIEW JSON' : 'VIEW FORM'} type={color ? color : 'btn-primary'} additionalClasses={`${buttonSize}`} onClick={toggleJSONPropertyView}></ButtonBasic>
   );
 };
 

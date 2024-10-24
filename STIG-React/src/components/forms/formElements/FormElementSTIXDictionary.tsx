@@ -186,14 +186,14 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
                 setParentSelectedProperties
               );
             }}
-            additionalClasses='select-xs dark:bg-gray-900 w-fit'
+            additionalClasses='select-xs dark:bg-neutralc-900 w-fit'
             includeInfo={false}
           />
           : null
         }
       </div>
       <div className='flex gap-2 mb-2 items-center'>
-        <ButtonSTIXJSON size={'small'} color='btn-secondary' showJson={showJsonPanel} setIsShowingJson={toggleJSONPropertyView} />
+        <ButtonSTIXJSON size={'small'} type='btn-neutralc' showJson={showJsonPanel} setIsShowingJson={toggleJSONPropertyView} />
         <FormElementSTIXPropertySelection
           propertyOptions={localDictionaryProps}
           setPropertyOptions={setLocalDictionaryProps}
@@ -209,7 +209,7 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
           <div className='form-stix-json flex h-full w-full mb-4'>
             <textarea
               rows={10}
-              className="jsonEditor flex flex-grow p-2 scrollbar h-full w-full rounded bg-gray-100 dark:bg-gray-900"
+              className="jsonEditor flex flex-grow p-2 scrollbar h-full w-full rounded bg-neutralc-100 dark:bg-neutralc-900"
               onChange={handleJsonChange}
               value={jsonText}
             />

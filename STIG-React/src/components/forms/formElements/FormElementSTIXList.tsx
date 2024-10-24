@@ -55,7 +55,7 @@ const FormElementSTIXList: React.FC<Props> = ({
   // Update the child STIX object (the one containing the list 
   // property) when its parent changes
   useEffect(() => {
-    if(parentSTIXObject && parentPropertyName && parentPropertyIndex !== undefined) {
+    if (parentSTIXObject && parentPropertyName && parentPropertyIndex !== undefined) {
       setSelectedSTIXObject(parentSTIXObject[parentPropertyName][parentPropertyIndex]);
     }
   }, [parentSTIXObject]);
@@ -63,10 +63,10 @@ const FormElementSTIXList: React.FC<Props> = ({
   // Update the parent STIX object when its child
   // (the one containing the list property) changes
   useEffect(() => {
-    if (parentPropertyName && parentPropertyIndex !== undefined && 
+    if (parentPropertyName && parentPropertyIndex !== undefined &&
       parentSTIXObject && setParentSTIXObject && selectedSTIXObject) {
-      handlePropertyUpdate(selectedSTIXObject, parentPropertyName, 
-        parentSTIXObject, setParentSTIXObject, parentPropertyIndex);
+      handlePropertyUpdate(selectedSTIXObject, parentPropertyName,
+        parentSTIXObject, setParentSTIXObject, undefined, parentPropertyIndex);
     }
   }, [selectedSTIXObject]);
 
@@ -82,110 +82,110 @@ const FormElementSTIXList: React.FC<Props> = ({
         infoText={property.propertyDescription}
       />
       <div className={`flex flex-col items-center w-full ml-4 pr-4`} >
-        { selectedSTIXObject && selectedSTIXObject[property.name] ?
+        {selectedSTIXObject && selectedSTIXObject[property.name] ?
           property.listType === "email-mime-part-type" ?
-            selectedSTIXObject[property.name].map((listItem: EmailMIMEPartType, i: number) => 
-            <FormElementEmailMIMEPart
-              key={i}
-              emailMIMEPart={listItem}
-              emailMIMEPartIndex={i}
-              property={property}
-            />
-          )
-          : property.listType === "enum" || property.listType === "open-vocab" ?
-          selectedSTIXObject[property.name].map((listItem: string, i:number) => 
-            <FormElementSelectOther
-              key={i}
-              placeholder=''
-              value={listItem}
-              options={property.openVocabType ? open_vocab_options[property.openVocabType] : 
-                property.enumType ? enum_options[property.enumType] : []}
-              onSelect={(event) => {
-                handlePropertyUpdate(event.target.value, property.name, 
-                  selectedSTIXObject, setSelectedSTIXObject, i);
-              }}
-              onInputChange={(event) => {
-                handlePropertyUpdate(event.target.value, property.name, 
-                  selectedSTIXObject, setSelectedSTIXObject, i);
-              }}
-              onSwitchToSuggested={() => {
-                handlePropertyUpdate("", property.name, 
-                  selectedSTIXObject, setSelectedSTIXObject, i);
-              }}
-              className="mb-2"
-              inputClassName="mb-2"
-              includeInfo={false}
-              additionalClasses="dark:bg-gray-900 w-full"
-              additionalInputClasses="select-sm dark:bg-gray-900"
-              isOtherAnOption={property.openVocabType ? true : false}
-              otherOptionText="Other"
-              otherOptionLabel={`Custom ${property?.name} Value`}
-            />
-          )
-          : property.listType === "external-reference" ?
-            selectedSTIXObject[property.name].map((listItem: ExternalReference, i: number) => 
-              <FormElementSTIXExternalReference
+            selectedSTIXObject[property.name].map((listItem: EmailMIMEPartType, i: number) =>
+              <FormElementEmailMIMEPart
                 key={i}
-                externalReference={listItem}
-                externalReferenceIndex={i}
+                emailMIMEPart={listItem}
+                emailMIMEPartIndex={i}
                 property={property}
               />
             )
-          : property.listType === "granular-marking" ?
-            selectedSTIXObject[property.name].map((listItem: GranularMarking, i: number) => 
-              <FormElementSTIXGranularMarking
-                key={i}
-                granularMarking={listItem}
-                granularMarkingIndex={i}
-                property={property}
-              />
-            )
-          : property.listType === "kill-chain-phase" ? 
-            selectedSTIXObject[property.name].map((listItem: KillChainPhase, i: number) =>
-              <FormElementSTIXKillChainPhase
-                key={i}
-                killChainPhase={listItem}
-                killChainPhaseIndex={i}
-                property={property}
-              />
-            )
-          : property.listType === "windows-registry-value-type" ?
-            selectedSTIXObject[property.name].map((listItem: WindowsRegistryValueType, i: number) => 
-              <FormElementSTIXWindowsRegistryValue
-                key={i}
-                windowsRegistryValue={listItem}
-                windowsRegistryValueIndex={i}
-                property={property}
-              />
-            )
-          : selectedSTIXObject[property.name].map((listItem: string, i: number) =>
-              <FormElementTextInput
-                key={i}
-                type="text"
-                value={listItem}
-                onChange={(event) => {
-                  handlePropertyUpdate(event.target.value, property.name, 
-                    selectedSTIXObject, setSelectedSTIXObject, i);
-                }}
-                className="mb-2"
-                includeInfo={false}
-                additionalInputClasses="select-sm dark:bg-gray-900"
-                additionalLabelClasses="ml-6 mr-5 w-20"
-                showValidationError={property.listType === "identifier" && selectedSTIXObject ?
-                  !stixIdentifierValidator(listItem)
-                  : false
-                }
-                validationErrorText={
-                  `The identifier is not valid. 
+            : property.listType === "enum" || property.listType === "open-vocab" ?
+              selectedSTIXObject[property.name].map((listItem: string, i: number) =>
+                <FormElementSelectOther
+                  key={i}
+                  placeholder=''
+                  value={listItem}
+                  options={property.openVocabType ? open_vocab_options[property.openVocabType] :
+                    property.enumType ? enum_options[property.enumType] : []}
+                  onSelect={(event) => {
+                    handlePropertyUpdate(event.target.value, property.name,
+                      selectedSTIXObject, setSelectedSTIXObject, undefined, i);
+                  }}
+                  onInputChange={(event) => {
+                    handlePropertyUpdate(event.target.value, property.name,
+                      selectedSTIXObject, setSelectedSTIXObject, undefined, i);
+                  }}
+                  onSwitchToSuggested={() => {
+                    handlePropertyUpdate("", property.name,
+                      selectedSTIXObject, setSelectedSTIXObject, undefined, i);
+                  }}
+                  className="mb-2"
+                  inputClassName="mb-2"
+                  includeInfo={false}
+                  additionalClasses="dark:bg-neutralc-900 w-full"
+                  additionalInputClasses="select-sm dark:bg-neutralc-900"
+                  isOtherAnOption={property.openVocabType ? true : false}
+                  otherOptionText="Other"
+                  otherOptionLabel={`Custom ${property?.name} Value`}
+                />
+              )
+              : property.listType === "external-reference" ?
+                selectedSTIXObject[property.name].map((listItem: ExternalReference, i: number) =>
+                  <FormElementSTIXExternalReference
+                    key={i}
+                    externalReference={listItem}
+                    externalReferenceIndex={i}
+                    property={property}
+                  />
+                )
+                : property.listType === "granular-marking" ?
+                  selectedSTIXObject[property.name].map((listItem: GranularMarking, i: number) =>
+                    <FormElementSTIXGranularMarking
+                      key={i}
+                      granularMarking={listItem}
+                      granularMarkingIndex={i}
+                      property={property}
+                    />
+                  )
+                  : property.listType === "kill-chain-phase" ?
+                    selectedSTIXObject[property.name].map((listItem: KillChainPhase, i: number) =>
+                      <FormElementSTIXKillChainPhase
+                        key={i}
+                        killChainPhase={listItem}
+                        killChainPhaseIndex={i}
+                        property={property}
+                      />
+                    )
+                    : property.listType === "windows-registry-value-type" ?
+                      selectedSTIXObject[property.name].map((listItem: WindowsRegistryValueType, i: number) =>
+                        <FormElementSTIXWindowsRegistryValue
+                          key={i}
+                          windowsRegistryValue={listItem}
+                          windowsRegistryValueIndex={i}
+                          property={property}
+                        />
+                      )
+                      : selectedSTIXObject[property.name].map((listItem: string, i: number) =>
+                        <FormElementTextInput
+                          key={i}
+                          type="text"
+                          value={listItem}
+                          onChange={(event) => {
+                            handlePropertyUpdate(event.target.value, property.name,
+                              selectedSTIXObject, setSelectedSTIXObject, undefined, i);
+                          }}
+                          className="mb-2"
+                          includeInfo={false}
+                          additionalInputClasses="select-sm dark:bg-neutralc-900"
+                          additionalLabelClasses="ml-6 mr-5 w-20"
+                          showValidationError={property.listType === "identifier" && selectedSTIXObject ?
+                            !stixIdentifierValidator(listItem)
+                            : false
+                          }
+                          validationErrorText={
+                            `The identifier is not valid. 
                   Double check that it matches the format \"object-type--UUID\".`
-                }
-              />
-            )
+                          }
+                        />
+                      )
           : null
         }
         <ButtonBasic
           label={btnLabel}
-          color="btn-primary"
+          type="btn-primary"
           onClick={() => {
             let tempSTIXObj = { ...selectedSTIXObject } as StixObject;
             if (!tempSTIXObj[property.name]) {
@@ -196,15 +196,15 @@ const FormElementSTIXList: React.FC<Props> = ({
                   tempSTIXObj[property.name] = [{}];
                   break;
                 case "external-reference":
-                  tempSTIXObj[property.name] = [{source_name: ""}];
+                  tempSTIXObj[property.name] = [{ source_name: "" }];
                   break;
                 case "granular-marking":
-                  tempSTIXObj[property.name] = [{selectors: []}];
+                  tempSTIXObj[property.name] = [{ selectors: [] }];
                   break;
-                case "kill-chain-phase": 
-                  tempSTIXObj[property.name] = [{kill_chain_name: "", phase_name: ""}];
+                case "kill-chain-phase":
+                  tempSTIXObj[property.name] = [{ kill_chain_name: "", phase_name: "" }];
                   break;
-                default: 
+                default:
                   tempSTIXObj[property.name] = [""];
               }
             } else {
@@ -214,13 +214,13 @@ const FormElementSTIXList: React.FC<Props> = ({
                   tempSTIXObj[property.name].push({});
                   break;
                 case "external-reference":
-                  tempSTIXObj[property.name].push({source_name: ""});
+                  tempSTIXObj[property.name].push({ source_name: "" });
                   break;
                 case "granular-marking":
-                  tempSTIXObj[property.name].push({selectors: []});
+                  tempSTIXObj[property.name].push({ selectors: [] });
                   break;
                 case "kill-chain-phase":
-                  tempSTIXObj[property.name].push({kill_chain_name: "", phase_name: ""});
+                  tempSTIXObj[property.name].push({ kill_chain_name: "", phase_name: "" });
                   break;
                 default:
                   tempSTIXObj[property.name].push("");

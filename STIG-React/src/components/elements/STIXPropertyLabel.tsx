@@ -2,6 +2,7 @@ import { SchemaSTIXType } from "@/types/stixSchemaTypes/SchemaSTIXType";
 import FormElementSelect from "../forms/formElements/FormElementSelect";
 import React, { forwardRef, useRef, useState } from "react";
 import InfoButton from "./InfoButton";
+import AlertComponent from "./AlertComponent";
 
 type Props = {
     propName: string;
@@ -13,11 +14,11 @@ type Props = {
     infoText?: string;
 }
 
-const STIXPropertyLabel = forwardRef<HTMLParagraphElement, Props>(({ 
-    propName, 
-    propertyType, 
-    showTypeSelector, 
-    onTypeChange, 
+const STIXPropertyLabel = forwardRef<HTMLParagraphElement, Props>(({
+    propName,
+    propertyType,
+    showTypeSelector,
+    onTypeChange,
     additionalLabelClasses,
     includeInfo = false,
     infoText
@@ -60,7 +61,7 @@ const STIXPropertyLabel = forwardRef<HTMLParagraphElement, Props>(({
                             options={["array", "string", "integer", "boolean", "number", "object"]}
                             value={stixSchemaToUITypeConverter[propertyType]}
                             onChange={onTypeChange}
-                            additionalClasses='select-xs dark:bg-gray-900 w-fit'
+                            additionalClasses='select-xs dark:bg-neutralc-900 w-fit'
                             includeInfo={false}
                         />
                         : null
@@ -73,7 +74,7 @@ const STIXPropertyLabel = forwardRef<HTMLParagraphElement, Props>(({
                 </div>
             }
             {showInfo && includeInfo && infoText && infoText?.length > 0 &&
-                <span className={`text-xs py-1 dark:text-orange-300 text-orange-800`}>{infoText}</span>
+                <AlertComponent alertText={infoText || ''} alertType={'info'} userClosable={false} className={'!mx-0 !my-1 !py-1 !px-2 text-xs'}></AlertComponent>
             }
         </>
     );

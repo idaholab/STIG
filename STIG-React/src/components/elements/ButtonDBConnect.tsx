@@ -14,7 +14,7 @@ interface ButtonDBConnectProps {
     inDBDeleteProcess?: boolean;
 }
 
-const ButtonDBConnect: React.FC<ButtonDBConnectProps> = ({ 
+const ButtonDBConnect: React.FC<ButtonDBConnectProps> = ({
     dbProfile, additionalButtonClasses,
     isConnectProcessing, setIsConnectProcessing,
     inDBDeleteProcess
@@ -22,30 +22,26 @@ const ButtonDBConnect: React.FC<ButtonDBConnectProps> = ({
     const { connectedDBProfile, setConnectedDBProfile,
         connectedDBDriver, setConnectedDBDriver,
     } = useContext(ConnectedDBContext) as ConnectedDBContextType;
-
     return (
         <ButtonBasic
-            label={<>
+            label={<span className='flex items-center'>
                 {(dbProfile && dbProfile.Id === connectedDBProfile?.Id) ? "Disconnect" : "Connect"}
                 {isConnectProcessing ?
                     <span className="loading loading-spinner loading-xs"></span>
                     : null
                 }
                 {dbProfile && !dbProfile?.LastDBOperationSuccessful ?
-                    <div className="tooltip tooltip-bottom tooltip-error" data-tip="ERROR: Unable to Connect">
-                        <span className="material-icons text-red-700">
+                    <div className="mx-1 tooltip tooltip-bottom tooltip-error" data-tip="ERROR: Unable to Connect">
+                        <span className="material-icons !text-base dark:text-error text-error-light">
                             error_outline
                         </span>
                     </div>
                     : null
                 }
-            </>}
-            color="btn-secondary"
-            additionalClasses={`${additionalButtonClasses}` +
-                (inDBDeleteProcess || !dbProfile || isConnectProcessing ?
-                    " btn-disabled" : ""
-                )
-            }
+            </span>}
+            type="btn-neutralc"
+            disabled={inDBDeleteProcess || !dbProfile || isConnectProcessing}
+            additionalClasses={`${additionalButtonClasses}`}
             onClick={async () => {
                 setIsConnectProcessing(true);
                 if (dbProfile && dbProfile?.Id === connectedDBProfile?.Id) {
@@ -63,7 +59,7 @@ const ButtonDBConnect: React.FC<ButtonDBConnectProps> = ({
                     }
                 } else {
                     // Connect
-                    if(dbProfile) {
+                    if (dbProfile) {
                         const [newDriver, successfulConnection] = await connectToNeo4jDB(connectedDBDriver, dbProfile)
                         if (successfulConnection) {
                             setConnectedDBDriver(newDriver);

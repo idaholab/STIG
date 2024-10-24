@@ -21,12 +21,12 @@ const FormElementSTIXKillChainPhase: React.FC<Props> = ({
   const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
 
   const killChainPhaseDescription = propertyDescriptions.find((group) => group.name === property.listType);
-  let killChainPropDescriptions:{[propName: string]: string} = {};
-  if(killChainPhaseDescription) {
+  let killChainPropDescriptions: { [propName: string]: string } = {};
+  if (killChainPhaseDescription) {
     killChainPropDescriptions = getSTIXPropDescriptions(killChainPhaseDescription);
   }
 
-  return ( selectedSTIXObject &&
+  return (selectedSTIXObject &&
     <div className='w-full'>
       <FormElementTextInput
         label="kill_chain_name"
@@ -37,13 +37,13 @@ const FormElementSTIXKillChainPhase: React.FC<Props> = ({
             {
               "kill_chain_name": event.target.value,
               "phase_name": killChainPhase.phase_name
-            }, 
+            },
             property.name, selectedSTIXObject, setSelectedSTIXObject, killChainPhaseIndex
           );
         }}
         includeInfo={killChainPropDescriptions.kill_chain_name ? true : false}
         infoText={killChainPropDescriptions.kill_chain_name}
-        additionalInputClasses="select-sm dark:bg-gray-900"
+        additionalInputClasses="select-sm dark:bg-neutralc-900"
         additionalLabelClasses="ml-6 mr-5 w-20"
       />
       <FormElementTextInput
@@ -62,7 +62,7 @@ const FormElementSTIXKillChainPhase: React.FC<Props> = ({
         className="mb-2"
         includeInfo={killChainPropDescriptions.phase_name ? true : false}
         infoText={killChainPropDescriptions.phase_name}
-        additionalInputClasses="select-sm dark:bg-gray-900"
+        additionalInputClasses="select-sm dark:bg-neutralc-900"
         additionalLabelClasses="ml-6 mr-5 w-20"
       />
     </div>
