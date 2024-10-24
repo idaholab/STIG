@@ -141,7 +141,7 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
                 selectedSTIXObject[property.name]
                 : ""
               }
-              options={property.openVocabType ? open_vocab_options[property.openVocabType] : 
+              options={property.openVocabType ? open_vocab_options[property.openVocabType] :
                 property.enumType ? enum_options[property.enumType] : []}
               onSelect={(event) => {
                 handlePropertyUpdate(event.target.value, property.name, selectedSTIXObject, setSelectedSTIXObject);
@@ -213,7 +213,7 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
                 : ""
               }
               onChange={(event) => {
-                handlePropertyUpdate(event.target.value, property.name, selectedSTIXObject, setSelectedSTIXObject);
+                handlePropertyUpdate(event.target.value, property.name, selectedSTIXObject, setSelectedSTIXObject, cyInstance);
               }}
               disabled={property.name === "id" || property.name === "type" ||
                 property.name === "source_ref" || property.name === "target_ref" ||

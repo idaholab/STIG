@@ -155,7 +155,6 @@ function cycore2stix(o: SingularElementArgument) {
 function submitter(nodes: NodeCollection, edges: EdgeCollection, addNotification: any) {
   const stix_nodes: StixObject[] = nodes.map(cycore2stix).filter(s => s !== undefined);
   const stix_edges: StixRelationshipObject[] = edges.map(cycore2stix).filter(s => s !== undefined);
-
   (async () => {
     let set = await commit(stix_nodes, stix_edges);
     let objs = set[0].size; let rels = set[1].size;
