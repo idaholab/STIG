@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useStigContext } from '@/contexts/StigContext.tsx';
 import { useStixPropsContext } from '../contexts/StixPropsContext.tsx';
 import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty.ts';
 import { SchemaSTIXClass } from '@/types/stixSchemaTypes/SchemaSTIXClass.ts';
@@ -38,7 +37,6 @@ function PropsPanelHeader({ selectedProperties, setSelectedProperties, setIsShow
   setSelectedProperties: React.Dispatch<React.SetStateAction<SchemaSTIXProperty[]>>,
   setIsShowingJson: React.Dispatch<React.SetStateAction<boolean>>
 }) {
-  const { toggleDrawer } = useStigContext();
   const { selectedSTIXObject } = useStixPropsContext();
   const [showJsonPanel, setShowJsonPanel] = useState<boolean>(false);
 
@@ -80,8 +78,8 @@ function PropsPanelHeader({ selectedProperties, setSelectedProperties, setIsShow
   }
   return (
     <>
-      <div className="flex justify-between items-center">
-        <h1 className="text-lg">
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-xl">
           {selectedSTIXObject && ("type" in selectedSTIXObject) ?
             stencilItems.find(stencilItem => {
               return selectedSTIXObject.type === stencilItem.id
@@ -89,12 +87,6 @@ function PropsPanelHeader({ selectedProperties, setSelectedProperties, setIsShow
             : null
           }
         </h1>
-        <button
-          className="btn border-none text-neutralc-900 dark:text-neutralc-100 shadow-none"
-          onClick={toggleDrawer}
-        >
-          <span className="material-icons">close</span>
-        </button>
       </div>
       <div className='flex gap-2 mb-4'>
         <ButtonSTIXJSON size={'standard'} showJson={showJsonPanel} setIsShowingJson={toggleJSONPropertyView} />

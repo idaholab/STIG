@@ -23,7 +23,6 @@ import { createCytoscapeNode } from '@/stix/stix';
 import { stencilItems } from '@/components/elements/StencilItems';
 import { setup_edge_handles } from './edge-handles';
 
-
 cytoscape.use(viewUtilities);
 cytoscape.use(cxtmenu);
 //cytoscape.use(edgehandles);
@@ -36,8 +35,8 @@ spread(cytoscape);
 const Graph: React.FC = () => {
     const cyContainerRef = useRef<HTMLDivElement>(null);
     const { addEventListener, removeEventListener } = useContext(EventContext);
-    const { theme, toggleTheme } = useTheme();
-    const { cyInstance, setCyInstance, isDrawerOpen, toggleDrawer } = useStigContext();
+    const { theme } = useTheme();
+    const { cyInstance, setCyInstance, isPropertyPanelOpen, togglePropertyPanel } = useStigContext();
     const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
 
     // Dynamically updates the styles on the nodes and edges
@@ -111,7 +110,7 @@ const Graph: React.FC = () => {
             try {
                 let viewUtil = cy?.viewUtilities(view_utils_options);
                 if (viewUtil) {
-                    setupCtxMenu(cy, isDrawerOpen, toggleDrawer,
+                    setupCtxMenu(cy, isPropertyPanelOpen, togglePropertyPanel,
                         selectedSTIXObject, setSelectedSTIXObject, viewUtil);
                 }
             }
@@ -160,7 +159,7 @@ const Graph: React.FC = () => {
             try {
                 let viewUtil = cyInstance.viewUtilities(view_utils_options);
                 if (viewUtil) {
-                    setupCtxMenu(cyInstance, isDrawerOpen, toggleDrawer,
+                    setupCtxMenu(cyInstance, isPropertyPanelOpen, togglePropertyPanel,
                         selectedSTIXObject, setSelectedSTIXObject, viewUtil);
                 }
             }
@@ -168,18 +167,18 @@ const Graph: React.FC = () => {
                 console.error('View utilities could not be initialized.', e);
             }
         }
-    }, [isDrawerOpen, selectedSTIXObject]);
+    }, [isPropertyPanelOpen, selectedSTIXObject]);
 
     // Needed to move handleClearGraph out of the above useEffect so that
-    // isDrawerOpen and cyInstance would properly update and clearing the
+    // isPropertyPanelOpen and cyInstance would properly update and clearing the
     // graph would properly know when to also close the properties panel.
     useEffect(() => {
         const handleClearGraph = () => {
             cyInstance?.elements().remove();
             cyInstance?.reset();
             setSelectedSTIXObject(undefined);
-            if (isDrawerOpen) {
-                toggleDrawer();
+            if (isPropertyPanelOpen) {
+                togglePropertyPanel();
             }
         }
 
@@ -189,7 +188,7 @@ const Graph: React.FC = () => {
         return () => {
             graphElement?.removeEventListener('clearGraph', handleClearGraph);
         };
-    }, [isDrawerOpen, cyInstance]);
+    }, [isPropertyPanelOpen, cyInstance]);
 
     // Triggered on edit of a node's properties
     useEffect(() => {
@@ -415,8 +414,8 @@ const Graph: React.FC = () => {
 
     // Show STIX props panel on node/edge click
     cyInstance?.on('click', 'node, edge', (evt: cytoscape.EventObject) => {
-        if (!isDrawerOpen) {
-            toggleDrawer();
+        if (!isPropertyPanelOpen) {
+            togglePropertyPanel();
         }
         const ele: cytoscape.CollectionReturnValue = evt.target;
         cyInstance.$(':selected').unselect();
@@ -428,8 +427,8 @@ const Graph: React.FC = () => {
 
     // Hide STIX props panel when node/edge is unselected
     cyInstance?.on('unselect', 'node, edge', (evt: cytoscape.EventObject) => {
-        if (isDrawerOpen) {
-            toggleDrawer();
+        if (isPropertyPanelOpen) {
+            togglePropertyPanel();
         }
     });
 

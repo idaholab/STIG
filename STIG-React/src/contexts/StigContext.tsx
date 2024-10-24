@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useState } from 'react';
 
 type StigContextType = {
-  isDrawerOpen: boolean;
+  isPropertyPanelOpen: boolean;
   cyInstance: cytoscape.Core | undefined;
-  toggleDrawer: () => void;
+  togglePropertyPanel: () => void;
   setCyInstance: React.Dispatch<React.SetStateAction<cytoscape.Core | undefined>>;
 };
 
@@ -22,15 +22,15 @@ type Props = {
 };
 
 export const StigContextProvider: React.FC<Props> = ({ children }) => {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isPropertyPanelOpen, setIsPropertyPanelOpen] = useState(false);
   const [cyInstance, setCyInstance] = useState<cytoscape.Core | undefined>(undefined);
 
-  const toggleDrawer = () => {
-    setIsDrawerOpen(!isDrawerOpen);
+  const togglePropertyPanel = () => {
+    setIsPropertyPanelOpen(!isPropertyPanelOpen);
   };
 
   return (
-    <StigContext.Provider value={{ isDrawerOpen, toggleDrawer, cyInstance, setCyInstance }}>
+    <StigContext.Provider value={{ isPropertyPanelOpen, togglePropertyPanel, cyInstance, setCyInstance }}>
       {children}
     </StigContext.Provider>
   );

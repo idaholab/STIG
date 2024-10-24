@@ -100,7 +100,6 @@ const Drawer = () => {
               additionalXClasses={`hover:dark:text-white`}
               additionalInputClasses={`h-9`}
               includeInfo={false}
-              infoText={'Filter the stencils'}
               className="w-full mx-4"
               prefix='filter_alt'
               ref={inputRef}  // Attach ref here for filter bar focus

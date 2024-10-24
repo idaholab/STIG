@@ -208,8 +208,8 @@ export class GraphUtils {
 
 export function setupCtxMenu(
     cy: cytoscape.Core,
-    isDrawerOpen: boolean,
-    toggleDrawer: () => void,
+    isPropertyPanelOpen: boolean,
+    togglePropertyPanel: () => void,
     selectedSTIXObject: StixObject | undefined,
     setSelectedSTIXObject: React.Dispatch<React.SetStateAction<StixObject | undefined>>,
     view_util?: any
@@ -246,8 +246,8 @@ export function setupCtxMenu(
                      */
                     if (selectedSTIXObject?.id === element.data("id")) {
                         setSelectedSTIXObject(undefined);
-                        if (isDrawerOpen) {
-                            toggleDrawer();
+                        if (isPropertyPanelOpen) {
+                            togglePropertyPanel();
                         }
                     }
                     cy.remove(element);
@@ -267,8 +267,8 @@ export function setupCtxMenu(
                         // });
                         if (selectedSTIXObject?.id === element.data("id")) {
                             setSelectedSTIXObject(undefined);
-                            if (isDrawerOpen) {
-                                toggleDrawer();
+                            if (isPropertyPanelOpen) {
+                                togglePropertyPanel();
                             }
                         }
                         cy.remove(element);
@@ -366,8 +366,8 @@ export function setupCtxMenu(
                     // its raw_data id with "relationship--" on the front
                     if (selectedSTIXObjectId === element.data("id") || selectedSTIXObject?.id === element.data("id")) {
                         setSelectedSTIXObject(undefined);
-                        if (isDrawerOpen) {
-                            toggleDrawer();
+                        if (isPropertyPanelOpen) {
+                            togglePropertyPanel();
                         }
                     }
                     cy.remove(element);
@@ -384,8 +384,8 @@ export function setupCtxMenu(
                             const selectedSTIXObjectId = selectedSTIXObject?.id.replace("relationship--", "");
                             if (selectedSTIXObjectId === element.data("id") || selectedSTIXObject?.id === element.data("id")) {
                                 setSelectedSTIXObject(undefined);
-                                if (isDrawerOpen) {
-                                    toggleDrawer();
+                                if (isPropertyPanelOpen) {
+                                    togglePropertyPanel();
                                 }
                             }
                             cy.remove(value);
@@ -477,8 +477,8 @@ export function setupCtxMenu(
                         (selectedSTIXObject?.id && !remainingElementIds.includes(selectedSTIXObject?.id))
                     ) {
                         setSelectedSTIXObject(undefined);
-                        if (isDrawerOpen) {
-                            toggleDrawer();
+                        if (isPropertyPanelOpen) {
+                            togglePropertyPanel();
                         }
                     }
                 }

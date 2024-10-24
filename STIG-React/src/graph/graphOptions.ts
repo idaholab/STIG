@@ -103,7 +103,7 @@ export const generateNodeSelectedStyle = (): StylesheetStyle[] => {
   const selectedColor = getCssRGBVarColor('--selected-node-color');
   const style: Css.Node = {
     'border-color': selectedColor,
-    'border-width': 4,
+    'border-width': 3,
     'border-opacity': 1,
   };
   return [{

@@ -179,7 +179,6 @@ body,
   box-sizing: border-box;
   font-family: 'Source Sans Pro';
   font-weight: 500;
-  /* color: rgb(var(--color-neutral-rgb-900)); */
 }
 
 #root > div {
@@ -188,9 +187,14 @@ body,
 
 
 @layer components {
+  [data-theme='light'] {
+      color: rgb(var(--color-neutral-rgb-600));
+  }
+
+
   [data-theme='dark'] {
     background-color: rgb(var(--color-neutral-rgb-800));
-    color: rgb(var(--color-neutral-rgb-100));
+    color: rgb(var(--color-neutral-rgb-300));
 
     /* Scroll Track */
     ::-webkit-scrollbar-track {

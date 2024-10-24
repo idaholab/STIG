@@ -9,7 +9,7 @@ import { StixPropsContextProvider } from '@/contexts/StixPropsContext';
 
 type Props = { children: any };
 const MainScaffold: React.FC<Props> = ({ children }) => {
-  const { isDrawerOpen } = useStigContext();
+  const { isPropertyPanelOpen } = useStigContext();
   const [panelWidth, setPanelWidth] = useState(480); // Default width in pixels
   const [isResizing, setIsResizing] = useState(false);
 
@@ -56,14 +56,14 @@ const MainScaffold: React.FC<Props> = ({ children }) => {
                 {children}
               </main>
 
-              {isDrawerOpen && (
+              {isPropertyPanelOpen && (
                 <div
                   className={`dark:bg-neutralc-700 bg-neutralc-200 h-full shadow-xl transition-transform duration-300 relative `}
                   style={{ width: panelWidth }}
                 >
                   <StixPropsPanel />
                   {/* Handle */}
-                  <div
+                  <div id='PropertyPanelHandle'
                     onMouseDown={handleMouseDown}
                     className="absolute left-0 top-0 h-full cursor-ew-resize flex items-center justify-center dark:bg-neutralc-700"
                     style={{ width: '8px', zIndex: 100 }}

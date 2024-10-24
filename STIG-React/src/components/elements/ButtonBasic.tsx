@@ -8,10 +8,11 @@ interface ButtonProps {
   onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   additionalClasses?: string;
   disabled?: boolean;
+  isLabelUppercase?: boolean;
 }
 
-const ButtonBasic: React.FC<ButtonProps> = ({ label, type, link, onClick, additionalClasses, disabled }) => {
-  const baseClasses = `btn ${type} uppercase hover:opacity-100`;
+const ButtonBasic: React.FC<ButtonProps> = ({ label, type, link, onClick, additionalClasses, disabled, isLabelUppercase = true }) => {
+  const baseClasses = `btn ${type} hover:opacity-100 ${isLabelUppercase ? 'uppercase' : ''}`;
   const lightModeClasses = type === 'btn-neutralc' ? 'border border-solid border-primary text-primary hover:text-primary' : '';
   const darkModeClasses = type === 'btn-neutralc' ? 'dark:border dark:border-solid dark:!border-neutralc-400 dark:hover:!border-white dark:text-neutralc-300 dark:hover:text-white dark:hover:bg-neutralc-950' : '';
 
