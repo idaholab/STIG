@@ -11,6 +11,7 @@ import FormElementFileInput from "./formElements/FormElementFileInput";
 import FormElementSTIXDictionary from "./formElements/FormElementSTIXDictionary";
 import FormElementSelectOther from "./formElements/FormElementSelectOther";
 import FormElementSTIXHashes from "./formElements/FormElementSTIXHashes";
+import FormElementSTIXX509V3Extensions from "./formElements/FormElementSTIXX509V3Extensions";
 
 import { SchemaSTIXProperty } from "@/types/stixSchemaTypes/SchemaSTIXProperty";
 
@@ -18,6 +19,7 @@ import { enum_options } from "@/stix/enumOptions";
 import { handlePropertyUpdate } from "@/stix/handlePropertyUpdate";
 import { open_vocab_options } from "@/stix/openVocabOptions";
 
+import { stixHexValidator } from "@/util/stixHexValidator";
 import { stixIdentifierValidator } from "@/util/stixIdentifierValidator";
 
 export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
@@ -200,6 +202,7 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
               property={property}
             />
           );
+        case "hex":
         case "identifier":
         case "string":
           return (
@@ -210,7 +213,7 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
                 : ""
               }
               onChange={(event) => {
-                handlePropertyUpdate(event.target.value, property.name, selectedSTIXObject, setSelectedSTIXObject);
+                handlePropertyUpdate(event.target.value, property.name, selectedSTIXObject, setSelectedSTIXObject, cyInstance);
               }}
               disabled={property.name === "id" || property.name === "type" ||
                 property.name === "source_ref" || property.name === "target_ref" ||
@@ -223,13 +226,22 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
               property={property}
               showTypeSelector={showTypeSelector}
               onTypeChange={onTypeChange}
-              showValidationError={property.type === "identifier" && selectedSTIXObject ?
-                !stixIdentifierValidator(selectedSTIXObject[property.name])
-                : false
+              showValidationError={
+                selectedSTIXObject ?
+                  property.type === "hex" ?
+                    !stixHexValidator(selectedSTIXObject[property.name])
+                    : property.type === "identifier" ?
+                      !stixIdentifierValidator(selectedSTIXObject[property.name])
+                      : false
+                  : false
               }
               validationErrorText={
-                `${property.name} is not a valid STIX identifier. 
-                Double check that it matches the format \"object-type--UUID\".`
+                property.type === "hex" ?
+                  `${property.name} is not a valid STIX hex value. 
+                  Double check that it contains an even number of hexadecimal characters
+                  (0-9 and lowercase a-f).`
+                  : `${property.name} is not a valid STIX identifier. 
+                  Double check that it matches the format \"object-type--UUID\".`
               }
             />
           );
@@ -242,7 +254,8 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
                 : property.listType === "granular-marking" ? "+ Granular Marking"
                   : property.listType === "identifier" ? "+ Identifier"
                     : property.listType === "kill-chain-phase" ? "+ Kill Chain Phase"
-                      : "+ Item";
+                      : property.listType === "windows-registry-value-type" ? "+ Windows Registry Key Value"
+                        : "+ Item";
           return (
             <FormElementSTIXList
               btnLabel={addNewItemLabel}
@@ -268,6 +281,12 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
               property={property}
               showTypeSelector={showTypeSelector}
               onTypeChange={onTypeChange}
+            />
+          );
+        case "x509-v3-extensions-type":
+          return (
+            <FormElementSTIXX509V3Extensions
+              property={property}
             />
           );
       }

@@ -3,10 +3,8 @@ import Dropdown from '../core/Dropdown';
 import { DialogBasic } from '../elements/DialogBasic';
 import ExportModal from '@/layouts/ExportModals';
 import { exportAll, exportSelected } from '@/util/GraphUtils';
-import { useStigContext } from '@/contexts/StigContext';
 
 const Export: React.FC = () => {
-  const { cyInstance } = useStigContext();
   return (
     <Dropdown
       title="Export"

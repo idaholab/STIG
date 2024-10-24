@@ -234,6 +234,16 @@ export function setupCtxMenu(
                     // Check if the deleted element is currently selected
                     // and if so, close the property panel and clear
                     // the currently selected object
+                    /*FIX!: TODO: the following steps will produce a bug:
+                     * Drag a node onto the screen (Let's call that node 'A')
+                     * Drag another node onto the screen (perhaps a different type of stix object for debugging. Let's call that node 'B')
+                     * Click 'A' (opening the property panel for 'A')
+                     * Click 'B' (opening the property panel for 'B')
+                     * Shift select 'A', still keeping the selection on and property panel open for 'B'
+                     * "Graph Remove" 'A'
+                     * 
+                     * Notice that the property panel is mistakenly closed for 'B'. See the console.debug below
+                     */
                     if (selectedSTIXObject?.id === element.data("id")) {
                         setSelectedSTIXObject(undefined);
                         if (isDrawerOpen) {
@@ -241,6 +251,7 @@ export function setupCtxMenu(
                         }
                     }
                     cy.remove(element);
+                    console.debug("the selected stix object during 'Graph Remove' is ", selectedSTIXObject?.id);
                 }
             },
             {
@@ -249,11 +260,19 @@ export function setupCtxMenu(
                     const element = ele as unknown as CollectionArgument;
 
                     try {
-                        const eleList = element.toArray();
-                        eleList.forEach((value) => {
-                            cy.remove(value);
-                            void db_delete(value.data('raw_data'));
-                        });
+                        // const eleList = element.toArray();
+                        // eleList.forEach((value) => {
+                        //     cy.remove(value);
+                        //     void db_delete(value.data('raw_data'));
+                        // });
+                        if (selectedSTIXObject?.id === element.data("id")) {
+                            setSelectedSTIXObject(undefined);
+                            if (isDrawerOpen) {
+                                toggleDrawer();
+                            }
+                        }
+                        cy.remove(element);
+                        db_delete(element.data('raw_data'));
                     } catch (e) {
                         // Handle error: probably want to indicate that it wasn't deleted from DB
                     }
@@ -362,6 +381,13 @@ export function setupCtxMenu(
                     try {
                         const eleList = element.toArray();
                         eleList.forEach((value) => {
+                            const selectedSTIXObjectId = selectedSTIXObject?.id.replace("relationship--", "");
+                            if (selectedSTIXObjectId === element.data("id") || selectedSTIXObject?.id === element.data("id")) {
+                                setSelectedSTIXObject(undefined);
+                                if (isDrawerOpen) {
+                                    toggleDrawer();
+                                }
+                            }
                             cy.remove(value);
                             void db_delete(value.data('raw_data'));
                         });

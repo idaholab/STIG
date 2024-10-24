@@ -5,6 +5,7 @@ import FormElementSTIXExternalReference from './FormElementSTIXExternalReference
 import FormElementSelectOther from './FormElementSelectOther';
 import FormElementSTIXGranularMarking from './FormElementSTIXGranularMarking';
 import FormElementSTIXKillChainPhase from './FormElementSTIXKillChainPhase';
+import FormElementSTIXWindowsRegistryValue from './FormElementSTIXWindowsRegistryValue';
 import FormElementTextInput from './FormElementTextInput';
 
 import ButtonBasic from '@/components/elements/ButtonBasic';
@@ -22,6 +23,7 @@ import { GranularMarking } from '@/types/stixTypes/GranularMarking';
 import { KillChainPhase } from '@/types/stixTypes/KillChainPhase';
 import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
 import { StixObject } from '@/types/stixTypes/StixObject';
+import { WindowsRegistryValueType } from '@/types/stixTypes/WindowsRegistryValueType';
 
 import { stixIdentifierValidator } from '@/util/stixIdentifierValidator';
 
@@ -113,8 +115,8 @@ const FormElementSTIXList: React.FC<Props> = ({
                   className="mb-2"
                   inputClassName="mb-2"
                   includeInfo={false}
-                  additionalClasses="dark:bg-neutralc-900 w-full"
-                  additionalInputClasses="select-sm dark:bg-neutralc-900"
+                  additionalClasses="dark:bg-gray-900 w-full"
+                  additionalInputClasses="select-sm dark:bg-gray-900"
                   isOtherAnOption={property.openVocabType ? true : false}
                   otherOptionText="Other"
                   otherOptionLabel={`Custom ${property?.name} Value`}
@@ -147,29 +149,38 @@ const FormElementSTIXList: React.FC<Props> = ({
                         property={property}
                       />
                     )
-                    : selectedSTIXObject[property.name].map((listItem: string, i: number) =>
-                      <FormElementTextInput
-                        key={i}
-                        type="text"
-                        value={listItem}
-                        onChange={(event) => {
-                          handlePropertyUpdate(event.target.value, property.name,
-                            selectedSTIXObject, setSelectedSTIXObject, i);
-                        }}
-                        className="mb-2"
-                        includeInfo={false}
-                        additionalInputClasses="select-sm dark:bg-neutralc-900"
-                        additionalLabelClasses="ml-6 mr-5 w-20"
-                        showValidationError={property.listType === "identifier" && selectedSTIXObject ?
-                          !stixIdentifierValidator(listItem)
-                          : false
-                        }
-                        validationErrorText={
-                          `The identifier is not valid. 
+                    : property.listType === "windows-registry-value-type" ?
+                      selectedSTIXObject[property.name].map((listItem: WindowsRegistryValueType, i: number) =>
+                        <FormElementSTIXWindowsRegistryValue
+                          key={i}
+                          windowsRegistryValue={listItem}
+                          windowsRegistryValueIndex={i}
+                          property={property}
+                        />
+                      )
+                      : selectedSTIXObject[property.name].map((listItem: string, i: number) =>
+                        <FormElementTextInput
+                          key={i}
+                          type="text"
+                          value={listItem}
+                          onChange={(event) => {
+                            handlePropertyUpdate(event.target.value, property.name,
+                              selectedSTIXObject, setSelectedSTIXObject, i);
+                          }}
+                          className="mb-2"
+                          includeInfo={false}
+                          additionalInputClasses="select-sm dark:bg-gray-900"
+                          additionalLabelClasses="ml-6 mr-5 w-20"
+                          showValidationError={property.listType === "identifier" && selectedSTIXObject ?
+                            !stixIdentifierValidator(listItem)
+                            : false
+                          }
+                          validationErrorText={
+                            `The identifier is not valid. 
                   Double check that it matches the format \"object-type--UUID\".`
-                        }
-                      />
-                    )
+                          }
+                        />
+                      )
           : null
         }
         <ButtonBasic
@@ -181,6 +192,7 @@ const FormElementSTIXList: React.FC<Props> = ({
               // Initialize the property array
               switch (property.listType) {
                 case "email-mime-part-type":
+                case "windows-registry-value-type":
                   tempSTIXObj[property.name] = [{}];
                   break;
                 case "external-reference":
@@ -198,6 +210,7 @@ const FormElementSTIXList: React.FC<Props> = ({
             } else {
               switch (property.listType) {
                 case "email-mime-part-type":
+                case "windows-registry-value-type":
                   tempSTIXObj[property.name].push({});
                   break;
                 case "external-reference":

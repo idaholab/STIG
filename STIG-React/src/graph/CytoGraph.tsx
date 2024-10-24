@@ -264,6 +264,13 @@ const Graph: React.FC = () => {
             spec_version: "2.1",
             label: label
         };
+        // SCOs do not have the created or modified property
+        if (stixObjectCategory !== 'sco') {
+            cytoscapeNode.created = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+            if (nodeType !== "marking-definition") {
+                cytoscapeNode.modified = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
+            }
+        }
         return createCytoscapeNode(cytoscapeNode, dSource, true, imgUrl);
     };
 
