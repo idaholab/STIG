@@ -8,7 +8,7 @@ type Props = {
   size: 'standard' | 'small'
 };
 
-const ButtonSTIXJSON: React.FC<Props> = ({ showJson, setIsShowingJson, type: color, size }) => {
+const ButtonSTIXJSON: React.FC<Props> = ({ showJson, setIsShowingJson, type, size }) => {
   function toggleJSONPropertyView() {
     setIsShowingJson(!showJson)
   }
@@ -20,7 +20,7 @@ const ButtonSTIXJSON: React.FC<Props> = ({ showJson, setIsShowingJson, type: col
   }, [size]);
 
   return (
-    <ButtonBasic label={!showJson ? 'VIEW JSON' : 'VIEW FORM'} type={color ? color : 'btn-primary'} additionalClasses={`${buttonSize}`} onClick={toggleJSONPropertyView}></ButtonBasic>
+    <ButtonBasic label={!showJson ? 'VIEW JSON' : 'VIEW FORM'} type={type ? type : 'btn-primary'} additionalClasses={`${buttonSize}`} onClick={toggleJSONPropertyView} />
   );
 };
 

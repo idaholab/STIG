@@ -20,27 +20,31 @@ const ImportJSONBundleModal: React.FC = () => {
                     setSelectedFile(fileVal);
                 }}
             />
-            <ButtonBasic
-                label="Import"
-                color='btn-primary'
-                additionalClasses={'place-self-end mt-8' + (!selectedFile ? " btn-disabled" : "")}
-                onClick={() => {
-                    if (cyInstance) {
-                        const [numVerticiesAdded, numEdgesAdded] = addToGraph(JSON.parse(selectedFile as string), cyInstance);
-                        if (numVerticiesAdded < 0 && numEdgesAdded < 0) {
-                            addNotification("Import failed", "error");
-                        } else if (numVerticiesAdded === 0 && numEdgesAdded === 0) {
-                            addNotification("Imported " + numVerticiesAdded + " node(s) and " + numEdgesAdded + " edge(s)", "warning");
-                        } else {
-                            addNotification("Imported " + numVerticiesAdded + " node(s) and " + numEdgesAdded + " edge(s)", "success");
+            {/* !!! This shouldn't be necessary and needs removed once we figure out why ButtonBasic won't display cursor-not-allowed' !! */}
+            <div className={`mt-8 flex flex-auto justify-end items-center ${!selectedFile ? 'cursor-not-allowed' : ''}`}>
+                <ButtonBasic
+                    label="Import"
+                    type='btn-primary'
+                    disabled={!selectedFile}
+                    additionalClasses={''}
+                    onClick={() => {
+                        if (cyInstance) {
+                            const [numVerticiesAdded, numEdgesAdded] = addToGraph(JSON.parse(selectedFile as string), cyInstance);
+                            if (numVerticiesAdded < 0 && numEdgesAdded < 0) {
+                                addNotification("Import failed", "error");
+                            } else if (numVerticiesAdded === 0 && numEdgesAdded === 0) {
+                                addNotification("Imported " + numVerticiesAdded + " node(s) and " + numEdgesAdded + " edge(s)", "warning");
+                            } else {
+                                addNotification("Imported " + numVerticiesAdded + " node(s) and " + numEdgesAdded + " edge(s)", "success");
+                            }
                         }
+                        // Close the dialog
+                        const dialogElement = document.getElementById("ImportJSONBundleModal") as HTMLDialogElement;
+                        dialogElement.close();
                     }
-                    // Close the dialog
-                    const dialogElement = document.getElementById("ImportJSONBundleModal") as HTMLDialogElement;
-                    dialogElement.close();
-                }
-                }
-            />
+                    }
+                />
+            </div>
         </div>
     );
 }

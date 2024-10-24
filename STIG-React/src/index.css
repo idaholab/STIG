@@ -582,7 +582,9 @@ background-color: rgb(var(--color-neutral-rgb-600));
 }
 
 
-.cursor-not-allowed123 {
-  cursor: not-allowed!important;
+.btn.btn-disabled,
+.btn[disabled],
+.btn:disabled {
+  cursor: not-allowed !important;
 }
 }
