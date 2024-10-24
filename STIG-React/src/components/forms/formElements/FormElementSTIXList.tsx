@@ -66,7 +66,7 @@ const FormElementSTIXList: React.FC<Props> = ({
     if (parentPropertyName && parentPropertyIndex !== undefined &&
       parentSTIXObject && setParentSTIXObject && selectedSTIXObject) {
       handlePropertyUpdate(selectedSTIXObject, parentPropertyName,
-        parentSTIXObject, setParentSTIXObject, parentPropertyIndex);
+        parentSTIXObject, setParentSTIXObject, undefined, parentPropertyIndex);
     }
   }, [selectedSTIXObject]);
 
@@ -102,21 +102,21 @@ const FormElementSTIXList: React.FC<Props> = ({
                     property.enumType ? enum_options[property.enumType] : []}
                   onSelect={(event) => {
                     handlePropertyUpdate(event.target.value, property.name,
-                      selectedSTIXObject, setSelectedSTIXObject, i);
+                      selectedSTIXObject, setSelectedSTIXObject, undefined, i);
                   }}
                   onInputChange={(event) => {
                     handlePropertyUpdate(event.target.value, property.name,
-                      selectedSTIXObject, setSelectedSTIXObject, i);
+                      selectedSTIXObject, setSelectedSTIXObject, undefined, i);
                   }}
                   onSwitchToSuggested={() => {
                     handlePropertyUpdate("", property.name,
-                      selectedSTIXObject, setSelectedSTIXObject, i);
+                      selectedSTIXObject, setSelectedSTIXObject, undefined, i);
                   }}
                   className="mb-2"
                   inputClassName="mb-2"
                   includeInfo={false}
-                  additionalClasses="dark:bg-gray-900 w-full"
-                  additionalInputClasses="select-sm dark:bg-gray-900"
+                  additionalClasses="dark:bg-neutralc-900 w-full"
+                  additionalInputClasses="select-sm dark:bg-neutralc-900"
                   isOtherAnOption={property.openVocabType ? true : false}
                   otherOptionText="Other"
                   otherOptionLabel={`Custom ${property?.name} Value`}
@@ -165,11 +165,11 @@ const FormElementSTIXList: React.FC<Props> = ({
                           value={listItem}
                           onChange={(event) => {
                             handlePropertyUpdate(event.target.value, property.name,
-                              selectedSTIXObject, setSelectedSTIXObject, i);
+                              selectedSTIXObject, setSelectedSTIXObject, undefined, i);
                           }}
                           className="mb-2"
                           includeInfo={false}
-                          additionalInputClasses="select-sm dark:bg-gray-900"
+                          additionalInputClasses="select-sm dark:bg-neutralc-900"
                           additionalLabelClasses="ml-6 mr-5 w-20"
                           showValidationError={property.listType === "identifier" && selectedSTIXObject ?
                             !stixIdentifierValidator(listItem)

@@ -50,7 +50,7 @@ const FormElementSTIXHash: React.FC<Props> = ({
         value={selectedSTIXObject[property.name][hashAlgName]}
         onChange={(event) => {
           handlePropertyUpdate(event.target.value, property.name,
-            selectedSTIXObject, setSelectedSTIXObject, hashAlgName);
+            selectedSTIXObject, setSelectedSTIXObject, undefined, hashAlgName);
         }}
         className="pl-2 mb-2"
         includeInfo={false}
