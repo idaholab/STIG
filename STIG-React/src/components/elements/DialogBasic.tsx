@@ -34,7 +34,6 @@ export const DialogBasic: React.FC<Props> = ({
   disabled,
   additionalButtonClasses
 }) => {
-  const { theme } = useTheme();
 
   const handleOpenDialog = () => {
     const dialogElement = document.getElementById(dialogId) as HTMLDialogElement;
@@ -58,6 +57,7 @@ export const DialogBasic: React.FC<Props> = ({
           onClick={handleOpenDialog}
           disabled={disabled}
           additionalClasses={`${additionalButtonClasses}`}
+          isLabelUppercase={false}
         />
       ) : (
         <ButtonIcon

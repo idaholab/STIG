@@ -36,7 +36,7 @@ const GraphLayouts: React.FC = () => {
       {layouts.map((layout) => (
         <li key={layout.name}>
           <a onClick={() => handleLayoutChange(layout.name)}>
-            {layout.display.toUpperCase()}
+            {layout.display}
           </a>
         </li>
       ))}

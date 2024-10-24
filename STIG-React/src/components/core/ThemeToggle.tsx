@@ -30,7 +30,7 @@ const ThemeToggle: React.FC = () => {
   }, [theme]);
 
   return (
-    <label className="swap swap-rotate btn btn-square btn-ghost">
+    <label className="swap swap-rotate">
       <input onClick={toggleTheme} type="checkbox" />
       <span className="swap-on material-icons">dark_mode</span>
       <span className="swap-off material-icons">light_mode</span>

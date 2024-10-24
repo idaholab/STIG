@@ -52,7 +52,7 @@ const SaveButtons: React.FC = () => {
         <DialogBasic
           dialogId="ExportObjectModal"
           title="Save JSON"
-          buttonLabel="Save JSON"
+          buttonLabel="SAVE JSON"
           buttonColor='btn-primary'
           showFormButtons={false}
           additionalButtonClasses={'h-[48px]'}

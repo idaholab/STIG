@@ -20,7 +20,7 @@ const Database: React.FC = () => {
     savedDBProfiles, connectedDBProfile, setSelectedProfile,
   } = useContext(ConnectedDBContext) as ConnectedDBContextType;
   const [isConnectProcessing, setIsConnectProcessing] = useState(false);
-  const { cyInstance, isDrawerOpen, toggleDrawer } = useStigContext();
+  const { cyInstance, isPropertyPanelOpen, togglePropertyPanel } = useStigContext();
   const { addNotification } = useNotificationContext();
   const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
 
@@ -118,30 +118,33 @@ const Database: React.FC = () => {
 
             <div className='hover:text-white hover:bg-primary' >
               <ButtonBasic
-                label="Commit All Nodes"
+                label="Save All Nodes"
                 type='btn-ghost'
                 additionalClasses='btn-sm ml-1'
                 onClick={() => { commitAllNodes(cyInstance, addNotification) }}
                 disabled={!connectedDBProfile}
+                isLabelUppercase={false}
               />
             </div>
 
             <div className='hover:text-white hover:bg-primary'>
               <ButtonBasic
                 type='btn-ghost'
-                label="Commit Selected Nodes"
+                label="Save Selected Nodes"
                 additionalClasses='btn-sm ml-1'
                 onClick={() => { commitSelectedNodes(cyInstance, addNotification) }}
                 disabled={!connectedDBProfile}
+                isLabelUppercase={false}
               />
             </div>
             <div className='hover:text-white hover:bg-primary'>
               <ButtonBasic
                 type='btn-ghost'
-                label="Delete Selected Nodes"
+                label="Remove Selected Nodes"
                 additionalClasses='btn-sm ml-1'
-                onClick={() => { deleteSelectedNodes(cyInstance, addNotification, selectedSTIXObject, setSelectedSTIXObject, isDrawerOpen, toggleDrawer) }}
+                onClick={() => { deleteSelectedNodes(cyInstance, addNotification, selectedSTIXObject, setSelectedSTIXObject, isPropertyPanelOpen, togglePropertyPanel) }}
                 disabled={!connectedDBProfile}
+                isLabelUppercase={false}
               />
             </div>
           </div>
@@ -195,7 +198,7 @@ function deleteSelectedNodes(
   selectedSTIXObject: StixObject | undefined,
   setSelectedSTIXObject: React.Dispatch<React.SetStateAction<StixObject | undefined>>,
   isDrawerOpen: boolean,
-  toggleDrawer: () => void,
+  togglePropertyPanel: () => void,
 ) {
 
   if (cy !== undefined) {
@@ -208,7 +211,7 @@ function deleteSelectedNodes(
       if (selectedSTIXObjectId === ele.data("id") || selectedSTIXObject?.id === ele.data("id")) {
         setSelectedSTIXObject(undefined);
         if (isDrawerOpen) {
-          toggleDrawer();
+          togglePropertyPanel();
         }
       }
       cy.remove(ele);
@@ -222,7 +225,7 @@ function deleteSelectedNodes(
       if (selectedSTIXObjectId === ele.data("id") || selectedSTIXObject?.id === ele.data("id")) {
         setSelectedSTIXObject(undefined);
         if (isDrawerOpen) {
-          toggleDrawer();
+          togglePropertyPanel();
         }
       }
     });
@@ -231,7 +234,4 @@ function deleteSelectedNodes(
   }
   return ''
 }
-
-
-
 export default Database;

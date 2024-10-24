@@ -133,7 +133,7 @@ const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
       </div>
 
       {badgeText && badgeText?.length > 0 &&
-        <AlertComponent alertText={infoText || ''} alertType={'warning'} userClosable={false} className={'!mx-0 !my-1 !py-1 !px-2 text-xs dark:text-white'}></AlertComponent>
+        <AlertComponent alertText={badgeText || ''} alertType={'warning'} userClosable={false} className={'!mx-0 !my-1 !py-1 !px-2 text-xs dark:text-white'}></AlertComponent>
       }
 
       {showInfo && includeInfo && infoText && infoText?.length > 0 &&
