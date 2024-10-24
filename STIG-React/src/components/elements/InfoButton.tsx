@@ -50,7 +50,7 @@ const FloatingInfoButton: React.FC<InfoButtonProps> = ({
                     style={additionalStyle}
                 >
                     <ButtonIcon
-                        color="btn-ghost"
+                        type="btn-ghost"
                         buttonIcon={infoIcon}
                         buttonSize="h-6 w-6 min-h-6"
                         iconText="!text-[18px]"
