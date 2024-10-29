@@ -4,7 +4,7 @@ Copyright 2018 Southern California Edison Company
 ALL RIGHTS RESERVED
  */
 import moment from 'moment';
-import cytoscape, { CollectionElements, CollectionReturnValue, ElementDefinition, JSONValue } from 'cytoscape';
+import cytoscape, { CollectionElements, CollectionReturnValue, ElementDefinition, EventHandler } from 'cytoscape';
 import { DataSourceType } from '@/types/DataSourceType';
 import { StixObject } from '@/types/stixTypes/StixObject';
 import { StixRelationshipObject } from '@/types/stixTypes/StixRelationshipObject';
@@ -15,10 +15,9 @@ import { layouts, LayoutsType } from '@/graph/graphOptions';
 import { createObjectMarkingRelationship, createCytoscapeNode } from '../stix/stix';
 import { CollectionArgument } from 'cytoscape';
 import { db_delete, query_incoming, query_outgoing } from './DbFunctions';
-import { StigSettings } from '@/storage/stig-settings-storage';
 import { graph_copy } from './clipboard';
 import { ContextMenu } from '@/types/cytoscapeTypes/ContextMenu';
-import { getCssRGBVarColor, getCssVarColor } from './GetCssVarColor';
+import { getCssRGBVarColor } from './GetCssVarColor';
 import { query } from '@/util/DbFunctions';
 import { STIGBundle } from '@/types/STIGBundle';
 import { v4 as uuidv4 } from 'uuid';
@@ -188,22 +187,6 @@ export class GraphUtils {
         const edges_added = this.cy.add(to_add);
         return [nodes_added.length, edges_added.length];
     }
-
-    /**
-     *
-     * @description Lays out and renders the graph.
-     * @param {keyof LayoutsType} layout_type
-     * @memberof GraphUtils
-     */
-    public myLayout(layout_type: keyof LayoutsType): void {
-        if (this.skipLayout) {
-            this.skipLayout = !this.skipLayout;
-            return;
-        }
-        const orphans = this.cy.elements(':orphan').filter(':childless');
-        const layout = orphans.layout(layouts[layout_type]);
-        layout.run();
-    }
 }
 
 export function setupCtxMenu(
@@ -258,7 +241,6 @@ export function setupCtxMenu(
                 content: 'DB Delete',
                 select(ele: cytoscape.CollectionElements) {
                     const element = ele as unknown as CollectionArgument;
-
                     try {
                         // const eleList = element.toArray();
                         // eleList.forEach((value) => {
@@ -290,7 +272,7 @@ export function setupCtxMenu(
                         let incoming = await query_incoming(data)
                         const coreObjects: StixObject[] = incoming.map(obj => obj as StixObject);
                         graph_utils.buildNodes(coreObjects, 'DB');
-                        graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
+                        runGraphLayout(getLayoutSettingsFromStore(), cy);
                     }
                 }
             },
@@ -328,7 +310,7 @@ export function setupCtxMenu(
                         let outgoing = await query_outgoing(data)
                         const coreObjects: StixObject[] = outgoing.map(obj => obj as StixObject);
                         graph_utils.buildNodes(coreObjects, 'DB');
-                        graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
+                        runGraphLayout(getLayoutSettingsFromStore(), cy);
                     }
                 }
             },
@@ -377,7 +359,6 @@ export function setupCtxMenu(
                 content: 'DB Delete',
                 select(ele: CollectionElements) {
                     const element = ele as unknown as CollectionArgument;
-
                     try {
                         const eleList = element.toArray();
                         eleList.forEach((value) => {
@@ -431,7 +412,7 @@ export function setupCtxMenu(
             {
                 content: 'Layout',
                 select: () => {
-                    graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
+                    runGraphLayout(getLayoutSettingsFromStore(), cy);
                 }
             },
             {
@@ -487,7 +468,6 @@ export function setupCtxMenu(
     } as ContextMenu);
 }
 
-
 export function create_bundle(nodes: CollectionReturnValue): STIGBundle {
     const bundle_id = 'bundle--' + uuidv4();
     let bundle: STIGBundle = { type: 'bundle', id: bundle_id, objects: [] } as any;
@@ -535,12 +515,10 @@ export function exportAll(fileName: string, cy: cytoscape.Core) {
 export async function queryToGraph(q: string, cyInstance: cytoscape.Core | undefined) {
     if (!(cyInstance)) { return [-1, -1]; }
     const graph_utils = new GraphUtils(cyInstance);
-
     try {
         let queryReturn = await query(q);
         const [numVerticiesAdded, numEdgesAdded] = graph_utils.buildNodes(queryReturn, "GUI");
-        graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
-
+        runGraphLayout(getLayoutSettingsFromStore(), cyInstance);
         return [numVerticiesAdded, numEdgesAdded];
     } catch (err) {
         console.warn("[Nodes could not be built] :", err);
@@ -559,44 +537,159 @@ export function addToGraph(pkg: STIGBundle, cyInstance: cytoscape.Core) {
         //TODO: make some sort of meaningful message appear to the user informing them why the nodes couldn't be added
         return [-1, -1];
     }
-
-    if (pkg.metadata) {
-        // Position the nodes
-        for (const node of pkg.metadata) {
-            // Find the element on the graph
-            cyInstance.$id(node.id).animate({
-                position: node.position,
-                duration: 1000,
-                complete: () => cyInstance.fit()
-            });
-        }
-    } else {
-        let canLayout = true;
-
-        // TODO: Add this logic back in for when
-        // defense in depth gets added as a feature?
-        // Check if defense in depth is on
-        // if (cyInstance.nodes(`#${defense.name.replaceAll(' ', '_')}`).length > 0) {
-        //     canLayout = false;
-        //     $('#dd-ctxLayoutDefInDepth').trigger('click');
-        // }
-
-        // TODO: Add this logic back in for when
-        // kill chain gets added as a feature?
-        // // Check if a kill chain is on
-        // killChain['kill-chain'].forEach(kc => {
-        //     // `#ctxLayout${kc.type}`
-        //     if (cy.nodes(`#${kc.type}`).length > 0) {
-        //         canLayout = false;
-        //         $(`#ctxLayout${kc.type}`).trigger('click');
-        //     }
-        // });
-
-        // Only do this if there aren't any defense in depth or kill chain layouts open
-        if (canLayout) {
-            graph_utils.myLayout(StigSettings.Instance.layout.toLowerCase());
-        }
-    }
-
     return [numVerticiesAdded, numEdgesAdded];
+}
+
+
+
+export const saveLayoutToLocalStorage = (layout: string) => {
+    localStorage.setItem('stigSettings', layout);
+}
+export const getLayoutSettingsFromStore = (): string => {
+    const layout = localStorage.getItem('stigSettings');
+    return layout === null ? 'default' : layout;
+}
+export const runGraphLayout = (layoutType: keyof LayoutsType, cyInstance: cytoscape.Core) => {
+    const orphans = cyInstance?.elements(':orphan').filter(':childless');
+    const layout = orphans?.layout(layouts[layoutType]);
+    if (layoutType === 'attack_timeline') {
+        layoutByTimeframe(cyInstance);
+        // Run the preset layout
+        cyInstance.layout({ name: 'preset' }).run();
+        saveLayoutToLocalStorage(layoutType);
+    }
+    else if (layoutType === 'default') {
+        cyInstance.layout({ name: 'preset' }).run();
+        saveLayoutToLocalStorage(layoutType);
+    }
+    else {
+        layout?.run();
+    }
+    saveLayoutToLocalStorage(layoutType);
+}
+
+
+
+
+
+export function layoutByTimeframe(cy: cytoscape.Core) {
+    const startX = 0;
+    const gap = 200; // Spacing between nodes
+    const bufferSpace = 200; // Space between timeline and non-timeline nodes
+    const gridCols = 5; // Number of columns in the grid
+    const gridGapX = 200; // Horizontal gap between nodes in the grid
+    const gridGapY = 200; // Vertical gap between nodes in the grid
+    const animations: Promise<EventHandler>[] = [];
+    const positionedAttackPatternNodes = new Set<string>(); // Track positioned node IDs
+    const observedDataNodes = getObservedDataNodes(cy);
+    const relationshipEdges = getRelationshipEdges(cy);
+    const maxYTimeline = positionObservedDataNodes(observedDataNodes, relationshipEdges, cy, animations, positionedAttackPatternNodes, startX, gap);
+    const nonTimelineNodes = getNonTimelineNodes(cy, positionedAttackPatternNodes);
+    positionNonTimelineNodes(nonTimelineNodes, animations, startX, maxYTimeline, bufferSpace, gridCols, gridGapX, gridGapY);
+}
+
+function getObservedDataNodes(cy: cytoscape.Core) {
+    return cy.nodes().filter(node => node.data('raw_data')?.last_observed && node.data('type') === 'observed-data');
+}
+
+function getRelationshipEdges(cy: cytoscape.Core) {
+    return cy.edges().filter(edge => edge.data('raw_data')?.type === 'relationship');
+}
+
+function positionObservedDataNodes(
+    observedDataNodes: cytoscape.Collection,
+    relationshipEdges: cytoscape.Collection,
+    cy: cytoscape.Core,
+    animations: Promise<EventHandler>[],
+    positionedAttackPatternNodes: Set<string>,
+    startX: number,
+    gap: number,
+): number {
+    let maxYTimeline = 0;
+    observedDataNodes.sort((a, b) => new Date(a.data('raw_data')?.last_observed).getTime() - new Date(b.data('raw_data')?.last_observed).getTime())
+        .forEach((observedNode, index) => {
+            const newX = startX + index * gap;
+            animateNodePosition(observedNode, newX, 0, animations);
+            maxYTimeline = Math.max(maxYTimeline, 0);
+            const connectedAttackPatternNodes = getConnectedAttackPatternNodes(observedNode, relationshipEdges, cy);
+            connectedAttackPatternNodes.forEach((attackPatternNode, attackIndex) => {
+                if (!positionedAttackPatternNodes.has(attackPatternNode.id())) {
+                    const newY = 200 + attackIndex * gap;
+                    animateNodePosition(attackPatternNode, newX, newY, animations);
+                    maxYTimeline = Math.max(maxYTimeline, newY);
+                    positionedAttackPatternNodes.add(attackPatternNode.id());
+                }
+            });
+        });
+    return maxYTimeline;
+}
+
+function getConnectedAttackPatternNodes(observedNode: cytoscape.NodeSingular, relationshipEdges: cytoscape.Collection, cy: cytoscape.Core) {
+    // Filter the edges to find connected attack-pattern nodes
+    const connectedNodes = relationshipEdges.filter(edge => {
+        const sourceIsObserved = edge.data('raw_data')?.source_ref === observedNode.data('id') &&
+            cy.getElementById(edge.data('raw_data').target_ref).data('type') === 'attack-pattern';
+        const targetIsObserved = edge.data('raw_data').target_ref === observedNode.data('id') &&
+            cy.getElementById(edge.data('raw_data').source_ref).data('type') === 'attack-pattern';
+        return sourceIsObserved || targetIsObserved;
+    }).map(edge => {
+        return cy.getElementById(edge.data('raw_data').source_ref === observedNode.data('id')
+            ? edge.data('raw_data').target_ref
+            : edge.data('raw_data').source_ref);
+    });
+
+    // Get attack-pattern nodes from object_refs
+    const objectRefs = observedNode.data('raw_data').object_refs || [];
+    objectRefs.forEach((refId: string) => {
+        const refNode = cy.getElementById(refId);
+        if (refNode.data('type') === 'attack-pattern') {
+            connectedNodes.push(refNode);
+        }
+    });
+
+    return [...new Set(connectedNodes)]; // Deduplicate attack-pattern nodes
+}
+
+function getNonTimelineNodes(cy: cytoscape.Core, positionedAttackPatternNodes: Set<string>) {
+    return cy.nodes().filter(node => {
+        const isObservedData = node.data('type') === 'observed-data';
+        const isConnectedAttackPattern = positionedAttackPatternNodes.has(node.id());
+        return !isObservedData && !isConnectedAttackPattern;
+    });
+}
+
+function positionNonTimelineNodes(
+    nonTimelineNodes: cytoscape.Collection,
+    animations: Promise<EventHandler>[],
+    startX: number,
+    maxYTimeline: number,
+    bufferSpace: number,
+    gridCols: number,
+    gridGapX: number,
+    gridGapY: number
+) {
+    let row = 0;
+    let col = 0;
+
+    nonTimelineNodes.forEach((nonTimelineNode) => {
+        const newX = startX + col * gridGapX;
+        const newY = maxYTimeline + bufferSpace + row * gridGapY;
+        animateNodePosition(nonTimelineNode, newX, newY, animations);
+        col++;
+        if (col >= gridCols) {
+            col = 0;
+            row++;
+        }
+    });
+}
+
+function animateNodePosition(node: cytoscape.NodeSingular, x: number, y: number, animations: Promise<EventHandler>[]) {
+    animations.push(node.animate({
+        position: { x, y }
+    }, {
+        duration: 1000,
+        easing: 'ease-in-out'
+    }).promiseOn('position'));
+
+    node.position({ x, y });
 }

@@ -36,10 +36,10 @@ async function wrapReturn<T, V>(
   return def();
 }
 
-export function close_db(){
-  try{
+export function close_db() {
+  try {
     currentDB?.close();
-  }catch(e){
+  } catch (e) {
     console.error(e);
   }
 
@@ -48,8 +48,8 @@ export function close_db(){
 export async function use_db(config: DBProfile) {
   currentDB?.close();
   try {
-    currentDB = await StigDB.getDB('neo4j', config); 
-  }catch(e){
+    currentDB = await StigDB.getDB('neo4j', config);
+  } catch (e) {
     console.error(e)
   }
 }

@@ -6,7 +6,7 @@ import { addToGraph } from '@/util/GraphUtils';
 import React, { useState } from 'react';
 
 const ImportJSONBundleModal: React.FC = () => {
-    const { cyInstance } = useStigContext();
+    const { cyInstance, getStigLayoutSettingsFromStore, runLayout } = useStigContext();
     const { addNotification } = useNotificationContext();
     const [selectedFile, setSelectedFile] = useState<string | ArrayBuffer | null | undefined>();
 
@@ -29,7 +29,23 @@ const ImportJSONBundleModal: React.FC = () => {
                     additionalClasses={''}
                     onClick={() => {
                         if (cyInstance) {
-                            const [numVerticiesAdded, numEdgesAdded] = addToGraph(JSON.parse(selectedFile as string), cyInstance);
+                            let parsedFile = JSON.parse(selectedFile as string);
+                            const [numVerticiesAdded, numEdgesAdded] = addToGraph(parsedFile, cyInstance);
+
+                            if (parsedFile.metadata) { // Position the nodes
+                                for (const node of parsedFile.metadata) {
+                                    // Find the element on the graph
+                                    cyInstance.$id(node.id).animate({
+                                        position: node.position,
+                                        duration: 1000,
+                                        complete: () => cyInstance.fit()
+                                    });
+                                }
+                            } else {
+                                runLayout(getStigLayoutSettingsFromStore(), cyInstance); // Perform layout if no metadata
+                            }
+
+
                             if (numVerticiesAdded < 0 && numEdgesAdded < 0) {
                                 addNotification("Import failed", "error");
                             } else if (numVerticiesAdded === 0 && numEdgesAdded === 0) {

@@ -29,7 +29,7 @@ const Dropdown: React.FC<DropdownProps> = ({ title, includeDropdownArrow,
         className={`btn btn-ghost ${additionalButtonClasses}`}
         onClick={handleToggle}
       >
-        {title}
+        <span>{title}</span>
         {includeDropdownArrow && <span className="material-icons">arrow_drop_down</span>}
       </div>
       {isOpen && (

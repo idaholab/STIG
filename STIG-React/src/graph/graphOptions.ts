@@ -6,11 +6,8 @@ ALL RIGHTS RESERVED
 
 import cytoscape, { Css, KlayOptions, LayoutOptions, PresetLayoutOptions, RandomLayoutOptions, SpreadLayoutOptions, StylesheetStyle } from 'cytoscape';
 import { IColaLayoutOptions } from './colaLayoutOptions';
-import { useTheme } from '@/contexts/useTheme';
 import { ViewUtilitiesOptions } from '@/types/cytoscapeTypes/ViewUtilitiesOptions';
 import { getCssRGBVarColor } from '@/util/GetCssVarColor';
-
-
 
 export const updateNodeStyle = (cy: cytoscape.Core) => {
   const nodeStyle: StylesheetStyle | undefined = generateNodeStyle().find(style => style.selector === '.stix_node');
@@ -683,7 +680,8 @@ export const layouts: LayoutsType = {
   circle: circle_options,
   concentric: concentric_options,
   breadthfirst: breadthfirst_options,
-  attack_timeline: preset_options
+  attack_timeline: preset_options,
+  default: preset_options,
 };
 
 
