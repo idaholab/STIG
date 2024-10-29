@@ -195,11 +195,11 @@ export class Main {
       });
 
       // EXPORT
-      const exportCb = () => {
+      const exportCb = (cyQuery: string) => {
         const bundle_id = 'bundle--' + uuid.v4();
         const bundle: BundleType = { type: 'bundle', id: bundle_id, objects: [] } as any;
 
-        const nodes = window.cycore.$(':selected');
+        const nodes = window.cycore.$(cyQuery);
         nodes.each((ele) => {
           if (ele.length === 0) {
             return;
@@ -212,8 +212,8 @@ export class Main {
 
         openBundleExport(bundle);
       };
-      $('#dd-exportSelected').on('click', exportCb);
-      $('#dd-exportGraph').on('click', exportCb);
+      $('#dd-exportSelected').on('click', ()=>exportCb(":selected"));
+      $('#dd-exportGraph').on('click', ()=>exportCb(":visible"));
       $('#dd-exportAll').on('click', () => {
         const bundle_id = 'bundle--' + uuid.v4();
         const bundle: BundleType = { type: 'bundle', id: bundle_id, objects: [] } as any;
