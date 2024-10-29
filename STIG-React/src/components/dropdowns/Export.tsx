@@ -2,7 +2,7 @@ import React from 'react';
 import Dropdown from '../core/Dropdown';
 import { DialogBasic } from '../elements/DialogBasic';
 import ExportModal from '@/layouts/ExportModals';
-import { exportAll, exportSelected } from '@/util/GraphUtils';
+import { exportAll, exportAllwPositions, exportSelected } from '@/util/GraphUtils';
 
 const Export: React.FC = () => {
   return (
@@ -11,6 +11,19 @@ const Export: React.FC = () => {
       includeDropdownArrow
       additionalOptionClasses={''}
     >
+      <div className="hover:text-black hover:text-white dark:hover:bg-primary hover:bg-primary">
+        <DialogBasic
+          dialogId="ExportSelectedModal"
+          title="Export Selected Elements to File"
+          buttonColor='btn-ghost'
+          showFormButtons={false}
+          buttonLabel="Selected"
+          additionalButtonClasses={"btn-sm justify-start w-[120px]"}
+        >
+          <ExportModal exporter={exportSelected} />
+        </DialogBasic>
+      </div>
+{/* ----------------------------------------------------------------------------------------------- */}
       <div className="hover:text-black hover:text-white dark:hover:bg-primary hover:bg-primary">
         <DialogBasic
           dialogId="ExportAllModal"
@@ -26,14 +39,14 @@ const Export: React.FC = () => {
 
       <div className="hover:text-black hover:text-white dark:hover:bg-primary hover:bg-primary">
         <DialogBasic
-          dialogId="ExportSelectedModal"
-          title="Export Selected Elements to File"
+          dialogId="ExportAllwPositionsModal"
+          title="Export All Elements with Positions to File"
           buttonColor='btn-ghost'
           showFormButtons={false}
-          buttonLabel="Selected"
+          buttonLabel="All w/Positions"
           additionalButtonClasses={"btn-sm justify-start w-[120px]"}
         >
-          <ExportModal exporter={exportSelected} />
+          <ExportModal exporter={exportAllwPositions} />
         </DialogBasic>
       </div>
     </Dropdown>
