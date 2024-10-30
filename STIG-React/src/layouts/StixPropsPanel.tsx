@@ -15,16 +15,21 @@ import SaveButtons from '@/components/elements/SaveButtons.tsx';
 const StixPropsPanel: React.FC = () => {
   const [selectedProperties, setSelectedProperties] = useState<SchemaSTIXProperty[]>([]);
   const [showJson, setShowJson] = useState<boolean>(false);
+  // Used to determine which STIX properties the selected STIX object can have
+  const [stixTypeProps, setStixTypeProps] = useState<SchemaSTIXProperty[]>([]);
 
   return (
     <div className={`drawer flex flex-col w-full h-full p-4 overflow-y-scroll scrollbar`}>
       <PropsPanelHeader
         selectedProperties={selectedProperties}
         setSelectedProperties={setSelectedProperties}
+        stixTypeProps={stixTypeProps}
+        setStixTypeProps={setStixTypeProps}
         setIsShowingJson={setShowJson}
       />
       <FormSTIXPropsPanel
         selectedProperties={selectedProperties}
+        stixTypeProps={stixTypeProps}
         showJson={showJson}
       />
       <SaveButtons />
@@ -32,16 +37,17 @@ const StixPropsPanel: React.FC = () => {
   );
 };
 
-function PropsPanelHeader({ selectedProperties, setSelectedProperties, setIsShowingJson }: {
+function PropsPanelHeader({ selectedProperties, setSelectedProperties, 
+  stixTypeProps, setStixTypeProps, setIsShowingJson }: {
   selectedProperties: SchemaSTIXProperty[],
   setSelectedProperties: React.Dispatch<React.SetStateAction<SchemaSTIXProperty[]>>,
-  setIsShowingJson: React.Dispatch<React.SetStateAction<boolean>>
+  stixTypeProps: SchemaSTIXProperty[],
+  setStixTypeProps: React.Dispatch<React.SetStateAction<SchemaSTIXProperty[]>>,
+  setIsShowingJson: React.Dispatch<React.SetStateAction<boolean>>,
 }) {
   const { selectedSTIXObject } = useStixPropsContext();
   const [showJsonPanel, setShowJsonPanel] = useState<boolean>(false);
 
-  // Used to determine which STIX properties the selected STIX object can have
-  const [stixTypeProps, setStixTypeProps] = useState<SchemaSTIXProperty[]>([]);
   const [stixTypeDesc, setStixTypeDesc] = useState<SchemaSTIXClass>();
   useEffect(() => {
     const schemaObject = schema.find(c => { return c.name === selectedSTIXObject?.type; });
@@ -90,12 +96,15 @@ function PropsPanelHeader({ selectedProperties, setSelectedProperties, setIsShow
       </div>
       <div className='flex gap-2 mb-4'>
         <ButtonSTIXJSON size={'standard'} showJson={showJsonPanel} setIsShowingJson={toggleJSONPropertyView} />
-        <FormSTIXPropertySelection
-          propertyOptions={stixTypeProps}
-          selectedProperties={selectedProperties}
-          setSelectedProperties={setSelectedProperties}
-          size={'standard'}
-        />
+        {!showJsonPanel ?
+          <FormSTIXPropertySelection
+            propertyOptions={stixTypeProps}
+            selectedProperties={selectedProperties}
+            setSelectedProperties={setSelectedProperties}
+            size={'standard'}
+          />
+          : null
+        }
       </div>
       <p className='mb-4'>{stixTypeDesc?.description}</p>
     </>

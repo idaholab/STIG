@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
 import ButtonSTIXJSON from '../../elements/ButtonSTIXJSON';
-import FormElementSTIXPropertySelection from '../FormSTIXPropertySelection';
+import FormSTIXPropertySelection from '../FormSTIXPropertySelection';
 import { inferSTIXType } from '@/stix/inferSTIXType';
 import { useStixPropsContext } from '@/contexts/StixPropsContext';
 import { UIPropertyType } from '@/types/UIPropertyType';
@@ -11,6 +11,7 @@ import { StixObject } from '@/types/stixTypes/StixObject';
 import { STIXPropertyRenderer } from '../STIXPropertyRenderer';
 import STIXPropertyLabel from '@/components/elements/STIXPropertyLabel';
 import { handlePropertyUpdate } from '@/stix/handlePropertyUpdate';
+import StixJSONView from '@/layouts/StixJSONView';
 
 type Props = {
   dictionary: StixObject;
@@ -43,13 +44,13 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
   useEffect(() => {
     if (!selectedSTIXObject) {
       setSelectedSTIXObject(dictionary);
-      setLocalDictionaryProps(dictionary ?
-        Object.keys(dictionary).map(key => {
-          return { name: key, type: inferSTIXType(dictionary[key]) }
-        })
-        : []
-      );
     }
+    setLocalDictionaryProps(dictionary ?
+      Object.keys(dictionary).map(key => {
+        return { name: key, type: inferSTIXType(dictionary[key]) }
+      })
+      : []
+    );
   }, [dictionary]);
 
   // Update the parent STIX object when its
@@ -140,26 +141,6 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
   function toggleJSONPropertyView() {
     setShowJsonPanel(!showJsonPanel);
   }
-  const [jsonText, setJsonText] = useState<string>('');
-  const handleJsonChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const value = e.target.value;
-    setJsonText(value);
-    try {
-      //const parsedJson = JSON.parse(value);
-      // TODO: Return the JSON string to the parent or convert it back to a stix object to return to the parent.
-      // Not part of task 106
-    } catch (error) {
-      console.error('Invalid JSON:', error);
-    }
-  };
-
-  useEffect(() => {
-    if (selectedSTIXObject === undefined) {
-      return;
-    }
-    const selectedSTIXObjectJSONString = { ...selectedSTIXObject };
-    setJsonText(JSON.stringify(selectedSTIXObjectJSONString, null, 2));
-  }, [selectedSTIXObject]);
 
   return (
     <>
@@ -194,27 +175,25 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
       </div>
       <div className='flex gap-2 mb-2 items-center'>
         <ButtonSTIXJSON size={'small'} type='btn-neutralc' showJson={showJsonPanel} setIsShowingJson={toggleJSONPropertyView} />
-        <FormElementSTIXPropertySelection
-          propertyOptions={localDictionaryProps}
-          setPropertyOptions={setLocalDictionaryProps}
-          selectedProperties={localSelectedProperties}
-          setSelectedProperties={setLocalSelectedProperties}
-          includeAddNew
-          size={'small'}
-        />
+        {!showJsonPanel ?
+          <FormSTIXPropertySelection
+            propertyOptions={localDictionaryProps}
+            setPropertyOptions={setLocalDictionaryProps}
+            selectedProperties={localSelectedProperties}
+            setSelectedProperties={setLocalSelectedProperties}
+            includeAddNew
+            size={'small'}
+          />
+          : null
+        }
       </div>
 
       <div className="ml-4">
-        {showJsonPanel && (
-          <div className='form-stix-json flex h-full w-full mb-4'>
-            <textarea
-              rows={10}
-              className="jsonEditor flex flex-grow p-2 scrollbar h-full w-full rounded bg-neutralc-100 dark:bg-neutralc-900"
-              onChange={handleJsonChange}
-              value={jsonText}
-            />
-          </div>
-        )}
+        {showJsonPanel && 
+          <StixJSONView 
+            rows={10}
+          />
+        }
 
         {!showJsonPanel && localSelectedProperties.map((selectedProperty, i) =>
           <STIXPropertyRenderer

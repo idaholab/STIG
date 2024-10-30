@@ -26,7 +26,7 @@ export const createObjectMarkingRelationship = (
     };
 };
 
-const getNodeLabel = (node: CytoscapeNodeData): string | undefined => {
+export const getNodeLabel = (node: CytoscapeNodeData): string | undefined => {
     let nodelabel: string = '';
     const labelorder = ['name', 'value', 'labels', 'key', 'path', 'product', 'dst_port', 'command_line', 'type', 'id'];
     for (const element of labelorder) {
