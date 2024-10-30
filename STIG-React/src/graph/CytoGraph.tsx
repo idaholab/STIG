@@ -20,10 +20,11 @@ import { setupCtxMenu } from '@/util/GraphUtils';
 import { createCytoscapeNode } from '@/stix/stix';
 import { stencilItems } from '@/components/elements/StencilItems';
 import { setup_edge_handles } from './edge-handles';
+import edgehandles from 'cytoscape-edgehandles';
 
 cytoscape.use(viewUtilities);
 cytoscape.use(cxtmenu);
-//cytoscape.use(edgehandles);
+cytoscape.use(edgehandles);
 
 cosebilkent(cytoscape);
 dagre(cytoscape);
@@ -228,6 +229,7 @@ const Graph: React.FC = () => {
         newNode.position = position;
         // Add Node
         const addedNode: SingularElementReturnValue = cyInstance.add(newNode) as SingularElementReturnValue;
+        runLayout(getStigLayoutSettingsFromStore(), cyInstance);
         // Auto Select
         autoSelectNewNode(cyInstance, addedNode);
     };
@@ -288,6 +290,14 @@ const Graph: React.FC = () => {
         }
         setSelectedSTIXObject(ele.data("raw_data"));
     });
+
+    // NOTE: For some reason, dragging a node and running the layout loses the edge handles. Need to figure out how to fix this before forcing nodes to relayout when the user tries to drag them.
+    // cyInstance?.on('dragfree', 'node', () => {
+    //     if (cyInstance) {
+    //         runLayout(getStigLayoutSettingsFromStore(), cyInstance);
+    //     }
+    //     //
+    // });
 
     // Hide STIX props panel when node/edge is unselected
     cyInstance?.on('unselect', 'node, edge', (evt: cytoscape.EventObject) => {

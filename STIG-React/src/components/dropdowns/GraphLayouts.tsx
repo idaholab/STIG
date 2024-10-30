@@ -4,7 +4,7 @@ import { EventContext } from '@/contexts/EventContext';
 import { useStigContext } from '@/contexts/StigContext';
 
 export const graphLayoutList = [
-  { name: "default", display: '- Default -' },
+  { name: "default", display: '- Freeform / Manual-' },
   { name: "breadthfirst", display: 'Breadth First' },
   { name: "circle", display: 'Circle' },
   { name: "concentric", display: 'Concentric' },
