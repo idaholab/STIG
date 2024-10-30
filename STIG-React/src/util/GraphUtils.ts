@@ -514,10 +514,10 @@ export function exportAll(fileName: string, cy: cytoscape.Core) {
 export function exportAllwPositions(fileName: string, cy: cytoscape.Core) {
     let allNodes = cy.$(':visible');
     let bundle = create_bundle(allNodes)
-    bundle.metadata = allNodes.map((obj:any) => ({
+    bundle.metadata = allNodes.map((obj: any) => ({
         id: obj.id(),
         position: obj.position(),
-      }));
+    }));
     exportGraph(fileName, bundle);
     return bundle
 }
@@ -551,13 +551,13 @@ export function addToGraph(pkg: STIGBundle, cyInstance: cytoscape.Core) {
 }
 
 
-
+export const defaultLayout: string = 'grid';
 export const saveLayoutToLocalStorage = (layout: string) => {
     localStorage.setItem('stigSettings', layout);
 }
 export const getLayoutSettingsFromStore = (): string => {
     const layout = localStorage.getItem('stigSettings');
-    return layout === null ? 'default' : layout;
+    return layout === null ? defaultLayout : layout;
 }
 export const runGraphLayout = (layoutType: keyof LayoutsType, cyInstance: cytoscape.Core) => {
     const orphans = cyInstance?.elements(':orphan').filter(':childless');

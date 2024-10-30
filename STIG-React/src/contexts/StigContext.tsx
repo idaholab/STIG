@@ -1,5 +1,5 @@
-import { layouts, LayoutsType } from '@/graph/graphOptions';
-import { getLayoutSettingsFromStore, layoutByTimeframe, runGraphLayout, saveLayoutToLocalStorage } from '@/util/GraphUtils';
+import { LayoutsType } from '@/graph/graphOptions';
+import { defaultLayout, getLayoutSettingsFromStore, runGraphLayout, saveLayoutToLocalStorage } from '@/util/GraphUtils';
 import React, { createContext, useContext, useState } from 'react';
 
 type StigContextType = {
@@ -36,7 +36,7 @@ export const StigContextProvider: React.FC<Props> = ({ children }) => {
   const [isPropertyPanelOpen, setIsPropertyPanelOpen] = useState(false);
   const [cyInstance, setCyInstance] = useState<cytoscape.Core | undefined>(undefined);
 
-  const [storedLayout, setStoredLayout] = useState<string>('grid');
+  const [storedLayout, setStoredLayout] = useState<string>(defaultLayout);
 
   const storeStigLayoutSettings = (layout: string) => {
     saveLayoutToLocalStorage(layout);
