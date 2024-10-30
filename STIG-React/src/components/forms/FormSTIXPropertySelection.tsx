@@ -10,16 +10,16 @@ type Props = {
   selectedProperties: SchemaSTIXProperty[];
   setSelectedProperties: React.Dispatch<React.SetStateAction<SchemaSTIXProperty[]>>;
   includeAddNew?: boolean;
-  size: string
+  size: 'standard' | 'small';
 };
 
-const FormElementSTIXPropertySelection: React.FC<Props> = ({
+const FormSTIXPropertySelection: React.FC<Props> = ({
   propertyOptions,
   setPropertyOptions,
   selectedProperties,
   setSelectedProperties,
   includeAddNew,
-  size = 'standard' || 'small'
+  size
 }) => {
   const [newPropertyName, setNewPropertyName] = useState("");
   const [buttonSize, setButtonSize] = useState<string>('');
@@ -110,4 +110,4 @@ const FormElementSTIXPropertySelection: React.FC<Props> = ({
   );
 };
 
-export default FormElementSTIXPropertySelection;
+export default FormSTIXPropertySelection;

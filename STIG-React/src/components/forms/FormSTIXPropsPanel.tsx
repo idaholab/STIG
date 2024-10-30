@@ -1,28 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
 import FormElementDatePicker from './formElements/FormElementDatePicker';
 import { STIXPropertyRenderer } from './STIXPropertyRenderer';
 import { useStixPropsContext } from '@/contexts/StixPropsContext';
 import { handlePropertyUpdate } from '@/stix/handlePropertyUpdate';
+import StixJSONView from '@/layouts/StixJSONView';
 
-export default function FormSTIXPropsPanel({ selectedProperties, showJson }: {
+export default function FormSTIXPropsPanel({ selectedProperties, stixTypeProps, showJson }: {
   selectedProperties: SchemaSTIXProperty[],
+  stixTypeProps: SchemaSTIXProperty[],
   showJson: boolean
 }) {
   const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
-
-  const [jsonText, setJsonText] = useState<string>('');
-  const handleJsonChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const value = e.target.value;
-    setJsonText(value);
-    try {
-      const parsedJson = JSON.parse(value);
-      // TODO: Return the JSON string to the parent or convert it back to a stix object to return to the parent.
-      // Not part of task 106
-    } catch (error) {
-      console.error('Invalid JSON:', error);
-    }
-  };
 
   const createdProperty = selectedProperties.find(selectedProperty =>
     selectedProperty.name === "created"
@@ -31,25 +20,12 @@ export default function FormSTIXPropsPanel({ selectedProperties, showJson }: {
     selectedProperty.name === "modified"
   );
 
-  // When stixTypeProps gets set for the object or changes
-  // when clicking on a different object, update the selectedProperties
-  useEffect(() => {
-    const selectedSTIXObjectJSONString = { ...selectedSTIXObject };
-    delete selectedSTIXObjectJSONString.raw_data;
-    delete selectedSTIXObjectJSONString.label;
-    setJsonText(JSON.stringify(selectedSTIXObjectJSONString, null, 2));
-  }, [selectedSTIXObject]);
-
   return (
     <>
       {showJson ?
-        <div className='form-stix-json flex flex-auto h-full w-full'>
-          <textarea
-            className="jsonEditor flex flex-grow p-2 scrollbar h-full w-full rounded bg-neutralc-100 dark:bg-neutralc-900"
-            onChange={handleJsonChange}
-            value={jsonText}
-          />
-        </div>
+        <StixJSONView 
+          stixTypeProps={stixTypeProps}
+        />
         :
         <>
           <div className='flex gap-4 mb-2'>
@@ -101,6 +77,3 @@ export default function FormSTIXPropsPanel({ selectedProperties, showJson }: {
     </>
   );
 }
-
-
-
