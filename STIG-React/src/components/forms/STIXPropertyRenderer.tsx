@@ -92,6 +92,7 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
               includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
               infoText={property?.propertyDescription}
               className='mb-2'
+              property={property}
             />
           );
         case "boolean":

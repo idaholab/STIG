@@ -511,6 +511,16 @@ export function exportAll(fileName: string, cy: cytoscape.Core) {
     exportGraph(fileName, bundle);
     return bundle
 }
+export function exportAllwPositions(fileName: string, cy: cytoscape.Core) {
+    let allNodes = cy.$(':visible');
+    let bundle = create_bundle(allNodes)
+    bundle.metadata = allNodes.map((obj:any) => ({
+        id: obj.id(),
+        position: obj.position(),
+      }));
+    exportGraph(fileName, bundle);
+    return bundle
+}
 
 export async function queryToGraph(q: string, cyInstance: cytoscape.Core | undefined) {
     if (!(cyInstance)) { return [-1, -1]; }
