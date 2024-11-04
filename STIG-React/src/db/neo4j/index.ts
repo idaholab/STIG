@@ -97,21 +97,22 @@ export class Neo4jStigDB implements StigDB {
 
   /**
    * @description Determines the difference between a node from the graph and what is in the database
-   * @param {StixObject} node
+   * @param {StixObject[]} nodes
    * @returns {Promise<diffpatch.Delta>}
    * @memberof StigDB
    */
-  public getDiff(node: StixObject): Promise<Delta | undefined> {
-    return this.wrapSession(async (s: Session) => {
-      const res = await s.executeRead((tx: ManagedTransaction) =>
-        tx.run('MATCH (n) where n.id = $id RETURN n', { id: node.id })
-      );
-      const rec = res.records[0];
-      if (rec) {
-        const patcher = new DiffPatcher();
-        return patcher.diff(node, fromNeo4j(rec.get('n').properties));
-      }
-    });
+  public async getDiff(...nodes: StixObject[]): Promise<Map<string, Delta | undefined>> {
+    const patcher = new DiffPatcher();
+    const promises: Promise<[string, Delta|undefined]>[] = nodes.map(
+      node => this.wrapSession(async (s: Session) => {
+        const res = await s.executeRead((tx: ManagedTransaction) =>
+          tx.run('MATCH (n) where n.id = $id RETURN n', { id: node.id })
+        );
+        const rec = res.records[0];
+        return [node.id, rec ? patcher.diff(node, fromNeo4j(rec.get('n').properties)) : undefined];
+      })
+    );
+    return new Map(await Promise.all(promises));
   }
 
   /**
