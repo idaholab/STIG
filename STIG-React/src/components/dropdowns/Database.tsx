@@ -120,12 +120,12 @@ const Database: React.FC = () => {
 
             <div className='hover:text-white hover:bg-primary' >
               <DialogBasic
-                dialogId="DBUpdateModal"
+                dialogId="SaveAllModal"
                 title="Update Database"
                 buttonColor='btn-ghost'
-                showFormButtons={false}
+                showFormButtons={true}
                 buttonLabel="Save All Nodes"
-                disabled={!connectedDBProfile || !cyInstance?.nodes('')}
+                disabled={!connectedDBProfile ||  !cyInstance || !cyInstance.nodes('').length}
                 additionalButtonClasses={`btn-sm ml-1`}
                 onSave={() => { commitAllNodes(cyInstance, addNotification) }}
               >
@@ -135,12 +135,12 @@ const Database: React.FC = () => {
 
             <div className='hover:text-white hover:bg-primary'>
               <DialogBasic
-                dialogId="DBUpdateModal"
+                dialogId="SaveSelectedModal"
                 title="Save Selected Nodes"
                 buttonColor='btn-ghost'
-                showFormButtons={false}
-                buttonLabel="Save All Nodes"
-                disabled={!connectedDBProfile || ! cyInstance?.nodes(':selected')}
+                showFormButtons={true}
+                buttonLabel="Save Selected Nodes"
+                disabled={!connectedDBProfile || !cyInstance || !cyInstance.nodes(':selected').length}
                 additionalButtonClasses={`btn-sm ml-1`}
                 onSave={() => { commitSelectedNodes(cyInstance, addNotification) }}
               >
@@ -150,11 +150,11 @@ const Database: React.FC = () => {
             <div className='hover:text-white hover:bg-primary'>
             <DialogBasic
                 dialogId="DBDeleteModal"
-                title="Save Selected Nodes"
+                title="Delete Selected Nodes"
                 buttonColor='btn-ghost'
-                showFormButtons={false}
+                showFormButtons={true}
                 buttonLabel="Remove Selected Nodes"
-                disabled={!connectedDBProfile || ! cyInstance?.nodes(':selected')}
+                disabled={!connectedDBProfile || !cyInstance || !cyInstance.nodes(':selected').length}
                 additionalButtonClasses={`btn-sm ml-1`}
                 onSave={() => { deleteSelectedNodes(cyInstance, addNotification, selectedSTIXObject, setSelectedSTIXObject, isPropertyPanelOpen, togglePropertyPanel) }}
               >
