@@ -1,7 +1,6 @@
 import React from 'react';
 import Dropdown from '../core/Dropdown';
 import { useStigContext } from '@/contexts/StigContext';
-import { view_utils_options } from '@/graph/graphOptions';
 
 const Edit: React.FC = () => {
   const { cyInstance } = useStigContext();

@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { StixRelationshipObject } from "@/types/stixTypes/StixRelationshipObject";
 import { convertISOToStandardDateFormat } from "@/util/convertISO8601ToStandardDate";
 import moment from "moment";
+import { SingularElementArgument } from "cytoscape";
 
 export const createObjectMarkingRelationship = (
     source_ref: string,
@@ -55,8 +56,6 @@ export const getNodeLabel = (node: CytoscapeNodeData): string | undefined => {
     return nodelabel;
 };
 
-
-
 export const createCytoscapeNode = (
     node: CytoscapeNodeData,
     dataSourceType: DataSourceType,
@@ -96,4 +95,18 @@ const addStixPropertiesToNode = (node: CytoscapeNodeData, isNewNode: boolean): C
     delete raw_data.label; // Label does not belong in stix data. User can add their own custom labels list
     returnedNode.raw_data = raw_data;
     return returnedNode;
-}
+};
+
+export const cycore2stix = (o: SingularElementArgument) => {
+// TODO: actually create STIX
+const n = o.data('raw_data');
+return n === undefined
+    ? n
+    : {
+    // The spec_version is mandatory, but sometimes it doesn't exist on the objects.
+    // This adds it if it isn't there already.
+    // TODO: It might be better to just add the spec_version when an object is created.
+    spec_version: '2.1',
+    ...n
+    };
+};

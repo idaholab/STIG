@@ -7,6 +7,7 @@ import { DBProfile } from "@/types/DBProfile";
 import { STIGBundle } from "@/types/STIGBundle";
 import { StixObject } from "@/types/stixTypes/StixObject";
 import { StixRelationshipObject } from "@/types/stixTypes/StixRelationshipObject";
+import { Delta } from "diffpatch";
 
 let currentDB: StigDB;
 
@@ -82,10 +83,10 @@ export async function query(query: string): Promise<StixObject[]> {
   return wrapReturn(query, () => [], q => currentDB.executeQuery(q));
 }
 
-// export async function get_diff(stix: StixObject): Promise<diffpatch.Delta | undefined> {
-//   if (!checkProps(stix)) throw new Error('Invalid stix');
-//   return wrapReturn(stix, () => ({}), s => currentDB.getDiff(s));
-// }
+export async function get_diff(stix: StixObject[]): Promise<[StixObject, Delta][]> {
+   if (!stix.every(checkProps)) throw new Error('Invalid stix');
+   return wrapReturn(stix, () => [], s => currentDB.getDiff(s));
+}
 
 function getAllProps(schemaObject: SchemaSTIXClass) {
   const props = schemaObject.properties;

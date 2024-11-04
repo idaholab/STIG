@@ -101,18 +101,18 @@ export class Neo4jStigDB implements StigDB {
    * @returns {Promise<diffpatch.Delta>}
    * @memberof StigDB
    */
-  public async getDiff(...nodes: StixObject[]): Promise<Map<string, Delta | undefined>> {
+  public async getDiff(nodes: StixObject[]): Promise<[StixObject, Delta][]> {
     const patcher = new DiffPatcher();
-    const promises: Promise<[string, Delta|undefined]>[] = nodes.map(
+    const promises: Promise<[StixObject, Delta|undefined]>[] = nodes.map(
       node => this.wrapSession(async (s: Session) => {
         const res = await s.executeRead((tx: ManagedTransaction) =>
           tx.run('MATCH (n) where n.id = $id RETURN n', { id: node.id })
         );
         const rec = res.records[0];
-        return [node.id, rec ? patcher.diff(node, fromNeo4j(rec.get('n').properties)) : undefined];
+        return [node, rec ? patcher.diff(node, fromNeo4j(rec.get('n').properties)) : undefined];
       })
     );
-    return new Map(await Promise.all(promises));
+    return (await Promise.all(promises)).filter(p => !!p[1]) as [StixObject, Delta][];
   }
 
   /**

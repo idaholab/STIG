@@ -5,15 +5,17 @@ import Dropdown from '../core/Dropdown';
 import ConnectedDBContext, { ConnectedDBContextType } from '@/contexts/ConnectedDBContext';
 import ButtonDBConnect from '../elements/ButtonDBConnect';
 import DBQueryModal from '@/layouts/DBQueryModal';
+import DBUpdateModal from '@/layouts/DBUpdateModal';
+import DBDeleteModal from '@/layouts/DBDeleteModal';
 import { useStigContext } from '@/contexts/StigContext';
 import { commit, db_delete } from '@/util/DbFunctions';
 import { StixObject } from '@/types/stixTypes/StixObject';
 import { StixRelationshipObject } from '@/types/stixTypes/StixRelationshipObject';
-import { CollectionReturnValue, EdgeCollection, NodeCollection, SingularElementArgument } from 'cytoscape';
+import { CollectionReturnValue, EdgeCollection, NodeCollection, NodeSingular } from 'cytoscape';
 import { AlertType } from '../elements/AlertComponent';
 import { useNotificationContext } from '@/contexts/NotificationContext';
-import ButtonBasic from '../elements/ButtonBasic';
 import { useStixPropsContext } from '@/contexts/StixPropsContext';
+import { cycore2stix } from '@/stix/stix';
 
 const Database: React.FC = () => {
   const {
@@ -117,81 +119,83 @@ const Database: React.FC = () => {
             </div>
 
             <div className='hover:text-white hover:bg-primary' >
-              <ButtonBasic
-                label="Save All Nodes"
-                type='btn-ghost'
-                additionalClasses='btn-sm ml-1'
-                onClick={() => { commitAllNodes(cyInstance, addNotification) }}
-                disabled={!connectedDBProfile}
-                isLabelUppercase={false}
-              />
+              <DialogBasic
+                dialogId="DBUpdateModal"
+                title="Update Database"
+                buttonColor='btn-ghost'
+                showFormButtons={false}
+                buttonLabel="Save All Nodes"
+                disabled={!connectedDBProfile || !cyInstance?.nodes('')}
+                additionalButtonClasses={`btn-sm ml-1`}
+                onSave={() => { commitAllNodes(cyInstance, addNotification) }}
+              >
+                <DBUpdateModal nodes={(cyInstance?.nodes('') ?? []) as NodeSingular[]}/>
+              </DialogBasic>
             </div>
 
             <div className='hover:text-white hover:bg-primary'>
-              <ButtonBasic
-                type='btn-ghost'
-                label="Save Selected Nodes"
-                additionalClasses='btn-sm ml-1'
-                onClick={() => { commitSelectedNodes(cyInstance, addNotification) }}
-                disabled={!connectedDBProfile}
-                isLabelUppercase={false}
-              />
+              <DialogBasic
+                dialogId="DBUpdateModal"
+                title="Save Selected Nodes"
+                buttonColor='btn-ghost'
+                showFormButtons={false}
+                buttonLabel="Save All Nodes"
+                disabled={!connectedDBProfile || ! cyInstance?.nodes(':selected')}
+                additionalButtonClasses={`btn-sm ml-1`}
+                onSave={() => { commitSelectedNodes(cyInstance, addNotification) }}
+              >
+                <DBUpdateModal nodes={(cyInstance?.nodes(':selected') ?? []) as NodeSingular[]}/>
+              </DialogBasic>
             </div>
             <div className='hover:text-white hover:bg-primary'>
-              <ButtonBasic
-                type='btn-ghost'
-                label="Remove Selected Nodes"
-                additionalClasses='btn-sm ml-1'
-                onClick={() => { deleteSelectedNodes(cyInstance, addNotification, selectedSTIXObject, setSelectedSTIXObject, isPropertyPanelOpen, togglePropertyPanel) }}
-                disabled={!connectedDBProfile}
-                isLabelUppercase={false}
-              />
+            <DialogBasic
+                dialogId="DBDeleteModal"
+                title="Save Selected Nodes"
+                buttonColor='btn-ghost'
+                showFormButtons={false}
+                buttonLabel="Remove Selected Nodes"
+                disabled={!connectedDBProfile || ! cyInstance?.nodes(':selected')}
+                additionalButtonClasses={`btn-sm ml-1`}
+                onSave={() => { deleteSelectedNodes(cyInstance, addNotification, selectedSTIXObject, setSelectedSTIXObject, isPropertyPanelOpen, togglePropertyPanel) }}
+              >
+                <DBDeleteModal nodes={(cyInstance?.nodes(':selected') ?? []) as NodeSingular[]}/>
+              </DialogBasic>
             </div>
           </div>
         </ul>
       </div>
     </Dropdown>
   );
-};
-function cycore2stix(o: SingularElementArgument) {
-  // TODO: actually create STIX
-  const n = o.data('raw_data');
-  return n === undefined
-    ? n
-    : {
-      // The spec_version is mandatory, but sometimes it doesn't exist on the objects.
-      // This adds it if it isn't there already.
-      // TODO: It might be better to just add the spec_version when an object is created.
-      spec_version: '2.1',
-      ...n
-    };
 }
+
 function submitter(nodes: NodeCollection, edges: EdgeCollection, addNotification: any) {
   const stix_nodes: StixObject[] = nodes.map(cycore2stix).filter(s => s !== undefined);
   const stix_edges: StixRelationshipObject[] = edges.map(cycore2stix).filter(s => s !== undefined);
   (async () => {
-    let set = await commit(stix_nodes, stix_edges);
-    let objs = set[0].size; let rels = set[1].size;
-    let toastType: AlertType = (objs + rels > 0) ? "success" : "warning";
+    const [{ size: objs }, { size: rels}] = await commit(stix_nodes, stix_edges);
+    const toastType: AlertType = (objs + rels > 0) ? "success" : "warning";
     addNotification(`Submitted ${objs}/${stix_nodes.length} node(s) and ${rels}/${stix_edges.length} edge(s)`, toastType);
   })();
 }
+
 function commitAllNodes(cy: cytoscape.Core | undefined, addNotification: any) {
   if (cy !== undefined) {
-    let nodes = cy.nodes('');
-    let edges = cy.edges('');
+    const nodes = cy.nodes('');
+    const edges = cy.edges('');
     submitter(nodes, edges, addNotification);
   }
-  return ''
-};
+  return '';
+}
+
 function commitSelectedNodes(cy: cytoscape.Core | undefined, addNotification: any) {
   if (cy !== undefined) {
-    let nodes = cy.nodes(':selected');
-    let edges = cy.edges(':selected');
+    const nodes = cy.nodes(':selected');
+    const edges = cy.edges(':selected');
     submitter(nodes, edges, addNotification);
   }
-  return ''
+  return '';
 }
+
 function deleteSelectedNodes(
   cy: cytoscape.Core | undefined,
   addNotification: any,
@@ -232,6 +236,6 @@ function deleteSelectedNodes(
     addNotification(`Deleted ${selected.length} object(s) and ${edges.length} edge(s) from database`, 'success');
 
   }
-  return ''
+  return '';
 }
 export default Database;
