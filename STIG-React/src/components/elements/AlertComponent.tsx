@@ -37,7 +37,7 @@ const AlertComponent: React.FC<AlertComponentProps> = ({
             {userClosable ?
                 <ButtonIcon
                     buttonIcon='close'
-                    type={'btn-neutralc'}
+                    type={'alert'}
                     buttonSize='btn-xs'
                     onClick={onClose}
                 />
