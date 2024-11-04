@@ -7,6 +7,7 @@ import { isRelationship } from './isRelationship';
 import { StixObject } from '@/types/stixTypes/StixObject';
 import { STIGBundle } from '@/types/STIGBundle';
 import { StixRelationshipObject } from '@/types/stixTypes/StixRelationshipObject';
+import { Delta, DiffPatcher } from 'diffpatch';
 
 function setProperties(tx: ManagedTransaction, stix: Record<string, unknown>, cmd: string) {
   return tx.run(
@@ -100,17 +101,18 @@ export class Neo4jStigDB implements StigDB {
    * @returns {Promise<diffpatch.Delta>}
    * @memberof StigDB
    */
-  // public getDiff(node: StixObject): Promise<diffpatch.Delta | undefined> {
-  //   return this.wrapSession(async (s: Session) => {
-  //     const res = await s.executeRead((tx: ManagedTransaction) =>
-  //       tx.run('MATCH (n) where n.id = $id RETURN n', { id: node.id })
-  //     );
-  //     const rec = res.records[0];
-  //     if (rec) {
-  //       return diffpatch.diff(node, fromNeo4j(rec.get('n').properties));
-  //     }
-  //   });
-  // }
+  public getDiff(node: StixObject): Promise<Delta | undefined> {
+    return this.wrapSession(async (s: Session) => {
+      const res = await s.executeRead((tx: ManagedTransaction) =>
+        tx.run('MATCH (n) where n.id = $id RETURN n', { id: node.id })
+      );
+      const rec = res.records[0];
+      if (rec) {
+        const patcher = new DiffPatcher();
+        return patcher.diff(node, fromNeo4j(rec.get('n').properties));
+      }
+    });
+  }
 
   /**
    * @description Updates the database from the editor form
