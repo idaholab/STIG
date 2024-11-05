@@ -11,7 +11,7 @@ import { useStigContext } from '@/contexts/StigContext';
 import { commit, db_delete } from '@/util/DbFunctions';
 import { StixObject } from '@/types/stixTypes/StixObject';
 import { StixRelationshipObject } from '@/types/stixTypes/StixRelationshipObject';
-import { CollectionReturnValue, EdgeCollection, NodeCollection, NodeSingular } from 'cytoscape';
+import { CollectionReturnValue, EdgeCollection, NodeCollection } from 'cytoscape';
 import { AlertType } from '../elements/AlertComponent';
 import { useNotificationContext } from '@/contexts/NotificationContext';
 import { useStixPropsContext } from '@/contexts/StixPropsContext';
@@ -158,7 +158,7 @@ const Database: React.FC = () => {
                 additionalButtonClasses={`btn-sm ml-1`}
                 onSave={() => { deleteSelectedNodes(cyInstance, addNotification, selectedSTIXObject, setSelectedSTIXObject, isPropertyPanelOpen, togglePropertyPanel) }}
               >
-                <DBDeleteModal nodes={(cyInstance?.nodes(':selected') ?? []) as NodeSingular[]}/>
+                <DBDeleteModal nodes={cyInstance?.nodes(':selected').map(cycore2stix).filter(s => s !== undefined) ?? []}/>
               </DialogBasic>
             </div>
           </div>

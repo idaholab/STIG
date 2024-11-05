@@ -1,20 +1,17 @@
-import { NodeSingular } from 'cytoscape';
-import { cycore2stix } from '@/stix/stix';
+import { StixObject } from '@/types/stixTypes/StixObject';
 import React from 'react';
 
 interface DBDeleteProps {
-  nodes: NodeSingular[];
+  nodes: StixObject[];
 }
 
 const DBDeleteModal: React.FC<DBDeleteProps> = ({nodes}) => {
-  const stix_nodes = nodes.map(cycore2stix).filter(s => s !== undefined);
-
-  return stix_nodes.length == 0 ? <div className='h-full relative'>
+  return nodes.length == 0 ? <div className='h-full relative'>
     <h2>Nothing to Delete</h2>
-    {stix_nodes.map(node => <div key={node.id}>{node.type}: {node.id}</div>)}
+    {nodes.map(node => <div key={node.id}>{node.type}: {node.id}</div>)}
   </div> : <div className='h-full relative'>
     <h2>Delete These Nodes?</h2>
-    {stix_nodes.map(node => <div>{node.type}: {node.id}</div>)}
+    {nodes.map(node => <div>{node.type}: {node.id}</div>)}
   </div>;
 };
 
