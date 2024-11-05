@@ -125,11 +125,11 @@ const Database: React.FC = () => {
                 buttonColor='btn-ghost'
                 showFormButtons={true}
                 buttonLabel="Save All Nodes"
-                disabled={!connectedDBProfile ||  !cyInstance || !cyInstance.nodes('').length}
+                disabled={!connectedDBProfile || !cyInstance || !cyInstance.nodes('').length}
                 additionalButtonClasses={`btn-sm ml-1`}
-                onSave={() => { commitAllNodes(cyInstance, addNotification) }}
+                onSave={() => commitAllNodes(cyInstance, addNotification) }
               >
-                <DBUpdateModal nodes={(cyInstance?.nodes('') ?? []) as NodeSingular[]}/>
+                <DBUpdateModal nodes={cyInstance?.nodes('').map(cycore2stix).filter(s => s !== undefined) ?? []}/>
               </DialogBasic>
             </div>
 
@@ -142,9 +142,9 @@ const Database: React.FC = () => {
                 buttonLabel="Save Selected Nodes"
                 disabled={!connectedDBProfile || !cyInstance || !cyInstance.nodes(':selected').length}
                 additionalButtonClasses={`btn-sm ml-1`}
-                onSave={() => { commitSelectedNodes(cyInstance, addNotification) }}
+                onSave={() => commitSelectedNodes(cyInstance, addNotification) }
               >
-                <DBUpdateModal nodes={(cyInstance?.nodes(':selected') ?? []) as NodeSingular[]}/>
+                <DBUpdateModal nodes={cyInstance?.nodes(':selected').map(cycore2stix).filter(s => s !== undefined) ?? []}/>
               </DialogBasic>
             </div>
             <div className='hover:text-white hover:bg-primary'>
@@ -170,7 +170,7 @@ const Database: React.FC = () => {
 
 function submitter(nodes: NodeCollection, edges: EdgeCollection, addNotification: any) {
   const stix_nodes: StixObject[] = nodes.map(cycore2stix).filter(s => s !== undefined);
-  const stix_edges: StixRelationshipObject[] = edges.map(cycore2stix).filter(s => s !== undefined);
+  const stix_edges = edges.map(cycore2stix).filter(s => s !== undefined) as StixRelationshipObject[];
   (async () => {
     const [{ size: objs }, { size: rels}] = await commit(stix_nodes, stix_edges);
     const toastType: AlertType = (objs + rels > 0) ? "success" : "warning";
@@ -184,7 +184,6 @@ function commitAllNodes(cy: cytoscape.Core | undefined, addNotification: any) {
     const edges = cy.edges('');
     submitter(nodes, edges, addNotification);
   }
-  return '';
 }
 
 function commitSelectedNodes(cy: cytoscape.Core | undefined, addNotification: any) {
@@ -193,7 +192,6 @@ function commitSelectedNodes(cy: cytoscape.Core | undefined, addNotification: an
     const edges = cy.edges(':selected');
     submitter(nodes, edges, addNotification);
   }
-  return '';
 }
 
 function deleteSelectedNodes(
@@ -234,8 +232,6 @@ function deleteSelectedNodes(
       }
     });
     addNotification(`Deleted ${selected.length} object(s) and ${edges.length} edge(s) from database`, 'success');
-
   }
-  return '';
 }
 export default Database;

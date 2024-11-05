@@ -103,7 +103,7 @@ export const DialogBasic: React.FC<Props> = ({
               <ButtonBasic
                 label="Save"
                 type="btn-primary"
-                onClick={onSave}
+                onClick={() => { handleCloseDialog(); onSave && onSave(); }}
               />
             </div>
           )}

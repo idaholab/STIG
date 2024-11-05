@@ -180,7 +180,7 @@ export function checkProps(object: StixObject): boolean {
   return true;
 }
 
-function setProps(object: StixObject) {
+export function setProps(object: StixObject) {
   const schemaObject = schema.find(c => { return c.name === object.type; });
   if (typeof schemaObject !== 'object') {
       return object;
@@ -206,7 +206,7 @@ function setProps(object: StixObject) {
   return object;
 }
 
-export const cycore2stix = (o: SingularElementArgument) => {
+export function cycore2stix(o: SingularElementArgument): StixObject | undefined {
 const n = o.data('raw_data');
 return n === undefined
     ? n

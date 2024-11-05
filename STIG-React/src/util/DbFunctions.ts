@@ -8,7 +8,7 @@ import { StixRelationshipObject } from "@/types/stixTypes/StixRelationshipObject
 import { Delta } from "diffpatch";
 import { checkProps } from "@/stix/stix";
 
-let currentDB: StigDB;
+export let currentDB: StigDB;
 
 async function wrapVoid<T>(stix: T, cb: (stix: T) => Promise<void>) {
   if (currentDB) {

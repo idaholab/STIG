@@ -1,13 +1,14 @@
+import React from "react";
 import { useNotificationContext } from "@/contexts/NotificationContext";
 import { useStixPropsContext } from "@/contexts/StixPropsContext";
 import { StixRelationshipObject } from "@/types/stixTypes/StixRelationshipObject";
 import { commit } from "@/util/DbFunctions";
 import { AlertType } from "./AlertComponent";
-import React from "react";
-import ButtonBasic from "./ButtonBasic";
 import { DialogBasic } from "./DialogBasic";
 import ExportModal from "@/layouts/ExportModals";
-import { exportObject, exportSelected } from "@/util/GraphUtils";
+import { exportObject } from "@/util/GraphUtils";
+import DBUpdateModal from "@/layouts/DBUpdateModal";
+import { setProps } from "@/stix/stix";
 
 const SaveButtons: React.FC = () => {
   const { addNotification } = useNotificationContext();
@@ -18,14 +19,12 @@ const SaveButtons: React.FC = () => {
       if (selectedSTIXObject !== undefined) {
         (async () => {
           try {
-            let set = [];
-            if (selectedSTIXObject.type !== "relationship") {
-              set = (await commit([selectedSTIXObject], []));
-            } else {
-              set = (await commit([], [selectedSTIXObject as StixRelationshipObject]));
-            }
-            let objs = set[0].size; let rels = set[1].size;
-            let toastType: AlertType = (objs + rels > 0) ? "success" : "warning";
+            const [{ size: objs }, { size: rels }] = await (
+              selectedSTIXObject.type !== "relationship" ?
+                commit([selectedSTIXObject], []) :
+                commit([], [selectedSTIXObject as StixRelationshipObject])
+            );
+            const toastType: AlertType = (objs + rels > 0) ? "success" : "warning";
             addNotification(`Submitted ${objs} node(s) and ${rels} edge(s)`, toastType);
           } catch (err) {
             addNotification((err as Error).message, "warning");
@@ -43,12 +42,17 @@ const SaveButtons: React.FC = () => {
   return (
     <>
       <div className='place-self-end mt-8 flex gap-2 mb-4'>
-        <ButtonBasic
-          label="Save to NEO4J"
-          // color='btn-sm'
-          additionalClasses='h-[48px] btn-sm '
-          onClick={saverNeo4j}
-        ></ButtonBasic>
+        <DialogBasic
+          dialogId="SaveToNeo4jModal"
+          title="Update Database"
+          showFormButtons={true}
+          buttonLabel="Save to NEO4J"
+          buttonColor="btn-neutralc"
+          additionalButtonClasses={`uppercase h-[48px] btn-sm`}
+          onSave={saverNeo4j}
+        >
+          <DBUpdateModal nodes={selectedSTIXObject ? [setProps({spec_version: '2.1', ...selectedSTIXObject})] : []}/>
+        </DialogBasic>
         <DialogBasic
           dialogId="ExportObjectModal"
           title="Save JSON"
