@@ -109,7 +109,7 @@ export class Neo4jStigDB implements StigDB {
           tx.run('MATCH (n) where n.id = $id RETURN n', { id: node.id })
         );
         const rec = res.records[0];
-        return [node, patcher.diff(rec ? fromNeo4j(rec.get('n'))[0] : {}, node)];
+        return [node, patcher.diff(rec ? toNeo4j(fromNeo4j(rec.get('n'))[0]) : {}, toNeo4j(node))];
       })
     );
     return (await Promise.all(promises)).filter(

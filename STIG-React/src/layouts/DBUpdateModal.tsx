@@ -12,7 +12,9 @@ const insertStyle = { backgroundColor: "#AAFFAA", ...diffStyle };
 const deleteStyle = { backgroundColor: "#FFAAAA", ...diffStyle };
 function * formatDiff(diff: Delta) {
   let k = 0;
-  for (const [key, val] of Object.entries(diff) as [string, any[]][]) {
+  const entries = Object.entries(diff) as [string, any[]][];
+  entries.sort(([a],[b]) => a.localeCompare(b));
+  for (const [key, val] of entries) {
     switch(val.length) {
       case 1: yield <div key={k++} style={insertStyle}>"{key}": {JSON.stringify(val[0])}</div>; continue;
       case 2: yield <>
