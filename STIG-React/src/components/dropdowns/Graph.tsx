@@ -65,70 +65,74 @@ function makeEmbeddedRelationships(cy: cytoscape.Core) {
   let to_add: ElementDefinition[] = [];
   nodes.each((ele) => {
     const obj = ele.data('raw_data');
-    if (obj === undefined) { console.debug(obj, " is undefined"); return; }
-    if (obj.object_marking_refs !== undefined) { to_add.push(...add_visual_edge(obj.object_marking_refs, obj.id)); }
+    if (obj === undefined) { console.debug("object is undefined"); return; }
+    if (obj.object_marking_refs !== undefined) { to_add.push(...add_visual_edge('object_marking_refs', obj.object_marking_refs, obj.id)); }
+    if (obj.created_by_ref !== undefined) { to_add.push(...add_visual_edge('created_by_ref', obj.created_by_ref, obj.id)); }
     switch (obj.type) {
+      case 'language-content':
+        to_add.push(...add_visual_edge('object_ref',obj.object_ref, obj.id));
+        break;
       case 'report':
       case 'opinion':
       case 'grouping':
       case 'note':
       case 'observed-data':
-        to_add.push(...add_visual_edge(obj.object_refs, obj.id));
+        to_add.push(...add_visual_edge("object_refs", obj.object_refs, obj.id));
         break;
       case 'malware':
-        to_add.push(...add_visual_edge(obj.operating_system_refs, obj.id));
-        to_add.push(...add_visual_edge(obj.sample_refs, obj.id));
+        to_add.push(...add_visual_edge('operating_system_refs', obj.operating_system_refs, obj.id));
+        to_add.push(...add_visual_edge('sample_refs', obj.sample_refs, obj.id));
         break;
       case 'malware-analysis':
-        to_add.push(...add_visual_edge(obj.host_vm_ref, obj.id));
-        to_add.push(...add_visual_edge(obj.operating_system_ref, obj.id));
-        to_add.push(...add_visual_edge(obj.installed_software_refs, obj.id));
-        to_add.push(...add_visual_edge(obj.analysis_sco_refs, obj.id));
-        to_add.push(...add_visual_edge(obj.sample_ref, obj.id));
+        to_add.push(...add_visual_edge('host_vm_ref', obj.host_vm_ref, obj.id));
+        to_add.push(...add_visual_edge('operating_system_ref', obj.operating_system_ref, obj.id));
+        to_add.push(...add_visual_edge('installed_software_refs', obj.installed_software_refs, obj.id));
+        to_add.push(...add_visual_edge('analysis_sco_refs', obj.analysis_sco_refs, obj.id));
+        to_add.push(...add_visual_edge('sample_ref', obj.sample_ref, obj.id));
         break;
       case 'directory':
-        to_add.push(...add_visual_edge(obj.contains_refs, obj.id));
+        to_add.push(...add_visual_edge('contains_refs', obj.contains_refs, obj.id));
         break;
       case 'domain-name':
-        to_add.push(...add_visual_edge(obj.resolves_to_refs, obj.id));
+        to_add.push(...add_visual_edge('resolves_to_refs', obj.resolves_to_refs, obj.id));
         break;
       case 'email-addr':
-        to_add.push(...add_visual_edge(obj.belongs_to_ref, obj.id));
+        to_add.push(...add_visual_edge('belongs_to_ref', obj.belongs_to_ref, obj.id));
         break;
       case 'email-message':
-        to_add.push(...add_visual_edge(obj.from_ref, obj.id));
-        to_add.push(...add_visual_edge(obj.sender_ref, obj.id));
-        to_add.push(...add_visual_edge(obj.to_refs, obj.id));
-        to_add.push(...add_visual_edge(obj.cc_refs, obj.id));
-        to_add.push(...add_visual_edge(obj.bcc_refs, obj.id));
-        to_add.push(...add_visual_edge(obj.raw_email_ref, obj.id));
+        to_add.push(...add_visual_edge('from_ref', obj.from_ref, obj.id));
+        to_add.push(...add_visual_edge('sender_ref', obj.sender_ref, obj.id));
+        to_add.push(...add_visual_edge('to_refs', obj.to_refs, obj.id));
+        to_add.push(...add_visual_edge('cc_refs', obj.cc_refs, obj.id));
+        to_add.push(...add_visual_edge('bcc_refs', obj.bcc_refs, obj.id));
+        to_add.push(...add_visual_edge('raw_email_ref', obj.raw_email_ref, obj.id));
         break;
       case 'file':
-        to_add.push(...add_visual_edge(obj.parent_directory_ref, obj.id));
-        to_add.push(...add_visual_edge(obj.contains_refs, obj.id));
-        to_add.push(...add_visual_edge(obj.content_ref, obj.id));
+        to_add.push(...add_visual_edge('parent_directory_ref', obj.parent_directory_ref, obj.id));
+        to_add.push(...add_visual_edge('contains_refs', obj.contains_refs, obj.id));
+        to_add.push(...add_visual_edge('content_ref', obj.content_ref, obj.id));
         break;
       case 'ipv4-addr':
       case 'ipv6-addr':
-        to_add.push(...add_visual_edge(obj.resolves_to_refs, obj.id));
-        to_add.push(...add_visual_edge(obj.belongs_to_refs, obj.id));
+        to_add.push(...add_visual_edge('resolves_to_refs', obj.resolves_to_refs, obj.id));
+        to_add.push(...add_visual_edge('belongs_to_refs', obj.belongs_to_refs, obj.id));
         break;
       case 'network-traffic':
-        to_add.push(...add_visual_edge(obj.src_ref, obj.id));
-        to_add.push(...add_visual_edge(obj.dst_ref, obj.id));
-        to_add.push(...add_visual_edge(obj.src_payload_ref, obj.id));
-        to_add.push(...add_visual_edge(obj.dst_payload_ref, obj.id));
-        to_add.push(...add_visual_edge(obj.encapsulates_refs, obj.id));
-        to_add.push(...add_visual_edge(obj.encapsulated_by_ref, obj.id));
+        to_add.push(...add_visual_edge('src_ref', obj.src_ref, obj.id));
+        to_add.push(...add_visual_edge('dst_ref', obj.dst_ref, obj.id));
+        to_add.push(...add_visual_edge('src_payload_ref', obj.src_payload_ref, obj.id));
+        to_add.push(...add_visual_edge('dst_payload_ref', obj.dst_payload_ref, obj.id));
+        to_add.push(...add_visual_edge('encapsulates_refs', obj.encapsulates_refs, obj.id));
+        to_add.push(...add_visual_edge('encapsulated_by_ref', obj.encapsulated_by_ref, obj.id));
         break;
       case 'process':
-        to_add.push(...add_visual_edge(obj.opened_connection_refs, obj.id));
-        to_add.push(...add_visual_edge(obj.image_ref, obj.id));
-        to_add.push(...add_visual_edge(obj.parent_ref, obj.id));
-        to_add.push(...add_visual_edge(obj.child_refs, obj.id));
+        to_add.push(...add_visual_edge('opened_connection_refs', obj.opened_connection_refs, obj.id));
+        to_add.push(...add_visual_edge('image_ref', obj.image_ref, obj.id));
+        to_add.push(...add_visual_edge('parent_ref', obj.parent_ref, obj.id));
+        to_add.push(...add_visual_edge('child_refs', obj.child_refs, obj.id));
       //NOTE: purposefully no break;
       case 'windows-registry-key':
-        to_add.push(...add_visual_edge(obj.creator_user_ref, obj.id));
+        to_add.push(...add_visual_edge('creator_user_ref', obj.creator_user_ref, obj.id));
         break;
     }
   })
@@ -140,7 +144,7 @@ function makeEmbeddedRelationships(cy: cytoscape.Core) {
 }
 
 
-function add_visual_edge(field: string[] | string, objID: string) {
+function add_visual_edge(label: string, field: string[] | string, objID: string) {
   let visualEdgeElemDefs: ElementDefinition[] = [];
   if (field !== undefined) {
 
@@ -155,7 +159,7 @@ function add_visual_edge(field: string[] | string, objID: string) {
           id: rel_id,
           target: refID,
           source: objID,
-          label: "" //NOTE: this bypasses an annoying cytoscape warning
+          label: label 
         }
       }
       visualEdgeElemDefs.push(JSON.parse(JSON.stringify(opts)) as ElementDefinition)
@@ -169,7 +173,7 @@ function add_visual_edge(field: string[] | string, objID: string) {
       }
     }
   } else {
-    console.debug(objID, " is undefined for the field");
+    console.debug(objID, "is undefined for the field", label);
   }
   return visualEdgeElemDefs;
 }
