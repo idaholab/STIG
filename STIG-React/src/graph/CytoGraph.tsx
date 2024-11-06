@@ -215,6 +215,7 @@ const Graph: React.FC = () => {
         event.preventDefault();
 
         if (event.dataTransfer.files && event.dataTransfer.files.length > 0) {
+            addNotification("Importing files....", "info");
             const { alerts, layout } = await importGraph(cyInstance, event.dataTransfer.files);
             for (const {message, type} of alerts) {
                 addNotification(message, type);

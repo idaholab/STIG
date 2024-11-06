@@ -20,11 +20,11 @@ export type StixObject = SDO | SRO;
 
 const relationshipsKeyRegex = /((r|R)elationship)|((s|S)ighting)/;
 export function isSRO (item: Core): item is SRO {
-  return relationshipsKeyRegex.exec(item.type) !== null;
+  return typeof item.type === "string" && relationshipsKeyRegex.exec(item.type) !== null;
 }
 
 export function isRelationship (item: Core): item is Relationship {
-  return item.type.toLocaleLowerCase() === 'relationship';
+  return typeof item.type === "string" && item.type.toLocaleLowerCase() === 'relationship';
 }
 
 /**
