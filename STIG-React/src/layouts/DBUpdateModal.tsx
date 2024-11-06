@@ -12,8 +12,8 @@ interface DBUpdateProps {
 }
 
 const diffStyle = { color: "black", marginLeft: "20pt", width: "fit-content" };
-const insertStyle = { backgroundColor: "#AAFFAA", ...diffStyle };
-const deleteStyle = { backgroundColor: "#FFAAAA", ...diffStyle };
+const insertStyle = { backgroundColor: "rgb(var(--color-success-light-rgb))", ...diffStyle };
+const deleteStyle = { backgroundColor: "rgb(var(--color-error-light-rgb))", ...diffStyle };
 function * formatDiff(diff: Delta) {
   let k = 0;
   const entries = Object.entries(diff) as [string, any[]][];

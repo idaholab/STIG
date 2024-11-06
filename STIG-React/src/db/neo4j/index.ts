@@ -115,7 +115,7 @@ export class Neo4jStigDB implements StigDB {
       node => this.wrapSession(diffAgainstDB(patcher, node, 'MATCH (n) where n.id = $id RETURN n'))
     );
     const edge_promises: Promise<[StixObject, Delta|undefined]>[] = edges.map(
-      edge => this.wrapSession(diffAgainstDB(patcher, edge, 'MATCH ()--[n]--() where n.id = $id RETURN n'))
+      edge => this.wrapSession(diffAgainstDB(patcher, edge, 'MATCH ()-[n]-() where n.id = $id RETURN n'))
     );
     return (await Promise.all([...node_promises, ...edge_promises])).filter(
       p => typeof p[1] == 'object' && Object.keys(p[1]).length > 0
