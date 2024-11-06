@@ -2,6 +2,8 @@ import { StixObject } from '@/types/stixTypes/StixObject';
 import React, { createContext, useContext, useState } from 'react';
 
 type StixPropsContextType = {
+  selectionExists: boolean;
+  setSelectionExists: React.Dispatch<React.SetStateAction<boolean>>;
   selectedSTIXObject: StixObject | undefined;
   setSelectedSTIXObject: React.Dispatch<React.SetStateAction<StixObject | undefined>>;
 };
@@ -22,9 +24,10 @@ type Props = {
 
 export const StixPropsContextProvider: React.FC<Props> = ({ children }) => {
   const [selectedSTIXObject, setSelectedSTIXObject] = useState<StixObject | undefined>();
+  const [selectionExists, setSelectionExists] = useState<boolean>(false);
 
   return (
-    <StixPropsContext.Provider value={{ selectedSTIXObject, setSelectedSTIXObject }}>
+    <StixPropsContext.Provider value={{ selectedSTIXObject, setSelectedSTIXObject, selectionExists, setSelectionExists }}>
       {children}
     </StixPropsContext.Provider>
   );

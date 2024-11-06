@@ -15,6 +15,7 @@ const SaveButtons: React.FC = () => {
   const { selectedSTIXObject } = useStixPropsContext();
   //-------------------------------------
   const saverNeo4j = () => {
+    addNotification("Saving to Database....", "info");
     try {
       if (selectedSTIXObject !== undefined) {
         (async () => {

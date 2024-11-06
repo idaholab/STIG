@@ -50,13 +50,14 @@ const FormElementSTIXList: React.FC<Props> = ({
   parentSTIXObject,
   setParentSTIXObject
 }) => {
-  const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
+  const { selectedSTIXObject, setSelectedSTIXObject, setSelectionExists } = useStixPropsContext();
 
   // Update the child STIX object (the one containing the list 
   // property) when its parent changes
   useEffect(() => {
     if (parentSTIXObject && parentPropertyName && parentPropertyIndex !== undefined) {
       setSelectedSTIXObject(parentSTIXObject[parentPropertyName][parentPropertyIndex]);
+      setSelectionExists(true);
     }
   }, [parentSTIXObject]);
 
@@ -66,7 +67,7 @@ const FormElementSTIXList: React.FC<Props> = ({
     if (parentPropertyName && parentPropertyIndex !== undefined &&
       parentSTIXObject && setParentSTIXObject && selectedSTIXObject) {
       handlePropertyUpdate(selectedSTIXObject, parentPropertyName,
-        parentSTIXObject, setParentSTIXObject, undefined, parentPropertyIndex);
+        parentSTIXObject, setParentSTIXObject, setSelectionExists, undefined, parentPropertyIndex);
     }
   }, [selectedSTIXObject]);
 
@@ -102,15 +103,15 @@ const FormElementSTIXList: React.FC<Props> = ({
                     property.enumType ? enum_options[property.enumType] : []}
                   onSelect={(event) => {
                     handlePropertyUpdate(event.target.value, property.name,
-                      selectedSTIXObject, setSelectedSTIXObject, undefined, i);
+                      selectedSTIXObject, setSelectedSTIXObject, setSelectionExists, undefined, i);
                   }}
                   onInputChange={(event) => {
                     handlePropertyUpdate(event.target.value, property.name,
-                      selectedSTIXObject, setSelectedSTIXObject, undefined, i);
+                      selectedSTIXObject, setSelectedSTIXObject, setSelectionExists, undefined, i);
                   }}
                   onSwitchToSuggested={() => {
                     handlePropertyUpdate("", property.name,
-                      selectedSTIXObject, setSelectedSTIXObject, undefined, i);
+                      selectedSTIXObject, setSelectedSTIXObject, setSelectionExists, undefined, i);
                   }}
                   className="mb-2"
                   inputClassName="mb-2"
@@ -165,7 +166,7 @@ const FormElementSTIXList: React.FC<Props> = ({
                           value={listItem}
                           onChange={(event) => {
                             handlePropertyUpdate(event.target.value, property.name,
-                              selectedSTIXObject, setSelectedSTIXObject, undefined, i);
+                              selectedSTIXObject, setSelectedSTIXObject, setSelectionExists, undefined, i);
                           }}
                           className="mb-2"
                           includeInfo={false}
@@ -227,6 +228,7 @@ const FormElementSTIXList: React.FC<Props> = ({
               }
             }
             setSelectedSTIXObject(tempSTIXObj);
+            setSelectionExists(true); 
           }}
           additionalClasses="btn-sm ml-6"
         />

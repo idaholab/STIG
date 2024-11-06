@@ -22,9 +22,9 @@ const Database: React.FC = () => {
     savedDBProfiles, connectedDBProfile, setSelectedProfile,
   } = useContext(ConnectedDBContext) as ConnectedDBContextType;
   const [isConnectProcessing, setIsConnectProcessing] = useState(false);
-  const { cyInstance, isPropertyPanelOpen, togglePropertyPanel } = useStigContext();
+  const { cyInstance, setIsPropertyPanelOpen } = useStigContext();
   const { addNotification } = useNotificationContext();
-  const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
+  const { selectedSTIXObject, setSelectedSTIXObject, selectionExists, setSelectionExists } = useStixPropsContext();
 
   return (
     <Dropdown
@@ -124,41 +124,44 @@ const Database: React.FC = () => {
                 title="Update Database"
                 buttonColor='btn-ghost'
                 showFormButtons={true}
-                buttonLabel="Save All Nodes"
+                buttonLabel="Save All"
                 disabled={!connectedDBProfile || !cyInstance || !cyInstance.nodes('').length}
                 additionalButtonClasses={`btn-sm ml-1`}
-                onSave={() => commitAllNodes(cyInstance, addNotification) }
+                onSave={() => commitNodes(cyInstance, '', addNotification) }
               >
-                <DBUpdateModal nodes={cyInstance?.nodes('').map(cycore2stix).filter(s => s !== undefined) ?? []}/>
+                <DBUpdateModal cy={cyInstance} selector='' />
               </DialogBasic>
             </div>
 
             <div className='hover:text-white hover:bg-primary'>
               <DialogBasic
                 dialogId="SaveSelectedModal"
-                title="Save Selected Nodes"
+                title="Save Selected"
                 buttonColor='btn-ghost'
                 showFormButtons={true}
-                buttonLabel="Save Selected Nodes"
-                disabled={!connectedDBProfile || !cyInstance || !cyInstance.nodes(':selected').length}
+                buttonLabel="Save Selected"
+                disabled={!connectedDBProfile || !selectionExists}
                 additionalButtonClasses={`btn-sm ml-1`}
-                onSave={() => commitSelectedNodes(cyInstance, addNotification) }
+                onSave={() => commitNodes(cyInstance, ':selected', addNotification) }
               >
-                <DBUpdateModal nodes={cyInstance?.nodes(':selected').map(cycore2stix).filter(s => s !== undefined) ?? []}/>
+                <DBUpdateModal cy={cyInstance} selector=':selected'/>
               </DialogBasic>
             </div>
             <div className='hover:text-white hover:bg-primary'>
             <DialogBasic
                 dialogId="DBDeleteModal"
-                title="Delete Selected Nodes"
+                title="Delete Selected"
                 buttonColor='btn-ghost'
                 showFormButtons={true}
-                buttonLabel="Remove Selected Nodes"
-                disabled={!connectedDBProfile || !cyInstance || !cyInstance.nodes(':selected').length}
+                buttonLabel="Remove Selected"
+                disabled={!connectedDBProfile || !selectionExists}
                 additionalButtonClasses={`btn-sm ml-1`}
-                onSave={() => { deleteSelectedNodes(cyInstance, addNotification, selectedSTIXObject, setSelectedSTIXObject, isPropertyPanelOpen, togglePropertyPanel) }}
+                onSave={() => {
+                  deleteSelectedNodes(cyInstance, addNotification, setSelectedSTIXObject, setIsPropertyPanelOpen);
+                  setSelectionExists(false);
+                }}
               >
-                <DBDeleteModal nodes={cyInstance?.nodes(':selected').map(cycore2stix).filter(s => s !== undefined) ?? []}/>
+                <DBDeleteModal cy={cyInstance} />
               </DialogBasic>
             </div>
           </div>
@@ -178,18 +181,11 @@ function submitter(nodes: NodeCollection, edges: EdgeCollection, addNotification
   })();
 }
 
-function commitAllNodes(cy: cytoscape.Core | undefined, addNotification: any) {
+function commitNodes(cy: cytoscape.Core | undefined, selector: string, addNotification: any) {
   if (cy !== undefined) {
-    const nodes = cy.nodes('');
-    const edges = cy.edges('');
-    submitter(nodes, edges, addNotification);
-  }
-}
-
-function commitSelectedNodes(cy: cytoscape.Core | undefined, addNotification: any) {
-  if (cy !== undefined) {
-    const nodes = cy.nodes(':selected');
-    const edges = cy.edges(':selected');
+    const nodes = cy.nodes(selector);
+    const edges = cy.edges(selector);
+    addNotification("Saving to Database....", "info");
     submitter(nodes, edges, addNotification);
   }
 }
@@ -197,10 +193,8 @@ function commitSelectedNodes(cy: cytoscape.Core | undefined, addNotification: an
 function deleteSelectedNodes(
   cy: cytoscape.Core | undefined,
   addNotification: any,
-  selectedSTIXObject: StixObject | undefined,
   setSelectedSTIXObject: React.Dispatch<React.SetStateAction<StixObject | undefined>>,
-  isDrawerOpen: boolean,
-  togglePropertyPanel: () => void,
+  setIsPropertyPanelOpen: (b: boolean) => void,
 ) {
 
   if (cy !== undefined) {
@@ -208,29 +202,14 @@ function deleteSelectedNodes(
     const vis: CollectionReturnValue = cy.$(':visible');
     const edges: EdgeCollection = selected.edgesWith(vis);
     // Delete incoming/outgoing edges first.
-    edges.forEach((ele) => {
-      const selectedSTIXObjectId = selectedSTIXObject?.id.replace("relationship--", "");
-      if (selectedSTIXObjectId === ele.data("id") || selectedSTIXObject?.id === ele.data("id")) {
-        setSelectedSTIXObject(undefined);
-        if (isDrawerOpen) {
-          togglePropertyPanel();
-        }
-      }
-      cy.remove(ele);
-    });
+    edges.forEach((ele) => void cy.remove(ele));
     selected.forEach((ele) => {
       // deleting a node deletes the edges connected to it as well
       void db_delete(ele.data('raw_data'));
       cy.remove(ele);
-
-      const selectedSTIXObjectId = selectedSTIXObject?.id.replace("relationship--", "");
-      if (selectedSTIXObjectId === ele.data("id") || selectedSTIXObject?.id === ele.data("id")) {
-        setSelectedSTIXObject(undefined);
-        if (isDrawerOpen) {
-          togglePropertyPanel();
-        }
-      }
     });
+    setSelectedSTIXObject(undefined);
+    setIsPropertyPanelOpen(false);
     addNotification(`Deleted ${selected.length} object(s) and ${edges.length} edge(s) from database`, 'success');
   }
 }

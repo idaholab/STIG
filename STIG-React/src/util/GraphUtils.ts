@@ -192,9 +192,10 @@ export class GraphUtils {
 export function setupCtxMenu(
     cy: cytoscape.Core,
     isPropertyPanelOpen: boolean,
-    togglePropertyPanel: () => void,
+    setIsPropertyPanelOpen: (b: boolean) => void,
     selectedSTIXObject: StixObject | undefined,
     setSelectedSTIXObject: React.Dispatch<React.SetStateAction<StixObject | undefined>>,
+    setSelectionExists: React.Dispatch<React.SetStateAction<boolean>>,
     view_util?: any
 ): void {
     const graph_utils = new GraphUtils(cy);
@@ -229,9 +230,8 @@ export function setupCtxMenu(
                      */
                     if (selectedSTIXObject?.id === element.data("id")) {
                         setSelectedSTIXObject(undefined);
-                        if (isPropertyPanelOpen) {
-                            togglePropertyPanel();
-                        }
+                        setSelectionExists(false);
+                        setIsPropertyPanelOpen(false);
                     }
                     cy.remove(element);
                     console.debug("the selected stix object during 'Graph Remove' is ", selectedSTIXObject?.id);
@@ -249,9 +249,8 @@ export function setupCtxMenu(
                         // });
                         if (selectedSTIXObject?.id === element.data("id")) {
                             setSelectedSTIXObject(undefined);
-                            if (isPropertyPanelOpen) {
-                                togglePropertyPanel();
-                            }
+                            setSelectionExists(false);
+                            setIsPropertyPanelOpen(false);
                         }
                         cy.remove(element);
                         db_delete(element.data('raw_data'));
@@ -348,9 +347,8 @@ export function setupCtxMenu(
                     // its raw_data id with "relationship--" on the front
                     if (selectedSTIXObjectId === element.data("id") || selectedSTIXObject?.id === element.data("id")) {
                         setSelectedSTIXObject(undefined);
-                        if (isPropertyPanelOpen) {
-                            togglePropertyPanel();
-                        }
+                        setSelectionExists(false);
+                        setIsPropertyPanelOpen(false);
                     }
                     cy.remove(element);
                 }
@@ -365,9 +363,8 @@ export function setupCtxMenu(
                             const selectedSTIXObjectId = selectedSTIXObject?.id.replace("relationship--", "");
                             if (selectedSTIXObjectId === element.data("id") || selectedSTIXObject?.id === element.data("id")) {
                                 setSelectedSTIXObject(undefined);
-                                if (isPropertyPanelOpen) {
-                                    togglePropertyPanel();
-                                }
+                                setSelectionExists(false);
+                                setIsPropertyPanelOpen(false);
                             }
                             cy.remove(value);
                             void db_delete(value.data('raw_data'));
@@ -458,9 +455,8 @@ export function setupCtxMenu(
                         (selectedSTIXObject?.id && !remainingElementIds.includes(selectedSTIXObject?.id))
                     ) {
                         setSelectedSTIXObject(undefined);
-                        if (isPropertyPanelOpen) {
-                            togglePropertyPanel();
-                        }
+                        setSelectionExists(false);
+                        setIsPropertyPanelOpen(false);
                     }
                 }
             }

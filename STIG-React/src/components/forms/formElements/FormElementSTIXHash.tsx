@@ -17,7 +17,7 @@ const FormElementSTIXHash: React.FC<Props> = ({
   hashAlgName,
   property
 }) => {
-  const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
+  const { selectedSTIXObject, setSelectedSTIXObject, setSelectionExists } = useStixPropsContext();
 
   return (selectedSTIXObject &&
     <div className='w-full'>
@@ -50,7 +50,7 @@ const FormElementSTIXHash: React.FC<Props> = ({
         value={selectedSTIXObject[property.name][hashAlgName]}
         onChange={(event) => {
           handlePropertyUpdate(event.target.value, property.name,
-            selectedSTIXObject, setSelectedSTIXObject, undefined, hashAlgName);
+            selectedSTIXObject, setSelectedSTIXObject, setSelectionExists, undefined, hashAlgName);
         }}
         className="pl-2 mb-2"
         includeInfo={false}

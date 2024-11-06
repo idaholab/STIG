@@ -18,6 +18,14 @@ function setProperties(tx: ManagedTransaction, stix: Record<string, unknown>, cm
   );
 }
 
+function diffAgainstDB(patcher: DiffPatcher, obj: StixObject, query: string):  (s: Session) => Promise<[StixObject, Delta | undefined]> {
+  return async (s: Session) => {
+    const res = await s.executeRead(tx => tx.run(query, { id: obj.id }));
+    const rec = res.records[0];
+    return [obj, patcher.diff(rec ? toNeo4j(fromNeo4j(rec.get('n'))[0]) : {}, toNeo4j(obj))];
+  };
+}
+
 export class Neo4jStigDB implements StigDB {
   private driver?: Driver;
   public config?: DBProfile;
@@ -101,18 +109,15 @@ export class Neo4jStigDB implements StigDB {
    * @returns {Promise<diffpatch.Delta>}
    * @memberof StigDB
    */
-  public async getDiff(nodes: StixObject[]): Promise<[StixObject, Delta][]> {
+  public async getDiff(nodes: StixObject[], edges: StixRelationshipObject[]): Promise<[StixObject, Delta][]> {
     const patcher = new DiffPatcher();
-    const promises: Promise<[StixObject, Delta|undefined]>[] = nodes.map(
-      node => this.wrapSession(async (s: Session) => {
-        const res = await s.executeRead((tx: ManagedTransaction) =>
-          tx.run('MATCH (n) where n.id = $id RETURN n', { id: node.id })
-        );
-        const rec = res.records[0];
-        return [node, patcher.diff(rec ? toNeo4j(fromNeo4j(rec.get('n'))[0]) : {}, toNeo4j(node))];
-      })
+    const node_promises: Promise<[StixObject, Delta|undefined]>[] = nodes.map(
+      node => this.wrapSession(diffAgainstDB(patcher, node, 'MATCH (n) where n.id = $id RETURN n'))
     );
-    return (await Promise.all(promises)).filter(
+    const edge_promises: Promise<[StixObject, Delta|undefined]>[] = edges.map(
+      edge => this.wrapSession(diffAgainstDB(patcher, edge, 'MATCH ()--[n]--() where n.id = $id RETURN n'))
+    );
+    return (await Promise.all([...node_promises, ...edge_promises])).filter(
       p => typeof p[1] == 'object' && Object.keys(p[1]).length > 0
     ) as [StixObject, Delta][];
   }
@@ -208,7 +213,7 @@ export class Neo4jStigDB implements StigDB {
   public executeQuery(query: string): Promise<StixObject[]> {
     return this.wrapSession(async (s: Session) => {
       const res = await s.executeRead((tx: ManagedTransaction) => tx.run(query));
-      return res.records.flatMap(rec => rec.map(fromNeo4j).flatMap(x => x));
+      return res.records.flatMap(rec => rec.map(fromNeo4j).flat());
     });
   }
 

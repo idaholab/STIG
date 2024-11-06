@@ -39,11 +39,12 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
 }) => {
   const [localSelectedProperties, setLocalSelectedProperties] = useState<SchemaSTIXProperty[]>([]);
   const [localDictionaryProps, setLocalDictionaryProps] = useState<SchemaSTIXProperty[]>([]);
-  const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
+  const { selectedSTIXObject, setSelectedSTIXObject, setSelectionExists } = useStixPropsContext();
 
   useEffect(() => {
     if (!selectedSTIXObject) {
       setSelectedSTIXObject(dictionary);
+      setSelectionExists(true);
     }
     setLocalDictionaryProps(dictionary ?
       Object.keys(dictionary).map(key => {
@@ -119,7 +120,7 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
         }
         setParentSTIXObject(tempParentSTIXObject);
       } else {
-        handlePropertyUpdate([], propName, selectedSTIXObject, setSelectedSTIXObject);
+        handlePropertyUpdate([], propName, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists);
       }
     } else if (newType === "boolean") {
       // When changing to a boolean, clear the value of the propName
@@ -132,7 +133,7 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
         }
         setParentSTIXObject(tempParentSTIXObject);
       } else {
-        handlePropertyUpdate("", propName, selectedSTIXObject, setSelectedSTIXObject);
+        handlePropertyUpdate("", propName, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists);
       }
     }
   };

@@ -13,7 +13,7 @@ const StixJSONView: React.FC<Props> = ({
   stixTypeProps,
   rows
 }) => {
-  const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
+  const { selectedSTIXObject, setSelectedSTIXObject, setSelectionExists } = useStixPropsContext();
   const { cyInstance } = useStigContext();
 
   const [jsonText, setJsonText] = useState<string>('');
@@ -46,6 +46,7 @@ const StixJSONView: React.FC<Props> = ({
         // whitespace changes
         if (value.replace(/\s/g, "") !== JSON.stringify(selectedSTIXObject)) {
           setSelectedSTIXObject(parsedJson);
+          setSelectionExists(true);
           // Reset cytoscape label in case the user
           // changed any properties that affect the label
           let ele = cyInstance?.getElementById(parsedJson.id.replace("relationship--", ""));

@@ -18,7 +18,7 @@ const FormElementSTIXExternalReference: React.FC<Props> = ({
   externalReferenceIndex,
   property
 }) => {
-  const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
+  const { selectedSTIXObject, setSelectedSTIXObject, setSelectionExists } = useStixPropsContext();
 
   const externalReferenceDescription = propertyDescriptions.find((group) => group.name === property.listType);
   let externalReferencePropDescriptions: { [propName: string]: string } = {};
@@ -46,6 +46,7 @@ const FormElementSTIXExternalReference: React.FC<Props> = ({
             };
           }
           setSelectedSTIXObject(tempSTIXObj);
+          setSelectionExists(true);
         }}
         includeInfo={externalReferencePropDescriptions.source_name ? true : false}
         infoText={externalReferencePropDescriptions.source_name}
@@ -66,6 +67,7 @@ const FormElementSTIXExternalReference: React.FC<Props> = ({
             };
           }
           setSelectedSTIXObject(tempSTIXObj);
+          setSelectionExists(true);
         }}
         includeInfo={externalReferencePropDescriptions.description ? true : false}
         infoText={externalReferencePropDescriptions.description}
@@ -86,6 +88,7 @@ const FormElementSTIXExternalReference: React.FC<Props> = ({
             };
           }
           setSelectedSTIXObject(tempSTIXObj);
+          setSelectionExists(true);
         }}
         includeInfo={externalReferencePropDescriptions.url ? true : false}
         infoText={externalReferencePropDescriptions.url}
@@ -102,7 +105,10 @@ const FormElementSTIXExternalReference: React.FC<Props> = ({
           parentPropertyName={property.name}
           parentPropertyIndex={externalReferenceIndex}
           parentSTIXObject={selectedSTIXObject}
-          setParentSTIXObject={setSelectedSTIXObject}
+          setParentSTIXObject={obj => {
+            setSelectedSTIXObject(obj);
+            setSelectionExists(true);
+          }}
         />
       </StixPropsContextProvider>
       <FormElementTextInput
@@ -119,6 +125,7 @@ const FormElementSTIXExternalReference: React.FC<Props> = ({
             };
           }
           setSelectedSTIXObject(tempSTIXObj);
+          setSelectionExists(true);
         }}
         className="mb-2"
         includeInfo={externalReferencePropDescriptions.external_id ? true : false}

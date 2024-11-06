@@ -21,6 +21,8 @@ import { createCytoscapeNode } from '@/stix/stix';
 import { stencilItems } from '@/components/elements/StencilItems';
 import { setup_edge_handles } from './edge-handles';
 import edgehandles from 'cytoscape-edgehandles';
+import { importGraph } from './importGraph';
+import { useNotificationContext } from '@/contexts/NotificationContext';
 
 cytoscape.use(viewUtilities);
 cytoscape.use(cxtmenu);
@@ -36,7 +38,8 @@ const Graph: React.FC = () => {
     const { addEventListener, removeEventListener } = useContext(EventContext);
     const { theme } = useTheme();
     const { cyInstance, setCyInstance, isPropertyPanelOpen, setIsPropertyPanelOpen, togglePropertyPanel, getStigLayoutSettingsFromStore, runLayout } = useStigContext();
-    const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
+    const { selectedSTIXObject, setSelectedSTIXObject, setSelectionExists } = useStixPropsContext();
+    const { addNotification } = useNotificationContext();
 
     // Dynamically updates the styles on the nodes and edges
     useEffect(() => {
@@ -78,9 +81,7 @@ const Graph: React.FC = () => {
         const handleLayoutChangeEvent = (payload: any) => {
             const layout = payload.data.detail.layout;
             const layoutChangeEvent = new CustomEvent('changeLayout', {
-                detail: {
-                    layout
-                }
+                detail: { layout }
             });
             cyContainerRef.current?.dispatchEvent(layoutChangeEvent);
         };
@@ -166,9 +167,8 @@ const Graph: React.FC = () => {
             cyInstance?.elements().remove();
             cyInstance?.reset();
             setSelectedSTIXObject(undefined);
-            if (isPropertyPanelOpen) {
-                togglePropertyPanel();
-            }
+            setIsPropertyPanelOpen(false);
+            setSelectionExists(false);
         }
 
         const graphElement = cyContainerRef.current;
@@ -207,12 +207,25 @@ const Graph: React.FC = () => {
         }
     }, [selectedSTIXObject]);
 
-    const handleDrop = (event: React.DragEvent) => {
+    const handleDrop = async (event: React.DragEvent) => {
         if (cyInstance === undefined) {
             return;
         }
 
         event.preventDefault();
+
+        if (event.dataTransfer.files && event.dataTransfer.files.length > 0) {
+            const { alerts, layout } = await importGraph(cyInstance, event.dataTransfer.files);
+            for (const {message, type} of alerts) {
+                addNotification(message, type);
+            }
+            if (layout) {
+                // Perform layout if some bundle had no metadata
+                runLayout(getStigLayoutSettingsFromStore(), cyInstance);
+            }
+            return;
+        }
+
         const label = event.dataTransfer.getData('text');
         const imageUrl = event.dataTransfer.getData('imageUrl');
         const type = event.dataTransfer.getData('type');
@@ -264,7 +277,7 @@ const Graph: React.FC = () => {
             }
         }
         return createCytoscapeNode(cytoscapeNode, dSource, true, imgUrl);
-    };
+    }
 
     // Auto Select the Added Node if nothing else is already selected.
     function autoSelectNewNode(cy: cytoscape.Core, addedNode: SingularElementReturnValue) {
@@ -273,6 +286,7 @@ const Graph: React.FC = () => {
             if (selectedNodes.length === 0) {
                 addedNode.select();
                 setSelectedSTIXObject(addedNode.data("raw_data"));
+                setSelectionExists(true);
                 setIsPropertyPanelOpen(true);
             }
         }
@@ -280,15 +294,24 @@ const Graph: React.FC = () => {
 
     // Show STIX props panel on node/edge click
     cyInstance?.on('click', 'node, edge', (evt: cytoscape.EventObject) => {
-        if (!isPropertyPanelOpen) {
-            togglePropertyPanel();
-        }
         const ele: cytoscape.CollectionReturnValue = evt.target;
         cyInstance.$(':selected').unselect();
         if (ele.empty() || ele.length > 1) {
             return;
         }
         setSelectedSTIXObject(ele.data("raw_data"));
+        setSelectionExists(true);
+        setIsPropertyPanelOpen(true);
+    });
+
+    cyInstance?.on('boxselect', 'node, edge', (evt: cytoscape.EventObject) => {
+        const ele: cytoscape.CollectionReturnValue = evt.target;
+        if (selectedSTIXObject || ele.empty() || ele.length > 1) return;
+        const data = ele.data("raw_data");
+        if (!data) return;
+        setSelectedSTIXObject(data);
+        setSelectionExists(true);
+        setIsPropertyPanelOpen(true);
     });
 
     // NOTE: For some reason, dragging a node and running the layout loses the edge handles. Need to figure out how to fix this before forcing nodes to relayout when the user tries to drag them.
@@ -301,9 +324,9 @@ const Graph: React.FC = () => {
 
     // Hide STIX props panel when node/edge is unselected
     cyInstance?.on('unselect', 'node, edge', (evt: cytoscape.EventObject) => {
-        if (isPropertyPanelOpen) {
-            togglePropertyPanel();
-        }
+        setSelectedSTIXObject(undefined);
+        setSelectionExists(false);
+        setIsPropertyPanelOpen(false);
     });
 
     // Handler for when an edge is created via the graph editor
