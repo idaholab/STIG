@@ -2,9 +2,14 @@ import React from 'react';
 import Dropdown from '../core/Dropdown';
 import { useStigContext } from '@/contexts/StigContext';
 import { view_utils_options } from '@/graph/graphOptions';
+import { CollectionReturnValue, EdgeCollection, NodeCollection } from 'cytoscape';
+import { StixObject } from '@/types/stixTypes/StixObject';
+import { useStixPropsContext } from '@/contexts/StixPropsContext';
 
 const Edit: React.FC = () => {
-  const { cyInstance } = useStigContext();
+  const { cyInstance, isPropertyPanelOpen, togglePropertyPanel } = useStigContext();
+  const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
+
   return (
     <Dropdown
       title="Edit"
@@ -22,6 +27,9 @@ const Edit: React.FC = () => {
 
       <li className='hover:bg-primary hover:text-white'><a onClick={() => { selectAll(cyInstance) }}>Select All</a></li>
       <li className='hover:bg-primary hover:text-white'><a onClick={() => { invertSelection(cyInstance) }}>Invert Selection</a></li>
+  
+
+      
 
       {/* <div className="divider dark:divider-neutral my-0"></div> */}
       {/* <li className='hover:bg-primary hover:text-white'><a>Find</a></li>  */}
@@ -42,5 +50,4 @@ function invertSelection(cy: cytoscape.Core | undefined) {
     unselected.select();
   }
 }
-
 export default Edit;

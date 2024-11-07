@@ -118,7 +118,7 @@ const Database: React.FC = () => {
 
             <div className='hover:text-white hover:bg-primary' >
               <ButtonBasic
-                label="Save All Nodes"
+                label="Save All"
                 type='btn-ghost'
                 additionalClasses='btn-sm ml-1'
                 onClick={() => { commitAllNodes(cyInstance, addNotification) }}
@@ -130,7 +130,7 @@ const Database: React.FC = () => {
             <div className='hover:text-white hover:bg-primary'>
               <ButtonBasic
                 type='btn-ghost'
-                label="Save Selected Nodes"
+                label="Save Selected"
                 additionalClasses='btn-sm ml-1'
                 onClick={() => { commitSelectedNodes(cyInstance, addNotification) }}
                 disabled={!connectedDBProfile}
@@ -140,7 +140,7 @@ const Database: React.FC = () => {
             <div className='hover:text-white hover:bg-primary'>
               <ButtonBasic
                 type='btn-ghost'
-                label="Remove Selected Nodes"
+                label="Remove Selected"
                 additionalClasses='btn-sm ml-1'
                 onClick={() => { deleteSelectedNodes(cyInstance, addNotification, selectedSTIXObject, setSelectedSTIXObject, isPropertyPanelOpen, togglePropertyPanel) }}
                 disabled={!connectedDBProfile}
@@ -204,23 +204,12 @@ function deleteSelectedNodes(
   if (cy !== undefined) {
     const selected: NodeCollection = cy.nodes(':selected');
     const vis: CollectionReturnValue = cy.$(':visible');
-    const edges: EdgeCollection = selected.edgesWith(vis);
-    // Delete incoming/outgoing edges first.
-    edges.forEach((ele) => {
-      const selectedSTIXObjectId = selectedSTIXObject?.id.replace("relationship--", "");
-      if (selectedSTIXObjectId === ele.data("id") || selectedSTIXObject?.id === ele.data("id")) {
-        setSelectedSTIXObject(undefined);
-        if (isDrawerOpen) {
-          togglePropertyPanel();
-        }
-      }
-      cy.remove(ele);
-    });
-    selected.forEach((ele) => {
-      // deleting a node deletes the edges connected to it as well
+    const eW: EdgeCollection = selected.edgesWith(vis);
+    const eS: EdgeCollection = cy.edges(':selected');
+    
+    cy.$(':selected').forEach((ele) => {
       void db_delete(ele.data('raw_data'));
       cy.remove(ele);
-
       const selectedSTIXObjectId = selectedSTIXObject?.id.replace("relationship--", "");
       if (selectedSTIXObjectId === ele.data("id") || selectedSTIXObject?.id === ele.data("id")) {
         setSelectedSTIXObject(undefined);
@@ -229,7 +218,7 @@ function deleteSelectedNodes(
         }
       }
     });
-    addNotification(`Deleted ${selected.length} object(s) and ${edges.length} edge(s) from database`, 'success');
+    addNotification(`Deleted ${selected.length} object(s) and ${eW.length+eS.length} edge(s) from database`, 'success');
 
   }
   return ''
