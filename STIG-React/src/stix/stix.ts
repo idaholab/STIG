@@ -187,6 +187,8 @@ export function setProps(object: StixObject) {
       return object;
   }
 
+  object.spec_version = '2.1';
+
   // Get the required props from the schema
   const props = getAllProps(schemaObject);
   const reqProps = props.filter(prop => prop.mandatory);

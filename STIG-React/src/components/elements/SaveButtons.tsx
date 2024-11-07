@@ -56,7 +56,7 @@ const SaveButtons: React.FC = () => {
           disabled={!cyInstance || !selectedSTIXObject || !connectedDBProfile}
           onSave={saverNeo4j}
         >
-          <DBUpdateModal type="objects" objects={selectedSTIXObject ? [setProps({spec_version: '2.1', ...selectedSTIXObject})] : []}/>
+          <DBUpdateModal type="objects" objects={selectedSTIXObject ? [selectedSTIXObject] : []}/>
         </DialogBasic>
         <DialogBasic
           dialogId="ExportObjectModal"
