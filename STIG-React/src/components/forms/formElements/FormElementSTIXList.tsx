@@ -11,6 +11,7 @@ import FormElementTextInput from './FormElementTextInput';
 import ButtonBasic from '@/components/elements/ButtonBasic';
 import STIXPropertyLabel from '@/components/elements/STIXPropertyLabel';
 
+import { useStigContext } from '@/contexts/StigContext';
 import { useStixPropsContext } from '@/contexts/StixPropsContext';
 
 import { open_vocab_options } from '@/stix/openVocabOptions';
@@ -51,6 +52,7 @@ const FormElementSTIXList: React.FC<Props> = ({
   setParentSTIXObject
 }) => {
   const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
+  const { cyInstance } = useStigContext();
 
   // Update the child STIX object (the one containing the list 
   // property) when its parent changes
@@ -165,7 +167,7 @@ const FormElementSTIXList: React.FC<Props> = ({
                           value={listItem}
                           onChange={(event) => {
                             handlePropertyUpdate(event.target.value, property.name,
-                              selectedSTIXObject, setSelectedSTIXObject, undefined, i);
+                              selectedSTIXObject, setSelectedSTIXObject, cyInstance, i);
                           }}
                           className="mb-2"
                           includeInfo={false}

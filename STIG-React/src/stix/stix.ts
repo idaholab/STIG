@@ -33,24 +33,23 @@ export const getNodeLabel = (node: CytoscapeNodeData): string | undefined => {
         if (Object.prototype.hasOwnProperty.call(node, element)) {
             if (element === 'dst_port') {
                 const { [element]: nodelabel1, src_port, protocols } = node;
-                nodelabel = src_port.toString().concat(' -> ', nodelabel1.toString(), '/', protocols.toString());
-            }
-            else if (element === 'labels') {
-                let nodeLabelslabel = (node?.labels && node?.labels?.length > 0) ? node.labels.join(', ') : '';
+                if(nodelabel1 && src_port && protocols) {
+                    nodelabel = src_port.toString().concat(' -> ', nodelabel1.toString(), '/', protocols.toString());
+                }
+            } else if (element === 'labels') {
+                const nodeLabelslabel = (node?.labels && node?.labels?.length > 0) ? node.labels.join(', ') : '';
                 nodelabel = `${nodeLabelslabel ? nodeLabelslabel : node[element]}`;
-            }else{
+            } else {
                 nodelabel = node[element];
             }
             break;
         }
     }
 
-    if (node.type === 'marking-definition' && node?.name) {
-        nodelabel = node.name;
-    }
     nodelabel = (nodelabel && nodelabel?.length > 60) ? nodelabel.substring(0, 60).concat('...') : nodelabel;
     if (node.type === 'observed-data') {
-        nodelabel = `${nodelabel} (${convertISOToStandardDateFormat(node.last_observed)})`; // If this gets dupicated then the label is getting saved with the stix when it shouldn't!
+        // If this gets duplicated then the label is getting saved with the stix when it shouldn't!
+        nodelabel = `${nodelabel} (${convertISOToStandardDateFormat(moment(node.last_observed).utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'))})`;
     }
 
     return nodelabel;

@@ -186,7 +186,7 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
                     number = property.min;
                   }
                 }
-                handlePropertyUpdate(number, property.name, selectedSTIXObject, setSelectedSTIXObject);
+                handlePropertyUpdate(number, property.name, selectedSTIXObject, setSelectedSTIXObject, cyInstance);
               }}
               additionalInputClasses='select-sm dark:bg-neutralc-900'
               includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
@@ -273,7 +273,7 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
                 : ""
               }
               onChange={([date]) => {
-                handlePropertyUpdate(date, property.name, selectedSTIXObject, setSelectedSTIXObject);
+                handlePropertyUpdate(date, property.name, selectedSTIXObject, setSelectedSTIXObject, cyInstance);
               }}
               className='w-full mb-2'
               additionalInputClasses='select-sm w-full'
