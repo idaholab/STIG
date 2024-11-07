@@ -1,10 +1,17 @@
+import { LayoutsType } from '@/graph/graphOptions';
+import { defaultLayout, getLayoutSettingsFromStore, runGraphLayout, saveLayoutToLocalStorage } from '@/util/GraphUtils';
 import React, { createContext, useContext, useState } from 'react';
 
 type StigContextType = {
   isPropertyPanelOpen: boolean;
+  setIsPropertyPanelOpen: React.Dispatch<React.SetStateAction<boolean>>;
   cyInstance: cytoscape.Core | undefined;
   togglePropertyPanel: () => void;
   setCyInstance: React.Dispatch<React.SetStateAction<cytoscape.Core | undefined>>;
+  getStigLayoutSettingsFromStore: () => string;
+  storeStigLayoutSettings: (layout: string) => void;
+  runLayout: (layoutType: string, cyInstance: cytoscape.Core) => void;
+  storedLayout: string;
 };
 
 const StigContext = createContext<StigContextType | undefined>(undefined);
@@ -17,6 +24,10 @@ export const useStigContext = () => {
   return context;
 };
 
+export type StigSettingsOptions = {
+  layout: string;
+}
+
 type Props = {
   children: React.ReactNode;
 };
@@ -25,12 +36,25 @@ export const StigContextProvider: React.FC<Props> = ({ children }) => {
   const [isPropertyPanelOpen, setIsPropertyPanelOpen] = useState(false);
   const [cyInstance, setCyInstance] = useState<cytoscape.Core | undefined>(undefined);
 
+  const [storedLayout, setStoredLayout] = useState<string>(defaultLayout);
+
+  const storeStigLayoutSettings = (layout: string) => {
+    saveLayoutToLocalStorage(layout);
+  }
+  const getStigLayoutSettingsFromStore = (): string => {
+    return getLayoutSettingsFromStore();
+  }
+  const runLayout = (layoutType: keyof LayoutsType, cyInstance: cytoscape.Core) => {
+    runGraphLayout(layoutType, cyInstance);
+    setStoredLayout(getStigLayoutSettingsFromStore());
+  }
+
   const togglePropertyPanel = () => {
     setIsPropertyPanelOpen(!isPropertyPanelOpen);
   };
 
   return (
-    <StigContext.Provider value={{ isPropertyPanelOpen, togglePropertyPanel, cyInstance, setCyInstance }}>
+    <StigContext.Provider value={{ isPropertyPanelOpen, setIsPropertyPanelOpen, togglePropertyPanel, cyInstance, setCyInstance, getStigLayoutSettingsFromStore, storeStigLayoutSettings, runLayout, storedLayout }}>
       {children}
     </StigContext.Provider>
   );

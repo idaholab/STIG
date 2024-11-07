@@ -558,7 +558,8 @@ export const layouts: LayoutsType = {
   circle: circle_options,
   concentric: concentric_options,
   breadthfirst: breadthfirst_options,
-  attack_timeline: preset_options
+  attack_timeline: preset_options,
+  default: preset_options,
 };
 
 

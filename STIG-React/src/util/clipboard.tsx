@@ -7,9 +7,10 @@ ALL RIGHTS RESERVED
 
 import { JSONValue } from 'cytoscape';
 import { StigSettings } from '../storage/stig-settings-storage';
-import { GraphUtils } from './GraphUtils';
+import { getLayoutSettingsFromStore, GraphUtils, runGraphLayout } from './GraphUtils';
 import { StixObject } from '@/types/stixTypes/StixObject';
 import { SafeStringify } from './SafeStringify';
+import { useStigContext } from '@/contexts/StigContext';
 
 const clipboard = {
   data: '',
@@ -70,7 +71,7 @@ export function graph_paste(cy: cytoscape.Core): void {
     }
     const graph = new GraphUtils(cy);//, db);
     void graph.buildNodes(objects, 'GUI');
-    graph.myLayout(StigSettings.Instance.layout);
+    runGraphLayout(getLayoutSettingsFromStore(), cy);
   } catch (e) {
     console.error(e);
   }

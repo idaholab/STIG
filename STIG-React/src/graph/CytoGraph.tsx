@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useRef } from 'react';
-
-import cytoscape, { EventHandler } from 'cytoscape';
+import cytoscape, { SingularElementReturnValue } from 'cytoscape';
 import { EventContext } from '@/contexts/EventContext';
 import { v4 as uuidv4 } from 'uuid';
 import { useTheme } from '../contexts/useTheme';
@@ -10,7 +9,6 @@ import { CytoscapeNodeData } from '@/types/cytoscapeTypes/CytoscapeNodeData';
 import moment from 'moment';
 import { DataSourceType } from '@/types/DataSourceType';
 import { useStixPropsContext } from '@/contexts/StixPropsContext';
-import { layouts } from './graphOptions';
 import cosebilkent from 'cytoscape-cose-bilkent';
 import dagre from 'cytoscape-dagre';
 import klay from 'cytoscape-klay';
@@ -24,10 +22,10 @@ import { stencilItems } from '@/components/elements/StencilItems';
 import { setup_edge_handles, updateEdgeHandlesStyle } from './graphEdgeHandles';
 import { updateEdgeSelectedStyle, updateEdgeStyle } from './graphEdgeStyles';
 import { updateNodeSelectedStyle, updateNodeStyle } from './graphNodeStyles';
-
+import edgehandles from 'cytoscape-edgehandles';
 cytoscape.use(viewUtilities);
 cytoscape.use(cxtmenu);
-//cytoscape.use(edgehandles);
+cytoscape.use(edgehandles);
 
 cosebilkent(cytoscape);
 dagre(cytoscape);
@@ -38,7 +36,7 @@ const Graph: React.FC = () => {
     const cyContainerRef = useRef<HTMLDivElement>(null);
     const { addEventListener, removeEventListener } = useContext(EventContext);
     const { theme } = useTheme();
-    const { cyInstance, setCyInstance, isPropertyPanelOpen, togglePropertyPanel } = useStigContext();
+    const { cyInstance, setCyInstance, isPropertyPanelOpen, setIsPropertyPanelOpen, togglePropertyPanel, getStigLayoutSettingsFromStore, runLayout } = useStigContext();
     const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
 
     // Dynamically updates the styles on the nodes and edges
@@ -100,12 +98,9 @@ const Graph: React.FC = () => {
         if (cyContainerRef.current) {
             let cy = cytoscape({
                 container: cyContainerRef.current,
-                style: [compound_style, modified_select_style, modified_unselect_style],
-                layout: {
-                    name: 'grid',
-                    rows: 1,
-                },
+                style: [compound_style, modified_select_style, modified_unselect_style]
             });
+            runLayout(getStigLayoutSettingsFromStore(), cy);
             setup_edge_handles(cy);
 
             // View Utilities
@@ -124,23 +119,17 @@ const Graph: React.FC = () => {
             const handleAddNode = (event: CustomEvent) => {
                 const { label, type, imageUrl } = event.detail;
                 const node = handleAddNewCytoscapeNode(label, type, imageUrl, 'GUI');
-                node.position = { x: 100, y: 100 };
+                node.position = { x: 0, y: 0 };
                 node.group = 'nodes';
-                cy?.add(node);
+                let addedNode = cy?.add(node);
+                runLayout(getStigLayoutSettingsFromStore(), cy);
+                // Auto Select the new node
+                autoSelectNewNode(cy, addedNode);
             };
 
             const handleLayoutChangeEvent = (event: CustomEvent) => {
                 const { layout } = event.detail;
-                // Select all nodes with no parents or children
-                const orphans = cy.elements(':orphan').filter(':childless');
-                const cyLayout = orphans.layout(layouts[layout]);
-
-                if (layout === 'attack_timeline') {
-                    layoutByTimeframe(cy);
-                }
-                else {
-                    cyLayout.run();
-                }
+                runLayout(layout, cy);
             }
 
             const graphElement = cyContainerRef.current;
@@ -152,7 +141,6 @@ const Graph: React.FC = () => {
             };
         }
     }, []);
-
 
 
     useEffect(() => {
@@ -240,7 +228,11 @@ const Graph: React.FC = () => {
         position = { x: adjustedX, y: adjustedY }
         let newNode = handleAddNewCytoscapeNode(label, type, imageUrl, 'GUI');
         newNode.position = position;
-        cyInstance?.add(newNode);
+        // Add Node
+        const addedNode: SingularElementReturnValue = cyInstance.add(newNode) as SingularElementReturnValue;
+        runLayout(getStigLayoutSettingsFromStore(), cyInstance);
+        // Auto Select
+        autoSelectNewNode(cyInstance, addedNode);
     };
 
     const handleDragOver = (event: React.DragEvent) => {
@@ -275,144 +267,17 @@ const Graph: React.FC = () => {
         return createCytoscapeNode(cytoscapeNode, dSource, true, imgUrl);
     };
 
-    function layoutByTimeframe(cy: cytoscape.Core) {
-        const observedDataNodes = cy.nodes().filter(node => node.data('raw_data')?.last_observed && node.data('type') === 'observed-data');
-        const relationshipEdges = cy.edges().filter(edge => edge.data('raw_data')?.type === 'relationship');
-        const positionedAttackPatternNodes = new Set<string>(); // Track positioned node IDs
-        const startX = 0;
-        const gap = 200; // Spacing between nodes
-        const animations: Promise<EventHandler>[] = [];
-        let maxYTimeline = 0;
-
-        observedDataNodes.sort((a, b) => new Date(a.data('raw_data')?.last_observed).getTime() - new Date(b.data('raw_data')?.last_observed).getTime())
-            .forEach((observedNode, index) => {
-                const newX = startX + index * gap;
-
-                // Animate
-                animations.push(observedNode.animate({
-                    position: { x: newX, y: 0 }
-                }, {
-                    duration: 1000,
-                    easing: 'ease-in-out'
-                }).promiseOn('position'));
-
-                observedNode.position({ x: newX, y: 0 });
-                maxYTimeline = Math.max(maxYTimeline, 0);
-
-
-                // Filter the edges to find connected attack-pattern nodes
-                const connectedAttackPatternNodes = relationshipEdges.filter(edge => {
-                    const sourceIsObserved = edge.data('raw_data')?.source_ref === observedNode.data('id') &&
-                        cy.getElementById(edge.data('raw_data').target_ref).data('type') === 'attack-pattern';
-                    const targetIsObserved = edge.data('raw_data').target_ref === observedNode.data('id') &&
-                        cy.getElementById(edge.data('raw_data').source_ref).data('type') === 'attack-pattern';
-                    return sourceIsObserved || targetIsObserved;
-                }).map(edge => {
-                    return cy.getElementById(edge.data('raw_data').source_ref === observedNode.data('id')
-                        ? edge.data('raw_data').target_ref
-                        : edge.data('raw_data').source_ref);
-                });
-
-                // Get attack-pattern nodes from object_refs
-                const objectRefs = observedNode.data('raw_data').object_refs || [];
-                objectRefs.forEach((refId: string) => {
-                    const refNode = cy.getElementById(refId);
-                    if (refNode.data('type') === 'attack-pattern') {
-                        connectedAttackPatternNodes.push(refNode);
-                    }
-                });
-
-                // Deduplicate attack-pattern nodes (avoid positioning the same node multiple times)
-                const uniqueAttackPatternNodes = [...new Set(connectedAttackPatternNodes)];
-
-                // Position each connected attack-pattern node
-                uniqueAttackPatternNodes.forEach((attackPatternNode, attackIndex) => {
-                    // Ensure attack-pattern nodes are only positioned once
-                    if (!positionedAttackPatternNodes.has(attackPatternNode.id())) {
-                        const newY = 200 + attackIndex * gap;
-
-                        animations.push(attackPatternNode.animate({
-                            position: { x: newX, y: newY }
-                        }, {
-                            duration: 1000,
-                            easing: 'ease-in-out'
-                        }).promiseOn('position'));
-
-                        attackPatternNode.position({ x: newX, y: newY });
-                        maxYTimeline = Math.max(maxYTimeline, newY);
-                        positionedAttackPatternNodes.add(attackPatternNode.id());
-                    }
-                });
-            });
-
-        const bufferSpace = 200;
-        const nonTimelineNodes = cy.nodes().filter(node => node.data('type') !== 'observed-data' && node.data('type') !== 'attack-pattern');
-
-        const gridCols = 5; // Number of columns in the grid
-        const gridGapX = 200; // Horizontal gap between nodes in the grid
-        const gridGapY = 200; // Vertical gap between nodes in the grid
-
-        let row = 0;
-        let col = 0;
-
-        nonTimelineNodes.forEach((nonTimelineNode) => {
-            // Calculate new X and Y position in grid format
-            const newX = startX + col * gridGapX;
-            const newY = maxYTimeline + bufferSpace + row * gridGapY;
-
-            // Animate the node to its new position
-            animations.push(nonTimelineNode.animate({
-                position: { x: newX, y: newY }
-            }, {
-                duration: 1000,
-                easing: 'ease-in-out'
-            }).promiseOn('position'));
-
-            nonTimelineNode.position({ x: newX, y: newY });
-
-            // Update column and row for next node
-            col++;
-            if (col >= gridCols) {
-                col = 0;
-                row++;
+    // Auto Select the Added Node if nothing else is already selected.
+    function autoSelectNewNode(cy: cytoscape.Core, addedNode: SingularElementReturnValue) {
+        if (cy) {
+            const selectedNodes = cy.$(':selected');
+            if (selectedNodes.length === 0) {
+                addedNode.select();
+                setSelectedSTIXObject(addedNode.data("raw_data"));
+                setIsPropertyPanelOpen(true);
             }
-        });
-
-
-
-        // let anyNonTimelineNodeTooClose = false;
-        // nonTimelineNodes.forEach(nonTimelineNode => {
-        //     const currentPos = nonTimelineNode.position();
-        //     if (currentPos.y < (maxYTimeline + bufferSpace)) {
-        //         anyNonTimelineNodeTooClose = true; // If any node is too close, flag it
-        //     }
-        // })
-
-        // if (anyNonTimelineNodeTooClose) {
-        //     const offsetY = maxYTimeline + bufferSpace;
-
-        //     nonTimelineNodes.forEach(nonTimelineNode => {
-        //         const nodePosition = nonTimelineNode.position();
-        //         const newY = nodePosition.y + offsetY;
-
-        //         animations.push(nonTimelineNode.animate({
-        //             position: { x: nodePosition.x, y: newY }
-        //         }, {
-        //             duration: 1000,
-        //             easing: 'ease-in-out'
-        //         }).promiseOn('position'));
-
-        //         nonTimelineNode.position({ x: nodePosition.x, y: newY });
-
-        //     });
-        // }
-        // Run the preset layout
-        cy.layout({ name: 'preset' }).run();
+        }
     }
-
-
-
-
 
     // Show STIX props panel on node/edge click
     cyInstance?.on('click', 'node, edge', (evt: cytoscape.EventObject) => {
@@ -426,6 +291,14 @@ const Graph: React.FC = () => {
         }
         setSelectedSTIXObject(ele.data("raw_data"));
     });
+
+    // NOTE: For some reason, dragging a node and running the layout loses the edge handles. Need to figure out how to fix this before forcing nodes to relayout when the user tries to drag them.
+    // cyInstance?.on('dragfree', 'node', () => {
+    //     if (cyInstance) {
+    //         runLayout(getStigLayoutSettingsFromStore(), cyInstance);
+    //     }
+    //     //
+    // });
 
     // Hide STIX props panel when node/edge is unselected
     cyInstance?.on('unselect', 'node, edge', (evt: cytoscape.EventObject) => {
