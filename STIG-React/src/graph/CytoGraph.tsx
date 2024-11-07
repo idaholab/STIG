@@ -98,7 +98,9 @@ const Graph: React.FC = () => {
         if (cyContainerRef.current) {
             let cy = cytoscape({
                 container: cyContainerRef.current,
-                style: [compound_style, modified_select_style, modified_unselect_style]
+                style: [compound_style, modified_select_style, modified_unselect_style],
+                wheelSensitivity: .1
+
             });
             runLayout(getStigLayoutSettingsFromStore(), cy);
             setup_edge_handles(cy);

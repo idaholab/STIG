@@ -4,6 +4,7 @@ import { useStigContext } from '@/contexts/StigContext';
 
 const Edit: React.FC = () => {
   const { cyInstance } = useStigContext();
+
   return (
     <Dropdown
       title="Edit"
@@ -41,5 +42,4 @@ function invertSelection(cy: cytoscape.Core | undefined) {
     unselected.select();
   }
 }
-
 export default Edit;
