@@ -214,17 +214,20 @@ const Graph: React.FC = () => {
 
         event.preventDefault();
 
-        if (event.dataTransfer.files && event.dataTransfer.files.length > 0) {
-            addNotification("Importing files....", "info");
-            const { alerts, layout } = await importGraph(cyInstance, event.dataTransfer.files);
-            for (const {message, type} of alerts) {
-                addNotification(message, type);
+        if (event.dataTransfer.files) {
+            const files = Array.from(event.dataTransfer.files).filter(f => f.name.endsWith('.json'));
+            if (files.length > 0) {
+                addNotification("Importing files....", "info");
+                const { alerts, layout } = await importGraph(cyInstance, event.dataTransfer.files);
+                for (const {message, type} of alerts) {
+                    addNotification(message, type);
+                }
+                if (layout) {
+                    // Perform layout if some bundle had no metadata
+                    runLayout(getStigLayoutSettingsFromStore(), cyInstance);
+                }
+                return;
             }
-            if (layout) {
-                // Perform layout if some bundle had no metadata
-                runLayout(getStigLayoutSettingsFromStore(), cyInstance);
-            }
-            return;
         }
 
         const label = event.dataTransfer.getData('text');

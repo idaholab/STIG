@@ -15,6 +15,7 @@ const ImportJSONBundleModal: React.FC = () => {
             placeholder='No file chosen'
             buttonLabel='Choose File'
             acceptedFileTypes='.json'
+            multiple={true}
             onFileChange={setSelectedFiles}
         />
         {/* !!! This shouldn't be necessary and needs removed once we figure out why ButtonBasic won't display cursor-not-allowed' !! */}
