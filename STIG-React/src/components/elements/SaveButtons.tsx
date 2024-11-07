@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useNotificationContext } from "@/contexts/NotificationContext";
 import { useStixPropsContext } from "@/contexts/StixPropsContext";
 import { StixRelationshipObject } from "@/types/stixTypes/StixRelationshipObject";
@@ -9,10 +9,14 @@ import ExportModal from "@/layouts/ExportModals";
 import { exportObject } from "@/util/GraphUtils";
 import DBUpdateModal from "@/layouts/DBUpdateModal";
 import { setProps } from "@/stix/stix";
+import ConnectedDBContext, { ConnectedDBContextType } from "@/contexts/ConnectedDBContext";
+import { useStigContext } from "@/contexts/StigContext";
 
 const SaveButtons: React.FC = () => {
   const { addNotification } = useNotificationContext();
   const { selectedSTIXObject } = useStixPropsContext();
+  const { connectedDBProfile } = useContext(ConnectedDBContext) as ConnectedDBContextType;
+  const { cyInstance } = useStigContext();
   //-------------------------------------
   const saverNeo4j = () => {
     addNotification("Saving to Database....", "info");
@@ -37,7 +41,6 @@ const SaveButtons: React.FC = () => {
     } catch (err) {
       console.error(err);
     }
-
   };
   //-------------------------------------
   return (
@@ -50,9 +53,10 @@ const SaveButtons: React.FC = () => {
           buttonLabel="Save to NEO4J"
           buttonColor="btn-neutralc"
           additionalButtonClasses={`uppercase h-[48px] btn-sm`}
+          disabled={!cyInstance || !selectedSTIXObject || !connectedDBProfile}
           onSave={saverNeo4j}
         >
-          <DBUpdateModal nodes={selectedSTIXObject ? [setProps({spec_version: '2.1', ...selectedSTIXObject})] : []}/>
+          <DBUpdateModal type="objects" objects={selectedSTIXObject ? [setProps({spec_version: '2.1', ...selectedSTIXObject})] : []}/>
         </DialogBasic>
         <DialogBasic
           dialogId="ExportObjectModal"

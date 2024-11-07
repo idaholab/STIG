@@ -24,7 +24,7 @@ const Database: React.FC = () => {
   const [isConnectProcessing, setIsConnectProcessing] = useState(false);
   const { cyInstance, setIsPropertyPanelOpen } = useStigContext();
   const { addNotification } = useNotificationContext();
-  const { selectedSTIXObject, setSelectedSTIXObject, selectionExists, setSelectionExists } = useStixPropsContext();
+  const { setSelectedSTIXObject, selectionExists, setSelectionExists } = useStixPropsContext();
 
   return (
     <Dropdown
@@ -129,7 +129,7 @@ const Database: React.FC = () => {
                 additionalButtonClasses={`btn-sm ml-1`}
                 onSave={() => commitNodes(cyInstance, '', addNotification) }
               >
-                <DBUpdateModal cy={cyInstance} selector='' />
+                <DBUpdateModal type="cytoscape" cy={cyInstance} selector='' />
               </DialogBasic>
             </div>
 
@@ -144,7 +144,7 @@ const Database: React.FC = () => {
                 additionalButtonClasses={`btn-sm ml-1`}
                 onSave={() => commitNodes(cyInstance, ':selected', addNotification) }
               >
-                <DBUpdateModal cy={cyInstance} selector=':selected'/>
+                <DBUpdateModal type="cytoscape" cy={cyInstance} selector=':selected'/>
               </DialogBasic>
             </div>
             <div className='hover:text-white hover:bg-primary'>
@@ -193,7 +193,7 @@ function commitNodes(cy: cytoscape.Core | undefined, selector: string, addNotifi
 function deleteSelectedNodes(
   cy: cytoscape.Core | undefined,
   addNotification: any,
-  setSelectedSTIXObject: React.Dispatch<React.SetStateAction<StixObject | undefined>>,
+  setSelectedSTIXObject: (obj: StixObject | undefined) => void,
   setIsPropertyPanelOpen: (b: boolean) => void,
 ) {
 
