@@ -16,7 +16,7 @@ import StixJSONView from '@/layouts/StixJSONView';
 type Props = {
   dictionary: StixObject;
   parentSTIXObject: StixObject | undefined;
-  setParentSTIXObject: React.Dispatch<React.SetStateAction<StixObject | undefined>>;
+  setParentSTIXObject: (obj: StixObject | undefined) => void;
   // Needed so that a Dictionary within a Dictionary can have its type changed
   parentDictionaryProps?: SchemaSTIXProperty[];
   setParentDictionaryProps?: React.Dispatch<React.SetStateAction<SchemaSTIXProperty[]>>;

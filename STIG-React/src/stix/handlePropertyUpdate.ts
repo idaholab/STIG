@@ -1,10 +1,11 @@
 import { StixObject } from "@/types/stixTypes/StixObject";
+import { getNodeLabel } from "./stix";
 
 export const handlePropertyUpdate = (
   newVal: string | boolean | number | Date | ArrayBuffer | null | undefined | Object | [],
   propName: string,
   selectedSTIXObject: StixObject | undefined,
-  setSelectedSTIXObject: React.Dispatch<React.SetStateAction<StixObject | undefined>>,
+  setSelectedSTIXObject: (obj: StixObject | undefined) => void,
   setSelectionExists: React.Dispatch<React.SetStateAction<boolean>>,
   cy?: cytoscape.Core,
   // Pass a prop index in for updating a value
@@ -24,21 +25,11 @@ export const handlePropertyUpdate = (
     tempSelectedSTIXObject[propName] = newVal;
   }
 
-  //set cytoscape label if property is the first populated label in the ordered list of labels
-  if (cy !== undefined) {
-    if (selectedSTIXObject) {
-      const labelorder = ['name', 'description', 'value', 'labels', 'key', 'path', 'product', 'dst_port', 'command_line', 'type'];
-      for (let i = 0; i < labelorder.length; i++) {
-        let label = labelorder[i]
-        if (selectedSTIXObject.hasOwnProperty(label)) {
-          if (label == propName) {
-            let ele = cy?.getElementById(selectedSTIXObject.id);
-            ele?.style('label', newVal);
-          }
-          break;
-        }
-      }
-    }
+  // Set cytoscape label
+  if (cy !== undefined && selectedSTIXObject) {
+    const nodelabel = getNodeLabel(tempSelectedSTIXObject);
+    const ele = cy?.getElementById(selectedSTIXObject.id);
+    ele?.style('label', nodelabel);
   }
 
   setSelectedSTIXObject(tempSelectedSTIXObject);
