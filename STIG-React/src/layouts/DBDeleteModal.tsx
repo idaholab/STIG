@@ -15,8 +15,8 @@ const DBDeleteModal: React.FC<DBDeleteProps> = ({cy}) => {
     {nodes.map(node => <div key={node.id}>{node.type}: {node.id}</div>)}
   </div> : <div className='h-full relative'>
     <h2>Delete These Elements?</h2>
-    {nodes.map(node => <div>{node.type}: {node.id}</div>)}
-    {edges.map(edge => <div>{edge.type}: {edge.id}</div>)}
+    {nodes.map((node, i) => <div key={i}>{node.type}: {node.id}</div>)}
+    {edges.map((edge, i) => <div key={i}>{edge.type}: {edge.id}</div>)}
   </div>;
 };
 
