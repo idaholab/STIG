@@ -10,6 +10,7 @@ import { exportObject } from "@/util/GraphUtils";
 import DBUpdateModal from "@/layouts/DBUpdateModal";
 import ConnectedDBContext, { ConnectedDBContextType } from "@/contexts/ConnectedDBContext";
 import { useStigContext } from "@/contexts/StigContext";
+import { isRelationship } from "@/db/neo4j/isRelationship";
 
 const SaveButtons: React.FC = () => {
   const { addNotification } = useNotificationContext();
@@ -24,9 +25,9 @@ const SaveButtons: React.FC = () => {
         (async () => {
           try {
             const [{ size: objs }, { size: rels }] = await (
-              selectedSTIXObject.type !== "relationship" ?
-                commit([selectedSTIXObject], []) :
-                commit([], [selectedSTIXObject as StixRelationshipObject])
+              isRelationship(selectedSTIXObject) ?
+                commit([], [selectedSTIXObject]) :
+                commit([selectedSTIXObject], [])
             );
             const toastType: AlertType = (objs + rels > 0) ? "success" : "warning";
             addNotification(`Submitted ${objs} node(s) and ${rels} edge(s)`, toastType);
@@ -55,7 +56,7 @@ const SaveButtons: React.FC = () => {
           disabled={!cyInstance || !selectedSTIXObject || !connectedDBProfile}
           onSave={saverNeo4j}
         >
-          <DBUpdateModal cy={cyInstance} selector={`node#${selectedSTIXObject?.id}`}/>
+          <DBUpdateModal cy={cyInstance} selector={`#${selectedSTIXObject?.id}`}/>
         </DialogBasic>
         <DialogBasic
           dialogId="ExportObjectModal"

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import ButtonBasic from "../elements/ButtonBasic.tsx";
 import ButtonIcon from "../elements/ButtonIcon.tsx";
 
@@ -11,6 +11,7 @@ type Props = {
   buttonLabel?: string | React.JSX.Element; // Optional button label for text button
   buttonIcon?: string; // Optional icon from https://fonts.google.com/icons
   buttonSize?: 'btn-sm' | 'btn-xs';
+  saveLabel?: string,
   onSave?: () => void; // Save handler
   onClose?: () => void; // Close handler
   showFormButtons?: boolean; // Show form buttons inside the form
@@ -27,6 +28,7 @@ export const DialogBasic: React.FC<Props> = ({
   buttonLabel = 'Open Dialog', // Default button label
   buttonIcon = 'open_in_new',
   buttonSize = 'btn-sm',
+  saveLabel = 'Save',
   onSave,
   onClose,
   showFormButtons = true,
@@ -34,74 +36,85 @@ export const DialogBasic: React.FC<Props> = ({
   additionalButtonClasses
 }) => {
   
+  const [isOpen, setIsOpen] = useState(false);
+
   const handleOpenDialog = () => {
     const dialogElement = document.getElementById(dialogId) as HTMLDialogElement;
     dialogElement.showModal();
+    setIsOpen(true);
   };
 
   const handleCloseDialog = () => {
     const dialogElement = document.getElementById(dialogId) as HTMLDialogElement;
     dialogElement.close();
     onClose && onClose();
+    setIsOpen(false);
   };
 
-  return (
-    <>
-      {buttonType === 'text' ? (
-        <ButtonBasic
-          label={buttonLabel}
-          type={buttonColor}
-          onClick={handleOpenDialog}
-          disabled={disabled}
-          additionalClasses={`${additionalButtonClasses}`}
-          isLabelUppercase={false}
-        />
-      ) : (
-        <ButtonIcon
-          type={buttonColor}
-          onClick={handleOpenDialog}
-          buttonIcon={buttonIcon}
-          buttonSize={buttonSize}
-          disabled={disabled}
-        />
-      )}
+  const observer = new MutationObserver(ms => {
+    const dialogElement = document.getElementById(dialogId) as HTMLDialogElement;
+    if (ms.some(mr => mr.target == dialogElement && dialogElement.open)) {
+      handleOpenDialog();
+    }
+  });
 
-      <dialog
-        id={dialogId}
-        className="modal"
-      >
-        <div className={`modal-box max-w-[1000px] max-h-[615px] min-w-none p-12 shadow-md-neutralc-900 dark:bg-neutralc-700 dark:text-neutralc-100 bg-neutralc-200 text-neutralc-900 `}>
-          <div className='flex justify-between items-center'>
-            <h2 className="text-2xl mb-8 align-middle">{title}</h2>
-            <div className="-mr-4 mb-8">
-              <ButtonIcon
-                buttonSize={buttonSize}
-                label={'Close'}
-                buttonIcon={'close'}
-                type={'btn-ghost'}
-                onClick={handleCloseDialog}
-              />
-            </div>
+  observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ['open'] });
+
+  return <>
+    {buttonType === 'text' ? (
+      <ButtonBasic
+        label={buttonLabel}
+        type={buttonColor}
+        onClick={handleOpenDialog}
+        disabled={disabled}
+        additionalClasses={`${additionalButtonClasses}`}
+        isLabelUppercase={false}
+      />
+    ) : (
+      <ButtonIcon
+        type={buttonColor}
+        onClick={handleOpenDialog}
+        buttonIcon={buttonIcon}
+        buttonSize={buttonSize}
+        disabled={disabled}
+      />
+    )}
+
+    <dialog
+      id={dialogId}
+      className="modal"
+    >
+      <div className={`modal-box max-w-[1000px] max-h-[615px] min-w-none p-12 shadow-md-neutralc-900 dark:bg-neutralc-700 dark:text-neutralc-100 bg-neutralc-200 text-neutralc-900 `}>
+        <div className='flex justify-between items-center'>
+          <h2 className="text-2xl mb-8 align-middle">{title}</h2>
+          <div className="-mr-4 mb-8">
+            <ButtonIcon
+              buttonSize={buttonSize}
+              label={'Close'}
+              buttonIcon={'close'}
+              type={'btn-ghost'}
+              onClick={handleCloseDialog}
+            />
           </div>
-
-          {children}
-
-          {showFormButtons && (
-            <div className="flex justify-end pt-4 space-x-2">
-              <ButtonBasic
-                label="Cancel"
-                type="btn-neutralc"
-                onClick={handleCloseDialog}
-              />
-              <ButtonBasic
-                label="Save"
-                type="btn-primary"
-                onClick={() => { handleCloseDialog(); onSave && onSave(); }}
-              />
-            </div>
-          )}
         </div>
-      </dialog>
-    </>
-  );
+
+        {isOpen && children}
+
+        {showFormButtons && (
+          <div className="flex justify-end pt-4 space-x-2">
+            <ButtonBasic
+              label="Cancel"
+              type="btn-neutralc"
+              onClick={handleCloseDialog}
+            />
+            <ButtonBasic
+              label={saveLabel}
+              type="btn-primary"
+              onClick={() => { handleCloseDialog(); onSave && onSave(); }}
+            />
+          </div>
+        )}
+      </div>
+    </dialog>
+  </>;
 };

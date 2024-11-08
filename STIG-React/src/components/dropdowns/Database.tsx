@@ -156,6 +156,7 @@ const Database: React.FC = () => {
                 buttonLabel="Remove Selected"
                 disabled={!connectedDBProfile || !selectionExists}
                 additionalButtonClasses={`btn-sm ml-1`}
+                saveLabel='Delete'
                 onSave={() => {
                   deleteSelectedNodes(cyInstance, addNotification, setSelectedSTIXObject, setIsPropertyPanelOpen);
                   setSelectionExists(false);

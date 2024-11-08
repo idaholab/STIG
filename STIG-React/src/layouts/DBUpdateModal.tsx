@@ -31,22 +31,23 @@ function * formatDiff(diff: Delta) {
 }
 
 const DBUpdateModal: React.FC<DBUpdateProps> = ({ cy, selector }) => {
-  const cynodes = cy?.nodes(selector) ?? [];
-  const nodeids = new Set(cynodes.map(n => n.id()));
-  const nodes = cynodes.map(cycore2stix).filter(s => s !== undefined);
-  const cyedges = cy?.edges(selector).filter(e => nodeids.has(e.source().id()) && nodeids.has(e.target().id())) ?? [];
-  const edges = cyedges.map(cycore2stix).filter(s => s !== undefined) as StixRelationshipObject[];
+  const [state, setState] = useState({ nodes: 0, edges: 0, diffs: [] as [StixObject, Delta][], isCalculated: false });
+  if (!state.isCalculated) {
+    const cynodes = cy?.nodes(selector) ?? [];
+    const nodeids = new Set(cynodes.map(n => n.id()));
+    const nodes = cynodes.map(cycore2stix).filter(s => s !== undefined);
+    const cyedges = cy?.edges(selector).filter(e => nodeids.has(e.source().id()) && nodeids.has(e.target().id())) ?? [];
+    const edges = cyedges.map(cycore2stix).filter(s => s !== undefined) as StixRelationshipObject[];
 
-  const [state, setState] = useState({ diffs: [] as [StixObject, Delta][], isCalculated: false });
-  if (nodes.length + edges.length > 0 && !state.isCalculated) {
-    get_diff(nodes, edges).then(diffs => setState({ diffs, isCalculated: true }));
+    if (nodes.length + edges.length > 0) {
+      get_diff(nodes, edges).then(diffs => setState({ nodes: nodes.length, edges: edges.length, diffs, isCalculated: true }));
+    }
   }
-
   return <div className='h-full relative'>{
     !currentDB || currentDB.is_closed() ? <h2>Error: No Database Connection</h2> :
-    nodes.length + edges.length == 0 || (state.isCalculated && state.diffs.length == 0) ? <h2>No Changes</h2> :
-    !state.isCalculated ? <h3>Calculating Diff... ({nodes.length}/{edges.length})</h3> : <>
-      <h2>Commit These Changes? ({nodes.length}/{edges.length})</h2>
+    (state.isCalculated && state.diffs.length == 0) ? <h2>No Changes</h2> :
+    !state.isCalculated ? <h3>Calculating Diff... ({state.nodes}/{state.edges})</h3> : <>
+      <h2>Commit These Changes? ({state.nodes}/{state.edges})</h2>
       {state.diffs.map(([obj, diff], i) =>
         <div key={i}>
           <h3>{obj.type}: {obj.id}</h3>
