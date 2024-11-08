@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { useTheme } from "../../contexts/useTheme";
+import React from "react";
 import ButtonBasic from "../elements/ButtonBasic.tsx";
 import ButtonIcon from "../elements/ButtonIcon.tsx";
 
@@ -34,22 +33,16 @@ export const DialogBasic: React.FC<Props> = ({
   disabled,
   additionalButtonClasses
 }) => {
-
-  const [isOpen, setOpen] = useState(false);
   
   const handleOpenDialog = () => {
     const dialogElement = document.getElementById(dialogId) as HTMLDialogElement;
-    setOpen(true);
     dialogElement.showModal();
   };
 
   const handleCloseDialog = () => {
     const dialogElement = document.getElementById(dialogId) as HTMLDialogElement;
     dialogElement.close();
-    setOpen(false);
-    if (onClose) {
-      onClose();
-    }
+    onClose && onClose();
   };
 
   return (
@@ -91,7 +84,7 @@ export const DialogBasic: React.FC<Props> = ({
             </div>
           </div>
 
-          {isOpen && children}
+          {children}
 
           {showFormButtons && (
             <div className="flex justify-end pt-4 space-x-2">
