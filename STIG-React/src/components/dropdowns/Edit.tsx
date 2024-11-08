@@ -1,9 +1,11 @@
 import React from 'react';
 import Dropdown from '../core/Dropdown';
 import { useStigContext } from '@/contexts/StigContext';
+import { useStixPropsContext } from '@/contexts/StixPropsContext';
 
 const Edit: React.FC = () => {
   const { cyInstance } = useStigContext();
+  const { setSelectionExists } = useStixPropsContext();
 
   return (
     <Dropdown
@@ -20,8 +22,8 @@ const Edit: React.FC = () => {
       {/* <li className='hover:bg-primary hover:text-white'><a>Paste</a></li> */}
       {/* <div className="divider dark:divider-neutral my-0"></div> */}
 
-      <li className='hover:bg-primary hover:text-white'><a onClick={() => { selectAll(cyInstance) }}>Select All</a></li>
-      <li className='hover:bg-primary hover:text-white'><a onClick={() => { invertSelection(cyInstance) }}>Invert Selection</a></li>
+      <li className='hover:bg-primary hover:text-white'><a onClick={() => selectAll(cyInstance, setSelectionExists) }>Select All</a></li>
+      <li className='hover:bg-primary hover:text-white'><a onClick={() => invertSelection(cyInstance, setSelectionExists) }>Invert Selection</a></li>
 
       {/* <div className="divider dark:divider-neutral my-0"></div> */}
       {/* <li className='hover:bg-primary hover:text-white'><a>Find</a></li>  */}
@@ -29,17 +31,20 @@ const Edit: React.FC = () => {
   );
 };
 
-function selectAll(cy: cytoscape.Core | undefined) {
+function selectAll(cy: cytoscape.Core | undefined, setSelectionExists: (v: boolean) => void) {
   if (cy !== undefined) {
-    cy.$('').select();
+    const all = cy.$('');
+    all.select();
+    setSelectionExists(all.length > 0);
   }
 }
-function invertSelection(cy: cytoscape.Core | undefined) {
+function invertSelection(cy: cytoscape.Core | undefined, setSelectionExists: (v: boolean) => void) {
   if (cy !== undefined) {
     const unselected = cy.$(':unselected');
     const selected = cy.$(':selected');
     selected.unselect();
     unselected.select();
+    setSelectionExists(unselected.length > 0);
   }
 }
 export default Edit;

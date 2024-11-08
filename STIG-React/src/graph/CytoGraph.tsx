@@ -75,6 +75,7 @@ const Graph: React.FC = () => {
         const handleClearGraphClickEvent = () => {
             const clearGraphEvent = new CustomEvent('clearGraph');
             cyContainerRef.current?.dispatchEvent(clearGraphEvent);
+            setSelectionExists(false);
         }
         addEventListener('clearGraphClickEvent', handleClearGraphClickEvent);
 
@@ -109,7 +110,7 @@ const Graph: React.FC = () => {
             try {
                 let viewUtil = cy?.viewUtilities(view_utils_options);
                 if (viewUtil) {
-                    setupCtxMenu(cy, isPropertyPanelOpen, togglePropertyPanel,
+                    setupCtxMenu(cy, setIsPropertyPanelOpen,
                         selectedSTIXObject, setSelectedSTIXObject, viewUtil);
                 }
             }
@@ -151,7 +152,7 @@ const Graph: React.FC = () => {
             try {
                 let viewUtil = cyInstance.viewUtilities(view_utils_options);
                 if (viewUtil) {
-                    setupCtxMenu(cyInstance, isPropertyPanelOpen, togglePropertyPanel,
+                    setupCtxMenu(cyInstance, setIsPropertyPanelOpen,
                         selectedSTIXObject, setSelectedSTIXObject, viewUtil);
                 }
             }

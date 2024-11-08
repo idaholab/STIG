@@ -191,10 +191,9 @@ export class GraphUtils {
 
 export function setupCtxMenu(
     cy: cytoscape.Core,
-    isPropertyPanelOpen: boolean,
     setIsPropertyPanelOpen: (b: boolean) => void,
     selectedSTIXObject: StixObject | undefined,
-    setSelectedSTIXObject: React.Dispatch<React.SetStateAction<StixObject | undefined>>,
+    setSelectedSTIXObject: (obj: StixObject | undefined) => void,
     setSelectionExists: React.Dispatch<React.SetStateAction<boolean>>,
     view_util?: any
 ): void {
