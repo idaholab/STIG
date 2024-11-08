@@ -37,8 +37,8 @@ const Graph: React.FC = () => {
     const cyContainerRef = useRef<HTMLDivElement>(null);
     const { addEventListener, removeEventListener } = useContext(EventContext);
     const { theme } = useTheme();
-    const { cyInstance, setCyInstance, isPropertyPanelOpen, setIsPropertyPanelOpen, togglePropertyPanel, getStigLayoutSettingsFromStore, runLayout } = useStigContext();
-    const { selectedSTIXObject, setSelectedSTIXObject, setSelectionExists } = useStixPropsContext();
+    const { cyInstance, setCyInstance, isPropertyPanelOpen, setIsPropertyPanelOpen, getStigLayoutSettingsFromStore, runLayout } = useStigContext();
+    const { selectedSTIXObject, setSelectedSTIXObject, setSelectionExists, setNodesExist } = useStixPropsContext();
     const { addNotification } = useNotificationContext();
 
     // Dynamically updates the styles on the nodes and edges
@@ -111,7 +111,7 @@ const Graph: React.FC = () => {
                 let viewUtil = cy?.viewUtilities(view_utils_options);
                 if (viewUtil) {
                     setupCtxMenu(cy, setIsPropertyPanelOpen,
-                        selectedSTIXObject, setSelectedSTIXObject, viewUtil);
+                        selectedSTIXObject, setSelectedSTIXObject, setSelectionExists, viewUtil);
                 }
             }
             catch (e) {
@@ -153,7 +153,7 @@ const Graph: React.FC = () => {
                 let viewUtil = cyInstance.viewUtilities(view_utils_options);
                 if (viewUtil) {
                     setupCtxMenu(cyInstance, setIsPropertyPanelOpen,
-                        selectedSTIXObject, setSelectedSTIXObject, viewUtil);
+                        selectedSTIXObject, setSelectedSTIXObject, setSelectionExists, viewUtil);
                 }
             }
             catch (e) {
@@ -320,6 +320,9 @@ const Graph: React.FC = () => {
         setSelectionExists(true);
         setIsPropertyPanelOpen(true);
     });
+
+    cyInstance?.on('add', 'node', () => setNodesExist(true));
+    cyInstance?.on('remove', 'node', () => setNodesExist(cyInstance.$('node').length > 0));
 
     // NOTE: For some reason, dragging a node and running the layout loses the edge handles. Need to figure out how to fix this before forcing nodes to relayout when the user tries to drag them.
     // cyInstance?.on('dragfree', 'node', () => {

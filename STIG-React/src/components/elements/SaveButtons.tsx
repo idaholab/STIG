@@ -8,7 +8,6 @@ import { DialogBasic } from "./DialogBasic";
 import ExportModal from "@/layouts/ExportModals";
 import { exportObject } from "@/util/GraphUtils";
 import DBUpdateModal from "@/layouts/DBUpdateModal";
-import { setProps } from "@/stix/stix";
 import ConnectedDBContext, { ConnectedDBContextType } from "@/contexts/ConnectedDBContext";
 import { useStigContext } from "@/contexts/StigContext";
 
@@ -56,7 +55,7 @@ const SaveButtons: React.FC = () => {
           disabled={!cyInstance || !selectedSTIXObject || !connectedDBProfile}
           onSave={saverNeo4j}
         >
-          <DBUpdateModal type="objects" objects={selectedSTIXObject ? [selectedSTIXObject] : []}/>
+          <DBUpdateModal cy={cyInstance} selector={`node#${selectedSTIXObject?.id}`}/>
         </DialogBasic>
         <DialogBasic
           dialogId="ExportObjectModal"

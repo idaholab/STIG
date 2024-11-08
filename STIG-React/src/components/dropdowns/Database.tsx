@@ -24,7 +24,7 @@ const Database: React.FC = () => {
   const [isConnectProcessing, setIsConnectProcessing] = useState(false);
   const { cyInstance, setIsPropertyPanelOpen } = useStigContext();
   const { addNotification } = useNotificationContext();
-  const { setSelectedSTIXObject, selectionExists, setSelectionExists } = useStixPropsContext();
+  const { setSelectedSTIXObject, selectionExists, setSelectionExists, nodesExist } = useStixPropsContext();
 
   return (
     <Dropdown
@@ -125,11 +125,11 @@ const Database: React.FC = () => {
                 buttonColor='btn-ghost'
                 showFormButtons={true}
                 buttonLabel="Save All"
-                disabled={!connectedDBProfile || !cyInstance || !cyInstance.nodes('').length}
+                disabled={!connectedDBProfile || !nodesExist}
                 additionalButtonClasses={`btn-sm ml-1`}
                 onSave={() => commitNodes(cyInstance, '', addNotification) }
               >
-                <DBUpdateModal type="cytoscape" cy={cyInstance} selector='' />
+                <DBUpdateModal cy={cyInstance} selector='' />
               </DialogBasic>
             </div>
 
@@ -144,7 +144,7 @@ const Database: React.FC = () => {
                 additionalButtonClasses={`btn-sm ml-1`}
                 onSave={() => commitNodes(cyInstance, ':selected', addNotification) }
               >
-                <DBUpdateModal type="cytoscape" cy={cyInstance} selector=':selected'/>
+                <DBUpdateModal cy={cyInstance} selector=':selected'/>
               </DialogBasic>
             </div>
             <div className='hover:text-white hover:bg-primary'>

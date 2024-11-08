@@ -5,20 +5,11 @@ import { StixObject } from '@/types/stixTypes/StixObject';
 import { Core } from 'cytoscape';
 import { cycore2stix } from '@/stix/stix';
 import { StixRelationshipObject } from '@/types/stixTypes/StixRelationshipObject';
-import { isRelationship } from '@/db/neo4j/isRelationship';
 
-interface DBUpdateCyProps {
-  type: "cytoscape";
+interface DBUpdateProps {
   cy?: Core;
   selector: string;
 }
-
-interface DBUpdateObjsProps {
-  type: "objects";
-  objects: StixObject[];
-}
-
-type DBUpdateProps = DBUpdateCyProps | DBUpdateObjsProps;
 
 const diffStyle = { color: "black", marginLeft: "20pt", width: "fit-content" };
 const insertStyle = { backgroundColor: "rgb(var(--color-success-light-rgb))", ...diffStyle };
@@ -39,25 +30,16 @@ function * formatDiff(diff: Delta) {
   }
 }
 
-const DBUpdateModal: React.FC<DBUpdateProps> = (props) => {
-  let nodes: StixObject[];
-  let edges: StixRelationshipObject[];
-  if (props.type === "objects") {
-    [nodes, edges] = [[],[]];
-    for (const obj of props.objects) {
-      (isRelationship(obj) ? edges : nodes).push(obj);
-    }
-  } else {
-    const { cy, selector } = props;
-    const cynodes = cy?.nodes(selector) ?? [];
-    const nodeids = new Set(cynodes.map(n => n.id()));
-    nodes = cynodes.map(cycore2stix).filter(s => s !== undefined);
-    const cyedges = cy?.edges(selector).filter(e => nodeids.has(e.source().id()) && nodeids.has(e.target().id())) ?? [];
-    edges = cyedges.map(cycore2stix).filter(s => s !== undefined) as StixRelationshipObject[];
-  }
+const DBUpdateModal: React.FC<DBUpdateProps> = ({ cy, selector }) => {
+  const cynodes = cy?.nodes(selector) ?? [];
+  const nodeids = new Set(cynodes.map(n => n.id()));
+  const nodes = cynodes.map(cycore2stix).filter(s => s !== undefined);
+  const cyedges = cy?.edges(selector).filter(e => nodeids.has(e.source().id()) && nodeids.has(e.target().id())) ?? [];
+  const edges = cyedges.map(cycore2stix).filter(s => s !== undefined) as StixRelationshipObject[];
+
   const [state, setState] = useState({ diffs: [] as [StixObject, Delta][], isCalculated: false });
   if (nodes.length + edges.length > 0 && !state.isCalculated) {
-    get_diff(nodes, edges as StixRelationshipObject[]).then(diffs => setState({ diffs, isCalculated: true }));
+    get_diff(nodes, edges).then(diffs => setState({ diffs, isCalculated: true }));
   }
 
   return <div className='h-full relative'>{
