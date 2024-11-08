@@ -10,12 +10,11 @@ import { StixRelationshipObject } from '@/types/stixTypes/StixRelationshipObject
 import { Delta, DiffPatcher } from 'diffpatch';
 
 function setProperties(tx: ManagedTransaction, stix: Record<string, unknown>, cmd: string) {
-  return tx.run(
-    cmd +
+  const query = cmd +
     Object.keys(stix).map(k => 'SET n.`' + k + '` = $`' + k + '`').join('\n') +
-    '\nRETURN n',
-    stix,
-  );
+    '\nRETURN n';
+  console.debug("Set Properties Query:", query);
+  return tx.run(query, stix);
 }
 
 function diffAgainstDB(patcher: DiffPatcher, obj: StixObject, query: string):  (s: Session) => Promise<[StixObject, Delta | undefined]> {
