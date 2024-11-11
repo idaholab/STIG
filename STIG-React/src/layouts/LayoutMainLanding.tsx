@@ -10,9 +10,7 @@ const LayoutMainLanding: React.FC = () => {
   return (
     <div id="graphContainer" className="relative h-full w-full overflow-hidden">
       <div className='m-4 flex flex-wrap items-start justify-between'>
-        <ConnectedDBProvider>
-          <Menu />
-        </ConnectedDBProvider>
+        <Menu />
         <ButtonClearGraph />
       </div>
       <div id="graph" className="h-full w-full">

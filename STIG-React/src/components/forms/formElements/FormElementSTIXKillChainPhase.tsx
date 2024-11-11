@@ -18,7 +18,7 @@ const FormElementSTIXKillChainPhase: React.FC<Props> = ({
   killChainPhaseIndex,
   property
 }) => {
-  const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
+  const { selectedSTIXObject, setSelectedSTIXObject, setSelectionExists } = useStixPropsContext();
 
   const killChainPhaseDescription = propertyDescriptions.find((group) => group.name === property.listType);
   let killChainPropDescriptions: { [propName: string]: string } = {};
@@ -38,7 +38,7 @@ const FormElementSTIXKillChainPhase: React.FC<Props> = ({
               "kill_chain_name": event.target.value,
               "phase_name": killChainPhase.phase_name
             },
-            property.name, selectedSTIXObject, setSelectedSTIXObject, undefined, killChainPhaseIndex
+            property.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists, undefined, killChainPhaseIndex
           );
         }}
         includeInfo={killChainPropDescriptions.kill_chain_name ? true : false}
@@ -56,7 +56,7 @@ const FormElementSTIXKillChainPhase: React.FC<Props> = ({
               "kill_chain_name": killChainPhase.kill_chain_name,
               "phase_name": event.target.value
             },
-            property.name, selectedSTIXObject, setSelectedSTIXObject, undefined, killChainPhaseIndex
+            property.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists, undefined, killChainPhaseIndex
           );
         }}
         className="mb-2"

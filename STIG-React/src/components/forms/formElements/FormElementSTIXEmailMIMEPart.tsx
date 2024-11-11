@@ -18,7 +18,7 @@ const FormElementEmailMIMEPart: React.FC<Props> = ({
   emailMIMEPartIndex,
   property
 }) => {
-  const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
+  const { selectedSTIXObject, setSelectedSTIXObject, setSelectionExists } = useStixPropsContext();
 
   const emailMIMEPartDescription = propertyDescriptions.find((group) => group.name === property.listType);
   let emailMIMEPartPropDescriptions: { [propName: string]: string } = {};
@@ -42,6 +42,7 @@ const FormElementEmailMIMEPart: React.FC<Props> = ({
             };
           }
           setSelectedSTIXObject(tempSTIXObj);
+          setSelectionExists(true);
         }}
         includeInfo={emailMIMEPartPropDescriptions.body ? true : false}
         infoText={emailMIMEPartPropDescriptions.body}
@@ -62,6 +63,7 @@ const FormElementEmailMIMEPart: React.FC<Props> = ({
             };
           }
           setSelectedSTIXObject(tempSTIXObj);
+          setSelectionExists(true);
         }}
         includeInfo={emailMIMEPartPropDescriptions.body_raw_ref ? true : false}
         infoText={emailMIMEPartPropDescriptions.body_raw_ref}
@@ -90,6 +92,7 @@ const FormElementEmailMIMEPart: React.FC<Props> = ({
             };
           }
           setSelectedSTIXObject(tempSTIXObj);
+          setSelectionExists(true);
         }}
         includeInfo={emailMIMEPartPropDescriptions.content_type ? true : false}
         infoText={emailMIMEPartPropDescriptions.content_type}
@@ -110,6 +113,7 @@ const FormElementEmailMIMEPart: React.FC<Props> = ({
             };
           }
           setSelectedSTIXObject(tempSTIXObj);
+          setSelectionExists(true);
         }}
         includeInfo={emailMIMEPartPropDescriptions.content_disposition ? true : false}
         infoText={emailMIMEPartPropDescriptions.content_disposition}

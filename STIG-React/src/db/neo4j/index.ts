@@ -7,14 +7,22 @@ import { isRelationship } from './isRelationship';
 import { StixObject } from '@/types/stixTypes/StixObject';
 import { STIGBundle } from '@/types/STIGBundle';
 import { StixRelationshipObject } from '@/types/stixTypes/StixRelationshipObject';
+import { Delta, DiffPatcher } from 'diffpatch';
 
 function setProperties(tx: ManagedTransaction, stix: Record<string, unknown>, cmd: string) {
-  return tx.run(
-    cmd +
+  const query = cmd +
     Object.keys(stix).map(k => 'SET n.`' + k + '` = $`' + k + '`').join('\n') +
-    '\nRETURN n',
-    stix,
-  );
+    '\nRETURN n';
+  console.debug("Set Properties Query:", query);
+  return tx.run(query, stix);
+}
+
+function diffAgainstDB(patcher: DiffPatcher, obj: StixObject, query: string):  (s: Session) => Promise<[StixObject, Delta | undefined]> {
+  return async (s: Session) => {
+    const res = await s.executeRead(tx => tx.run(query, { id: obj.id }));
+    const rec = res.records[0];
+    return [obj, patcher.diff(rec ? toNeo4j(fromNeo4j(rec.get('n'))[0]) : {}, toNeo4j(obj))];
+  };
 }
 
 export class Neo4jStigDB implements StigDB {
@@ -96,21 +104,22 @@ export class Neo4jStigDB implements StigDB {
 
   /**
    * @description Determines the difference between a node from the graph and what is in the database
-   * @param {StixObject} node
+   * @param {StixObject[]} nodes
    * @returns {Promise<diffpatch.Delta>}
    * @memberof StigDB
    */
-  // public getDiff(node: StixObject): Promise<diffpatch.Delta | undefined> {
-  //   return this.wrapSession(async (s: Session) => {
-  //     const res = await s.executeRead((tx: ManagedTransaction) =>
-  //       tx.run('MATCH (n) where n.id = $id RETURN n', { id: node.id })
-  //     );
-  //     const rec = res.records[0];
-  //     if (rec) {
-  //       return diffpatch.diff(node, fromNeo4j(rec.get('n').properties));
-  //     }
-  //   });
-  // }
+  public async getDiff(nodes: StixObject[], edges: StixRelationshipObject[]): Promise<[StixObject, Delta][]> {
+    const patcher = new DiffPatcher();
+    const node_promises: Promise<[StixObject, Delta|undefined]>[] = nodes.map(
+      node => this.wrapSession(diffAgainstDB(patcher, node, 'MATCH (n) where n.id = $id RETURN n'))
+    );
+    const edge_promises: Promise<[StixObject, Delta|undefined]>[] = edges.map(
+      edge => this.wrapSession(diffAgainstDB(patcher, edge, 'MATCH ()-[n]-() where n.id = $id RETURN n'))
+    );
+    return (await Promise.all([...node_promises, ...edge_promises])).filter(
+      p => typeof p[1] == 'object' && Object.keys(p[1]).length > 0
+    ) as [StixObject, Delta][];
+  }
 
   /**
    * @description Updates the database from the editor form
@@ -203,7 +212,7 @@ export class Neo4jStigDB implements StigDB {
   public executeQuery(query: string): Promise<StixObject[]> {
     return this.wrapSession(async (s: Session) => {
       const res = await s.executeRead((tx: ManagedTransaction) => tx.run(query));
-      return res.records.flatMap(rec => rec.map(fromNeo4j).flatMap(x => x));
+      return res.records.flatMap(rec => rec.map(fromNeo4j).flat());
     });
   }
 

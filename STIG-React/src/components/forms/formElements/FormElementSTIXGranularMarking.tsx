@@ -18,7 +18,7 @@ const FormElementSTIXGranularMarking: React.FC<Props> = ({
   granularMarkingIndex,
   property
 }) => {
-  const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
+  const { selectedSTIXObject, setSelectedSTIXObject, setSelectionExists } = useStixPropsContext();
 
   const granularMarkingDescription = propertyDescriptions.find((group) => group.name === property.listType);
   let granularMarkingPropDescriptions: { [propName: string]: string } = {};
@@ -42,6 +42,7 @@ const FormElementSTIXGranularMarking: React.FC<Props> = ({
             };
           }
           setSelectedSTIXObject(tempSTIXObj);
+          setSelectionExists(true);
         }}
         includeInfo={granularMarkingPropDescriptions.lang ? true : false}
         infoText={granularMarkingPropDescriptions.lang}
@@ -62,6 +63,7 @@ const FormElementSTIXGranularMarking: React.FC<Props> = ({
             };
           }
           setSelectedSTIXObject(tempSTIXObj);
+          setSelectionExists(true);
         }}
         className="mb-2"
         includeInfo={granularMarkingPropDescriptions.marking_ref ? true : false}
@@ -82,7 +84,10 @@ const FormElementSTIXGranularMarking: React.FC<Props> = ({
           parentPropertyName={property.name}
           parentPropertyIndex={granularMarkingIndex}
           parentSTIXObject={selectedSTIXObject}
-          setParentSTIXObject={setSelectedSTIXObject}
+          setParentSTIXObject={obj => {
+            setSelectedSTIXObject(obj);
+            setSelectionExists(true);
+          }}
         />
       </StixPropsContextProvider>
     </div>

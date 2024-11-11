@@ -5,7 +5,8 @@ export const handlePropertyUpdate = (
   newVal: string | boolean | number | Date | ArrayBuffer | null | undefined | Object | [],
   propName: string,
   selectedSTIXObject: StixObject | undefined,
-  setSelectedSTIXObject: React.Dispatch<React.SetStateAction<StixObject | undefined>>,
+  setSelectedSTIXObject: (obj: StixObject | undefined) => void,
+  setSelectionExists: React.Dispatch<React.SetStateAction<boolean>>,
   cy?: cytoscape.Core,
   // Pass a prop index in for updating a value
   // inside a list or hash
@@ -32,4 +33,5 @@ export const handlePropertyUpdate = (
   }
 
   setSelectedSTIXObject(tempSelectedSTIXObject);
+  setSelectionExists(true);
 };

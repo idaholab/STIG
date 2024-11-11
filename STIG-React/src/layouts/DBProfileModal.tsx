@@ -97,9 +97,7 @@ function DBProfileSelector({ dbProfiles, inDBDeleteProcess, setInDBDeleteProcess
 
   return (
     <div className='rounded-box flex h-[452px] bg-neutralc-300 dark:bg-neutralc-800 p-2 basis-2/5 '>
-      <ul
-        className="h-full flex flex-col flex-auto justify-between "
-      >
+      <ul className="h-full flex flex-col flex-auto justify-between">
         <div className={"scrollbar"}>
           {dbProfiles.map((profile) => {
             return (
