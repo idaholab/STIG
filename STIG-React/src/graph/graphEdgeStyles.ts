@@ -3,7 +3,7 @@ import { getCssRGBVarColor } from '@/util/GetCssVarColor';
 
 type LineStyle = 'solid' | 'dotted' | 'dashed';
 
-const applyStyleToCytoscape = (cy: cytoscape.Core, selector: string, style: Css.Edge) => {
+const applyStyleToCytoscapeEdges = (cy: cytoscape.Core, selector: string, style: Css.Edge) => {
     cy.style()
         .selector(selector)
         .style(style)
@@ -34,6 +34,7 @@ const createEdgeStyle = (): Css.Edge => {
         'line-color': edgeColor,
         'line-style': 'solid', // default, will be overridden
         'target-arrow-shape': 'triangle',
+        'target-arrow-fill': 'filled',
         'source-arrow-shape': 'none',
         'source-arrow-fill': 'hollow',
         'text-margin-x': -10,
@@ -52,8 +53,8 @@ const createEdgeStyle = (): Css.Edge => {
 export const updateEdgeStyle = (cy: cytoscape.Core) => {
     const solidEdgeStyle: StylesheetStyle = generateEdgeStyle();
     const dashedEdgeStyle: StylesheetStyle = generateEdgeStyle('dashed');
-    applyStyleToCytoscape(cy, 'edge[style="solid"]', solidEdgeStyle.style as Css.Edge);
-    applyStyleToCytoscape(cy, 'edge[style="dashed"]', dashedEdgeStyle.style as Css.Edge);
+    applyStyleToCytoscapeEdges(cy, 'edge', solidEdgeStyle.style as Css.Edge);
+    applyStyleToCytoscapeEdges(cy, 'edge[raw_data="visual_edge"]', dashedEdgeStyle.style as Css.Edge);
 };
 
 export const generateEdgeStyle = (edgeLineStyle?: string): StylesheetStyle => {
@@ -73,7 +74,7 @@ export const generateEdgeStyle = (edgeLineStyle?: string): StylesheetStyle => {
 export const updateEdgeSelectedStyle = (cy: cytoscape.Core) => {
     const selectedStyle: StylesheetStyle | undefined = generateEdgeSelectedStyle();
     if (selectedStyle && selectedStyle.style) {
-        applyStyleToCytoscape(cy, 'edge:selected', selectedStyle.style as Css.Edge);
+        applyStyleToCytoscapeEdges(cy, 'edge:selected', selectedStyle.style as Css.Edge);
     }
 };
 export const generateEdgeSelectedStyle = (): StylesheetStyle => {

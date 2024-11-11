@@ -160,7 +160,6 @@ function add_visual_edge(label: string, field: string[] | string, objID: string)
           target: refID,
           source: objID,
           label: label,
-          style: 'dashed'
         }
       }
       visualEdgeElemDefs.push(JSON.parse(JSON.stringify(opts)) as ElementDefinition)
