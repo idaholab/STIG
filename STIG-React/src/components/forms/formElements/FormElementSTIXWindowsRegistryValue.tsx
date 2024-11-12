@@ -19,7 +19,7 @@ const FormElementSTIXWindowsRegistryValue: React.FC<Props> = ({
   windowsRegistryValueIndex,
   property
 }) => {
-  const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
+  const { selectedSTIXObject, setSelectedSTIXObject, setSelectionExists } = useStixPropsContext();
 
   const windowsRegistryValueDescription = propertyDescriptions.find((group) => group.name === property.listType);
   let windowsRegistryValuePropDescriptions:{[propName: string]: string} = {};
@@ -43,6 +43,7 @@ const FormElementSTIXWindowsRegistryValue: React.FC<Props> = ({
             };
           }
           setSelectedSTIXObject(tempSTIXObj);
+          setSelectionExists(true);
         }}
         includeInfo={windowsRegistryValuePropDescriptions.name ? true : false}
         infoText={windowsRegistryValuePropDescriptions.name}
@@ -63,6 +64,7 @@ const FormElementSTIXWindowsRegistryValue: React.FC<Props> = ({
             };
           }
           setSelectedSTIXObject(tempSTIXObj);
+          setSelectionExists(true);
         }}
         includeInfo={windowsRegistryValuePropDescriptions.data ? true : false}
         infoText={windowsRegistryValuePropDescriptions.data}
@@ -84,6 +86,7 @@ const FormElementSTIXWindowsRegistryValue: React.FC<Props> = ({
             };
           }
           setSelectedSTIXObject(tempSTIXObj);
+          setSelectionExists(true);
         }}
         className="mb-2"
         includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}

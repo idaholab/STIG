@@ -21,6 +21,8 @@ import { open_vocab_options } from "@/stix/openVocabOptions";
 
 import { stixHexValidator } from "@/util/stixHexValidator";
 import { stixIdentifierValidator } from "@/util/stixIdentifierValidator";
+import { readFiles } from "@/util/fileReader";
+import { useNotificationContext } from "@/contexts/NotificationContext";
 
 export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
   parentDictionaryProps, setParentDictionaryProps,
@@ -37,7 +39,8 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
   parentSelectedProperties?: SchemaSTIXProperty[];
   setParentSelectedProperties?: React.Dispatch<React.SetStateAction<SchemaSTIXProperty[]>>;
 }) {
-  const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
+  const { selectedSTIXObject, setSelectedSTIXObject, setSelectionExists } = useStixPropsContext();
+  const { addNotification } = useNotificationContext();
   const { cyInstance } = useStigContext();
 
   switch (property.name) {
@@ -56,7 +59,7 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
           // and implement as part of schema.ts or here
           options={["uses", "targets", "delivers", "related-to", "created-by", "derived-from", "duplicate-of"]}
           onChange={(event) => {
-            handlePropertyUpdate(event.target.value, property.name, selectedSTIXObject, setSelectedSTIXObject);
+            handlePropertyUpdate(event.target.value, property.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists);
             // Get cytoscape element (by id)
             if (selectedSTIXObject) {
               let ele = cyInstance?.getElementById(selectedSTIXObject.id.replace("relationship--", ""));
@@ -83,10 +86,14 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
           return (
             <FormElementFileInput
               buttonLabel='Upload'
-              onFileChange={async (fileVal: string | ArrayBuffer | null | undefined) => {
-                handlePropertyUpdate(fileVal, property.name, selectedSTIXObject, setSelectedSTIXObject);
+              onFileChange={async (files) => {
+                const fileData = (await readFiles(files, "url"))[0];
+                if (fileData.data) {
+                  handlePropertyUpdate(fileData.data, property.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists);
+                } else {
+                  addNotification(`Error loading ${fileData.name}`, "error");
+                }
               }}
-              parsedFileType='url'
               additionalInputClasses='input-sm'
               additionalBtnClasses='btn-sm'
               includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
@@ -106,7 +113,7 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
               options={["true", "false"]}
               onChange={(event) => {
                 handlePropertyUpdate(event.target.value === "true" ? true : false,
-                  property.name, selectedSTIXObject, setSelectedSTIXObject);
+                  property.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists);
               }}
               additionalClasses='dark:bg-neutralc-900 w-full'
               includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
@@ -145,13 +152,13 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
               options={property.openVocabType ? open_vocab_options[property.openVocabType] :
                 property.enumType ? enum_options[property.enumType] : []}
               onSelect={(event) => {
-                handlePropertyUpdate(event.target.value, property.name, selectedSTIXObject, setSelectedSTIXObject);
+                handlePropertyUpdate(event.target.value, property.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists);
               }}
               onInputChange={(event) => {
-                handlePropertyUpdate(event.target.value, property.name, selectedSTIXObject, setSelectedSTIXObject);
+                handlePropertyUpdate(event.target.value, property.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists);
               }}
               onSwitchToSuggested={() => {
-                handlePropertyUpdate(undefined, property.name, selectedSTIXObject, setSelectedSTIXObject);
+                handlePropertyUpdate(undefined, property.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists);
               }}
               className="mb-2"
               inputClassName="pl-2 mb-2"
@@ -186,7 +193,7 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
                     number = property.min;
                   }
                 }
-                handlePropertyUpdate(number, property.name, selectedSTIXObject, setSelectedSTIXObject);
+                handlePropertyUpdate(number, property.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists, cyInstance);
               }}
               additionalInputClasses='select-sm dark:bg-neutralc-900'
               includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
@@ -214,7 +221,7 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
                 : ""
               }
               onChange={(event) => {
-                handlePropertyUpdate(event.target.value, property.name, selectedSTIXObject, setSelectedSTIXObject, cyInstance);
+                handlePropertyUpdate(event.target.value, property.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists, cyInstance);
               }}
               disabled={property.name === "id" || property.name === "type" ||
                 property.name === "source_ref" || property.name === "target_ref" ||
@@ -273,7 +280,7 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
                 : ""
               }
               onChange={([date]) => {
-                handlePropertyUpdate(date, property.name, selectedSTIXObject, setSelectedSTIXObject);
+                handlePropertyUpdate(date, property.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists, cyInstance);
               }}
               className='w-full mb-2'
               additionalInputClasses='select-sm w-full'

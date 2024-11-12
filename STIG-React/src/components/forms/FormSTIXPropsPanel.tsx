@@ -11,7 +11,7 @@ export default function FormSTIXPropsPanel({ selectedProperties, stixTypeProps, 
   stixTypeProps: SchemaSTIXProperty[],
   showJson: boolean
 }) {
-  const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
+  const { selectedSTIXObject, setSelectedSTIXObject, setSelectionExists } = useStixPropsContext();
 
   const createdProperty = selectedProperties.find(selectedProperty =>
     selectedProperty.name === "created"
@@ -36,7 +36,7 @@ export default function FormSTIXPropsPanel({ selectedProperties, stixTypeProps, 
                   : ""
                 }
                 onChange={([date]) => {
-                  handlePropertyUpdate(date, "created", selectedSTIXObject, setSelectedSTIXObject);
+                  handlePropertyUpdate(date, "created", selectedSTIXObject, setSelectedSTIXObject, setSelectionExists);
                 }}
                 className={'flex flex-auto' + (modifiedProperty ? " max-w-[50%]" : "")}
                 additionalInputClasses={"select-sm px-2 w-full"}
@@ -54,7 +54,7 @@ export default function FormSTIXPropsPanel({ selectedProperties, stixTypeProps, 
                   : ""
                 }
                 onChange={([date]) => {
-                  handlePropertyUpdate(date, "modified", selectedSTIXObject, setSelectedSTIXObject);
+                  handlePropertyUpdate(date, "modified", selectedSTIXObject, setSelectedSTIXObject, setSelectionExists);
                 }}
                 className={'flex flex-auto' + (createdProperty ? " max-w-[50%]" : "")}
                 additionalInputClasses='select-sm px-2 w-full'

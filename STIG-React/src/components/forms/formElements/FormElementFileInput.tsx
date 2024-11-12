@@ -5,7 +5,6 @@ import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty.t
 import STIXPropertyLabel from '@/components/elements/STIXPropertyLabel.tsx';
 import { useStixPropsContext } from '@/contexts/StixPropsContext.tsx';
 import AlertComponent from '@/components/elements/AlertComponent.tsx';
-import { useNotificationContext } from '@/contexts/NotificationContext.tsx';
 
 type Props = {
   placeholder?: string;
@@ -13,8 +12,7 @@ type Props = {
   buttonLabel: string;
   acceptedFileTypes?: string;
   onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-  onFileChange?: (fileVal: string | ArrayBuffer | null | undefined) => void;
-  parsedFileType?: "url" | "text";
+  onFileChange?: (files: FileList) => void;
   additionalInputClasses?: string;
   additionalBtnClasses?: string;
   className?: string;
@@ -22,6 +20,7 @@ type Props = {
   additionalInfoClasses?: string;
   infoIcon?: string;
   infoText?: string;
+  multiple?: boolean;
   property?: SchemaSTIXProperty
 };
 
@@ -32,7 +31,6 @@ const FormElementFileInput: React.FC<Props> = ({
   acceptedFileTypes,
   onClick,
   onFileChange,
-  parsedFileType = "text",
   additionalInputClasses,
   additionalBtnClasses,
   className,
@@ -40,10 +38,10 @@ const FormElementFileInput: React.FC<Props> = ({
   additionalInfoClasses,
   infoIcon,
   infoText,
+  multiple,
   property
 }) => {
-  const { addNotification } = useNotificationContext();
-  
+
   // Get the file's size as done in STIG Old
   // (as done in the json-editor npm package)
   const { selectedSTIXObject } = useStixPropsContext();
@@ -67,33 +65,14 @@ const FormElementFileInput: React.FC<Props> = ({
     }
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      const file = event.target.files[0];
-
-      const fileReader = new FileReader();
-      if (parsedFileType === "url") {
-        fileReader.readAsDataURL(file);
-      } else if (parsedFileType === "text") {
-        fileReader.readAsText(file);
-      }
-
-      fileReader.onload = (event) => {
-        const fileValue = event.target?.result;
-        if (onFileChange) {
-          // Notify parent component about the selected file
-          if (parsedFileType === "url") {
-            // Remove the metadata from what goes in the JSON
-            onFileChange(String(fileValue).split(",")[1]);
-            const fileSize = Math.floor(String(fileValue).split(",")[1].length / 1.33333);
-            setFilename(`File Uploaded. Size: ${fileSize} bytes`);
-            addNotification(`${file.name} successfully uploaded`, "success");
-          } else {
-            onFileChange(fileValue);
-            setFilename(file.name); // Update the filename state
-          }
-        }
-      }
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const fileData = event.target.files;
+    if (!onFileChange || !fileData || fileData.length === 0) return;
+    onFileChange(fileData);
+    if (fileData.length == 1) {
+      setFilename(fileData[0].name);
+    } else {
+      setFilename(Array.from(fileData).map(({ name }) => `"${name}"`).join(' '));
     }
   };
 
@@ -129,6 +108,7 @@ const FormElementFileInput: React.FC<Props> = ({
         />
         <input
           type="file"
+          multiple={multiple}
           ref={fileInputRef}
           className="hidden"
           onChange={handleFileChange}

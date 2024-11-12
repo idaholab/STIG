@@ -15,7 +15,7 @@ type Props = {
 const FormElementSTIXX509V3Extensions: React.FC<Props> = ({
   property
 }) => {
-  const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
+  const { selectedSTIXObject, setSelectedSTIXObject, setSelectionExists } = useStixPropsContext();
 
   const x509V3ExtensionsDescription = propertyDescriptions.find((group) => group.name === property.type);
   let x509V3ExtensionsPropDescriptions:{[propName: string]: string} = {};
@@ -57,7 +57,7 @@ const FormElementSTIXX509V3Extensions: React.FC<Props> = ({
             }
             onChange={(event) => {
               handlePropertyUpdate(event.target.value, property.name, 
-                selectedSTIXObject, setSelectedSTIXObject, x509V3ExtensionsProperty
+                selectedSTIXObject, setSelectedSTIXObject, setSelectionExists, undefined, x509V3ExtensionsProperty
               );
             }}
             className='ml-4 pr-4'
@@ -79,7 +79,7 @@ const FormElementSTIXX509V3Extensions: React.FC<Props> = ({
             }
             onChange={([date]) => {
               handlePropertyUpdate(date, property.name, 
-                selectedSTIXObject, setSelectedSTIXObject, x509V3ExtensionsProperty
+                selectedSTIXObject, setSelectedSTIXObject, setSelectionExists, undefined, x509V3ExtensionsProperty
               );
             }}
             className='ml-4'

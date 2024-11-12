@@ -4,9 +4,9 @@ import { Notification } from '../types/Notification';
 import { AlertType } from '@/components/elements/AlertComponent';
 
 type NotificationContextType = {
-  notification: Notification | undefined;
+  notification: Notification[];
   addNotification: (text: string, type: AlertType) => void;
-  removeNotification: () => void;
+  removeNotification: (i: number) => void;
 };
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
@@ -24,14 +24,18 @@ type Props = {
 };
 
 export const NotificationContextProvider: React.FC<Props> = ({ children }) => {
-  const [notification, setNotification] = useState<Notification>();
+  const [notification, setNotification] = useState<Notification[]>([]);
 
   const addNotification = (text: string, type: AlertType) => {
-    setNotification({text: text, type: type});
+    notification.push({text, type});
+    if (notification.length > 10) {
+      notification.shift();
+    }
+    setNotification(notification.slice());
   }
 
-  const removeNotification = () => {
-    setNotification(undefined);
+  const removeNotification = (i: number) => {
+    setNotification(notification.toSpliced(i,1));
   }
 
   return (

@@ -23,13 +23,14 @@ const FormElementSTIXHashes: React.FC<Props> = ({
   parentSTIXObject,
   setParentSTIXObject
 }) => {
-  const { selectedSTIXObject, setSelectedSTIXObject } = useStixPropsContext();
+  const { selectedSTIXObject, setSelectedSTIXObject, setSelectionExists } = useStixPropsContext();
 
   // Update the child STIX object (the one containing the hashes
   // property) when its parent changes
   useEffect(() => {
     if (parentSTIXObject && parentPropertyName && parentPropertyIndex !== undefined) {
       setSelectedSTIXObject(parentSTIXObject[parentPropertyName][parentPropertyIndex]);
+      setSelectionExists(true);
     }
   }, [parentSTIXObject]);
 
@@ -80,6 +81,7 @@ const FormElementSTIXHashes: React.FC<Props> = ({
               };
             }
             setSelectedSTIXObject(tempSTIXObj);
+            setSelectionExists(true);
           }}
           additionalClasses="btn-sm ml-6"
         />

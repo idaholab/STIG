@@ -1,14 +1,14 @@
 // import diffpatch from 'jsondiffpatch';
 
 import { StigDB } from "@/db/dbi";
-import { SchemaSTIXClass } from "@/types/stixSchemaTypes/SchemaSTIXClass";
-import { schema } from "@/stix/schema";
 import { DBProfile } from "@/types/DBProfile";
 import { STIGBundle } from "@/types/STIGBundle";
 import { StixObject } from "@/types/stixTypes/StixObject";
 import { StixRelationshipObject } from "@/types/stixTypes/StixRelationshipObject";
+import { Delta } from "diffpatch";
+import { checkProps } from "@/stix/stix";
 
-let currentDB: StigDB;
+export let currentDB: StigDB;
 
 async function wrapVoid<T>(stix: T, cb: (stix: T) => Promise<void>) {
   if (currentDB) {
@@ -82,42 +82,7 @@ export async function query(query: string): Promise<StixObject[]> {
   return wrapReturn(query, () => [], q => currentDB.executeQuery(q));
 }
 
-// export async function get_diff(stix: StixObject): Promise<diffpatch.Delta | undefined> {
-//   if (!checkProps(stix)) throw new Error('Invalid stix');
-//   return wrapReturn(stix, () => ({}), s => currentDB.getDiff(s));
-// }
-
-function getAllProps(schemaObject: SchemaSTIXClass) {
-  const props = schemaObject.properties;
-  for (const superClass of schemaObject.superClasses) {
-    const superClassObject = schema.find(c =>
-      c.name.replace(/-/g, '') === superClass
-    );
-    if (superClassObject) {
-      props.concat(getAllProps(superClassObject));
-    }
-  }
-  return props;
-}
-
-export function checkProps(object: StixObject): boolean {
-  const schemaObject = schema.find(c => { return c.name === object.type; });
-  if (typeof schemaObject !== 'object') {
-    return false;
-  }
-
-  // Get the required props from the schema
-  const props = getAllProps(schemaObject);
-  const reqProps = props.filter(prop => { return prop.mandatory; });
-  for (const prop of reqProps) {
-    // id_ only exists on the database side. Skip this.
-    if (prop.name === 'id_') continue;
-
-    if ((object as any)[prop.name] === undefined) {
-      // Return false to indicate that this object is invalid
-      return false;
-    }
-  }
-
-  return true;
+export async function get_diff(nodes: StixObject[], edges: StixRelationshipObject[]): Promise<[StixObject, Delta][]> {
+  if (!nodes.every(checkProps) || !edges.every(checkProps)) throw new Error('Invalid stix');
+  return wrapReturn({nodes, edges}, () => [], ({ nodes, edges }) => currentDB.getDiff(nodes, edges));
 }
