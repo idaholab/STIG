@@ -2,7 +2,8 @@
 Copyright 2018 Southern California Edison Company
 ALL RIGHTS RESERVED
  */
-import cytoscape from 'cytoscape';
+import { getCssRGBVarColor } from '@/util/GetCssVarColor';
+import cytoscape, { Css, StylesheetStyle } from 'cytoscape';
 import edgehandles from 'cytoscape-edgehandles';
 
 cytoscape.use(edgehandles);
@@ -93,3 +94,30 @@ const defaults: cytoscapeEdgehandles.EdgeHandlesOptions = {
 export function setup_edge_handles(cy: cytoscape.Core) {
   return cy.edgehandles(defaults);
 }
+
+export const generateEdgeHandlesStyle = (): StylesheetStyle[] => {
+  const handleBackgroundColor = getCssRGBVarColor('--node-handle-color');
+  const nodeEdgeHandleStyles: Css.Node = {
+    'background-color': handleBackgroundColor,
+    width: 12,
+    height: 12,
+    shape: 'roundrectangle',
+    'overlay-opacity': 0,
+    'border-width': 0,
+    'border-opacity': 0,
+  };
+  return [{
+    selector: '.eh-handle',
+    style: nodeEdgeHandleStyles
+  }];
+};
+
+export const updateEdgeHandlesStyle = (cy: cytoscape.Core) => {
+  const handleStyle: StylesheetStyle | undefined = generateEdgeHandlesStyle().find(style => style.selector === '.eh-handle');
+  if (handleStyle && handleStyle.style) {
+    cy.style()
+      .selector('.eh-handle')
+      .style(handleStyle.style as Css.Node)
+      .update();
+  }
+};

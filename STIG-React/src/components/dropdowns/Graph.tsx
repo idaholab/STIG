@@ -70,7 +70,7 @@ function makeEmbeddedRelationships(cy: cytoscape.Core) {
     if (obj.created_by_ref !== undefined) { to_add.push(...add_visual_edge('created_by_ref', obj.created_by_ref, obj.id)); }
     switch (obj.type) {
       case 'language-content':
-        to_add.push(...add_visual_edge('object_ref',obj.object_ref, obj.id));
+        to_add.push(...add_visual_edge('object_ref', obj.object_ref, obj.id));
         break;
       case 'report':
       case 'opinion':
@@ -159,7 +159,7 @@ function add_visual_edge(label: string, field: string[] | string, objID: string)
           id: rel_id,
           target: refID,
           source: objID,
-          label: label 
+          label: label,
         }
       }
       visualEdgeElemDefs.push(JSON.parse(JSON.stringify(opts)) as ElementDefinition)
