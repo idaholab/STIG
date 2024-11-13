@@ -8,7 +8,6 @@ import { StixObject } from '@/types/stixTypes/StixObject';
 import { StixRelationshipObject } from '@/types/stixTypes/StixRelationshipObject';
 import { Delta, DiffPatcher } from 'diffpatch';
 
-
 const get_node_query = `
 UNWIND $ids AS id
 OPTIONAL MATCH (n {id:id})
@@ -114,13 +113,15 @@ export class Neo4jStigDB implements StigDB {
    * @returns {Promise<void>}
    * @memberof StigDB
    */
-  public delete(stix: StixObject): Promise<void> {
-    return this.wrapSession((s: Session) =>
-      s.executeWrite((tx: ManagedTransaction) =>
-        tx.run(isRelationship(stix)
-          ? 'MATCH ()-[r]->() WHERE r.id = $id DELETE r'
-          : 'MATCH (n: stixnode) WHERE n.id = $id DETACH DELETE n',
-          { id: stix.id })
+  public delete(stix: StixObject[]): Promise<void> {
+    return this.wrapSession(s =>
+      s.executeWrite(tx =>
+        Promise.all(stix.map(obj =>
+          tx.run(isRelationship(obj)
+            ? 'MATCH ()-[r]->() WHERE r.id = $id DELETE r'
+            : 'MATCH (n: stixnode) WHERE n.id = $id DETACH DELETE n',
+            { id: obj.id })
+        ))
       )
     ) as Promise<unknown> as Promise<void>;
   }

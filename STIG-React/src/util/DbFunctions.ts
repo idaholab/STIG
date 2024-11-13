@@ -62,7 +62,7 @@ export async function commit(nodes: StixObject[], edges: StixRelationshipObject[
   return wrapReturn(pair, () => ({ nodes: 0, edges: 0, errors: 0 }), ([n, e]) => currentDB.updateDB(n, e));
 }
 
-export function db_delete(stix: StixObject) {
+export function db_delete(stix: StixObject[]) {
   return wrapVoid(stix, s => currentDB.delete(s));
 }
 

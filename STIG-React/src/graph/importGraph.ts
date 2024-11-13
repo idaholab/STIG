@@ -81,7 +81,7 @@ export async function * importGraphToDB(files: ArrayLike<File>): AsyncGenerator<
         yield { alert: { message: `Reading ${file.name}`, type: "info" }, layout: false };
         for await (const obj of streamStixFile(file)) {
             (isRelationship(obj) ? rels : nodes).push(obj);
-            if (nodes.length + rels.length >= 100) yield * await commitBatch();
+            if (nodes.length + rels.length >= 250) yield * await commitBatch();
         }
         if (nodes.length + rels.length > 0) yield * await commitBatch();
         yield {

@@ -204,10 +204,9 @@ function deleteSelectedNodes(
     const eW: EdgeCollection = selected.edgesWith(vis);
     const eS: EdgeCollection = cy.edges(':selected');
     
-    cy.$(':selected').forEach((ele) => {
-      void db_delete(ele.data('raw_data'));
-      cy.remove(ele);
-    });
+    const sel = cy.$(':selected');
+    sel.forEach(ele => void cy.remove(ele));
+    db_delete(sel.map(ele => ele.data('raw_data')));
     setSelectedSTIXObject(undefined);
     setIsPropertyPanelOpen(false);
     addNotification(`Deleted ${selected.length} object(s) and ${eW.length+eS.length} edge(s) from database`, 'success');

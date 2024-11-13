@@ -11,7 +11,7 @@ export abstract class StigDB {
 
   abstract getName(): string;
   abstract configure(config: DBProfile): Promise<void>;
-  abstract delete(stix: StixObject): Promise<void>;
+  abstract delete(stix: StixObject[]): Promise<void>;
   abstract traverseNodeIn(id: string): Promise<StixObject[]>;
   abstract traverseNodeOut(id: string): Promise<StixObject[]>;
   abstract getDiff(nodes: StixObject[], edges: StixRelationshipObject[]): Promise<[StixObject, Delta][]>;
