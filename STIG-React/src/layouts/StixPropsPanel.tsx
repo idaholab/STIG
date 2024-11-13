@@ -78,10 +78,6 @@ function PropsPanelHeader({ selectedProperties, setSelectedProperties,
     setShowJsonPanel(isShowingJson);
     setIsShowingJson(isShowingJson)
   }
-  if (JSON.stringify(selectedSTIXObject) == "\"visual_edge\"") {
-    console.error("TODO: please make it so clicking visual edges doesn't pop up the property panel");
-    return;
-  }
   return (
     <>
       <div className="flex justify-between items-center mb-4">

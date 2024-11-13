@@ -18,7 +18,8 @@ export const schema: SchemaSTIXClass[] = [
       { name: 'lang', type: 'string' },
       { name: 'external_references', type: 'list', listType: "external-reference" },
       { name: 'object_marking_refs', type: 'list', listType: 'identifier' },
-      { name: 'granular_markings', type: 'list', listType: 'granular-marking' }
+      { name: 'granular_markings', type: 'list', listType: 'granular-marking' },
+      { name: 'extensions', type: 'dictionary' }
     ]
   },
   {
@@ -107,7 +108,8 @@ export const schema: SchemaSTIXClass[] = [
       { name: 'confidence', type: 'integer' },
       { name: 'external_references', type: 'list', listType: 'external-reference' },
       { name: 'object_marking_refs', type: 'list', listType: 'identifier' },
-      { name: 'granular_markings', type: 'list', listType: 'granular-marking' }
+      { name: 'granular_markings', type: 'list', listType: 'granular-marking' },
+      { name: 'extensions', type: 'dictionary' }
     ]
   },
   {
@@ -121,7 +123,36 @@ export const schema: SchemaSTIXClass[] = [
       { name: 'created', type: 'timestamp', mandatory: true, notNull: true, },
       { name: 'external_references', type: 'list', listType: 'external-reference' },
       { name: 'object_marking_refs', type: 'list', listType: 'identifier' },
-      { name: 'granular_markings', type: 'list', listType: 'granular-marking' }
+      { name: 'granular_markings', type: 'list', listType: 'granular-marking' },
+      { name: 'extensions', type: 'dictionary' }
+
+    ]
+  },
+  {
+    name: 'extension-definition',
+    description: "The extension-definition object represents a specific extension.",
+    superClasses: [],
+    properties: [
+      { name: 'id', type: 'identifier', mandatory: true, notNull: true, },
+      { name: 'type', type: 'string', mandatory: true, notNull: true, },
+      { name: 'spec_version', type: 'string', mandatory: true, notNull: true, },
+      { name: 'created', type: 'timestamp', mandatory: true, notNull: true, },
+      { name: 'modified', type: 'timestamp', mandatory: true, notNull: true, },
+      { name: 'created_by_ref', type: 'identifier' },
+      
+      { name: 'revoked', type: 'boolean', default: 'False' },
+      { name: 'labels', type: 'list', listType: 'string' },
+      { name: 'external_references', type: 'list', listType: "external-reference" },
+      { name: 'object_marking_refs', type: 'list', listType: 'identifier' },
+      { name: 'granular_markings', type: 'list', listType: 'granular-marking' },
+
+      { name: 'name', type: 'string' },
+      { name: 'description', type: 'string' },
+      { name: 'schema', type: 'string', mandatory: true, notNull: true, },
+      { name: 'version', type: 'string', mandatory: true, notNull: true, },
+      { name: 'extension_types', type: 'list', listType: 'enum', enumType: 'extension-type-enum', mandatory: true, notNull: true, },
+      { name: 'extension_properties', type: 'list', listType: 'string' },
+
     ]
   },
   {
@@ -323,18 +354,6 @@ export const schema: SchemaSTIXClass[] = [
     name: 'exploits',
     superClasses: ['relationship'],
     properties: [
-    ]
-  },
-  {
-    name: 'extension-definition',
-    description: "The extension-definition object represents a specific extension.",
-    superClasses: ['core'],
-    properties: [
-      { name: 'name', type: 'string' },
-      { name: 'schema', type: 'string', mandatory: true, notNull: true, },
-      { name: 'version', type: 'string', mandatory: true, notNull: true, },
-      { name: 'extension_types', type: 'list', listType: 'enum', enumType: 'extension-type-enum', mandatory: true, notNull: true, },
-      { name: 'extension_properties', type: 'list', listType: 'string' }
     ]
   },
   {

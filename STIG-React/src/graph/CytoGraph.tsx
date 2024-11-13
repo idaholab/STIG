@@ -304,6 +304,12 @@ const Graph: React.FC = () => {
     // Show STIX props panel on node/edge click
     cyInstance?.on('click', 'node, edge', (evt: cytoscape.EventObject) => {
         const ele: cytoscape.CollectionReturnValue = evt.target;
+        if (ele.data("raw_data")===undefined || ele.data("raw_data") == "visual_edge"){
+            return;
+        }
+        // if (!isPropertyPanelOpen) {
+        //     togglePropertyPanel();
+        // }
         cyInstance.$(':selected').unselect();
         if (ele.empty() || ele.length > 1) {
             return;

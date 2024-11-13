@@ -6,7 +6,6 @@ ALL RIGHTS RESERVED
 
 
 import { JSONValue } from 'cytoscape';
-import { StigSettings } from '../storage/stig-settings-storage';
 import { getLayoutSettingsFromStore, GraphUtils, runGraphLayout } from './GraphUtils';
 import { StixObject } from '@/types/stixTypes/StixObject';
 import { SafeStringify } from './SafeStringify';
