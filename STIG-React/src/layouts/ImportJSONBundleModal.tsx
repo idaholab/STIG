@@ -24,8 +24,9 @@ const ImportJSONBundleModal: React.FC = () => {
         }
         
         let need_layout = false;
+        let sym = Symbol();
         for await (const { alert, layout } of gen) {
-            addNotification(alert.message, alert.type);
+            sym = addNotification(alert.message, alert.type, sym);
             need_layout = need_layout || layout;
         }
         if (need_layout && cyInstance) {

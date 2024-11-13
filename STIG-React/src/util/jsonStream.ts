@@ -79,7 +79,6 @@ export class JSONStream {
   private slashed  = false;
   private unicodeI = 0;
   private unicodeS = "";
-  private top    = -1;
 
   private call(s: STATE, ret: STATE) {
     this.state_stack.push(ret);
@@ -91,20 +90,23 @@ export class JSONStream {
   }
 
   private closevalue(value: unknown) {
-    const { key, val: parent } = this.value_stack[this.top];
+    const l = this.value_stack.length;
+    if (l === 0) {
+      return { depth: 0, value };
+    }
+    const { key, val: parent } = this.value_stack[l-1];
     this.ret();
     if (Array.isArray(parent)) {
       const index = parent.length;
       parent.push(value);
-      return { depth: this.value_stack.length, parent, key: index, value };
+      return { depth: l, parent, key: index, value };
     }
     parent[key] = value;
-    return { depth: this.value_stack.length, parent, key, value };
+    return { depth: l, parent, key, value };
   }
 
   private closenested() {
     const { val: obj } = this.value_stack.pop()!;
-    this.top--;
     return this.closevalue(obj);
   }
 
@@ -146,10 +148,9 @@ export class JSONStream {
         ret = this.value_stack.pop()?.val;
     }
 
-    while (this.top > -1) {
+    while (this.value_stack.length) {
       yield this.closevalue(ret);
       ret = this.value_stack.pop()?.val;
-      this.top--;
     }
 
     this.state_stack = [];
@@ -217,7 +218,6 @@ export class JSONStream {
           
           // Open Object      
           this.value_stack.push({ key: "", val: {} });
-          this.top++;
 
           this.state = STATE.OPEN_KEY;
           //fallthrough
@@ -240,7 +240,7 @@ export class JSONStream {
           }
           if (c !== Char.colon) throw new Error("Malformed object; key must be followed by colon.");
           
-          this.value_stack[this.top].key = this.buffer;
+          this.value_stack[this.value_stack.length-1].key = this.buffer;
           this.call(STATE.VALUE, STATE.PARSE_OBJECT);
           continue char;
 
@@ -267,7 +267,6 @@ export class JSONStream {
           
           // Open Array
           this.value_stack.push({ key: "", val: [] });
-          this.top++;
 
           this.call(STATE.VALUE, STATE.PARSE_ARRAY);
           if (!isWhitespace(c)) continue state;

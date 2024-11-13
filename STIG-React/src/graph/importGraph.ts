@@ -59,27 +59,31 @@ export async function * importGraphToDB(files: ArrayLike<File>): AsyncGenerator<
     const rels: StixRelationshipObject[] = [];
     for (const file of Array.from(files)) {
         let ncommit = 0, rcommit = 0, errors = 0;
+
+        async function commitBatch() {
+            const { nodes: nc, edges: rc, errors: ec } = await commit(nodes, rels);
+            if (rc === 0 && nc === 0 && ec === 0) return [];
+            rcommit += rc;
+            ncommit += nc;
+            errors += ec;
+            nodes.length = 0;
+            rels.length = 0;
+        
+            return [{
+                alert: {
+                    message: `Imported ${ncommit} node(s) and ${rcommit} edge(s) from ${file.name} with ${errors} error(s).`,
+                    type: errors === 0 ? "success" : "warning" as AlertType
+                },
+                layout: false,
+            }];
+        }
+
         yield { alert: { message: `Reading ${file.name}`, type: "info" }, layout: false };
         for await (const obj of streamStixFile(file)) {
             (isRelationship(obj) ? rels : nodes).push(obj);
-            if (nodes.length + rels.length >= 50) {
-                const { nodes: nc, edges: rc, errors: ec } = await commit(nodes, rels);
-                if (rc === 0 && nc === 0 && ec === 0) continue;
-                rcommit += rc;
-                ncommit += nc;
-                errors += ec;
-                nodes.length = 0;
-                rels.length = 0;
-
-                yield {
-                    alert: {
-                        message: `Imported ${ncommit} node(s) and ${rcommit} edge(s) from ${file.name} with ${errors} error(s).`,
-                        type: errors === 0 ? "success" : "warning"
-                    },
-                    layout: false,
-                };
-            }
+            if (nodes.length + rels.length >= 100) yield * await commitBatch();
         }
+        if (nodes.length + rels.length > 0) yield * await commitBatch();
         yield {
             alert: { message: `Imported all objects from ${file.name} with ${errors} error(s).`, type: "info" },
             layout: false,

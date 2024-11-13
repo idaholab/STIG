@@ -37,7 +37,8 @@ export async function * streamStixFile(file: File): AsyncGenerator<StixObject> {
       const chunk = decoder.decode(value);
       for (const { depth, parent, key, value } of parser.parse(chunk)) {
         if (depth !== 2) continue;
-        delete parent[key];
+        delete parent[key!];
+        parent.length = 0;
         yield value as StixObject;
       }
     } catch (e) {
