@@ -23,17 +23,20 @@ type Props = {
   children: React.ReactNode;
 };
 
+let globalNotifications: Notification[] = [];
+
 export const NotificationContextProvider: React.FC<Props> = ({ children }) => {
   const [notification, setNotification] = useState<Notification[]>([]);
+  globalNotifications = notification;
 
   const addNotification = (text: string, type: AlertType, sym?: symbol) => {
     let obj: Notification | undefined;
     if (typeof sym === 'symbol') {
-      obj = notification.find(n => n.s === sym && n.type === type);
+      obj = globalNotifications.find(n => n.s === sym && n.type === type);
       if (obj) {
         obj.text = text;
         obj.type = type;
-        setNotification(notification.slice());
+        setNotification(globalNotifications.slice());
         return sym;
       }
       obj = { text, type, s: sym };
@@ -41,16 +44,16 @@ export const NotificationContextProvider: React.FC<Props> = ({ children }) => {
       obj = {text, type, s: Symbol() };
     }
 
-    notification.push(obj);
-    if (notification.length > 10) {
-      notification.shift();
+    globalNotifications.push(obj);
+    if (globalNotifications.length > 10) {
+      globalNotifications.shift();
     }
-    setNotification(notification.slice());
+    setNotification(globalNotifications.slice());
     return obj.s;
   }
 
   const removeNotification = (i: number) => {
-    setNotification(notification.toSpliced(i,1));
+    setNotification(globalNotifications.toSpliced(i,1));
   }
 
   return (
