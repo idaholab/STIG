@@ -176,9 +176,9 @@ function submitter(nodes: NodeCollection, edges: EdgeCollection, addNotification
   const stix_nodes: StixObject[] = nodes.map(cycore2stix).filter(s => s !== undefined);
   const stix_edges = edges.map(cycore2stix).filter(s => s !== undefined) as StixRelationshipObject[];
   (async () => {
-    const [{ size: objs }, { size: rels}] = await commit(stix_nodes, stix_edges);
-    const toastType: AlertType = (objs + rels > 0) ? "success" : "warning";
-    addNotification(`Submitted ${objs}/${stix_nodes.length} node(s) and ${rels}/${stix_edges.length} edge(s)`, toastType);
+    const { nodes, edges, errors } = await commit(stix_nodes, stix_edges);
+    const toastType: AlertType = errors === 0 ? "success" : "warning";
+    addNotification(`Submitted ${nodes}/${stix_nodes.length} node(s) and ${edges}/${stix_edges.length} edge(s)`, toastType);
   })();
 }
 

@@ -5,17 +5,8 @@ import moment from 'moment';
 import { fromNeo4j, toNeo4j } from './stix2neo';
 import { isRelationship } from './isRelationship';
 import { StixObject } from '@/types/stixTypes/StixObject';
-import { STIGBundle } from '@/types/STIGBundle';
 import { StixRelationshipObject } from '@/types/stixTypes/StixRelationshipObject';
 import { Delta, DiffPatcher } from 'diffpatch';
-
-function setProperties(tx: ManagedTransaction, stix: Record<string, unknown>, cmd: string) {
-  const query = cmd +
-    Object.keys(stix).map(k => 'SET n.`' + k + '` = $`' + k + '`').join('\n') +
-    '\nRETURN n';
-  console.debug("Set Properties Query:", query);
-  return tx.run(query, stix);
-}
 
 function diffAgainstDB(patcher: DiffPatcher, obj: StixObject, query: string):  (s: Session) => Promise<[StixObject, Delta | undefined]> {
   return async (s: Session) => {
@@ -127,81 +118,64 @@ export class Neo4jStigDB implements StigDB {
    * @returns  Promise<string>
    * @memberof StigDB
    */
-  public uploadBundle(stix: STIGBundle): Promise<[Set<string>, Set<string>]> {
-    const nodes: StixObject[] = [];
-    const edges: StixRelationshipObject[] = [];
-    for (const obj of stix.objects) {
-      (isRelationship(obj) ? edges : nodes).push(obj as any);
-    }
-    return this.updateDB(nodes, edges);
-  }
-
-  /**
-   * @description Updates the database from the editor form
-   * @param {StixObject} stix
-   * @returns  Promise<string>
-   * @memberof StigDB
-   */
-  public async updateDB(stix_nodes: StixObject[], stix_edges: StixRelationshipObject[]): Promise<[Set<string>, Set<string>]> {
+  public async updateDB(stix_nodes: StixObject[], stix_edges: StixRelationshipObject[]): Promise<{ nodes: number; edges: number; errors: number; }> {
     const time = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
     return await this.wrapSession(async (s: Session) => {
-      const node_res = await s.executeWrite(async (tx: ManagedTransaction) =>
+      const node_res: number[] = await s.executeWrite((tx: ManagedTransaction) =>
+        
         Promise.all(stix_nodes.map(async (stix) => {
           (stix as StixObject).modified = time;
           if (!moment(stix.created).isValid()) {
             stix.created = time;
           }
           try {
-            const res = await tx.run('MATCH (n:stixnode {id:$id}) RETURN n', { id: stix.id });
-            const cmd = res.records.length === 0
-              ? 'MERGE (n:stixnode:`' + stix.type + '` {id:$id})\n'
-              : 'MATCH (n:stixnode {id:$id})\n';
-
-            await setProperties(tx, toNeo4j((stix as StixObject)), cmd);
-            return stix.id;
+            const query = 'MERGE (n {id:$id})\nSET n = $props\n'
+                        + 'SET n:stixnode:`'+stix.type+'`\nRETURN n';
+            const props = toNeo4j(stix);
+            delete props.type;
+            const res = await tx.run(query, { id: props.id, props });
+            return res.records.length === 1 ? 1 : 0;
           } catch (e) {
             console.error(e); // eslint-disable-line no-console
-            return '';
+            return 0;
           }
         }))
       );
 
-      const cnodes = new Set(node_res.filter(s => s !== ''));
+      const cnodes = node_res.reduce((p, n) => p + n, 0);
 
-      const edge_res = await s.executeWrite(async (tx: ManagedTransaction) =>
+      const edge_res: number[] = await s.executeWrite((tx: ManagedTransaction) =>
         Promise.all(stix_edges.map(async (stix) => {
-          if (!cnodes.has(stix.source_ref!)) {
-            console.error(`Source ref ${stix.source_ref} has not been committed`); // eslint-disable-line no-console
-            return '';
-          }
-          if (!cnodes.has(stix.target_ref!)) {
-            console.error(`Target ref ${stix.source_ref} has not been committed`); // eslint-disable-line no-console
-            return '';
-          }
-
           stix.modified = time;
           if (!moment(stix.created).isValid()) {
             stix.created = time;
           }
           try {
-            const res = await tx.run('MATCH ()-[n {id:$id}]->() RETURN n', { id: stix.id });
-            const cmd = res.records.length === 0
-              ? 'MATCH (a:stixnode {id:$source_ref}), (b:stixnode {id:$target_ref})\n' +
-              'MERGE (a)-[n:`' + stix.relationship_type + '` {id:$id}]->(b)\n'
-              : 'MATCH (n:stixnode {id:$id})\n';
+            const query = 'MATCH (a:stixnode {id:$srcid}),(b:stixnode {id:$dstid})\n'
+                        + 'MERGE (a)-[n:`' + stix.relationship_type + '` {id:$id}]->(b)\n'
+                        + 'SET n = $props\nRETURN n'
 
-            await setProperties(tx, stix as any, cmd);
-            return stix.id;
+            const props = toNeo4j((stix as StixObject));
+            delete props.type;
+            delete props.relationship_type;
+
+            const res = await tx.run(query, {
+              id: stix.id,
+              srcid: stix.source_ref,
+              dstid: stix.target_ref,
+              props,
+            });
+            return res.records.length === 1 ? 1 : 0;
           } catch (e) {
             console.error(e); // eslint-disable-line no-console
-            return '';
+            return 0;
           }
         }))
       );
 
-      const enodes = new Set(edge_res.filter(s => s !== ''));
+      const cedges = edge_res.reduce((p, n) => p + n, 0);
 
-      return [cnodes, enodes];
+      return { nodes: cnodes, edges: cedges, errors: stix_edges.length + stix_nodes.length - cnodes - cedges };
     });
   }
 

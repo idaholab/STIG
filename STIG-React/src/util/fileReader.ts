@@ -1,3 +1,6 @@
+import { StixObject } from "@/types/stixTypes/StixObject";
+import { JSONStream } from "./jsonStream";
+
 export async function readFiles(files: ArrayLike<File>, type: "text" | "url" = "text") {
   const filePromises = Array.from(files).map(file => {
     const { promise, resolve } = Promise.withResolvers<{name: string; data?: string }>();
@@ -21,4 +24,25 @@ export async function readFiles(files: ArrayLike<File>, type: "text" | "url" = "
   });
   
   return Promise.all(filePromises);
+}
+
+export async function * streamStixFile(file: File): AsyncGenerator<StixObject> {
+  const reader = file.stream().getReader();
+  const decoder = new TextDecoder();
+  const parser = new JSONStream();
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) return;
+    try {
+      const chunk = decoder.decode(value);
+      for (const { depth, parent, key, value } of parser.parse(chunk)) {
+        if (depth !== 2) continue;
+        delete parent[key];
+        yield value as StixObject;
+      }
+    } catch (e) {
+      console.error(e);
+      return;
+    }
+  }
 }

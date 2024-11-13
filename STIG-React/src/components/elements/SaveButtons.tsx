@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
 import { useNotificationContext } from "@/contexts/NotificationContext";
 import { useStixPropsContext } from "@/contexts/StixPropsContext";
-import { StixRelationshipObject } from "@/types/stixTypes/StixRelationshipObject";
 import { commit } from "@/util/DbFunctions";
 import { AlertType } from "./AlertComponent";
 import { DialogBasic } from "./DialogBasic";
@@ -24,13 +23,13 @@ const SaveButtons: React.FC = () => {
       if (selectedSTIXObject !== undefined) {
         (async () => {
           try {
-            const [{ size: objs }, { size: rels }] = await (
+            const { nodes, edges, errors } = await (
               isRelationship(selectedSTIXObject) ?
                 commit([], [selectedSTIXObject]) :
                 commit([selectedSTIXObject], [])
             );
-            const toastType: AlertType = (objs + rels > 0) ? "success" : "warning";
-            addNotification(`Submitted ${objs} node(s) and ${rels} edge(s)`, toastType);
+            const toastType: AlertType = errors === 0 ? "success" : "warning";
+            addNotification(`Submitted ${nodes} node(s) and ${edges} edge(s) with ${errors} error(s)`, toastType);
           } catch (err) {
             addNotification((err as Error).message, "warning");
           }

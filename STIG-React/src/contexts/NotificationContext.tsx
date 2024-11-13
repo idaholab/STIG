@@ -35,7 +35,8 @@ export const NotificationContextProvider: React.FC<Props> = ({ children }) => {
   }
 
   const removeNotification = (i: number) => {
-    setNotification(notification.toSpliced(i,1));
+    notification.splice(i,1);
+    setNotification(notification.slice());
   }
 
   return (
