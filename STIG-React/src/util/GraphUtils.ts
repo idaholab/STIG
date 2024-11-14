@@ -430,12 +430,6 @@ export function setupCtxMenu(
                 }
             },
             {
-                content: 'Copy Selected',
-                select: () => {
-                    graph_copy(cy);
-                }
-            },
-            {
                 content: 'Remove Selected',
                 select: () => {
                     cy.remove(':selected');
