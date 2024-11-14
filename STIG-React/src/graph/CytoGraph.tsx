@@ -305,10 +305,11 @@ const Graph: React.FC = () => {
     cyInstance?.on('click', 'node, edge', (evt: cytoscape.EventObject) => {
         const ele: cytoscape.CollectionReturnValue = evt.target;
         cyInstance.$(':selected').unselect();
-        if (ele.empty() || ele.length > 1) {
-            return;
-        }
-        setSelectedSTIXObject(ele.data("raw_data"));
+        if (ele.empty() || ele.length > 1) return;
+        const data = ele.data("raw_data");
+        if (!data) return;
+
+        setSelectedSTIXObject(data);
         setSelectionExists(true);
         setIsPropertyPanelOpen(true);
     });
