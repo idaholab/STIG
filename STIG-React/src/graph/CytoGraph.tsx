@@ -291,13 +291,11 @@ const Graph: React.FC = () => {
     // Auto Select the Added Node if nothing else is already selected.
     function autoSelectNewNode(cy: cytoscape.Core, addedNode: SingularElementReturnValue) {
         if (cy) {
-            const selectedNodes = cy.$(':selected');
-            if (selectedNodes.length === 0) {
-                addedNode.select();
-                setSelectedSTIXObject(addedNode.data("raw_data"));
-                setSelectionExists(true);
-                setIsPropertyPanelOpen(true);
-            }
+            cy.$(':selected').unselect();
+            addedNode.select();
+            setSelectedSTIXObject(addedNode.data("raw_data"));
+            setSelectionExists(true);
+            setIsPropertyPanelOpen(true);
         }
     }
 
