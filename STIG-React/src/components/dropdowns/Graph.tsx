@@ -65,74 +65,74 @@ function makeEmbeddedRelationships(cy: cytoscape.Core) {
   let to_add: ElementDefinition[] = [];
   nodes.each((ele) => {
     const obj = ele.data('raw_data');
-    if (obj === undefined) { console.debug("object is undefined"); return; }
-    if (obj.object_marking_refs !== undefined) { to_add.push(...add_visual_edge('object_marking_refs', obj.object_marking_refs, obj.id)); }
-    if (obj.created_by_ref !== undefined) { to_add.push(...add_visual_edge('created_by_ref', obj.created_by_ref, obj.id)); }
+    if (obj === undefined) { return; }
+    if (obj.object_marking_refs !== undefined) { to_add.push(...add_visual_edge(cy, 'object_marking_refs', obj.object_marking_refs, obj.id)); }
+    if (obj.created_by_ref !== undefined) { to_add.push(...add_visual_edge(cy, 'created_by_ref', obj.created_by_ref, obj.id)); }
     switch (obj.type) {
       case 'language-content':
-        to_add.push(...add_visual_edge('object_ref', obj.object_ref, obj.id));
+        to_add.push(...add_visual_edge(cy, 'object_ref',obj.object_ref, obj.id));
         break;
       case 'report':
       case 'opinion':
       case 'grouping':
       case 'note':
       case 'observed-data':
-        to_add.push(...add_visual_edge("object_refs", obj.object_refs, obj.id));
+        to_add.push(...add_visual_edge(cy, "object_refs", obj.object_refs, obj.id));
         break;
       case 'malware':
-        to_add.push(...add_visual_edge('operating_system_refs', obj.operating_system_refs, obj.id));
-        to_add.push(...add_visual_edge('sample_refs', obj.sample_refs, obj.id));
+        to_add.push(...add_visual_edge(cy, 'operating_system_refs', obj.operating_system_refs, obj.id));
+        to_add.push(...add_visual_edge(cy, 'sample_refs', obj.sample_refs, obj.id));
         break;
       case 'malware-analysis':
-        to_add.push(...add_visual_edge('host_vm_ref', obj.host_vm_ref, obj.id));
-        to_add.push(...add_visual_edge('operating_system_ref', obj.operating_system_ref, obj.id));
-        to_add.push(...add_visual_edge('installed_software_refs', obj.installed_software_refs, obj.id));
-        to_add.push(...add_visual_edge('analysis_sco_refs', obj.analysis_sco_refs, obj.id));
-        to_add.push(...add_visual_edge('sample_ref', obj.sample_ref, obj.id));
+        to_add.push(...add_visual_edge(cy, 'host_vm_ref', obj.host_vm_ref, obj.id));
+        to_add.push(...add_visual_edge(cy, 'operating_system_ref', obj.operating_system_ref, obj.id));
+        to_add.push(...add_visual_edge(cy, 'installed_software_refs', obj.installed_software_refs, obj.id));
+        to_add.push(...add_visual_edge(cy, 'analysis_sco_refs', obj.analysis_sco_refs, obj.id));
+        to_add.push(...add_visual_edge(cy, 'sample_ref', obj.sample_ref, obj.id));
         break;
       case 'directory':
-        to_add.push(...add_visual_edge('contains_refs', obj.contains_refs, obj.id));
+        to_add.push(...add_visual_edge(cy, 'contains_refs', obj.contains_refs, obj.id));
         break;
       case 'domain-name':
-        to_add.push(...add_visual_edge('resolves_to_refs', obj.resolves_to_refs, obj.id));
+        to_add.push(...add_visual_edge(cy, 'resolves_to_refs', obj.resolves_to_refs, obj.id));
         break;
       case 'email-addr':
-        to_add.push(...add_visual_edge('belongs_to_ref', obj.belongs_to_ref, obj.id));
+        to_add.push(...add_visual_edge(cy, 'belongs_to_ref', obj.belongs_to_ref, obj.id));
         break;
       case 'email-message':
-        to_add.push(...add_visual_edge('from_ref', obj.from_ref, obj.id));
-        to_add.push(...add_visual_edge('sender_ref', obj.sender_ref, obj.id));
-        to_add.push(...add_visual_edge('to_refs', obj.to_refs, obj.id));
-        to_add.push(...add_visual_edge('cc_refs', obj.cc_refs, obj.id));
-        to_add.push(...add_visual_edge('bcc_refs', obj.bcc_refs, obj.id));
-        to_add.push(...add_visual_edge('raw_email_ref', obj.raw_email_ref, obj.id));
+        to_add.push(...add_visual_edge(cy, 'from_ref', obj.from_ref, obj.id));
+        to_add.push(...add_visual_edge(cy, 'sender_ref', obj.sender_ref, obj.id));
+        to_add.push(...add_visual_edge(cy, 'to_refs', obj.to_refs, obj.id));
+        to_add.push(...add_visual_edge(cy, 'cc_refs', obj.cc_refs, obj.id));
+        to_add.push(...add_visual_edge(cy, 'bcc_refs', obj.bcc_refs, obj.id));
+        to_add.push(...add_visual_edge(cy, 'raw_email_ref', obj.raw_email_ref, obj.id));
         break;
       case 'file':
-        to_add.push(...add_visual_edge('parent_directory_ref', obj.parent_directory_ref, obj.id));
-        to_add.push(...add_visual_edge('contains_refs', obj.contains_refs, obj.id));
-        to_add.push(...add_visual_edge('content_ref', obj.content_ref, obj.id));
+        to_add.push(...add_visual_edge(cy, 'parent_directory_ref', obj.parent_directory_ref, obj.id));
+        to_add.push(...add_visual_edge(cy, 'contains_refs', obj.contains_refs, obj.id));
+        to_add.push(...add_visual_edge(cy, 'content_ref', obj.content_ref, obj.id));
         break;
       case 'ipv4-addr':
       case 'ipv6-addr':
-        to_add.push(...add_visual_edge('resolves_to_refs', obj.resolves_to_refs, obj.id));
-        to_add.push(...add_visual_edge('belongs_to_refs', obj.belongs_to_refs, obj.id));
+        to_add.push(...add_visual_edge(cy, 'resolves_to_refs', obj.resolves_to_refs, obj.id));
+        to_add.push(...add_visual_edge(cy, 'belongs_to_refs', obj.belongs_to_refs, obj.id));
         break;
       case 'network-traffic':
-        to_add.push(...add_visual_edge('src_ref', obj.src_ref, obj.id));
-        to_add.push(...add_visual_edge('dst_ref', obj.dst_ref, obj.id));
-        to_add.push(...add_visual_edge('src_payload_ref', obj.src_payload_ref, obj.id));
-        to_add.push(...add_visual_edge('dst_payload_ref', obj.dst_payload_ref, obj.id));
-        to_add.push(...add_visual_edge('encapsulates_refs', obj.encapsulates_refs, obj.id));
-        to_add.push(...add_visual_edge('encapsulated_by_ref', obj.encapsulated_by_ref, obj.id));
+        to_add.push(...add_visual_edge(cy, 'src_ref', obj.src_ref, obj.id));
+        to_add.push(...add_visual_edge(cy, 'dst_ref', obj.dst_ref, obj.id));
+        to_add.push(...add_visual_edge(cy, 'src_payload_ref', obj.src_payload_ref, obj.id));
+        to_add.push(...add_visual_edge(cy, 'dst_payload_ref', obj.dst_payload_ref, obj.id));
+        to_add.push(...add_visual_edge(cy, 'encapsulates_refs', obj.encapsulates_refs, obj.id));
+        to_add.push(...add_visual_edge(cy, 'encapsulated_by_ref', obj.encapsulated_by_ref, obj.id));
         break;
       case 'process':
-        to_add.push(...add_visual_edge('opened_connection_refs', obj.opened_connection_refs, obj.id));
-        to_add.push(...add_visual_edge('image_ref', obj.image_ref, obj.id));
-        to_add.push(...add_visual_edge('parent_ref', obj.parent_ref, obj.id));
-        to_add.push(...add_visual_edge('child_refs', obj.child_refs, obj.id));
+        to_add.push(...add_visual_edge(cy, 'opened_connection_refs', obj.opened_connection_refs, obj.id));
+        to_add.push(...add_visual_edge(cy, 'image_ref', obj.image_ref, obj.id));
+        to_add.push(...add_visual_edge(cy, 'parent_ref', obj.parent_ref, obj.id));
+        to_add.push(...add_visual_edge(cy, 'child_refs', obj.child_refs, obj.id));
       //NOTE: purposefully no break;
       case 'windows-registry-key':
-        to_add.push(...add_visual_edge('creator_user_ref', obj.creator_user_ref, obj.id));
+        to_add.push(...add_visual_edge(cy, 'creator_user_ref', obj.creator_user_ref, obj.id));
         break;
     }
   })
@@ -144,7 +144,7 @@ function makeEmbeddedRelationships(cy: cytoscape.Core) {
 }
 
 
-function add_visual_edge(label: string, field: string[] | string, objID: string) {
+function add_visual_edge(cy: cytoscape.Core, label: string, field: string[] | string, objID: string ) {
   let visualEdgeElemDefs: ElementDefinition[] = [];
   if (field !== undefined) {
 
@@ -166,14 +166,13 @@ function add_visual_edge(label: string, field: string[] | string, objID: string)
     };
 
     if (typeof field == "string") {
-      f_addVisualEdge(field);
+      //don't even try to add an edge if the target object doesn't exist
+      if (cy.$id(field).length == 1){f_addVisualEdge(field);}
     } else {
       for (const ref_id of field) {
-        f_addVisualEdge(ref_id);
+        if (cy.$id(ref_id).length == 1){f_addVisualEdge(ref_id);}
       }
     }
-  } else {
-    console.debug(objID, "is undefined for the field", label);
   }
   return visualEdgeElemDefs;
 }
