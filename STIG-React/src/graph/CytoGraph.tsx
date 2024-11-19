@@ -238,6 +238,8 @@ const Graph: React.FC = () => {
         const label = event.dataTransfer.getData('text');
         const imageUrl = event.dataTransfer.getData('imageUrl');
         const type = event.dataTransfer.getData('type');
+        if (!type) return;
+
         let position = cyContainerRef.current ? cyContainerRef.current.getBoundingClientRect() : { x: 0, y: 0 };
         const x = event.clientX - position.x;
         const y = event.clientY - position.y;
