@@ -46,17 +46,12 @@ const ButtonDBConnect: React.FC<ButtonDBConnectProps> = ({
                 setIsConnectProcessing(true);
                 if (dbProfile && dbProfile?.Id === connectedDBProfile?.Id) {
                     // Disconnect
-                    const successfulDisconnect = await disconnectFromNeo4jDB(connectedDBDriver);
+                    await disconnectFromNeo4jDB(connectedDBDriver);
                     close_db();
-                    if (successfulDisconnect) {
-                        setConnectedDBProfile(undefined);
-                        setConnectedDBDriver(undefined);
-                        dbProfile.LastDBOperationSuccessful = true;
-                        editDBConfig(dbProfile);
-                    } else {
-                        dbProfile.LastDBOperationSuccessful = false;
-                        editDBConfig(dbProfile);
-                    }
+                    setConnectedDBProfile(undefined);
+                    setConnectedDBDriver(undefined);
+                    dbProfile.LastDBOperationSuccessful = true;
+                    editDBConfig(dbProfile);
                 } else {
                     // Connect
                     if (dbProfile) {

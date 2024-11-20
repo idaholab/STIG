@@ -16,6 +16,7 @@ type Props = {
   onClose?: () => void; // Close handler
   showFormButtons?: boolean; // Show form buttons inside the form
   disabled?: boolean;
+  saveEnabled?: boolean;
   additionalButtonClasses?: string;
 };
 
@@ -32,6 +33,7 @@ export const DialogBasic: React.FC<Props> = ({
   onSave,
   onClose,
   showFormButtons = true,
+  saveEnabled = true,
   disabled,
   additionalButtonClasses
 }) => {
@@ -111,6 +113,7 @@ export const DialogBasic: React.FC<Props> = ({
               label={saveLabel}
               type="btn-primary"
               onClick={() => { handleCloseDialog(); onSave && onSave(); }}
+              disabled={!saveEnabled}
             />
           </div>
         )}

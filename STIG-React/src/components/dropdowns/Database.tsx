@@ -176,9 +176,9 @@ function submitter(nodes: NodeCollection, edges: EdgeCollection, addNotification
   const stix_nodes: StixObject[] = nodes.map(cycore2stix).filter(s => s !== undefined);
   const stix_edges = edges.map(cycore2stix).filter(s => s !== undefined) as StixRelationshipObject[];
   (async () => {
-    const [{ size: objs }, { size: rels}] = await commit(stix_nodes, stix_edges);
-    const toastType: AlertType = (objs + rels > 0) ? "success" : "warning";
-    addNotification(`Submitted ${objs}/${stix_nodes.length} node(s) and ${rels}/${stix_edges.length} edge(s)`, toastType);
+    const { nodes, edges, errors } = await commit(stix_nodes, stix_edges);
+    const toastType: AlertType = errors === 0 ? "success" : "warning";
+    addNotification(`Submitted ${nodes}/${stix_nodes.length} node(s) and ${edges}/${stix_edges.length} edge(s)`, toastType);
   })();
 }
 
@@ -204,10 +204,9 @@ function deleteSelectedNodes(
     const eW: EdgeCollection = selected.edgesWith(vis);
     const eS: EdgeCollection = cy.edges(':selected');
     
-    cy.$(':selected').forEach((ele) => {
-      void db_delete(ele.data('raw_data'));
-      cy.remove(ele);
-    });
+    const sel = cy.$(':selected');
+    sel.forEach(ele => void cy.remove(ele));
+    db_delete(sel.map(ele => ele.data('raw_data')));
     setSelectedSTIXObject(undefined);
     setIsPropertyPanelOpen(false);
     addNotification(`Deleted ${selected.length} object(s) and ${eW.length+eS.length} edge(s) from database`, 'success');

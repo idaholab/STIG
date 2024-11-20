@@ -23,7 +23,7 @@ import { setup_edge_handles, updateEdgeHandlesStyle } from './graphEdgeHandles';
 import { updateEdgeSelectedStyle, updateEdgeStyle } from './graphEdgeStyles';
 import { updateNodeSelectedStyle, updateNodeStyle } from './graphNodeStyles';
 import edgehandles from 'cytoscape-edgehandles';
-import { importGraph } from './importGraph';
+import { importGraphToView } from './importGraph';
 import { useNotificationContext } from '@/contexts/NotificationContext';
 
 cytoscape.use(viewUtilities);
@@ -223,7 +223,7 @@ const Graph: React.FC = () => {
             const files = Array.from(event.dataTransfer.files).filter(f => f.name.endsWith('.json'));
             if (files.length > 0) {
                 addNotification("Importing files....", "info");
-                const { alerts, layout } = await importGraph(cyInstance, event.dataTransfer.files);
+                const { alerts, layout } = await importGraphToView(cyInstance, event.dataTransfer.files);
                 for (const { message, type } of alerts) {
                     addNotification(message, type);
                 }

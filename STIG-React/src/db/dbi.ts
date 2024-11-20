@@ -1,7 +1,6 @@
 import { DBProfile } from '@/types/DBProfile';
 import { Neo4jStigDB } from './neo4j';
 import { StixObject } from '@/types/stixTypes/StixObject';
-import { STIGBundle } from '@/types/STIGBundle';
 import { StixRelationshipObject } from '@/types/stixTypes/StixRelationshipObject';
 import { Delta } from "diffpatch"
 
@@ -12,12 +11,11 @@ export abstract class StigDB {
 
   abstract getName(): string;
   abstract configure(config: DBProfile): Promise<void>;
-  abstract delete(stix: StixObject): Promise<void>;
+  abstract delete(stix: StixObject[]): Promise<void>;
   abstract traverseNodeIn(id: string): Promise<StixObject[]>;
   abstract traverseNodeOut(id: string): Promise<StixObject[]>;
   abstract getDiff(nodes: StixObject[], edges: StixRelationshipObject[]): Promise<[StixObject, Delta][]>;
-  abstract uploadBundle(stix: STIGBundle): Promise<[Set<string>, Set<string>]>;
-  abstract updateDB(stix_nodes: StixObject[], stix_edges: StixRelationshipObject[]): Promise<[Set<string>, Set<string>]>;
+  abstract updateDB(stix_nodes: StixObject[], stix_edges: StixRelationshipObject[]): Promise<{ nodes: number; edges: number; errors: number; }> ;
   abstract executeQuery(query: string): Promise<StixObject[]>;
   abstract close(): void;
   abstract is_closed(): boolean;
