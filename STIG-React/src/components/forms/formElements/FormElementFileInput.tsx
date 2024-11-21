@@ -42,27 +42,14 @@ const FormElementFileInput: React.FC<Props> = ({
   property
 }) => {
 
-  // Get the file's size as done in STIG Old
-  // (as done in the json-editor npm package)
-  const { selectedSTIXObject } = useStixPropsContext();
-  let fileSize = undefined;
-  if (selectedSTIXObject && property && selectedSTIXObject[property?.name]) {
-    fileSize = Math.floor(selectedSTIXObject[property?.name].length / 1.33333);
-  }
-  const [filename, setFilename] = useState(fileSize !== undefined ? 
-    `File Uploaded. Size: ${fileSize} bytes`
-    : ''
-  );
-
+  const [filename, setFilename] = useState('');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleButtonClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
-    if (onClick) {
-      onClick(event);
-    }
+    onClick && onClick(event);
   };
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -77,9 +64,6 @@ const FormElementFileInput: React.FC<Props> = ({
   };
 
   const [showInfo, setShowInfo] = useState(false);
-  const toggleInfo = () => {
-    setShowInfo(prevShowInfo => !prevShowInfo);
-  };
   const parentRef = useRef<HTMLDivElement>(null);
 
   return (
@@ -94,6 +78,7 @@ const FormElementFileInput: React.FC<Props> = ({
         <input
           type="text"
           value={filename}
+          placeholder={placeholder}
           readOnly
           className={`
           input
@@ -112,7 +97,6 @@ const FormElementFileInput: React.FC<Props> = ({
           ref={fileInputRef}
           className="hidden"
           onChange={handleFileChange}
-          placeholder={placeholder}
           accept={acceptedFileTypes}
         />
         <ButtonBasic
@@ -123,7 +107,7 @@ const FormElementFileInput: React.FC<Props> = ({
         />
         <InfoButton
           visible={includeInfo}
-          toggleInfo={toggleInfo}
+          toggleInfo={() => setShowInfo(prevShowInfo => !prevShowInfo)}
           additionalInfoClasses={`absolute top-0 right-0 ${additionalInfoClasses}`}
           additionalStyle={{ transform: 'translate(50%, -50%)' }}
           parentRef={parentRef}

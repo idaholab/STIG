@@ -223,11 +223,13 @@ const Graph: React.FC = () => {
             const files = Array.from(event.dataTransfer.files).filter(f => f.name.endsWith('.json'));
             if (files.length > 0) {
                 addNotification("Importing files....", "info");
-                const { alerts, layout } = await importGraphToView(cyInstance, event.dataTransfer.files);
-                for (const { message, type } of alerts) {
-                    addNotification(message, type);
+                let needsLayout = false;
+                let sym;
+                for await (const { alert: { message, type }, layout } of importGraphToView(cyInstance, event.dataTransfer.files)) {
+                    sym = addNotification(message, type, sym);
+                    needsLayout = needsLayout || layout;
                 }
-                if (layout) {
+                if (needsLayout) {
                     // Perform layout if some bundle had no metadata
                     runLayout(getStigLayoutSettingsFromStore(), cyInstance);
                 }

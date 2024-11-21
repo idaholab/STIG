@@ -33,6 +33,8 @@ const ImportJSONBundleModal: React.FC = () => {
             // Perform layout if some bundle had no metadata
             runLayout(getStigLayoutSettingsFromStore(), cyInstance);
         }
+        // Make sure selections don't persist across closing and re-opening the dialog
+        setSelectedFiles([]);
     };
 
     return <DialogBasic
