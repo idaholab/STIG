@@ -18,23 +18,21 @@ const StixPropsPanel: React.FC = () => {
   // Used to determine which STIX properties the selected STIX object can have
   const [stixTypeProps, setStixTypeProps] = useState<SchemaSTIXProperty[]>([]);
 
-  return (
-    <div className={`drawer flex flex-col w-full h-full p-4 overflow-y-scroll scrollbar`}>
-      <PropsPanelHeader
-        selectedProperties={selectedProperties}
-        setSelectedProperties={setSelectedProperties}
-        stixTypeProps={stixTypeProps}
-        setStixTypeProps={setStixTypeProps}
-        setIsShowingJson={setShowJson}
-      />
-      <FormSTIXPropsPanel
-        selectedProperties={selectedProperties}
-        stixTypeProps={stixTypeProps}
-        showJson={showJson}
-      />
-      <SaveButtons />
-    </div>
-  );
+  return <div className={`drawer flex flex-col w-full h-full p-4 overflow-y-scroll scrollbar`}>
+    <PropsPanelHeader
+      selectedProperties={selectedProperties}
+      setSelectedProperties={setSelectedProperties}
+      stixTypeProps={stixTypeProps}
+      setStixTypeProps={setStixTypeProps}
+      setIsShowingJson={setShowJson}
+    />
+    <FormSTIXPropsPanel
+      selectedProperties={selectedProperties}
+      stixTypeProps={stixTypeProps}
+      showJson={showJson}
+    />
+    <SaveButtons />
+  </div>;
 };
 
 function PropsPanelHeader({ selectedProperties, setSelectedProperties, 
@@ -50,13 +48,13 @@ function PropsPanelHeader({ selectedProperties, setSelectedProperties,
 
   const [stixTypeDesc, setStixTypeDesc] = useState<SchemaSTIXClass>();
   useEffect(() => {
-    const schemaObject = schema.find(c => { return c.name === selectedSTIXObject?.type; });
+    const schemaObject = schema.find(c => c.name === selectedSTIXObject?.type);
     if (typeof schemaObject !== 'object') {
       return;
     }
 
     const properties = getSTIXPropsFromSchema(schemaObject);
-    const propertyDescriptionObject = propertyDescriptions.find((group) => group.name === selectedSTIXObject?.type);
+    const propertyDescriptionObject = propertyDescriptions.find(group => group.name === selectedSTIXObject?.type);
     if (propertyDescriptionObject) {
       const propertyDescriptions = getSTIXPropDescriptions(propertyDescriptionObject);
       properties.forEach((prop) => {
@@ -70,7 +68,7 @@ function PropsPanelHeader({ selectedProperties, setSelectedProperties,
   // When stixTypeProps gets set for the object or changes
   // when clicking on a different object, update the selectedProperties
   useEffect(() => {
-    setSelectedProperties(stixTypeProps.filter(prop => prop.mandatory));
+    setSelectedProperties(stixTypeProps.filter(prop => prop.mandatory || selectedSTIXObject?.[prop.name] != undefined));
   }, [stixTypeProps]);
 
   function toggleJSONPropertyView() {
@@ -78,33 +76,31 @@ function PropsPanelHeader({ selectedProperties, setSelectedProperties,
     setShowJsonPanel(isShowingJson);
     setIsShowingJson(isShowingJson)
   }
-  return (
-    <>
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-xl">
-          {selectedSTIXObject && ("type" in selectedSTIXObject) ?
-            stencilItems.find(stencilItem => {
-              return selectedSTIXObject.type === stencilItem.id
-            })?.alt ?? "Relationship"
-            : null
-          }
-        </h1>
-      </div>
-      <div className='flex gap-2 mb-4'>
-        <ButtonSTIXJSON size={'standard'} showJson={showJsonPanel} setIsShowingJson={toggleJSONPropertyView} />
-        {!showJsonPanel ?
-          <FormSTIXPropertySelection
-            propertyOptions={stixTypeProps}
-            selectedProperties={selectedProperties}
-            setSelectedProperties={setSelectedProperties}
-            size={'standard'}
-          />
+  return <>
+    <div className="flex justify-between items-center mb-4">
+      <h1 className="text-xl">
+        {selectedSTIXObject && ("type" in selectedSTIXObject) ?
+          stencilItems.find(stencilItem => {
+            return selectedSTIXObject.type === stencilItem.id
+          })?.alt ?? "Relationship"
           : null
         }
-      </div>
-      <p className='mb-4'>{stixTypeDesc?.description}</p>
-    </>
-  );
+      </h1>
+    </div>
+    <div className='flex gap-2 mb-4'>
+      <ButtonSTIXJSON size={'standard'} showJson={showJsonPanel} setIsShowingJson={toggleJSONPropertyView} />
+      {!showJsonPanel ?
+        <FormSTIXPropertySelection
+          propertyOptions={stixTypeProps}
+          selectedProperties={selectedProperties}
+          setSelectedProperties={setSelectedProperties}
+          size={'standard'}
+        />
+        : null
+      }
+    </div>
+    <p className='mb-4'>{stixTypeDesc?.description}</p>
+  </>;
 }
 
 export default StixPropsPanel;

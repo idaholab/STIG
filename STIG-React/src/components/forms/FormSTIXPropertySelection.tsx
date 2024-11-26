@@ -50,7 +50,7 @@ const FormSTIXPropertySelection: React.FC<Props> = ({
                 if (event.target.checked) {
                   selectedProperties.push(prop);
                   // Need this so that React recognizes the variable change and updates the checkbox
-                  setSelectedProperties([...selectedProperties]);
+                  setSelectedProperties(selectedProperties.toSorted((a, b) => a.name.localeCompare(b.name)));
                 } else {
                   setSelectedProperties(
                     selectedProperties.filter(selectedProperty => selectedProperty.name !== prop.name)

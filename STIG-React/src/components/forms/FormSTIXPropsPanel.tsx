@@ -20,60 +20,52 @@ export default function FormSTIXPropsPanel({ selectedProperties, stixTypeProps, 
     selectedProperty.name === "modified"
   );
 
-  return (
+  return showJson ?
+    <StixJSONView stixTypeProps={stixTypeProps} /> :
     <>
-      {showJson ?
-        <StixJSONView 
-          stixTypeProps={stixTypeProps}
+      <div className='flex gap-4 mb-2'>
+        {createdProperty ?
+          <FormElementDatePicker
+            value={selectedSTIXObject && selectedSTIXObject["created"] !== undefined ?
+              selectedSTIXObject["created"]
+              : ""
+            }
+            onChange={([date]) => {
+              handlePropertyUpdate(date, "created", selectedSTIXObject, setSelectedSTIXObject, setSelectionExists);
+            }}
+            className={'flex flex-auto' + (modifiedProperty ? " max-w-[50%]" : "")}
+            additionalInputClasses={"select-sm px-2 w-full"}
+            includeInfo={!!createdProperty.propertyDescription && createdProperty.propertyDescription?.length > 0}
+            infoText={createdProperty.propertyDescription}
+            label={'created'}
+          />
+          : null
+        }
+
+        {modifiedProperty ?
+          <FormElementDatePicker
+            value={selectedSTIXObject && selectedSTIXObject["modified"] !== undefined ?
+              selectedSTIXObject["modified"]
+              : ""
+            }
+            onChange={([date]) => {
+              handlePropertyUpdate(date, "modified", selectedSTIXObject, setSelectedSTIXObject, setSelectionExists);
+            }}
+            className={'flex flex-auto' + (createdProperty ? " max-w-[50%]" : "")}
+            additionalInputClasses='select-sm px-2 w-full'
+            includeInfo={!!modifiedProperty.propertyDescription && modifiedProperty.propertyDescription?.length > 0}
+            infoText={modifiedProperty.propertyDescription}
+            label={'modified'}
+          />
+          : null
+        }
+      </div>
+
+      {selectedProperties.map((selectedProperty, i) =>
+        <STIXPropertyRenderer
+          key={i}
+          property={selectedProperty}
         />
-        :
-        <>
-          <div className='flex gap-4 mb-2'>
-            {createdProperty ?
-              <FormElementDatePicker
-                value={selectedSTIXObject && selectedSTIXObject["created"] !== undefined ?
-                  selectedSTIXObject["created"]
-                  : ""
-                }
-                onChange={([date]) => {
-                  handlePropertyUpdate(date, "created", selectedSTIXObject, setSelectedSTIXObject, setSelectionExists);
-                }}
-                className={'flex flex-auto' + (modifiedProperty ? " max-w-[50%]" : "")}
-                additionalInputClasses={"select-sm px-2 w-full"}
-                includeInfo={!!createdProperty.propertyDescription && createdProperty.propertyDescription?.length > 0}
-                infoText={createdProperty.propertyDescription}
-                label={'created'}
-              />
-              : null
-            }
-
-            {modifiedProperty ?
-              <FormElementDatePicker
-                value={selectedSTIXObject && selectedSTIXObject["modified"] !== undefined ?
-                  selectedSTIXObject["modified"]
-                  : ""
-                }
-                onChange={([date]) => {
-                  handlePropertyUpdate(date, "modified", selectedSTIXObject, setSelectedSTIXObject, setSelectionExists);
-                }}
-                className={'flex flex-auto' + (createdProperty ? " max-w-[50%]" : "")}
-                additionalInputClasses='select-sm px-2 w-full'
-                includeInfo={!!modifiedProperty.propertyDescription && modifiedProperty.propertyDescription?.length > 0}
-                infoText={modifiedProperty.propertyDescription}
-                label={'modified'}
-              />
-              : null
-            }
-          </div>
-
-          {selectedProperties.map((selectedProperty, i) =>
-            <STIXPropertyRenderer
-              key={i}
-              property={selectedProperty}
-            />
-          )}
-        </>
-      }
-    </>
-  );
+      )}
+    </>;
 }
