@@ -11,7 +11,8 @@ import { SchemaSTIXClass } from "@/types/stixSchemaTypes/SchemaSTIXClass";
 import { schema } from "./schema";
 import { StixObject } from "@/types/stixTypes/StixObject";
 import { SchemaSTIXProperty } from "@/types/stixSchemaTypes/SchemaSTIXProperty";
-
+import { enum_options } from "./enumOptions";
+import { open_vocab_options } from "./openVocabOptions";
 function stixTypeCheck(prop: SchemaSTIXProperty, v: unknown): boolean {
   if (prop.mandatory && v === undefined) return false;
   if (!prop.notNull && v === null) return true;
@@ -35,19 +36,19 @@ function stixTypeCheck(prop: SchemaSTIXProperty, v: unknown): boolean {
 function stixTypeDefaults(prop: SchemaSTIXProperty): unknown {
   if (!prop.notNull) return null;
   switch (prop.type) {
-    case 'string':
-    case 'enum':
+    case 'string': return prop.default!== undefined ? prop.default : undefined ; 
+    case 'enum': return prop.enumType !== undefined ? enum_options[prop.enumType][0] : ""
     case 'timestamp': // TODO: make this more precise
     case 'identifier': // TODO: make this more precise
-    case 'binary': return "";
-    case 'boolean': return false;
-    case 'list': return [];
+    case 'binary': return undefined;
+    case 'boolean': return prop.default !== undefined ? prop.default : false;
+    case 'list': return prop.default !== undefined ? prop.default : undefined;
     case 'float':
     case 'integer': return prop.min ?? 0;
-    case 'dictionary': return {};
+    case 'open-vocab': return prop.openVocabType !== undefined ? open_vocab_options[prop.openVocabType][0] : ""
+    case 'dictionary': 
     case 'hashes':
-    case 'open-vocab':
-    default: return "";
+    default: return undefined;
   }
 }
 
