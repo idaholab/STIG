@@ -11,7 +11,7 @@ export type SchemaSTIXProperty = {
   openVocabType?: SchemaSTIXOpenVocabType;
   mandatory?: boolean;
   notNull?: boolean;
-  default?: string;
+  default?: any;
   min?: number;
   max?: number;
   propertyDescription?: string;

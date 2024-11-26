@@ -1,4 +1,5 @@
 import { SchemaSTIXClass } from "@/types/stixSchemaTypes/SchemaSTIXClass";
+import { enum_options } from "./enumOptions";
 
 //TODO: fix any string types that should be more specific into their proper thing
 export const schema: SchemaSTIXClass[] = [
@@ -12,7 +13,7 @@ export const schema: SchemaSTIXClass[] = [
       { name: 'created_by_ref', type: 'identifier' },
       { name: 'created', type: 'timestamp', mandatory: true, notNull: true, },
       { name: 'modified', type: 'timestamp', mandatory: true, notNull: true, },
-      { name: 'revoked', type: 'boolean', default: 'False' },
+      { name: 'revoked', type: 'boolean', default: false },
       { name: 'labels', type: 'list', listType: 'string' },
       { name: 'confidence', type: 'integer', min: 0, max: 100, },
       { name: 'lang', type: 'string' },
@@ -32,7 +33,7 @@ export const schema: SchemaSTIXClass[] = [
       { name: 'object_marking_refs', type: 'list', listType: 'identifier' },
       { name: 'granular_markings', type: 'list', listType: 'granular-marking' },
       { name: 'extensions', type: 'dictionary' },
-      { name: 'defanged', type: 'boolean', default: 'False' }
+      { name: 'defanged', type: 'boolean', default: false}
     ]
   },
   {
@@ -46,7 +47,7 @@ export const schema: SchemaSTIXClass[] = [
       { name: 'created_by_ref', type: 'identifier' },
       { name: 'created', type: 'timestamp', mandatory: true, notNull: true, },
       { name: 'modified', type: 'timestamp', mandatory: true, notNull: true, },
-      { name: 'revoked', type: 'boolean', default: 'False' },
+      { name: 'revoked', type: 'boolean', default: false ,},
       { name: 'labels', type: 'list', listType: 'string' },
       { name: 'confidence', type: 'integer', min: 0, max: 100, },
       { name: 'lang', type: 'string' },
@@ -74,7 +75,7 @@ export const schema: SchemaSTIXClass[] = [
       { name: 'created_by_ref', type: 'identifier' },
       { name: 'created', type: 'timestamp', mandatory: true, notNull: true, },
       { name: 'modified', type: 'timestamp', mandatory: true, notNull: true, },
-      { name: 'revoked', type: 'boolean', default: 'False' },
+      { name: 'revoked', type: 'boolean', default: false },
       { name: 'labels', type: 'list', listType: 'string' },
       { name: 'confidence', type: 'integer' },
       { name: 'lang', type: 'string' },
@@ -89,7 +90,7 @@ export const schema: SchemaSTIXClass[] = [
       { name: 'sighting_of_ref', type: 'identifier', mandatory: true, notNull: true, },
       { name: 'observed_data_refs', type: 'list', listType: 'identifier' }, // observed data scos
       { name: 'where_sighted_refs', type: 'list', listType: 'identifier' }, // identity or location sdos
-      { name: 'summary', type: 'boolean', default: 'False' }
+      { name: 'summary', type: 'boolean', default: false }
 
     ]
   },
@@ -103,7 +104,7 @@ export const schema: SchemaSTIXClass[] = [
       { name: 'created_by_ref', type: 'identifier' },
       { name: 'created', type: 'timestamp', mandatory: true, notNull: true, },
       { name: 'modified', type: 'timestamp', mandatory: true, notNull: true, },
-      { name: 'revoked', type: 'boolean', default: 'False' },
+      { name: 'revoked', type: 'boolean', default: false },
       { name: 'labels', type: 'list', listType: 'string' },
       { name: 'confidence', type: 'integer' },
       { name: 'external_references', type: 'list', listType: 'external-reference' },
@@ -140,7 +141,7 @@ export const schema: SchemaSTIXClass[] = [
       { name: 'modified', type: 'timestamp', mandatory: true, notNull: true, },
       { name: 'created_by_ref', type: 'identifier' },
       
-      { name: 'revoked', type: 'boolean', default: 'False' },
+      { name: 'revoked', type: 'boolean', default: false },
       { name: 'labels', type: 'list', listType: 'string' },
       { name: 'external_references', type: 'list', listType: "external-reference" },
       { name: 'object_marking_refs', type: 'list', listType: 'identifier' },
@@ -150,7 +151,8 @@ export const schema: SchemaSTIXClass[] = [
       { name: 'description', type: 'string' },
       { name: 'schema', type: 'string', mandatory: true, notNull: true, },
       { name: 'version', type: 'string', mandatory: true, notNull: true, },
-      { name: 'extension_types', type: 'list', listType: 'enum', enumType: 'extension-type-enum', mandatory: true, notNull: true, },
+      { name: 'extension_types', type: 'list', listType: 'enum', enumType: 'extension-type-enum', 
+        mandatory: true, notNull: true, default: [enum_options['extension-type-enum'][0]]},
       { name: 'extension_properties', type: 'list', listType: 'string' },
 
     ]
@@ -179,7 +181,7 @@ export const schema: SchemaSTIXClass[] = [
     description: "Attack Patterns are a type of TTP that describe ways that adversaries attempt to compromise targets.",
     superClasses: ['core'],
     properties: [
-      { name: 'name', type: 'string', mandatory: true, notNull: true, },
+      { name: 'name', type: 'string', mandatory: true, notNull: true, default: "attack-pattern"},
       { name: 'description', type: 'string' },
       { name: 'aliases', type: 'list' },
       { name: 'kill_chain_phases', type: 'list', listType: 'kill-chain-phase' }
@@ -218,7 +220,7 @@ export const schema: SchemaSTIXClass[] = [
     description: "A Campaign is a grouping of adversary behavior that describes a set of malicious activities or attacks that occur over a period of time against a specific set of targets.",
     superClasses: ['core'],
     properties: [
-      { name: 'name', type: 'string', mandatory: true, notNull: true, },
+      { name: 'name', type: 'string', mandatory: true, notNull: true, default:"campaign"},
       { name: 'description', type: 'string' },
       { name: 'aliases', type: 'list', listType: 'string' },
       { name: 'first_seen', type: 'timestamp' },
@@ -261,7 +263,7 @@ export const schema: SchemaSTIXClass[] = [
     description: "A Course of Action is an action taken either to prevent an attack or to respond to an attack that is in progress. ",
     superClasses: ['core'],
     properties: [
-      { name: 'name', type: 'string', mandatory: true, notNull: true, },
+      { name: 'name', type: 'string', mandatory: true, notNull: true, default: 'course-of-action'},
       { name: 'description', type: 'string' },
       // { name: 'action', type: 'string' }, //ATTN: This is reserved, but not currently implemented in the spec
     ]
@@ -327,7 +329,7 @@ export const schema: SchemaSTIXClass[] = [
     description: "The Email Message Object represents an instance of an email message.",
     superClasses: ['cyber-observable-core'],
     properties: [
-      { name: 'is_multipart', type: 'boolean', mandatory: true, notNull: true, },
+      { name: 'is_multipart', type: 'boolean', mandatory: true, notNull: true },
       { name: 'date', type: 'timestamp' },
       { name: 'content_type', type: 'string' },
       { name: 'from_ref', type: 'identifier' },
@@ -403,7 +405,7 @@ export const schema: SchemaSTIXClass[] = [
     description: "Identities can represent actual individuals, organizations, or groups (e.g., ACME, Inc.) as well as classes of individuals, organizations, or groups.",
     superClasses: ['core'],
     properties: [
-      { name: 'name', type: 'string', mandatory: true, notNull: true },
+      { name: 'name', type: 'string', mandatory: true, notNull: true, default: 'identity'},
       { name: 'description', type: 'string' },
       { name: 'roles', type: 'list', listType: 'string' },
       { name: 'identity_class', type: 'open-vocab', openVocabType: "identity-class-ov" },
@@ -430,7 +432,7 @@ export const schema: SchemaSTIXClass[] = [
     properties: [
       { name: 'name', type: 'string' },
       { name: 'description', type: 'string' },
-      { name: 'indicator_types', type: 'list', listType: 'open-vocab', openVocabType: 'indicator-type-ov', notNull: true, },
+      { name: 'indicator_types', type: 'list', listType: 'open-vocab', openVocabType: 'indicator-type-ov', notNull: true},
       { name: 'pattern', type: 'string', mandatory: true, notNull: true, },
       { name: 'pattern_type', type: 'open-vocab', openVocabType: 'pattern-type-ov', notNull: true, },
       { name: 'pattern_version', type: 'string' },
@@ -444,7 +446,7 @@ export const schema: SchemaSTIXClass[] = [
     description: "Infrastructure objects describe systems, software services, and associated physical or virtual resources.",
     superClasses: ['core'],
     properties: [
-      { name: 'name', type: 'string', mandatory: true, notNull: true, },
+      { name: 'name', type: 'string', mandatory: true, notNull: true, default: 'infrastructure'},
       { name: 'description', type: 'string' },
       { name: 'infrastructure_types', type: 'list', listType: 'open-vocab', openVocabType: "infrastructure-type-ov" },
       { name: 'aliases', type: 'list', listType: 'string' },
@@ -458,7 +460,7 @@ export const schema: SchemaSTIXClass[] = [
     description: "An Intrusion Set is a grouped set of adversary behavior and resources with common properties that is believed to be orchestrated by a single organization.",
     superClasses: ['core'],
     properties: [
-      { name: 'name', type: 'string', mandatory: true, notNull: true, },
+      { name: 'name', type: 'string', mandatory: true, notNull: true, default: 'intrusion-set'},
       { name: 'description', type: 'string' },
       { name: 'aliases', type: 'list', listType: 'string' },
       { name: 'first_seen', type: 'timestamp' },
@@ -610,7 +612,7 @@ export const schema: SchemaSTIXClass[] = [
       { name: 'dst_ref', type: 'identifier' },
       { name: 'src_port', type: 'integer', min: 0, max: 65535, },
       { name: 'dst_port', type: 'integer', min: 0, max: 65535, },
-      { name: 'protocols', type: 'list', listType: 'string', mandatory: true },
+      { name: 'protocols', type: 'list', listType: 'string', mandatory: true, notNull: true },
       { name: 'src_byte_count', type: 'integer', min: 0, },
       { name: 'dst_byte_count', type: 'integer', min: 0, },
       { name: 'src_packets', type: 'integer', min: 0, },
@@ -709,7 +711,7 @@ export const schema: SchemaSTIXClass[] = [
     description: "The Software Object represents high-level properties associated with software, including software products.",
     superClasses: ['cyber-observable-core'],
     properties: [
-      { name: 'name', type: 'string', mandatory: true, notNull: true, },
+      { name: 'name', type: 'string', mandatory: true, notNull: true, default: 'software'},
       { name: 'cpe', type: 'string' },
       { name: 'languages', type: 'list', listType: 'string' },
       { name: 'vendor', type: 'string' },
@@ -733,7 +735,7 @@ export const schema: SchemaSTIXClass[] = [
     description: "Threat Actors are actual individuals, groups, or organizations believed to be operating with malicious intent.",
     superClasses: ['core'],
     properties: [
-      { name: 'name', type: 'string', mandatory: true, notNull: true, },
+      { name: 'name', type: 'string', mandatory: true, notNull: true, default: 'threat-actor'},
       { name: 'description', type: 'string' },
       { name: 'threat_actor_types', type: 'list', listType: 'open-vocab', openVocabType: 'threat-actor-type-ov' },
       { name: 'aliases', type: 'list', listType: 'string' },
@@ -753,7 +755,7 @@ export const schema: SchemaSTIXClass[] = [
     description: "Tools are legitimate software that can be used by threat actors to perform attacks.",
     superClasses: ['core'],
     properties: [
-      { name: 'name', type: 'string', mandatory: true, notNull: true, },
+      { name: 'name', type: 'string', mandatory: true, notNull: true, default: 'tool'},
       { name: 'description', type: 'string' },
       { name: 'tool_types', type: 'list', listType: 'open-vocab', openVocabType: 'tool-type-ov' },
       { name: 'aliases', type: 'list', listType: 'string' },
@@ -807,7 +809,7 @@ export const schema: SchemaSTIXClass[] = [
     description: "A Vulnerability is a mistake in software that can be directly used by a hacker to gain access to a system or network.",
     superClasses: ['core'],
     properties: [
-      { name: 'name', type: 'string', mandatory: true, notNull: true, },
+      { name: 'name', type: 'string', mandatory: true, notNull: true, default:'vulnerability'},
       { name: 'description', type: 'string' },
     ]
   },
