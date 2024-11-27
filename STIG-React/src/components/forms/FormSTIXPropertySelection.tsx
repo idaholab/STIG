@@ -27,18 +27,22 @@ const FormSTIXPropertySelection: React.FC<Props> = ({
 
   useEffect(() => {
     setButtonSize((size === 'standard') ? 'btn-sm' : 'btn-xs');
-    setButtonContainerSize((size === 'standard') ? 'w-[125px]' : 'w-[105px] h-[24px]');
+    setButtonContainerSize((size === 'standard') ? 'w-[150px]' : 'w-[105px] h-[24px]');
   }, [size]);
+
+  const [filter, setFilter] = useState('');
 
   return <Dropdown
     title="Properties"
+    filter={filter}
+    setFilter={setFilter}
     includeDropdownArrow
     additionalClasses={`flex items-center bg-white dark:bg-neutralc-900 border border-black dark:border-transparent rounded-md ${buttonContainerSize}`}
     additionalButtonClasses={`${buttonSize}`}
   >
     <div className="relative">
       <div className={`max-h-60 overflow-y-scroll scrollbar w-60 ${includeAddNew ? 'mb-8' : ''} `}>
-        {propertyOptions?.toSorted((a, b) => a.name.localeCompare(b.name)).map((prop, i) =>
+        {propertyOptions?.filter(o => o.name.includes(filter)).toSorted((a, b) => a.name.localeCompare(b.name)).map((prop, i) =>
           <label key={i} className="label cursor-pointer dark:text-neutralc-300 dark:hover:text-white dark:hover:bg-neutralc-800 text-neutralc-700 hover:text-black hover:bg-neutralc-200">
             <span className="mr-2">{prop.name}</span>
             <input

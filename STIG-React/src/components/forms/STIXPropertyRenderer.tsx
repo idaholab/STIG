@@ -85,173 +85,160 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
       // TODO: Make it possible to clear each type of form input
       switch (property.type) {
         case "binary":
-          return (
-            <FormElementFileInput
-              buttonLabel='Upload'
-              onFileChange={async (files) => {
-                const fileData = (await readFiles(files, "url"))[0];
-                if (fileData.data) {
-                  handlePropertyUpdate(fileData.data, property.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists);
-                } else {
-                  addNotification(`Error loading ${fileData.name}`, "error");
-                }
-              }}
-              additionalInputClasses='input-sm'
-              additionalBtnClasses='btn-sm'
-              includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
-              infoText={property?.propertyDescription}
-              className='mb-2'
-              property={property}
-            />
-          );
-        case "boolean":
-          return (
-            <FormElementSelect
-              placeholder=''
-              value={selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ?
-                selectedSTIXObject[property.name]
-                : ""
+          return <FormElementFileInput
+            buttonLabel='Upload'
+            onFileChange={async (files) => {
+              const fileData = (await readFiles(files, "url"))[0];
+              if (fileData.data) {
+                handlePropertyUpdate(fileData.data, property.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists);
+              } else {
+                addNotification(`Error loading ${fileData.name}`, "error");
               }
-              options={["true", "false"]}
-              onChange={(event) => {
-                handlePropertyUpdate(event.target.value === "true" ? true : false,
-                  property.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists);
-              }}
-              additionalClasses='dark:bg-neutralc-900 w-full'
-              includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
-              infoText={property?.propertyDescription}
+            }}
+            additionalInputClasses='input-sm'
+            additionalBtnClasses='btn-sm'
+            includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
+            infoText={property?.propertyDescription}
+            className='mb-2'
+            property={property}
+          />;
+        case "boolean":
+          return <FormElementSelect
+            placeholder=''
+            value={selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ?
+              selectedSTIXObject[property.name]
+              : ""
+            }
+            options={["true", "false"]}
+            onChange={(event) => {
+              handlePropertyUpdate(event.target.value === "true" ? true : false,
+                property.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists);
+            }}
+            additionalClasses='dark:bg-neutralc-900 w-full'
+            includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
+            infoText={property?.propertyDescription}
+            property={property}
+            showTypeSelector={showTypeSelector}
+            onTypeChange={onTypeChange}
+            className='mb-2'
+          />;
+        case "dictionary":
+          return <StixPropsContextProvider>
+            <FormElementSTIXDictionary
+              dictionary={selectedSTIXObject ? selectedSTIXObject[property.name] : undefined}
+              parentSTIXObject={selectedSTIXObject}
+              setParentSTIXObject={setSelectedSTIXObject}
+              parentDictionaryProps={parentDictionaryProps}
+              setParentDictionaryProps={setParentDictionaryProps}
+              parentSelectedProperties={parentSelectedProperties}
+              setParentSelectedProperties={setParentSelectedProperties}
               property={property}
               showTypeSelector={showTypeSelector}
-              onTypeChange={onTypeChange}
-              className='mb-2'
             />
-          );
-        case "dictionary":
-          return (
-            <StixPropsContextProvider>
-              <FormElementSTIXDictionary
-                dictionary={selectedSTIXObject ? selectedSTIXObject[property.name] : undefined}
-                parentSTIXObject={selectedSTIXObject}
-                setParentSTIXObject={setSelectedSTIXObject}
-                parentDictionaryProps={parentDictionaryProps}
-                setParentDictionaryProps={setParentDictionaryProps}
-                parentSelectedProperties={parentSelectedProperties}
-                setParentSelectedProperties={setParentSelectedProperties}
-                property={property}
-                showTypeSelector={showTypeSelector}
-              />
-            </StixPropsContextProvider>
-          );
+          </StixPropsContextProvider>;
         case "enum":
         case "open-vocab":
-          return (
-            <FormElementSelectOther
-              placeholder=''
-              value={selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ?
-                selectedSTIXObject[property.name]
-                : ""
-              }
-              options={property.openVocabType ? open_vocab_options[property.openVocabType] :
-                property.enumType ? enum_options[property.enumType] : []}
-              onSelect={(event) => {
-                handlePropertyUpdate(event.target.value, property.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists);
-              }}
-              onInputChange={(event) => {
-                handlePropertyUpdate(event.target.value, property.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists);
-              }}
-              onSwitchToSuggested={() => {
-                handlePropertyUpdate(undefined, property.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists);
-              }}
-              className="mb-2"
-              inputClassName="pl-2 mb-2"
-              includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
-              infoText={property?.propertyDescription}
-              additionalClasses="dark:bg-neutralc-900 w-full"
-              additionalInputClasses="select-sm dark:bg-neutralc-900"
-              property={property}
-              isOtherAnOption={property.openVocabType ? true : false}
-              otherOptionText="Other"
-              otherOptionLabel={`Custom ${property?.name} Value`}
-            />
-          );
+          return <FormElementSelectOther
+            placeholder=''
+            value={selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ?
+              selectedSTIXObject[property.name]
+              : ""
+            }
+            options={property.openVocabType ? open_vocab_options[property.openVocabType] :
+              property.enumType ? enum_options[property.enumType] : []}
+            onSelect={(event) => {
+              handlePropertyUpdate(event.target.value, property.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists);
+            }}
+            onInputChange={(event) => {
+              handlePropertyUpdate(event.target.value, property.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists);
+            }}
+            onSwitchToSuggested={() => {
+              handlePropertyUpdate(undefined, property.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists);
+            }}
+            className="mb-2"
+            inputClassName="pl-2 mb-2"
+            includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
+            infoText={property?.propertyDescription}
+            additionalClasses="dark:bg-neutralc-900 w-full"
+            additionalInputClasses="select-sm dark:bg-neutralc-900"
+            property={property}
+            isOtherAnOption={property.openVocabType ? true : false}
+            otherOptionText="Other"
+            otherOptionLabel={`Custom ${property?.name} Value`}
+          />;
         case "float":
         case "integer":
-          return (
-            <FormElementTextInput
-              type="number"
-              min={property.min}
-              max={property.max}
-              value={selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ?
-                selectedSTIXObject[property.name]
-                : ""
-              }
-              onChange={(event) => {
-                let number: string | number = event.target.value;
-                if (number !== "") {
-                  number = Number(event.target.value);
-                  if (property.max !== undefined && number > property.max) {
-                    number = property.max;
-                  } else if (property.min !== undefined && number < property.min) {
-                    number = property.min;
-                  }
+          return <FormElementTextInput
+            type="number"
+            min={property.min}
+            max={property.max}
+            value={selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ?
+              selectedSTIXObject[property.name]
+              : ""
+            }
+            onChange={(event) => {
+              let number: string | number = event.target.value;
+              if (number !== "") {
+                number = Number(event.target.value);
+                if (property.max !== undefined && number > property.max) {
+                  number = property.max;
+                } else if (property.min !== undefined && number < property.min) {
+                  number = property.min;
                 }
-                handlePropertyUpdate(number, property.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists, cyInstance);
-              }}
-              additionalInputClasses='select-sm dark:bg-neutralc-900'
-              includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
-              infoText={property?.propertyDescription}
-              property={property}
-              showTypeSelector={showTypeSelector}
-              onTypeChange={onTypeChange}
-              className='mb-2'
-            />
-          );
+              }
+              handlePropertyUpdate(number, property.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists, cyInstance);
+            }}
+            additionalInputClasses='select-sm dark:bg-neutralc-900'
+            includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
+            infoText={property?.propertyDescription}
+            property={property}
+            showTypeSelector={showTypeSelector}
+            onTypeChange={onTypeChange}
+            className='mb-2'
+          />;
         case "hashes":
-          return (
-            <FormElementSTIXHashes
-              property={property}
-            />
-          );
+          return <FormElementSTIXHashes property={property} />;
         case "hex":
         case "identifier":
         case "string":
-          return (
-            <FormElementTextInput
-              type="text"
-              value={selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ?
-                selectedSTIXObject[property.name]
-                : ""
-              }
-              onChange={(event) => {
-                handlePropertyUpdate(event.target.value, property.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists, cyInstance);
-              }}
-              disabled={false}
-              additionalInputClasses='select-sm dark:bg-neutralc-900'
-              includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
-              infoText={property?.propertyDescription}
-              className="mb-2"
-              property={property}
-              showTypeSelector={showTypeSelector}
-              onTypeChange={onTypeChange}
-              showValidationError={
-                selectedSTIXObject ?
-                  property.type === "hex" ?
-                    !stixHexValidator(selectedSTIXObject[property.name])
-                    : property.type === "identifier" ?
-                      !stixIdentifierValidator(selectedSTIXObject[property.name])
-                      : false
-                  : false
-              }
-              validationErrorText={
+          return <FormElementTextInput
+            type="text"
+            value={selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ?
+              selectedSTIXObject[property.name]
+              : ""
+            }
+            onChange={(event) => {
+              handlePropertyUpdate(event.target.value, property.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists, cyInstance);
+            }}
+            disabled={property.name === "id" || property.name === "type" ||
+              property.name === "source_ref" || property.name === "target_ref" ||
+              property.name === "spec_version"
+            }
+            additionalInputClasses='select-sm dark:bg-neutralc-900'
+            includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
+            infoText={property?.propertyDescription}
+            className="mb-2"
+            property={property}
+            showTypeSelector={showTypeSelector}
+            onTypeChange={onTypeChange}
+            showValidationError={
+              selectedSTIXObject ?
                 property.type === "hex" ?
-                  `${property.name} is not a valid STIX hex value. 
-                  Double check that it contains an even number of hexadecimal characters
-                  (0-9 and lowercase a-f).`
-                  : `${property.name} is not a valid STIX identifier. 
-                  Double check that it matches the format \"object-type--UUID\".`
-              }
-            />
-          );
+                  !stixHexValidator(selectedSTIXObject[property.name])
+                  : property.type === "identifier" ?
+                    !stixIdentifierValidator(selectedSTIXObject[property.name])
+                    : false
+                : false
+            }
+            validationErrorText={
+              property.type === "hex" ?
+                `${property.name} is not a valid STIX hex value. 
+                Double check that it contains an even number of hexadecimal characters
+                (0-9 and lowercase a-f).`
+                : `${property.name} is not a valid STIX identifier. 
+                Double check that it matches the format \"object-type--UUID\".`
+            }
+          />;
         case "list":
           // TODO: Develop way to delete items (and reorganize list, 
           // clear list, and remove last item?)
@@ -263,39 +250,31 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
                     : property.listType === "kill-chain-phase" ? "+ Kill Chain Phase"
                       : property.listType === "windows-registry-value-type" ? "+ Windows Registry Key Value"
                         : "+ Item";
-          return (
-            <FormElementSTIXList
-              btnLabel={addNewItemLabel}
-              property={property}
-              showTypeSelector={showTypeSelector}
-              onTypeChange={onTypeChange}
-            />
-          );
+          return <FormElementSTIXList
+            btnLabel={addNewItemLabel}
+            property={property}
+            showTypeSelector={showTypeSelector}
+            onTypeChange={onTypeChange}
+          />;
         case "timestamp":
-          return (
-            <FormElementDatePicker
-              value={selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ?
-                selectedSTIXObject[property.name]
-                : ""
-              }
-              onChange={(_, date) => {
-                handlePropertyUpdate(date, property.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists);
-              }}
-              className='w-full mb-2'
-              additionalInputClasses='select-sm w-full'
-              includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
-              infoText={property?.propertyDescription}
-              property={property}
-              showTypeSelector={showTypeSelector}
-              onTypeChange={onTypeChange}
-            />
-          );
+          return <FormElementDatePicker
+            value={selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ?
+              selectedSTIXObject[property.name]
+              : ""
+            }
+            onChange={([date]) => {
+              handlePropertyUpdate(date, property.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists, cyInstance);
+            }}
+            className='w-full mb-2'
+            additionalInputClasses='select-sm w-full'
+            includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
+            infoText={property?.propertyDescription}
+            property={property}
+            showTypeSelector={showTypeSelector}
+            onTypeChange={onTypeChange}
+          />;
         case "x509-v3-extensions-type":
-          return (
-            <FormElementSTIXX509V3Extensions
-              property={property}
-            />
-          );
+          return <FormElementSTIXX509V3Extensions property={property} />;
       }
   }
 }
