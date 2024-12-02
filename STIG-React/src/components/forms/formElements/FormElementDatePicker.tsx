@@ -56,7 +56,6 @@ const FormElementDatePicker: React.FC<Props> = ({
           data-enable-time
           options={{
             time_24hr: true,
-            allowInput: true,
             dateFormat: "Z"
           }}
           value={value}
@@ -68,6 +67,7 @@ const FormElementDatePicker: React.FC<Props> = ({
           additionalInfoClasses={`absolute top-0 right-0 ${additionalInfoClasses}`}
           additionalStyle={{ transform: 'translate(50%, -50%)' }}
           parentRef={parentRef}
+          infoIcon={infoIcon}
         />
       </div>
       {

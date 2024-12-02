@@ -279,8 +279,8 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
                 selectedSTIXObject[property.name]
                 : ""
               }
-              onChange={([date]) => {
-                handlePropertyUpdate(date, property.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists, cyInstance);
+              onChange={(_, date) => {
+                handlePropertyUpdate(date, property.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists);
               }}
               className='w-full mb-2'
               additionalInputClasses='select-sm w-full'

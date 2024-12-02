@@ -52,7 +52,7 @@ export default function FormSTIXPropsPanel({ selectedProperties, stixTypeProps, 
               selectedSTIXObject[property.name]
               : ""
             }
-            onChange={([date]) => {
+            onChange={(_, date) => {
               handlePropertyUpdate(date, property.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists);
             }}
             className={'flex flex-auto' + (property ? " max-w-[50%]" : "")}

@@ -77,10 +77,9 @@ const FormElementSTIXX509V3Extensions: React.FC<Props> = ({
               selectedSTIXObject[property.name][x509V3ExtensionsProperty] ?? ""
               : ""
             }
-            onChange={([date]) => {
-              handlePropertyUpdate(date, property.name, 
-                selectedSTIXObject, setSelectedSTIXObject, setSelectionExists, undefined, x509V3ExtensionsProperty
-              );
+            onChange={(_, date) => {
+              handlePropertyUpdate(date, property.name, selectedSTIXObject,
+                setSelectedSTIXObject, setSelectionExists, undefined, x509V3ExtensionsProperty);
             }}
             className='ml-4'
             additionalInputClasses='select-sm w-full'
