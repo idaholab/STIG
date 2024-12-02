@@ -44,11 +44,14 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
   const { cyInstance } = useStigContext();
 
   switch (property.name) {
+    case "id":
+    case "type":
+    case "spec_version":
+    case "source_ref":
+    case "target_ref":
     case "created":
     case "modified":
-      return (
-        null
-      );
+      return null;
     case "relationship_type":
       return (
         <FormElementSelect
@@ -223,10 +226,7 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
               onChange={(event) => {
                 handlePropertyUpdate(event.target.value, property.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists, cyInstance);
               }}
-              disabled={property.name === "id" || property.name === "type" ||
-                property.name === "source_ref" || property.name === "target_ref" ||
-                property.name === "spec_version"
-              }
+              disabled={false}
               additionalInputClasses='select-sm dark:bg-neutralc-900'
               includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
               infoText={property?.propertyDescription}
