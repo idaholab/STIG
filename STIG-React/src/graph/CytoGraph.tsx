@@ -25,6 +25,8 @@ import { updateNodeSelectedStyle, updateNodeStyle } from './graphNodeStyles';
 import edgehandles from 'cytoscape-edgehandles';
 import { importGraphToView } from './importGraph';
 import { useNotificationContext } from '@/contexts/NotificationContext';
+import { calcRelTypes } from '@/util/calcSTIXRelTypes';
+import { StixRelationshipObject } from '@/types/stixTypes/StixRelationshipObject';
 
 cytoscape.use(viewUtilities);
 cytoscape.use(cxtmenu);
@@ -351,20 +353,6 @@ const Graph: React.FC = () => {
 
     // Handler for when an edge is created via the graph editor
     cyInstance?.on('add', 'edge', (evt: cytoscape.EventObject) => {
-        const my_map = new Map();
-
-        my_map.set('attack-pattern', 'uses');
-        my_map.set('campaign', 'uses');
-        my_map.set('course-of-action', 'mitigates');
-        my_map.set('identity', 'located-at');
-        my_map.set('indicator', 'indicates');
-        my_map.set('infrastructure', 'consists-of');
-        my_map.set('intrusion-set', 'uses');
-        my_map.set('malware', 'targets');
-        my_map.set('malware-analysis', 'analysis-of');
-        my_map.set('threat-actor', 'uses');
-        my_map.set('tool', 'targets');
-
         const ele = evt.target;
         // first check to see if the edge has been completed
         // if either end of the edge doesn't have raw_data it hasn't been completed
@@ -374,15 +362,7 @@ const Graph: React.FC = () => {
 
         const input_data = ele.data('raw_data');
         if (input_data === undefined) {
-            const src_obj_type = ele.source().data('raw_data').type;
-            let default_relationship = '';
-            if (my_map.has(src_obj_type)) {
-                default_relationship = my_map.get(src_obj_type);
-            } else {
-                default_relationship = 'related-to';
-            }
-
-            const raw_data = {
+            const raw_data: StixRelationshipObject = {
                 // get source node
                 source_ref: ele.source().data('raw_data').id,
                 // get target node
@@ -391,11 +371,12 @@ const Graph: React.FC = () => {
                 created: moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
                 modified: moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
                 id: 'relationship--' + ele.id(),
-                relationship_type: (default_relationship),
+                relationship_type: '',
                 spec_version: "2.1"
             };
+            raw_data.relationship_type = calcRelTypes(raw_data)[0];
             ele.data("raw_data", raw_data);
-            ele.data('label', default_relationship);
+            ele.data('label', raw_data.relationship_type);
             //   ele.data('saved', false);
         }
         ele.classes('edge');

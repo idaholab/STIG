@@ -2,7 +2,6 @@
 
 import { StigDB } from "@/db/dbi";
 import { DBProfile } from "@/types/DBProfile";
-import { STIGBundle } from "@/types/STIGBundle";
 import { StixObject } from "@/types/stixTypes/StixObject";
 import { StixRelationshipObject } from "@/types/stixTypes/StixRelationshipObject";
 import { Delta } from "diffpatch";

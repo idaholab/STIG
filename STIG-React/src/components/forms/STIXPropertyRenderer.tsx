@@ -23,6 +23,7 @@ import { stixHexValidator } from "@/util/stixHexValidator";
 import { stixIdentifierValidator } from "@/util/stixIdentifierValidator";
 import { readFiles } from "@/util/fileReader";
 import { useNotificationContext } from "@/contexts/NotificationContext";
+import { calcRelTypes } from "@/util/calcSTIXRelTypes";
 
 export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
   parentDictionaryProps, setParentDictionaryProps,
@@ -58,9 +59,7 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
           value={selectedSTIXObject && "relationship_type" in selectedSTIXObject ?
             selectedSTIXObject.relationship_type : ""
           }
-          // TODO: Figure out what determines which of these options are choices
-          // and implement as part of schema.ts or here
-          options={["uses", "targets", "delivers", "related-to", "created-by", "derived-from", "duplicate-of"]}
+          options={calcRelTypes(selectedSTIXObject)}
           onChange={(event) => {
             handlePropertyUpdate(event.target.value, property.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists);
             // Get cytoscape element (by id)
