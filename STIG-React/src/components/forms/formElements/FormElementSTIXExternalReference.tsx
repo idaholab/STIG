@@ -1,6 +1,6 @@
 import React from 'react';
 import FormElementTextInput from './FormElementTextInput';
-import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
+import { SchemaSTIXListProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
 import { StixPropsContextProvider, useStixPropsContext } from '@/contexts/StixPropsContext';
 import { propertyDescriptions } from '@/stix/propertyDescriptions';
 import { getSTIXPropDescriptions } from '@/stix/getSTIXPropDescriptions';
@@ -10,7 +10,7 @@ import FormElementSTIXHashes from './FormElementSTIXHashes';
 type Props = {
   externalReference: ExternalReference;
   externalReferenceIndex: number;
-  property: SchemaSTIXProperty;
+  property: SchemaSTIXListProperty;
 };
 
 const FormElementSTIXExternalReference: React.FC<Props> = ({

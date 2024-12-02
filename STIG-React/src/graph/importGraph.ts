@@ -54,7 +54,7 @@ export async function * importGraphToView(cyInstance: Core, files: ArrayLike<Fil
     }
 }
 
-export async function * importGraphToDB(files: ArrayLike<File>): AsyncGenerator<ImportResult> {
+export async function * importGraphToDB(files: ArrayLike<File>): AsyncGenerator<ImportResult, undefined, undefined> {
     const nodes: StixObject[] = [];
     const rels: StixRelationshipObject[] = [];
     for (const file of Array.from(files)) {

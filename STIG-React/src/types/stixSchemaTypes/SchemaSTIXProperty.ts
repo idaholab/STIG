@@ -1,3 +1,5 @@
+import { GranularMarking } from "../stixTypes/GranularMarking";
+import { KillChainPhase } from "../stixTypes/KillChainPhase";
 import { SchemaSTIXEnumType } from "./SchemaSTIXEnumType";
 import { SchemaSTIXOpenVocabType } from "./SchemaSTIXOpenVocabType";
 
@@ -23,6 +25,9 @@ export type SchemaSTIXType =
   "timestamp" | // A time value (date and time).
   "x509-v3-extensions-type";
 
+export type SchemaSTIXStringType =
+  "string" | "binary" | "hex" | "timestamp" | "external-reference" | "identifier";
+
 // These type names correspond to STIX types
 // that show up as list of type SchemaSTIXListType
 // in our schema.ts file.
@@ -31,36 +36,23 @@ export type SchemaSTIXListType =
   "kill-chain-phase" | "email-mime-part-type" | "enum" | "open-vocab" |
   "windows-registry-value-type";
 
-export type SchemaSTIXGranularMarkingType = {
-  lang?: string;
-  marking_ref: string;
-  selectors: string[];
-};
-
-export type SchemaSTIXProperty = {
+export type BaseSchemaSTIXProperty = {
   name: string;
   mandatory?: boolean;
   notNull?: boolean;
   propertyDescription?: string;
-} & ({
-  type: "binary" | "hex" | "string" | "external-reference" | "identifier" | "kill-chain-phase" | "timestamp";
-  default?: string;
-} | {
-  type: "boolean";
-  default?: boolean;
- } | {
-  type: "dictionary";
-  default?: Record<string, any>;
- } | {
-  type: "hashes";
+}
+
+export type HashAlgorithmOV = "MD5" | "SHA-1" | "SHA-256" | "SHA-512" | "SHA3-256" | "SHA3-512" | "SSDEEP" | "TLSH";
+
+export type SchemaSTIXListProperty = BaseSchemaSTIXProperty & ({
+  type: "list";
+  listType: SchemaSTIXStringType | "email-mime-part-type" | "windows-registry-value-type";
   default?: string[];
- } | {
-  type: "observable-container" | "x509-v3-extensions-type";
-  default?: any;
 } | {
   type: "list";
-  listType: "string" | "external-reference" | "identifier" | "kill-chain-phase" | "email-mime-part-type" | "windows-registry-value-type";
-  default?: any[];
+  listType: "kill-chain-phase";
+  default?: KillChainPhase[];
 } | {
   type: "list";
   listType: "enum";
@@ -74,7 +66,27 @@ export type SchemaSTIXProperty = {
 } | {
   type: "list";
   listType: "granular-marking"
-  default?: SchemaSTIXGranularMarkingType[];
+  default?: GranularMarking[];
+});
+
+export type SchemaSTIXPrimitiveProperty = BaseSchemaSTIXProperty & ({
+  type: SchemaSTIXStringType;
+  default?: string;
+} | {
+  type: "kill-chain-phase";
+  default?: KillChainPhase;
+} | {
+  type: "boolean";
+  default?: boolean;
+ } | {
+  type: "dictionary";
+  default?: Record<string, any>;
+ } | {
+  type: "hashes";
+  default?: Record<HashAlgorithmOV,string>;
+ } | {
+  type: "observable-container" | "x509-v3-extensions-type";
+  default?: any; // TODO: create more specific types
 } | {
   type: "enum";
   enumType: SchemaSTIXEnumType;
@@ -89,3 +101,5 @@ export type SchemaSTIXProperty = {
   min?: number;
   max?: number;
 });
+
+export type SchemaSTIXProperty = SchemaSTIXListProperty | SchemaSTIXPrimitiveProperty;

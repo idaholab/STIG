@@ -1,6 +1,6 @@
 import React from 'react';
 import FormElementTextInput from './FormElementTextInput';
-import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
+import { SchemaSTIXListProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
 import { StixPropsContextProvider, useStixPropsContext } from '@/contexts/StixPropsContext';
 import { propertyDescriptions } from '@/stix/propertyDescriptions';
 import { getSTIXPropDescriptions } from '@/stix/getSTIXPropDescriptions';
@@ -10,7 +10,7 @@ import FormElementSTIXList from './FormElementSTIXList';
 type Props = {
   granularMarking: GranularMarking;
   granularMarkingIndex: number;
-  property: SchemaSTIXProperty;
+  property: SchemaSTIXListProperty;
 };
 
 const FormElementSTIXGranularMarking: React.FC<Props> = ({

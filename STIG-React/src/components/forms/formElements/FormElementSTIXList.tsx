@@ -22,7 +22,7 @@ import { EmailMIMEPartType } from '@/types/stixTypes/EmailMIMEPartType';
 import { ExternalReference } from '@/types/stixTypes/ExternalReference';
 import { GranularMarking } from '@/types/stixTypes/GranularMarking';
 import { KillChainPhase } from '@/types/stixTypes/KillChainPhase';
-import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
+import { SchemaSTIXListProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
 import { StixObject } from '@/types/stixTypes/StixObject';
 import { WindowsRegistryValueType } from '@/types/stixTypes/WindowsRegistryValueType';
 
@@ -30,7 +30,7 @@ import { stixIdentifierValidator } from '@/util/stixIdentifierValidator';
 
 type Props = {
   btnLabel: string | React.JSX.Element;
-  property: SchemaSTIXProperty;
+  property: SchemaSTIXListProperty;
   showTypeSelector?: boolean;
   onTypeChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   // The following are only needed when a list is 
@@ -38,7 +38,7 @@ type Props = {
   parentPropertyName?: string;
   parentPropertyIndex?: number;
   parentSTIXObject?: StixObject | undefined;
-  setParentSTIXObject?: React.Dispatch<React.SetStateAction<StixObject | undefined>>;
+  setParentSTIXObject?: (obj?: StixObject) => void;
 };
 
 const FormElementSTIXList: React.FC<Props> = ({
@@ -94,15 +94,43 @@ const FormElementSTIXList: React.FC<Props> = ({
                 emailMIMEPartIndex={i}
                 property={property}
               />
+          )
+          : property.listType === "enum" ?
+            selectedSTIXObject[property.name].map((listItem: string, i: number) =>
+              <FormElementSelectOther
+                key={i}
+                placeholder=''
+                value={listItem}
+                options={enum_options[property.enumType]}
+                onSelect={(event) => {
+                  handlePropertyUpdate(event.target.value, property.name,
+                    selectedSTIXObject, setSelectedSTIXObject, setSelectionExists, undefined, i);
+                }}
+                onInputChange={(event) => {
+                  handlePropertyUpdate(event.target.value, property.name,
+                    selectedSTIXObject, setSelectedSTIXObject, setSelectionExists, undefined, i);
+                }}
+                onSwitchToSuggested={() => {
+                  handlePropertyUpdate("", property.name,
+                    selectedSTIXObject, setSelectedSTIXObject, setSelectionExists, undefined, i);
+                }}
+                className="mb-2"
+                inputClassName="mb-2"
+                includeInfo={false}
+                additionalClasses="dark:bg-neutralc-900 w-full"
+                additionalInputClasses="select-sm dark:bg-neutralc-900"
+                isOtherAnOption={false}
+                otherOptionText="Other"
+                otherOptionLabel={`Custom ${property?.name} Value`}
+              />
             )
-            : property.listType === "enum" || property.listType === "open-vocab" ?
+            : property.listType === "open-vocab" ?
               selectedSTIXObject[property.name].map((listItem: string, i: number) =>
                 <FormElementSelectOther
                   key={i}
                   placeholder=''
                   value={listItem}
-                  options={property.openVocabType ? open_vocab_options[property.openVocabType] :
-                    property.enumType ? enum_options[property.enumType] : []}
+                  options={open_vocab_options[property.openVocabType]}
                   onSelect={(event) => {
                     handlePropertyUpdate(event.target.value, property.name,
                       selectedSTIXObject, setSelectedSTIXObject, setSelectionExists, undefined, i);
@@ -120,7 +148,7 @@ const FormElementSTIXList: React.FC<Props> = ({
                   includeInfo={false}
                   additionalClasses="dark:bg-neutralc-900 w-full"
                   additionalInputClasses="select-sm dark:bg-neutralc-900"
-                  isOtherAnOption={property.openVocabType ? true : false}
+                  isOtherAnOption={true}
                   otherOptionText="Other"
                   otherOptionLabel={`Custom ${property?.name} Value`}
                 />

@@ -13,7 +13,7 @@ type Props = {
   parentPropertyName?: string;
   parentPropertyIndex?: number;
   parentSTIXObject?: StixObject | undefined;
-  setParentSTIXObject?: React.Dispatch<React.SetStateAction<StixObject | undefined>>;
+  setParentSTIXObject?: (obj?: StixObject) => void;
 };
 
 const FormElementSTIXHashes: React.FC<Props> = ({
