@@ -183,7 +183,7 @@ export const schema: SchemaSTIXClass[] = [
     properties: [
       { name: 'name', type: 'string', mandatory: true, notNull: true, default: "attack-pattern"},
       { name: 'description', type: 'string' },
-      { name: 'aliases', type: 'list' },
+      { name: 'aliases', type: 'list', listType: 'string' },
       { name: 'kill_chain_phases', type: 'list', listType: 'kill-chain-phase' }
     ]
   },

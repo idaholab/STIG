@@ -10,9 +10,5 @@ export function stixHashKeyValidator(hashKey: string) {
   }
   // Check that the key is only made up of the 
   // characters a-z, A-Z, 0-9, -, and _
-  if (hashKey.match(/^[a-zA-Z0-9\-_]+$/)) {
-    return true;
-  } else {
-    return false;
-  }
+  return hashKey.match(/^[a-zA-Z0-9\-_]+$/) != null;
 }

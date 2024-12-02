@@ -137,15 +137,13 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
             />
           </StixPropsContextProvider>;
         case "enum":
-        case "open-vocab":
           return <FormElementSelectOther
             placeholder=''
             value={selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ?
               selectedSTIXObject[property.name]
               : ""
             }
-            options={property.openVocabType ? open_vocab_options[property.openVocabType] :
-              property.enumType ? enum_options[property.enumType] : []}
+            options={enum_options[property.enumType]}
             onSelect={(event) => {
               handlePropertyUpdate(event.target.value, property.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists);
             }}
@@ -162,7 +160,35 @@ export function STIXPropertyRenderer({ property, showTypeSelector, onTypeChange,
             additionalClasses="dark:bg-neutralc-900 w-full"
             additionalInputClasses="select-sm dark:bg-neutralc-900"
             property={property}
-            isOtherAnOption={property.openVocabType ? true : false}
+            isOtherAnOption={false}
+            otherOptionText="Other"
+            otherOptionLabel={`Custom ${property?.name} Value`}
+          />;
+        case "open-vocab":
+          return <FormElementSelectOther
+            placeholder=''
+            value={selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ?
+              selectedSTIXObject[property.name]
+              : ""
+            }
+            options={open_vocab_options[property.openVocabType]}
+            onSelect={(event) => {
+              handlePropertyUpdate(event.target.value, property.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists);
+            }}
+            onInputChange={(event) => {
+              handlePropertyUpdate(event.target.value, property.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists);
+            }}
+            onSwitchToSuggested={() => {
+              handlePropertyUpdate(undefined, property.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists);
+            }}
+            className="mb-2"
+            inputClassName="pl-2 mb-2"
+            includeInfo={!!property?.propertyDescription && property?.propertyDescription?.length > 0}
+            infoText={property?.propertyDescription}
+            additionalClasses="dark:bg-neutralc-900 w-full"
+            additionalInputClasses="select-sm dark:bg-neutralc-900"
+            property={property}
+            isOtherAnOption={true}
             otherOptionText="Other"
             otherOptionLabel={`Custom ${property?.name} Value`}
           />;
