@@ -18,7 +18,7 @@ const StixPropsPanel: React.FC = () => {
   // Used to determine which STIX properties the selected STIX object can have
   const [stixTypeProps, setStixTypeProps] = useState<SchemaSTIXProperty[]>([]);
 
-  return <div className={`drawer flex flex-col w-full h-full p-4 overflow-y-scroll scrollbar`}>
+  return <div className="drawer flex flex-col w-full h-full p-4">
     <PropsPanelHeader
       selectedProperties={selectedProperties}
       setSelectedProperties={setSelectedProperties}
