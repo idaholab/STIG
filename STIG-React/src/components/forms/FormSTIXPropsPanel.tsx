@@ -25,9 +25,10 @@ export default function FormSTIXPropsPanel({ selectedProperties, stixTypeProps, 
   return showJson ?
     <StixJSONView stixTypeProps={stixTypeProps} /> :
     <>
-      {[idProperty, typeProperty, specProperty, sourceProperty, targetProperty].map(property =>
+      {[idProperty, typeProperty, specProperty, sourceProperty, targetProperty].map((property, i) =>
         property ?
         <FormElementTextInput
+          key={i}
           type="text"
           value={selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ?
             selectedSTIXObject[property.name]
@@ -45,9 +46,10 @@ export default function FormSTIXPropsPanel({ selectedProperties, stixTypeProps, 
         : null
       )}
       <div className='flex gap-4 mb-2'>
-        {[createdProperty, modifiedProperty].map(property =>
+        {[createdProperty, modifiedProperty].map((property, i) =>
           property ?
           <FormElementDatePicker
+            key={i}
             value={selectedSTIXObject && selectedSTIXObject[property.name] !== undefined ?
               selectedSTIXObject[property.name]
               : ""
@@ -65,11 +67,6 @@ export default function FormSTIXPropsPanel({ selectedProperties, stixTypeProps, 
         )}
       </div>
 
-      {selectedProperties.map((selectedProperty, i) =>
-        <STIXPropertyRenderer
-          key={i}
-          property={selectedProperty}
-        />
-      )}
+      {selectedProperties.map((p, i) => <STIXPropertyRenderer key={i} property={p} />)}
     </>;
 }

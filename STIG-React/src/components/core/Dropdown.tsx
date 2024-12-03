@@ -33,7 +33,10 @@ const Dropdown: React.FC<DropdownProps> = ({
         placeholder={title}
         value={filter}
         onChange={e => setFilter && setFilter(e.target.value)}
-        className={`w-full rounded-md border border-neutralc-500 bg-neutralc-100 dark:bg-neutralc-900 placeholder-neutralc-500 dark:placeholder-neutralc-300`}
+        onFocus={e => e.target.placeholder = ""}
+        onBlur={(e => e.target.placeholder = title)}
+        style={{ marginLeft: "7px", outline: "none" }}
+        className={`w-full rounded-md bg-neutralc-100 dark:bg-neutralc-900 placeholder-neutralc-500 dark:placeholder-neutralc-300 hide-placeholder`}
       /> }
       {includeDropdownArrow && <span className="material-icons">arrow_drop_down</span>}
     </div>
