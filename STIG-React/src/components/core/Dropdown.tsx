@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import FormElementTextInput from '../forms/formElements/FormElementTextInput';
+import React from 'react';
 
 interface DropdownProps {
   title: string;
@@ -10,6 +9,7 @@ interface DropdownProps {
   additionalButtonClasses?: string;
   additionalOptionClasses?: string;
   children?: React.ReactNode;
+  fixed?: boolean;
 }
 
 const Dropdown: React.FC<DropdownProps> = ({
@@ -20,41 +20,40 @@ const Dropdown: React.FC<DropdownProps> = ({
   additionalClasses,
   additionalButtonClasses,
   additionalOptionClasses,
-  children
-}) => {
-  return <div className={`dropdown dropdown-bottom ${additionalClasses}`}>
-    <div
-      tabIndex={0}
-      role="button"
-      className={ filter === undefined ? `btn btn-ghost ${additionalButtonClasses}` : "flex"}
-    >
-      { filter === undefined ? <span>{title}</span> : <input
-        type="text"
-        placeholder={title}
-        value={filter}
-        onChange={e => setFilter && setFilter(e.target.value)}
-        onFocus={e => e.target.placeholder = ""}
-        onBlur={(e => e.target.placeholder = title)}
-        style={{ marginLeft: "7px", outline: "none" }}
-        className={`w-full rounded-md bg-neutralc-100 dark:bg-neutralc-900 placeholder-neutralc-500 dark:placeholder-neutralc-300 hide-placeholder`}
-      /> }
-      {includeDropdownArrow && <span className="material-icons">arrow_drop_down</span>}
-    </div>
-    <ul
-      tabIndex={0}
-      className={`dark:bg-neutralc-950 border border-neutralc-300 dark:border-none dropdown-content menu bg-neutralc-100 rounded-[4px] z-[1] p-2 shadow`}
-      style={{ outline: 'none' }}
-    >
-      {React.Children.map(children, (child) => {
-        if (React.isValidElement(child)) {
-          return React.cloneElement(child as React.ReactElement<any>, {
-            className: `${additionalOptionClasses} ${child.props.className || ''}`
-          });
-        }
-        return child;
-      })}
-    </ul>
-  </div>;
-};
+  children,
+  fixed,
+}) => <div className={`dropdown dropdown-bottom ${additionalClasses ?? ''}`}>
+  <div
+    tabIndex={0}
+    role="button"
+    className={ filter === undefined ? `btn btn-ghost ${additionalButtonClasses ?? ''}` : "flex"}
+  >
+    { filter === undefined ? <span>{title}</span> : <input
+      type="text"
+      placeholder={title}
+      value={filter}
+      onChange={e => setFilter && setFilter(e.target.value)}
+      onFocus={e => e.target.placeholder = ""}
+      onBlur={(e => e.target.placeholder = title)}
+      style={{ marginLeft: "7px", outline: "none" }}
+      className={`w-full rounded-md bg-neutralc-100 dark:bg-neutralc-900 placeholder-neutralc-500 dark:placeholder-neutralc-300 hide-placeholder`}
+    /> }
+    {includeDropdownArrow && <span className="material-icons">arrow_drop_down</span>}
+  </div>
+  <ul
+    tabIndex={0}
+    className={`dark:bg-neutralc-950 border border-neutralc-300 dark:border-none dropdown-content menu bg-neutralc-100 rounded-[4px] z-[1] p-2 shadow`}
+    style={{ outline: 'none', position: fixed ? 'fixed' : undefined }}
+  >
+    {React.Children.map(children, (child) => {
+      if (React.isValidElement(child)) {
+        return React.cloneElement(child as React.ReactElement<any>, {
+          className: `${additionalOptionClasses ?? ''} ${child.props.className ?? ''}`
+        });
+      }
+      return child;
+    })}
+  </ul>
+</div>;
 
 export default Dropdown;

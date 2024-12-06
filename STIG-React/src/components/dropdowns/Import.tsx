@@ -7,9 +7,7 @@ const Import: React.FC = () => {
     <Dropdown
       title="Import"
       includeDropdownArrow
-      // hover:bg-neutralc-200 dark:hover:bg-neutralc-700 hover:text-black dark:hover-text-white
-      additionalOptionClasses={''}
-      additionalClasses={''}
+      fixed
     >
       <div className="hover:text-black hover:text-white dark:hover:bg-primary hover:bg-primary">
         <ImportJSONBundleModal />

@@ -233,6 +233,7 @@ const ContextLayouts: React.FC = () => {
       title="Context Layouts"
       includeDropdownArrow
       additionalButtonClasses={'text-neutral-600 dark:text-neutral-300'}
+      fixed
     >
       <li className='hover:bg-primary hover:text-white'><a onClick={() => fLay_none(cyInstance)}>None</a></li>
       <li className='hover:bg-primary hover:text-white'><a onClick={() => fLay_defenseInDepth(cyInstance)}>Defense in Depth</a></li>

@@ -5,6 +5,10 @@ import React, { createContext, useContext, useState } from 'react';
 type StigContextType = {
   isPropertyPanelOpen: boolean;
   setIsPropertyPanelOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  panelWidth: number;
+  setPanelWidth: React.Dispatch<React.SetStateAction<number>>;
+  isDrawerOpen: boolean;
+  setIsDrawerOpen: React.Dispatch<React.SetStateAction<boolean>>;
   cyInstance: cytoscape.Core | undefined;
   togglePropertyPanel: () => void;
   setCyInstance: React.Dispatch<React.SetStateAction<cytoscape.Core | undefined>>;
@@ -34,7 +38,10 @@ type Props = {
 
 export const StigContextProvider: React.FC<Props> = ({ children }) => {
   const [isPropertyPanelOpen, setIsPropertyPanelOpen] = useState(false);
+  const [panelWidth, setPanelWidth] = useState(480); // Default width in pixels
   const [cyInstance, setCyInstance] = useState<cytoscape.Core | undefined>(undefined);
+
+  const [isDrawerOpen, setIsDrawerOpen] = useState(true);
 
   const [storedLayout, setStoredLayout] = useState<string>(defaultLayout);
 
@@ -54,7 +61,14 @@ export const StigContextProvider: React.FC<Props> = ({ children }) => {
   };
 
   return (
-    <StigContext.Provider value={{ isPropertyPanelOpen, setIsPropertyPanelOpen, togglePropertyPanel, cyInstance, setCyInstance, getStigLayoutSettingsFromStore, storeStigLayoutSettings, runLayout, storedLayout }}>
+    <StigContext.Provider value={{
+      isPropertyPanelOpen, setIsPropertyPanelOpen,
+      panelWidth, setPanelWidth, togglePropertyPanel,
+      isDrawerOpen, setIsDrawerOpen,
+      cyInstance, setCyInstance,
+      getStigLayoutSettingsFromStore,
+      storeStigLayoutSettings,
+      runLayout, storedLayout }}>
       {children}
     </StigContext.Provider>
   );

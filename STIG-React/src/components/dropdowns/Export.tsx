@@ -9,7 +9,7 @@ const Export: React.FC = () => {
     <Dropdown
       title="Export"
       includeDropdownArrow
-      additionalOptionClasses={''}
+      fixed
     >
       <div className="hover:text-black hover:text-white dark:hover:bg-primary hover:bg-primary">
         <DialogBasic

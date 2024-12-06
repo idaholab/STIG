@@ -12,6 +12,7 @@ const Edit: React.FC = () => {
       title="Edit"
       includeDropdownArrow
       additionalOptionClasses={'hover:text-black hover:text-white dark:hover:bg-primary hover:bg-primary w-[130px]'}
+      fixed
     >
       {/* <li className='hover:bg-primary hover:text-white'><a>Undo</a></li> */}
       {/* <li className='hover:bg-primary hover:text-white'><a>Redo</a></li> */}
