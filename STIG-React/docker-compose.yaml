@@ -1,0 +1,10 @@
+version: "3.3"
+services:
+  stig-v3.0.0.alpha:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: stig-v3
+    ports:
+      - '5173:5173'
+
