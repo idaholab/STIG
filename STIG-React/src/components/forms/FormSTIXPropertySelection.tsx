@@ -11,6 +11,7 @@ type Props = {
   setSelectedProperties: React.Dispatch<React.SetStateAction<SchemaSTIXProperty[]>>;
   includeAddNew?: boolean;
   size: 'standard' | 'small';
+  onAdd?: (p: SchemaSTIXProperty) => void;
 };
 
 const FormSTIXPropertySelection: React.FC<Props> = ({
@@ -19,7 +20,8 @@ const FormSTIXPropertySelection: React.FC<Props> = ({
   selectedProperties,
   setSelectedProperties,
   includeAddNew,
-  size
+  size,
+  onAdd,
 }) => {
   const [newPropertyName, setNewPropertyName] = useState("");
   const [buttonSize, setButtonSize] = useState<string>('');
@@ -56,9 +58,7 @@ const FormSTIXPropertySelection: React.FC<Props> = ({
                   // Need this so that React recognizes the variable change and updates the checkbox
                   setSelectedProperties(selectedProperties.toSorted((a, b) => a.name.localeCompare(b.name)));
                 } else {
-                  setSelectedProperties(
-                    selectedProperties.filter(selectedProperty => selectedProperty.name !== prop.name)
-                  );
+                  setSelectedProperties(selectedProperties.filter(p => p.name !== prop.name));
                 }
               }}
             />
@@ -89,15 +89,17 @@ const FormSTIXPropertySelection: React.FC<Props> = ({
               disabled={newPropertyName === undefined || newPropertyName === ''}
               onClick={() => {
                 // Can't add a property with no name
-                if (newPropertyName) {
-                  const tempPropertyOptions = [...propertyOptions];
-                  tempPropertyOptions.push({ name: newPropertyName, type: "string" });
-                  setPropertyOptions(tempPropertyOptions);
-                  const tempSelectedProperties = [...selectedProperties];
-                  tempSelectedProperties.push({ name: newPropertyName, type: "string" });
-                  setSelectedProperties(tempSelectedProperties);
-                  setNewPropertyName("");
-                }
+                if (!newPropertyName) return;
+
+                const p: SchemaSTIXProperty = { name: newPropertyName, type: "string" };
+                propertyOptions.push(p);
+                selectedProperties.push(p);
+
+                setPropertyOptions(propertyOptions.toSorted((a,b) => a.name.localeCompare(b.name)));
+                setSelectedProperties(selectedProperties.toSorted((a,b) => a.name.localeCompare(b.name)));
+
+                setNewPropertyName("");
+                onAdd && onAdd(p);
               }}
             />
           </div>

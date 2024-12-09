@@ -30,6 +30,7 @@ const Database: React.FC = () => {
     <Dropdown
       title="Database"
       includeDropdownArrow
+      fixed
     >
       <div className='w-[230px]'>
         <div className='grid'>

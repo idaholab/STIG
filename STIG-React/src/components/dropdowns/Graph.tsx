@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Dropdown from '../core/Dropdown';
 import { useStigContext } from '@/contexts/StigContext';
+import { EventContext } from '@/contexts/EventContext';
 import { v5 as uuidv5 } from 'uuid';
 import { ElementDefinition } from 'cytoscape';
 import { view_utils_options } from '@/graph/graphOptions';
@@ -12,35 +13,37 @@ const NAMESPACE = '00abedb4-aa42-466c-9c01-fed23315a9b7';
 
 const Graph: React.FC = () => {
   const { cyInstance } = useStigContext();
+  const { dispatchEvent } = useContext(EventContext);
   let v_isVisible = React.useContext(visualEdge_isVisible);
   let r_isVisible = React.useContext(relationship_isVisible);
-  return (
-    <Dropdown
-      title="Graph"
-      includeDropdownArrow
-      additionalOptionClasses={'w-[220px] hover:text-black hover:text-white dark:hover:bg-primary hover:bg-primary'}
-    >
-      {/* <li className='hover:bg-primary hover:text-white'><a>Copy Selected Elements</a></li>
-      <li className='hover:bg-primary hover:text-white'><a>Cut Selected Elements</a></li>
-      <li className='hover:bg-primary hover:text-white'><a>Paste Elements</a></li>
-      <li className='hover:bg-primary hover:text-white'><a>Commit All Elements</a></li>
-      <li className='hover:bg-primary hover:text-white'><a>Delete Selected from Database</a></li>
-      <li className='hover:bg-primary hover:text-white'><a>Select All Elements</a></li>
-      <li className='hover:bg-primary hover:text-white'><a>Invert Selection</a></li>*/}
-      <li><a onClick={() => {
-        r_isVisible = !r_isVisible;
-        toggleRelationships(cyInstance, r_isVisible);
-      }}>Toggle STIX Relationships</a></li>
-      <li><a onClick={() => {
-        v_isVisible = !v_isVisible;
-        toggleEmbeddedRelationships(cyInstance, v_isVisible);
-      }}>Toggle Embedded Relationships</a></li>
+  return <Dropdown
+    title="Graph"
+    includeDropdownArrow
+    additionalOptionClasses={'w-[220px] hover:text-black hover:text-white dark:hover:bg-primary hover:bg-primary'}
+    fixed
+  >
+    {/* <li className='hover:bg-primary hover:text-white'><a>Copy Selected Elements</a></li>
+    <li className='hover:bg-primary hover:text-white'><a>Cut Selected Elements</a></li>
+    <li className='hover:bg-primary hover:text-white'><a>Paste Elements</a></li>
+    <li className='hover:bg-primary hover:text-white'><a>Commit All Elements</a></li>
+    <li className='hover:bg-primary hover:text-white'><a>Delete Selected from Database</a></li>
+    <li className='hover:bg-primary hover:text-white'><a>Select All Elements</a></li>
+    <li className='hover:bg-primary hover:text-white'><a>Invert Selection</a></li>*/}
+    <li><a onClick={() => {
+      r_isVisible = !r_isVisible;
+      toggleRelationships(cyInstance, r_isVisible);
+    }}>Toggle STIX Relationships</a></li>
+    <li><a onClick={() => {
+      v_isVisible = !v_isVisible;
+      toggleEmbeddedRelationships(cyInstance, v_isVisible);
+    }}>Toggle Embedded Relationships</a></li>
+    <li><a onClick={() => {
+      const clearGraphEvent = new CustomEvent('clearGraph');
+      dispatchEvent('clearGraphClickEvent', { data: clearGraphEvent });
+    }}>Clear Graph</a></li>
 
-
-    </Dropdown>
-  );
+  </Dropdown>;
 };
-
 
 function toggleRelationships(cy: cytoscape.Core | undefined, makeVisible: boolean) {
   if (cy == undefined) { return; }
