@@ -1,7 +1,6 @@
 import { SchemaSTIXClass } from "@/types/stixSchemaTypes/SchemaSTIXClass";
 import { enum_options } from "./enumOptions";
 
-//TODO: fix any string types that should be more specific into their proper thing
 export const schema: SchemaSTIXClass[] = [
   {
     name: 'core',
@@ -20,6 +19,7 @@ export const schema: SchemaSTIXClass[] = [
       { name: 'external_references', type: 'list', listType: "external-reference" },
       { name: 'object_marking_refs', type: 'list', listType: 'identifier' },
       { name: 'granular_markings', type: 'list', listType: 'granular-marking' },
+      { name: 'defanged', type: 'boolean', default: false},
       { name: 'extensions', type: 'dictionary' }
     ]
   },
@@ -98,7 +98,7 @@ export const schema: SchemaSTIXClass[] = [
     name: 'language-meta-core',
     superClasses: [],
     properties: [
-      { name: 'id', type: 'string', mandatory: true, notNull: true, },
+      {  name: 'id', type: 'identifier', mandatory: true, notNull: true, },
       { name: 'type', type: 'string', mandatory: true, notNull: true, },
       { name: 'spec_version', type: 'string', mandatory: true, notNull: true, default: '2.1' },
       { name: 'created_by_ref', type: 'identifier' },
@@ -117,10 +117,10 @@ export const schema: SchemaSTIXClass[] = [
     name: 'marking-meta-core',
     superClasses: [],
     properties: [
-      { name: 'id', type: 'string', mandatory: true, notNull: true, },
+      {  name: 'id', type: 'identifier', mandatory: true, notNull: true, },
       { name: 'type', type: 'string', mandatory: true, notNull: true, },
       { name: 'spec_version', type: 'string', mandatory: true, notNull: true, default: '2.1' },
-      { name: 'created_by_ref', type: 'string' },
+      { name: 'created_by_ref', type: 'identifier' },
       { name: 'created', type: 'timestamp', mandatory: true, notNull: true, },
       { name: 'external_references', type: 'list', listType: 'external-reference' },
       { name: 'object_marking_refs', type: 'list', listType: 'identifier' },
@@ -160,8 +160,7 @@ export const schema: SchemaSTIXClass[] = [
   {
     name: 'analysis-of',
     superClasses: ['relationship'],
-    properties: [
-    ]
+    properties: []
   },
   {
     name: 'artifact',
@@ -183,15 +182,14 @@ export const schema: SchemaSTIXClass[] = [
     properties: [
       { name: 'name', type: 'string', mandatory: true, notNull: true, default: "attack-pattern"},
       { name: 'description', type: 'string' },
-      { name: 'aliases', type: 'list' },
+      { name: 'aliases', type: 'list', listType: 'string' },
       { name: 'kill_chain_phases', type: 'list', listType: 'kill-chain-phase' }
     ]
   },
   {
     name: 'attributed-to',
     superClasses: ['relationship'],
-    properties: [
-    ]
+    properties: []
   },
   {
     name: 'autonomous-system',
@@ -206,14 +204,12 @@ export const schema: SchemaSTIXClass[] = [
   {
     name: 'based-on',
     superClasses: ['relationship'],
-    properties: [
-    ]
+    properties: []
   },
   {
     name: 'beacons-to',
     superClasses: ['relationship'],
-    properties: [
-    ]
+    properties: []
   },
   {
     name: 'campaign',
@@ -231,32 +227,27 @@ export const schema: SchemaSTIXClass[] = [
   {
     name: 'characterizes',
     superClasses: ['relationship'],
-    properties: [
-    ]
+    properties: []
   },
   {
     name: 'communicates-with',
     superClasses: ['relationship'],
-    properties: [
-    ]
+    properties: []
   },
   {
     name: 'compromises',
     superClasses: ['relationship'],
-    properties: [
-    ]
+    properties: []
   },
   {
     name: 'consists-of',
     superClasses: ['relationship'],
-    properties: [
-    ]
+    properties: []
   },
   {
     name: 'controls',
     superClasses: ['relationship'],
-    properties: [
-    ]
+    properties: []
   },
   {
     name: 'course-of-action',
@@ -271,8 +262,7 @@ export const schema: SchemaSTIXClass[] = [
   {
     name: 'delivers',
     superClasses: ['relationship'],
-    properties: [
-    ]
+    properties: []
   },
   {
     name: 'directory',
@@ -299,20 +289,17 @@ export const schema: SchemaSTIXClass[] = [
   {
     name: 'downloads',
     superClasses: ['relationship'],
-    properties: [
-    ]
+    properties: []
   },
   {
     name: 'drops',
     superClasses: ['relationship'],
-    properties: [
-    ]
+    properties: []
   },
   {
     name: 'dynamic-analysis-of',
     superClasses: ['relationship'],
-    properties: [
-    ]
+    properties: []
   },
   {
     name: 'email-addr',
@@ -349,14 +336,12 @@ export const schema: SchemaSTIXClass[] = [
   {
     name: 'exfiltrates-to',
     superClasses: ['relationship'],
-    properties: [
-    ]
+    properties: []
   },
   {
     name: 'exploits',
     superClasses: ['relationship'],
-    properties: [
-    ]
+    properties: []
   },
   {
     name: 'file',
@@ -391,14 +376,12 @@ export const schema: SchemaSTIXClass[] = [
   {
     name: 'has',
     superClasses: ['relationship'],
-    properties: [
-    ]
+    properties: []
   },
   {
     name: 'hosts',
     superClasses: ['relationship'],
-    properties: [
-    ]
+    properties: []
   },
   {
     name: 'identity',
@@ -416,14 +399,12 @@ export const schema: SchemaSTIXClass[] = [
   {
     name: 'impersonates',
     superClasses: ['relationship'],
-    properties: [
-    ]
+    properties: []
   },
   {
     name: 'indicates',
     superClasses: ['relationship'],
-    properties: [
-    ]
+    properties: []
   },
   {
     name: 'indicator',
@@ -474,8 +455,7 @@ export const schema: SchemaSTIXClass[] = [
   {
     name: 'investigates',
     superClasses: ['relationship'],
-    properties: [
-    ]
+    properties: []
   },
   {
     name: 'ipv4-addr',
@@ -502,7 +482,7 @@ export const schema: SchemaSTIXClass[] = [
     description: "The language-content object represents text content for STIX Objects represented in languages other than that of the original object.",
     superClasses: ['language-meta-core'],
     properties: [
-      { name: 'object_ref', type: 'string', mandatory: true, notNull: true, },
+      { name: 'object_ref', type: 'identifier', mandatory: true, notNull: true, },
       { name: 'object_modified', type: 'timestamp' },
       { name: 'contents', type: 'dictionary', mandatory: true, notNull: true, }
     ]
@@ -589,8 +569,7 @@ export const schema: SchemaSTIXClass[] = [
   {
     name: 'mitigates',
     superClasses: ['relationship'],
-    properties: [
-    ]
+    properties: []
   },
   {
     name: 'mutex',
@@ -660,14 +639,12 @@ export const schema: SchemaSTIXClass[] = [
   {
     name: 'originates-from',
     superClasses: ['relationship'],
-    properties: [
-    ]
+    properties: []
   },
   {
     name: 'owns',
     superClasses: ['relationship'],
-    properties: [
-    ]
+    properties: []
   },
   {
     name: 'process',
@@ -690,8 +667,7 @@ export const schema: SchemaSTIXClass[] = [
   {
     name: 'related-to',
     superClasses: ['relationship'],
-    properties: [
-    ]
+    properties: []
   },
 
   {
@@ -721,14 +697,12 @@ export const schema: SchemaSTIXClass[] = [
   {
     name: 'static-analysis-of',
     superClasses: ['relationship'],
-    properties: [
-    ]
+    properties: []
   },
   {
     name: 'targets',
     superClasses: ['relationship'],
-    properties: [
-    ]
+    properties: []
   },
   {
     name: 'threat-actor',
@@ -795,14 +769,12 @@ export const schema: SchemaSTIXClass[] = [
   {
     name: 'uses',
     superClasses: ['relationship'],
-    properties: [
-    ]
+    properties: []
   },
   {
     name: 'variant-of',
     superClasses: ['relationship'],
-    properties: [
-    ]
+    properties: []
   },
   {
     name: 'vulnerability',

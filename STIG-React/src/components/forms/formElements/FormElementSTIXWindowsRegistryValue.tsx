@@ -1,6 +1,6 @@
 import React from 'react';
 import FormElementTextInput from './FormElementTextInput';
-import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
+import { SchemaSTIXListProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
 import { useStixPropsContext } from '@/contexts/StixPropsContext';
 import { propertyDescriptions } from '@/stix/propertyDescriptions';
 import { getSTIXPropDescriptions } from '@/stix/getSTIXPropDescriptions';
@@ -11,7 +11,7 @@ import { enum_options } from '@/stix/enumOptions';
 type Props = {
   windowsRegistryValue: WindowsRegistryValueType;
   windowsRegistryValueIndex: number;
-  property: SchemaSTIXProperty;
+  property: SchemaSTIXListProperty;
 };
 
 const FormElementSTIXWindowsRegistryValue: React.FC<Props> = ({

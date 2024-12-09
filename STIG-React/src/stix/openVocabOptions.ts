@@ -364,7 +364,5 @@ export const open_vocab_options = {
   "threat-actor-role-ov": threat_actor_role_ov,
   "threat-actor-sophistication-ov": threat_actor_sophistication_ov,
   "tool-type-ov": tool_type_ov,
-  // TODO: Uncomment once windows-pebinary-type-ov gets 
-  // referenced in schema.ts
-  // "windows-pebinary-type-ov": windows_pebinary_type_ov
+  "windows-pebinary-type-ov": [], //windows_pebinary_type_ov
 }

@@ -65,8 +65,9 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
       setSelectedSTIXObject(dictionary);
       setSelectionExists(true);
     }
-    setLocalDictionaryProps(dictionary ?
-      Object.keys(dictionary).map(key => ({ name: key, type: inferSTIXType(dictionary[key]) })) : []
+    setLocalDictionaryProps(_ => dictionary ?
+      Object.keys(dictionary).map(key => ({ name: key, type: inferSTIXType(dictionary[key]) } as SchemaSTIXProperty))
+      : []
     );
   }, [dictionary]);
 

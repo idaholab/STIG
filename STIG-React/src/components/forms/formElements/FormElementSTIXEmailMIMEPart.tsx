@@ -1,6 +1,6 @@
 import React from 'react';
 import FormElementTextInput from './FormElementTextInput';
-import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
+import { SchemaSTIXListProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
 import { useStixPropsContext } from '@/contexts/StixPropsContext';
 import { propertyDescriptions } from '@/stix/propertyDescriptions';
 import { getSTIXPropDescriptions } from '@/stix/getSTIXPropDescriptions';
@@ -10,7 +10,7 @@ import { stixIdentifierValidator } from '@/util/stixIdentifierValidator';
 type Props = {
   emailMIMEPart: EmailMIMEPartType;
   emailMIMEPartIndex: number;
-  property: SchemaSTIXProperty;
+  property: SchemaSTIXListProperty;
 };
 
 const FormElementEmailMIMEPart: React.FC<Props> = ({

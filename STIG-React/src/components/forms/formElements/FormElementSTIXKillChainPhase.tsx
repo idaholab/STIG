@@ -1,6 +1,6 @@
 import React from 'react';
 import FormElementTextInput from './FormElementTextInput';
-import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
+import { SchemaSTIXListProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
 import { useStixPropsContext } from '@/contexts/StixPropsContext';
 import { KillChainPhase } from '@/types/stixTypes/KillChainPhase';
 import { propertyDescriptions } from '@/stix/propertyDescriptions';
@@ -10,7 +10,7 @@ import { handlePropertyUpdate } from '@/stix/handlePropertyUpdate';
 type Props = {
   killChainPhase: KillChainPhase;
   killChainPhaseIndex: number;
-  property: SchemaSTIXProperty;
+  property: SchemaSTIXListProperty;
 };
 
 const FormElementSTIXKillChainPhase: React.FC<Props> = ({

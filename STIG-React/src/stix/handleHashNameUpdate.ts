@@ -5,7 +5,7 @@ export function handleHashNameUpdate(
   oldHashName: string,
   propName: string,
   selectedSTIXObject: StixObject | undefined,
-  setSelectedSTIXObject: React.Dispatch<React.SetStateAction<StixObject | undefined>>
+  setSelectedSTIXObject: (obj?: StixObject) => void,
 ) {
   // Hash Algorithm Name Update is done as follows
   // to preserve the order of hashes
