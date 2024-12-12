@@ -57,8 +57,8 @@
       --color-warning-rgb: 249 115 22;
       /* Warning Light #fed7aa */
       --color-warning-light-rgb: 254 215 170;
-      /* Warning Dark: #ea580c */
-      --color-warning-dark-rgb: 234 88 12;
+      /* Warning Dark: #c24a0c */
+      --color-warning-dark-rgb: 194 74 12;
 
       /* Neutral Colors Light (tailwind slate) */
       /* Neutral 50: #f8fafc */
@@ -163,9 +163,6 @@
   --node-handle-color: var(--edge-color);
   --selected-node-color: var(--color-selected-rgb);
   --selected-edge-color: var(--color-selected-rgb);
-
-  --context-menu-edge-background: var(--color-selected-rgb) 0.85;
-  --context-menu-edge-active-background: var(--color-neutral-rgb-950) 0.95;
 }
 
 
@@ -193,7 +190,7 @@ body,
 
 
   [data-theme='dark'] {
-    background-color: rgb(var(--color-neutral-rgb-800));
+    background-color: rgb(var(--color-neutral-rgb-700));
     color: rgb(var(--color-neutral-rgb-300));
 
     /* Scroll Track */
@@ -592,3 +589,9 @@ background-color: rgb(var(--color-neutral-rgb-600));
   cursor: not-allowed !important;
 }
 }
+
+
+
+
+
+

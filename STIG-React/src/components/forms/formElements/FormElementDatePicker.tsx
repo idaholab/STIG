@@ -68,6 +68,7 @@ const FormElementDatePicker: React.FC<Props> = ({
           additionalStyle={{ transform: 'translate(50%, -50%)' }}
           parentRef={parentRef}
           infoIcon={infoIcon}
+          iconSize={.7}
         />
       </div>
       {

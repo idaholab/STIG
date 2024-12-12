@@ -20,7 +20,7 @@ const Graph: React.FC = () => {
     title="Graph"
     includeDropdownArrow
     additionalOptionClasses={'w-[220px] hover:text-black hover:text-white dark:hover:bg-primary hover:bg-primary'}
-    fixed
+    fixed={true}
   >
     {/* <li className='hover:bg-primary hover:text-white'><a>Copy Selected Elements</a></li>
     <li className='hover:bg-primary hover:text-white'><a>Cut Selected Elements</a></li>
@@ -73,7 +73,7 @@ function makeEmbeddedRelationships(cy: cytoscape.Core) {
     if (obj.created_by_ref !== undefined) { to_add.push(...add_visual_edge(cy, 'created_by_ref', obj.created_by_ref, obj.id)); }
     switch (obj.type) {
       case 'language-content':
-        to_add.push(...add_visual_edge(cy, 'object_ref',obj.object_ref, obj.id));
+        to_add.push(...add_visual_edge(cy, 'object_ref', obj.object_ref, obj.id));
         break;
       case 'report':
       case 'opinion':
@@ -147,7 +147,7 @@ function makeEmbeddedRelationships(cy: cytoscape.Core) {
 }
 
 
-function add_visual_edge(cy: cytoscape.Core, label: string, field: string[] | string, objID: string ) {
+function add_visual_edge(cy: cytoscape.Core, label: string, field: string[] | string, objID: string) {
   let visualEdgeElemDefs: ElementDefinition[] = [];
   if (field !== undefined) {
 
@@ -170,10 +170,10 @@ function add_visual_edge(cy: cytoscape.Core, label: string, field: string[] | st
 
     if (typeof field == "string") {
       //don't even try to add an edge if the target object doesn't exist
-      if (cy.$id(field).length == 1){f_addVisualEdge(field);}
+      if (cy.$id(field).length == 1) { f_addVisualEdge(field); }
     } else {
       for (const ref_id of field) {
-        if (cy.$id(ref_id).length == 1){f_addVisualEdge(ref_id);}
+        if (cy.$id(ref_id).length == 1) { f_addVisualEdge(ref_id); }
       }
     }
   }

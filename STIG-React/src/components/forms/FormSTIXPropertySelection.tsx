@@ -3,6 +3,8 @@ import Dropdown from '@/components/core/Dropdown';
 import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
 import FormElementTextInput from './formElements/FormElementTextInput';
 import ButtonBasic from '../elements/ButtonBasic';
+import { mdiPlus } from '@mdi/js';
+import Icon from '@mdi/react';
 
 type Props = {
   propertyOptions: SchemaSTIXProperty[];
@@ -80,7 +82,7 @@ const FormSTIXPropertySelection: React.FC<Props> = ({
             <ButtonBasic
               label={
                 <div className='flex items-center justify-between'>
-                  <span className="material-icons !text-sm">add</span>
+                  <Icon path={mdiPlus} size={1} />
                   <span>Add</span>
                 </div>
               }

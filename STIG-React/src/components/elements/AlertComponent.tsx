@@ -1,5 +1,8 @@
 import React from 'react';
 import ButtonIcon from './ButtonIcon';
+import { mdiAlert, mdiAlertCircle, mdiCheckCircleOutline, mdiClose } from '@mdi/js';
+import { mdilInformation } from '@mdi/light-js';
+import Icon from '@mdi/react';
 
 export type AlertType = 'info' | 'success' | 'warning' | 'error';
 
@@ -12,10 +15,10 @@ type AlertComponentProps = {
 }
 
 const alertIcons: Record<AlertType, string> = {
-    info: 'info',
-    success: 'check_circle',
-    warning: 'warning',
-    error: 'error',
+    info: mdilInformation,
+    success: mdiCheckCircleOutline,
+    warning: mdiAlert,
+    error: mdiAlertCircle,
 };
 
 const AlertComponent: React.FC<AlertComponentProps> = ({
@@ -31,12 +34,12 @@ const AlertComponent: React.FC<AlertComponentProps> = ({
     const alertIcon = alertIcons[alertType];
 
     return (
-        <div className={`alert ${alertClass} ${className} grid w-[unset] mx-4`}>
-            <span className="material-icons">{alertIcon}</span>
+        <div className={`alert ${alertClass} ${className} grid w-[unset]`}>
+            <Icon path={alertIcon} size={1} />
             <span className="text-wrap">{alertText}</span>
             {userClosable ?
                 <ButtonIcon
-                    buttonIcon='close'
+                    buttonIcon={mdiClose}
                     type={'alert'}
                     buttonSize='btn-xs'
                     onClick={onClose}

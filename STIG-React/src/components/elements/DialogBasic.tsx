@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import ButtonBasic from "../elements/ButtonBasic.tsx";
 import ButtonIcon from "../elements/ButtonIcon.tsx";
+import { mdiClose, mdiOpenInNew } from "@mdi/js";
 
 type Props = {
   children?: React.ReactNode;
@@ -27,7 +28,7 @@ export const DialogBasic: React.FC<Props> = ({
   buttonColor = 'btn-primary', // Default button color is 'btn-primary'
   buttonType = 'text', // Default button type to 'text'
   buttonLabel = 'Open Dialog', // Default button label
-  buttonIcon = 'open_in_new',
+  buttonIcon = mdiOpenInNew,
   buttonSize = 'btn-sm',
   saveLabel = 'Save',
   onSave,
@@ -37,7 +38,7 @@ export const DialogBasic: React.FC<Props> = ({
   disabled,
   additionalButtonClasses
 }) => {
-  
+
   const [isOpen, setIsOpen] = useState(false);
 
   const handleOpenDialog = () => {
@@ -92,8 +93,8 @@ export const DialogBasic: React.FC<Props> = ({
           <div className="-mr-4 mb-8">
             <ButtonIcon
               buttonSize={buttonSize}
-              label={'Close'}
-              buttonIcon={'close'}
+              iconText={'Close'}
+              buttonIcon={mdiClose}
               type={'btn-ghost'}
               onClick={handleCloseDialog}
             />

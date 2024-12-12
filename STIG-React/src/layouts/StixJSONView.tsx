@@ -3,6 +3,8 @@ import { useStixPropsContext } from '@/contexts/StixPropsContext';
 import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
 import { useStigContext } from '@/contexts/StigContext';
 import { getNodeLabel } from '@/stix/stix';
+import { mdiAlertCircle, mdiCheckCircleOutline } from '@mdi/js';
+import Icon from '@mdi/react';
 
 type Props = {
   stixTypeProps?: SchemaSTIXProperty[],
@@ -32,7 +34,7 @@ const StixJSONView: React.FC<Props> = ({
       // If the JSON passes, check that the object's keys are 
       // all valid for the STIX type.
       const stixTypePropNames = stixTypeProps?.map(prop => prop.name);
-      const invalidKeys = Object.keys(parsedJson).filter(jsonKey => 
+      const invalidKeys = Object.keys(parsedJson).filter(jsonKey =>
         !stixTypePropNames?.includes(jsonKey)
       );
       setInvalidPropNames(invalidKeys);
@@ -88,47 +90,39 @@ const StixJSONView: React.FC<Props> = ({
       {jsonValid ?
         <>
           <div className='flex gap-1 mt-1'>
-            <span className="material-icons">
-              check_circle
-            </span>
+            <Icon path={mdiCheckCircleOutline} size={1} />
             <p>JSON Valid</p>
           </div>
           {
             stixPropNamesValid ?
               <>
                 <div className='flex gap-1 mt-1'>
-                  <span className="material-icons">
-                    check_circle
-                  </span>
+                  <Icon path={mdiCheckCircleOutline} size={1} />
                   <p>STIX Property Names Valid</p>
                 </div>
                 <p>STIX Object Saved</p>
               </>
-            : stixPropNamesValid !== undefined ?
-              <>
-                <div className='flex gap-1 mt-1'>
-                  <span className="material-icons">
-                    error
-                  </span>
-                  <p>
-                    STIX Property Names Invalid. The following property names are not valid for the
-                    current STIX object:&nbsp;
-                    { invalidPropNames.map((name, i) =>
-                      `"${name}"${i !== invalidPropNames.length-1 ? ", " : ""}`
-                    )}
-                  </p> 
-                </div>
-                <p>STIX Object Not Saved</p>
-              </>
-            : <p>STIX Object Saved</p>
+              : stixPropNamesValid !== undefined ?
+                <>
+                  <div className='flex gap-1 mt-1'>
+                    <Icon path={mdiAlertCircle} size={1} />
+                    <p>
+                      STIX Property Names Invalid. The following property names are not valid for the
+                      current STIX object:&nbsp;
+                      {invalidPropNames.map((name, i) =>
+                        `"${name}"${i !== invalidPropNames.length - 1 ? ", " : ""}`
+                      )}
+                    </p>
+                  </div>
+                  <p>STIX Object Not Saved</p>
+                </>
+                : <p>STIX Object Saved</p>
           }
         </>
-        : 
+        :
         <>
           <div className='flex gap-1 mt-1'>
-            <span className="material-icons">
-              error
-            </span>
+            <Icon path={mdiAlertCircle} size={1} />
             <p>JSON Invalid. STIX object not saved.</p>
           </div>
           <p>JSON Error: {jsonErrorText}</p>

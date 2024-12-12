@@ -41,7 +41,7 @@ const Graph: React.FC = () => {
     const cyContainerRef = useRef<HTMLDivElement>(null);
     const { addEventListener, removeEventListener } = useContext(EventContext);
     const { theme } = useTheme();
-    const { cyInstance, setCyInstance, isPropertyPanelOpen, setIsPropertyPanelOpen, getStigLayoutSettingsFromStore, runLayout } = useStigContext();
+    const { cyInstance, setCyInstance, isPropertyPanelOpen, setIsPropertyPanelOpen, getStigLayoutSettingsFromStore, runLayout, setActivePropertiesPanelTab } = useStigContext();
     const { selectedSTIXObject, setSelectedSTIXObject, setSelectionExists, setNodesExist } = useStixPropsContext();
     const { addNotification } = useNotificationContext();
 
@@ -165,6 +165,15 @@ const Graph: React.FC = () => {
             }
         }
     }, [isPropertyPanelOpen, selectedSTIXObject]);
+
+    useEffect(() => {
+        if (cyInstance) {
+            if (selectedSTIXObject) {
+                setActivePropertiesPanelTab(0);
+            }
+
+        }
+    }, [selectedSTIXObject]);
 
     // Needed to move handleClearGraph out of the above useEffect so that
     // isPropertyPanelOpen and cyInstance would properly update and clearing the
@@ -307,7 +316,7 @@ const Graph: React.FC = () => {
     // Show STIX props panel on node/edge click
     cyInstance?.on('click', 'node, edge', (evt: cytoscape.EventObject) => {
         const ele: cytoscape.CollectionReturnValue = evt.target;
-        if (ele.data("raw_data")===undefined || ele.data("raw_data") == "visual_edge"){
+        if (ele.data("raw_data") === undefined || ele.data("raw_data") == "visual_edge") {
             return;
         }
         // if (!isPropertyPanelOpen) {

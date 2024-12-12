@@ -70,6 +70,7 @@ const STIXPropertyLabel = forwardRef<HTMLParagraphElement, Props>(({
                         visible={includeInfo}
                         toggleInfo={toggleInfo}
                         parentRef={parentRef}
+                        iconSize={.7}
                     />
                 </div>
             }

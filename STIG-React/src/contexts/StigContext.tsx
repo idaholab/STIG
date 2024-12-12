@@ -9,6 +9,16 @@ type StigContextType = {
   setPanelWidth: React.Dispatch<React.SetStateAction<number>>;
   isDrawerOpen: boolean;
   setIsDrawerOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  drawerWidth: number;
+  setDrawerWidth: React.Dispatch<React.SetStateAction<number>>;
+
+  activePropertiesPanelTab: number;
+  setActivePropertiesPanelTab: React.Dispatch<React.SetStateAction<number>>;
+  togglePropertiesSetTab: (activeTab?: number) => void;
+
+  activeContextLayout: number;
+  setActiveContextLayout: React.Dispatch<React.SetStateAction<number>>;
+
   cyInstance: cytoscape.Core | undefined;
   togglePropertyPanel: () => void;
   setCyInstance: React.Dispatch<React.SetStateAction<cytoscape.Core | undefined>>;
@@ -39,9 +49,12 @@ type Props = {
 export const StigContextProvider: React.FC<Props> = ({ children }) => {
   const [isPropertyPanelOpen, setIsPropertyPanelOpen] = useState(false);
   const [panelWidth, setPanelWidth] = useState(480); // Default width in pixels
+  const [activePropertiesPanelTab, setActivePropertiesPanelTab] = useState<number>(0);
+  const [activeContextLayout, setActiveContextLayout] = useState<number>(0);
   const [cyInstance, setCyInstance] = useState<cytoscape.Core | undefined>(undefined);
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(true);
+  const [drawerWidth, setDrawerWidth] = useState(280); // Default width in pixels
 
   const [storedLayout, setStoredLayout] = useState<string>(defaultLayout);
 
@@ -60,15 +73,23 @@ export const StigContextProvider: React.FC<Props> = ({ children }) => {
     setIsPropertyPanelOpen(!isPropertyPanelOpen);
   };
 
+  const togglePropertiesSetTab = (activeTab: number = 0) => {
+    setIsPropertyPanelOpen(!isPropertyPanelOpen);
+    setActivePropertiesPanelTab(activeTab);
+  };
+
+
   return (
     <StigContext.Provider value={{
-      isPropertyPanelOpen, setIsPropertyPanelOpen,
+      activeContextLayout, setActiveContextLayout, togglePropertiesSetTab, activePropertiesPanelTab, setActivePropertiesPanelTab, isPropertyPanelOpen, setIsPropertyPanelOpen,
       panelWidth, setPanelWidth, togglePropertyPanel,
       isDrawerOpen, setIsDrawerOpen,
+      drawerWidth, setDrawerWidth,
       cyInstance, setCyInstance,
       getStigLayoutSettingsFromStore,
       storeStigLayoutSettings,
-      runLayout, storedLayout }}>
+      runLayout, storedLayout
+    }}>
       {children}
     </StigContext.Provider>
   );

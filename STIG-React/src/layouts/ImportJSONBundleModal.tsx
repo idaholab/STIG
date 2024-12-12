@@ -11,7 +11,7 @@ const ImportJSONBundleModal: React.FC = () => {
     const { addNotification } = useNotificationContext();
     const { cyInstance, getStigLayoutSettingsFromStore, runLayout } = useStigContext();
     const [selectedFiles, setSelectedFiles] = useState<ArrayLike<File>>([]);
-    const [target, setTarget] = useState<"view"|"db">("view");
+    const [target, setTarget] = useState<"view" | "db">("view");
 
     const importFile = async () => {
         let gen: AsyncGenerator<ImportResult>;
@@ -22,7 +22,7 @@ const ImportJSONBundleModal: React.FC = () => {
             if (!connectedDBProfile) return;
             gen = importGraphToDB(selectedFiles);
         }
-        
+
         let need_layout = false;
         let sym = Symbol();
         for await (const { alert, layout } of gen) {
@@ -39,7 +39,7 @@ const ImportJSONBundleModal: React.FC = () => {
 
     return <DialogBasic
         dialogId="ImportJSONBundleModal"
-        title="Import JSON Bundle from File"
+        title="Import a JSON Bundle File to the Graph"
         buttonColor='btn-ghost'
         showFormButtons={true}
         buttonLabel="JSON Bundle"
@@ -49,12 +49,12 @@ const ImportJSONBundleModal: React.FC = () => {
         onSave={importFile}
     >
         <div className='h-full grid'>
-            <select className='dark:bg-neutralc-700' onChange={e => setTarget(e.target.value as any)} defaultValue={"view"}>
+            {/* <select className='dark:bg-neutralc-700' onChange={e => setTarget(e.target.value as any)} defaultValue={"view"}>
                 <option value="view">To View</option>
                 { connectedDBProfile && <option value="db">To DB</option> }
-            </select>
+            </select> */}
             <FormElementFileInput
-                placeholder='No file chosen'
+                placeholder='Choose a JSON Bundle File'
                 buttonLabel='Choose File'
                 acceptedFileTypes='.json'
                 multiple={true}

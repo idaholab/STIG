@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ButtonIcon from './ButtonIcon';
+import { mdiInformation } from '@mdi/js';
 
 type InfoButtonProps = {
     visible?: boolean;
@@ -8,15 +9,17 @@ type InfoButtonProps = {
     additionalInfoClasses?: string;
     additionalStyle?: React.CSSProperties;
     parentRef: React.RefObject<HTMLDivElement>;
+    iconSize?: number
 }
 
 const FloatingInfoButton: React.FC<InfoButtonProps> = ({
     visible = true,
-    infoIcon = 'info_outline',
+    infoIcon = mdiInformation,
     toggleInfo,
     additionalInfoClasses = '',
     additionalStyle,
     parentRef,
+    iconSize = 1
 }) => {
     const [isVisible, setIsVisible] = useState(false);
 
@@ -54,6 +57,7 @@ const FloatingInfoButton: React.FC<InfoButtonProps> = ({
                         buttonIcon={infoIcon}
                         buttonSize="h-6 w-6 min-h-6"
                         iconText="!text-[18px]"
+                        iconSize={iconSize}
                         onClick={toggleInfo}
                     />
                 </div>

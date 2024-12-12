@@ -44,7 +44,8 @@ export default function FormDatabaseConnect({ selectedProfile, setSelectedProfil
   }, [selectedProfile]);
 
   return (
-    <div className='flex basis-3/6 flex-col'>
+    <div className='profilePropertiesContainer flex flex-col mt-4'>
+      {/* <div className='mt-4 p-4 profilePropertiesContainer rounded-md flex flex-col bg-neutralc-300 dark:bg-neutralc-800 p-1'> */}
       <FormElementTextInput
         label="Profile Name *"
         type="text"
@@ -139,6 +140,7 @@ export default function FormDatabaseConnect({ selectedProfile, setSelectedProfil
         additionalInfoClasses='tooltip-left'
         additionalLabelClasses='mr-5 w-48'
       />
+
       <div className="flex justify-between items-center">
         <span>* Required</span>
         <span>

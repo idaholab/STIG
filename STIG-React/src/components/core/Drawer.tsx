@@ -3,6 +3,8 @@ import { EventContext } from '@/contexts/EventContext';
 import FormElementTextInput from '../forms/formElements/FormElementTextInput';
 import AccordionSection from './AccordionSection';
 import StencilLibrary from './StencilLibrary';
+import Icon from '@mdi/react';
+import { mdiFilter, mdiMenu, mdiMenuOpen } from '@mdi/js';
 import { useStigContext } from '@/contexts/StigContext';
 
 const Drawer = () => {
@@ -22,7 +24,6 @@ const Drawer = () => {
       inputRef.current.focus();
     }
   }, [isDrawerOpen]);
-
 
   // Define an array of sections
   const accordionSections = isDrawerOpen ? [
@@ -49,24 +50,29 @@ const Drawer = () => {
     return () => window.removeEventListener('resize', calculateHeight);
   }, []);
 
-  return <aside style={{ width:'0px', overflow: 'visible', zIndex: 1 }}>
-    <div className={`flex bg-neutralc-300 dark:bg-neutralc-950 text-base-content transition-all max-w-[281px]`}
-      style={{ height: accordionContainerHeight, width: isDrawerOpen ? '281px' : '81px' }}
-    >
-      <div className="flex flex-col justify-between  w-full h-full overflow-hidden relative">
-        <div className={`mt-4 flex items-center ${isDrawerOpen ? 'justify-end' : 'justify-center'}`}>
-          <button
-            onClick={() => setIsDrawerOpen(!isDrawerOpen)}
-            className="flex items-center justify-center w-12 h-12 rounded-lg hover:bg-neutralc-200 dark:hover:bg-neutralc-700 transition"
-            aria-label={isDrawerOpen ? "Collapse drawer" : "Expand drawer"}
-          >
-            <span className="material-icons text-xl">
-              {isDrawerOpen ? 'menu_open' : 'menu'}
-            </span>
-          </button>
-        </div>
-        <div className="flex items-center justify-center mt-3 mb-6">
-          {isDrawerOpen ? <FormElementTextInput
+  const handleFilterIconClick = () => {
+    if (!isDrawerOpen) {
+      setIsDrawerOpen(true);
+    }
+  };
+
+  return (
+    <aside style={{ width: '0px', overflow: 'visible', zIndex: 1 }}>
+      <div className={`flex bg-neutralc-300 dark:bg-neutralc-950 text-base-content transition-all max-w-[281px]`}
+        style={{ height: accordionContainerHeight, width: isDrawerOpen ? '281px' : '81px' }}
+      >
+        <div className="flex flex-col justify-between  w-full h-full overflow-hidden relative">
+          <div className={`mt-4 flex items-center ${isDrawerOpen ? 'justify-end' : 'justify-center'}`}>
+            <button
+              onClick={() => setIsDrawerOpen(!isDrawerOpen)}
+              className="flex items-center justify-center w-12 h-12 rounded-lg hover:bg-neutralc-200 dark:hover:bg-neutralc-700 transition"
+              aria-label={isDrawerOpen ? "Collapse drawer" : "Expand drawer"}
+            >
+              <Icon path={isDrawerOpen ? mdiMenuOpen : mdiMenu} size={1} />
+            </button>
+          </div>
+          <div className="flex items-center justify-center mt-3 mb-6">
+            {isDrawerOpen ? <FormElementTextInput
               placeholder='FILTER STENCILS'
               value={stencilFilterText}
               type="text"
@@ -77,48 +83,46 @@ const Drawer = () => {
               additionalInputClasses={`h-9`}
               includeInfo={false}
               className="w-full mx-4"
-              prefix='filter_alt'
+              prefix={mdiFilter}
               ref={inputRef}  // Attach ref here for filter bar focus
               badgeText={stencilFilterText?.length > 0 ? 'Stencils are Filtered!' : undefined}
-            /> :
-            <button
-              onClick={() => setIsDrawerOpen(true)}
-              className="flex items-center justify-center w-12 h-12 rounded-lg hover:bg-neutralc-200 dark:hover:bg-neutralc-700 transition"
-              aria-label="Expand drawer"
-            >
-              <span className="material-icons text-xl">filter_alt</span>
-            </button>
-          }
-        </div>
-
-        <div className="flex flex-col flex-grow h-full scrollbar mb-6" >
-          <ul className={`menu p-0 flex flex-col justify-start`}>
-            {accordionSections.map(section => (
-              <li className="flex" key={section.type}>
-                <AccordionSection
-                  title={section.title}
-                  isOpen={openAccordionSections[section.type]}
-                >
-                  <StencilLibrary
-                    type={section.type}
-                    onAddNode={handleAddStencilNode}
-                    searchText={stencilFilterText}
-                    isAccordionOpen={openAccordionSections[section.type]}
-                    isPanelOpen={isDrawerOpen}
-                  />
-                </AccordionSection>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {isDrawerOpen && (
-          <div className="flex justify-center w-full py-2 z-50 bottom-0 dark:bg-neutralc-950 bg-neutralc-300">
-            <span className="copyright-box">©{new Date().getFullYear()} Idaho National Laboratory</span>
+            />
+              :
+              <button onClick={handleFilterIconClick} className="flex items-center justify-center w-12 h-12 rounded-lg hover:bg-neutralc-200 dark:hover:bg-neutralc-700 transition" aria-label="Expand drawer">
+                <Icon path={mdiFilter} size={1} />
+              </button>
+            }
           </div>
-        )}
+
+          <div className="flex flex-col flex-grow h-full scrollbar mb-6" >
+            <ul className={`menu p-0 flex flex-col justify-start`}>
+              {accordionSections.map(section => (
+                <li className="flex" key={section.type}>
+                  <AccordionSection
+                    title={section.title}
+                    isOpen={openAccordionSections[section.type]}
+                  >
+                    <StencilLibrary
+                      type={section.type}
+                      onAddNode={handleAddStencilNode}
+                      searchText={stencilFilterText}
+                      isAccordionOpen={openAccordionSections[section.type]}
+                      isPanelOpen={isDrawerOpen}
+                    />
+                  </AccordionSection>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {isDrawerOpen && (
+            <div className="flex justify-center w-full py-2 z-50 bottom-0 dark:bg-neutralc-950 bg-neutralc-300">
+              <span className="copyright-box">©{new Date().getFullYear()} Idaho National Laboratory</span>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
-  </aside>;
+    </aside>)
 };
+
 export default Drawer;

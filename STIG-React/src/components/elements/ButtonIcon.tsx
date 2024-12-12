@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Icon from '@mdi/react';
 
 interface ButtonProps {
-  label?: string;
   buttonIcon: string;
   iconText?: string;
   buttonSize?: string | undefined;
@@ -14,11 +14,12 @@ interface ButtonProps {
   onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   onKeyDown?: (e: React.KeyboardEvent<HTMLButtonElement>) => void;
   additionalClasses?: string;
+  iconSize?: number;
 }
 
 const ButtonIcon: React.FC<ButtonProps> = ({
-  label, buttonIcon, iconText, buttonSize, type, link,
-  title, disabled, tabIndex, onClick, onKeyDown, additionalClasses
+  buttonIcon, iconText, buttonSize, type, link,
+  title, disabled, tabIndex, onClick, onKeyDown, additionalClasses, iconSize = 1
 }) => {
   // Define base classes
   const baseClasses = `btn btn-circle ${type} ${buttonSize} uppercase hover:opacity-100 border-transparent`;
@@ -31,16 +32,19 @@ const ButtonIcon: React.FC<ButtonProps> = ({
   const darkModeClasses = type === 'btn-neutralc' ? 'dark:border dark:border-solid dark:!border-neutralc-400 dark:text-neutralc-300 dark:hover:text-white' : '';
   const btnGhostDarkModeClasses = type === 'btn-ghost' ? 'dark:text-neutralc-300 dark:hover:text-white' : '';
 
+
+  const disabledClass = disabled ? (type === 'btn-ghost') ? 'cursor-not-allowed !text-neutralc-400 !bg-transparent dark:!text-neutralc-400 dark:!bg-transparent'
+    : 'cursor-not-allowed !text-neutralc-400 !bg-neutralc-300 dark:!text-neutralc-400 dark:!bg-neutralc-500' : '';
+
+
   // Combine base classes and conditional classes
-  const btnClass = `${baseClasses} ${lightModeClasses} ${darkModeClasses} ${btnGhostLightModeClasses} ${btnGhostDarkModeClasses} ${additionalClasses}`;
+  const btnClass = `${baseClasses} ${lightModeClasses} ${darkModeClasses} ${btnGhostLightModeClasses} ${btnGhostDarkModeClasses} ${additionalClasses} ${disabledClass}`;
 
   return (
     <>
       {link ? (
         <Link className={btnClass} to={link} title={title}>
-          <span className="material-icons">
-            {buttonIcon}
-          </span>
+          <Icon path={buttonIcon} size={iconSize} />
         </Link>
       ) : (
         <button
@@ -51,8 +55,8 @@ const ButtonIcon: React.FC<ButtonProps> = ({
           disabled={disabled}
           tabIndex={tabIndex}
         >
-          <span className={`material-icons ${iconText}`}>
-            {buttonIcon}
+          <span className={``} title={iconText}>
+            <Icon path={buttonIcon} size={iconSize} />
           </span>
         </button>
       )}

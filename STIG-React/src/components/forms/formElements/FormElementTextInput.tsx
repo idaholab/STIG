@@ -2,6 +2,8 @@ import AlertComponent from '@/components/elements/AlertComponent';
 import InfoButton from '@/components/elements/InfoButton';
 import STIXPropertyLabel from '@/components/elements/STIXPropertyLabel';
 import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
+import { mdiCloseCircle } from '@mdi/js';
+import Icon from '@mdi/react';
 import React, { forwardRef, useRef, useState } from 'react';
 
 type Props = {
@@ -81,7 +83,7 @@ const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
       <div ref={parentRef} className={`relative group flex items-center w-full `}>
         {prefix && (
           <span className="absolute inset-y-0 left-1 flex items-center text-neutralc-400 dark:text-neutralc-400">
-            <span className="material-icons">{prefix}</span>
+            <Icon path={prefix} size={1} />
           </span>
         )}
         <input
@@ -95,6 +97,7 @@ const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
           className={`
           flex
           ${prefix && 'pl-8'}
+          items-center
           w-full
           rounded-md
           border
@@ -111,10 +114,10 @@ const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
         {includeX && value && (
           <button
             type="button"
-            className={`material-icons absolute right-2 dark:text-neutralc-300 text-neutralc-500 hover:text-black ${additionalXClasses}`}
+            className={`flex items-center absolute right-2 dark:text-neutralc-300 text-neutralc-500 hover:text-black ${additionalXClasses}`}
             onClick={onX}
             title='Clear'>
-            close
+            <Icon path={mdiCloseCircle} size={.9} />
           </button>
         )}
 
@@ -129,6 +132,7 @@ const FormElementTextInput = forwardRef<HTMLInputElement, Props>(({
           additionalInfoClasses={`absolute top-0 right-0 ${additionalInfoClasses}`}
           additionalStyle={{ transform: 'translate(50%, -50%)' }}
           parentRef={parentRef}
+          iconSize={.7}
         />
       </div>
 

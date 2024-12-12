@@ -46,7 +46,7 @@ const DBQueryModal: React.FC = () => {
           <DBQueryHistory
             inQueryDeleteProcess={inQueryDeleteProcess}
             setInQueryDeleteProcess={setInQueryDeleteProcess}
-            setQueryToDelteId={setQueryToDeleteId}
+            setQueryToDeleteId={setQueryToDeleteId}
           />
         }
       </div>
@@ -72,7 +72,7 @@ function QueryWriterHistorySelector({ inQueryDeleteProcess, queryWriterSelected,
   };
 
   return (
-    <div className='rounded-box flex h-[452px] bg-neutralc-300 dark:bg-neutralc-800 p-2 basis-1/5'>
+    <div className='rounded-md flex h-[452px] bg-neutralc-300 dark:bg-neutralc-800 p-2 basis-1/5'>
       <ul
         className="h-full flex flex-col flex-auto"
       >

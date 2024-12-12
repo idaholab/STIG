@@ -3,6 +3,8 @@ import { useEffect } from 'react';
 
 // components/ThemeToggle.tsx
 import { useTheme } from '../../contexts/useTheme';
+import Icon from '@mdi/react';
+import { mdiThemeLightDark } from '@mdi/js';
 
 const ThemeToggle: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
@@ -32,8 +34,7 @@ const ThemeToggle: React.FC = () => {
   return (
     <label className="swap swap-rotate text-neutralc-300 hover:text-white" >
       <input onClick={toggleTheme} type="checkbox" />
-      <span className="swap-on material-icons" title='Switch to light theme'>dark_mode</span>
-      <span className="swap-off material-icons" title='Switch to dark theme'>light_mode</span>
+      <Icon path={mdiThemeLightDark} size={1} title='Switch between light and dark themes' />
     </label>
   );
 };

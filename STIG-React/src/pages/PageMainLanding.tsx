@@ -6,14 +6,15 @@ import Notifications from '@/components/core/Notifications';
 
 type Props = object;
 
-const PageMainLanding: React.FC<Props> = () => <div className="page-component">
-  <div id="graphContainer" className="relative h-full w-full overflow-hidden">
-    <Menu />
-    <div id="graph" className="h-full w-full" style={{ position: "absolute", top: 0 }}>
-      <Graph />
+const PageMainLanding: React.FC<Props> = () =>
+  <div className="page-component">
+    <div id="graphContainer" className="relative h-full w-full overflow-hidden">
+      <Menu />
+      <div id="graph" className="h-full w-full absolute top-0">
+        <Graph />
+      </div>
+      <Notifications />
     </div>
-    <Notifications />
-  </div>
-</div>;
+  </div>;
 
 export default PageMainLanding;

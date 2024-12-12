@@ -43,37 +43,39 @@ const MainScaffold: React.FC<Props> = ({ children }) => {
     };
   }, [isResizing]);
 
-  return <ThemeContextComponent>
-    <StixPropsContextProvider>
-      <ConnectedDBProvider>
-        <div className="flex flex-col h-screen overflow-hidden">
-          <Header />
-          <div className="flex flex-1 h-full relative overflow-hidden">
-            <Drawer />
-            <main className={`flex-1 h-full overflow-hidden`}>
-              {children}
-            </main>
+  return (
+    <ThemeContextComponent>
+      <StixPropsContextProvider>
+        <ConnectedDBProvider>
+          <div className="flex flex-col h-screen overflow-hidden">
+            <Header />
+            <div className="flex flex-1 h-full relative overflow-hidden">
+              <Drawer />
+              <main className={`flex-1 h-full overflow-hidden`}>
+                {children}
+              </main>
 
-            {isPropertyPanelOpen && (
-              <div
-                className={`dark:bg-neutralc-700 bg-neutralc-200 shadow-xl transition-transform duration-300 relative scrollbar `}
-                style={{ width: panelWidth, position: "fixed", right: 0, overflow: "scroll", height: "calc(100% - 65px)"}}
-              >
-                <StixPropsPanel />
-                {/* Handle */}
-                <div id='PropertyPanelHandle'
-                  onMouseDown={handleMouseDown}
-                  className="absolute left-0 top-0 h-full cursor-ew-resize flex items-center justify-center dark:bg-neutralc-700"
-                  style={{ width: '8px', zIndex: 100 }}
+              {isPropertyPanelOpen && (
+                <div
+                  className={`dark:bg-neutralc-800 bg-neutralc-200 h-full shadow-xl transition-transform duration-300 relative `}
+                  style={{ width: panelWidth }}
                 >
-                  <div className="w-1 h-8 bg-neutralc-500 dark:bg-neutralc-500 rounded-full hover:dark:bg-neutralc-400 hover:bg-neutralc-700"></div>
+                  <StixPropsPanel />
+                  {/* Handle */}
+                  <div id='PropertyPanelHandle'
+                    onMouseDown={handleMouseDown}
+                    className="absolute left-0 top-0 h-full cursor-ew-resize flex items-center justify-center dark:bg-neutralc-700"
+                    style={{ width: '8px', zIndex: 100 }}
+                  >
+                    <div className="w-1 h-8 bg-neutralc-500 dark:bg-neutralc-500 rounded-full hover:dark:bg-neutralc-400 hover:bg-neutralc-700"></div>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
-      </ConnectedDBProvider>
-    </StixPropsContextProvider>
-  </ThemeContextComponent>;
+        </ConnectedDBProvider>
+      </StixPropsContextProvider>
+    </ThemeContextComponent>
+  );
 }
 export default MainScaffold;

@@ -12,7 +12,7 @@ const Edit: React.FC = () => {
       title="Edit"
       includeDropdownArrow
       additionalOptionClasses={'hover:text-black hover:text-white dark:hover:bg-primary hover:bg-primary w-[130px]'}
-      fixed
+      fixed={true}
     >
       {/* <li className='hover:bg-primary hover:text-white'><a>Undo</a></li> */}
       {/* <li className='hover:bg-primary hover:text-white'><a>Redo</a></li> */}
@@ -23,8 +23,8 @@ const Edit: React.FC = () => {
       {/* <li className='hover:bg-primary hover:text-white'><a>Paste</a></li> */}
       {/* <div className="divider dark:divider-neutral my-0"></div> */}
 
-      <li className='hover:bg-primary hover:text-white'><a onClick={() => selectAll(cyInstance, setSelectionExists) }>Select All</a></li>
-      <li className='hover:bg-primary hover:text-white'><a onClick={() => invertSelection(cyInstance, setSelectionExists) }>Invert Selection</a></li>
+      <li className='hover:bg-primary hover:text-white'><a onClick={() => selectAll(cyInstance, setSelectionExists)}>Select All</a></li>
+      <li className='hover:bg-primary hover:text-white'><a onClick={() => invertSelection(cyInstance, setSelectionExists)}>Invert Selection</a></li>
 
       {/* <div className="divider dark:divider-neutral my-0"></div> */}
       {/* <li className='hover:bg-primary hover:text-white'><a>Find</a></li>  */}

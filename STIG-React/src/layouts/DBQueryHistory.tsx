@@ -1,53 +1,52 @@
-import React from 'react';
+import React, { useContext, useState } from 'react';
 import { queryToGraph } from '@/util/GraphUtils';
 import { useStigContext } from '@/contexts/StigContext';
 import { useNotificationContext } from '@/contexts/NotificationContext';
-import { readDBQueryStorage } from '@/data/db-query-storage';
+import { readDBQueryStorage, removeDBQuery } from '@/data/db-query-storage';
 import ButtonIcon from '@/components/elements/ButtonIcon';
 import AlertComponent from '@/components/elements/AlertComponent';
+import { mdiDeleteForever, mdiPlay } from '@mdi/js';
+import ConnectedDBContext, { ConnectedDBContextType } from '@/contexts/ConnectedDBContext';
+import { DeleteCancelAlert } from '@/components/elements/DeleteCancelAlert';
 
 export default function DBQueryHistory({ inQueryDeleteProcess, setInQueryDeleteProcess,
-  setQueryToDelteId
 }: {
   inQueryDeleteProcess: boolean,
   setInQueryDeleteProcess: React.Dispatch<React.SetStateAction<boolean>>,
-  setQueryToDelteId: React.Dispatch<React.SetStateAction<string>>
 }) {
   const { cyInstance } = useStigContext();
   const { addNotification } = useNotificationContext();
-
+  const { connectedDBProfile } = useContext(ConnectedDBContext) as ConnectedDBContextType;
   const savedQueries = readDBQueryStorage();
+  const [queryToDeleteId, setQueryToDeleteId] = useState("");
+
+
+  const deleteQuery = () => {
+    removeDBQuery(queryToDeleteId);
+    setQueryToDeleteId("");
+    setInQueryDeleteProcess(false);
+  }
+  const cancelDeleteQuery = () => {
+    setInQueryDeleteProcess(false);
+  }
 
   return (
-    <div className='flex basis-9/12 flex-col'>
-      <p className='mb-2'>Query History</p>
-      <div className='scrollbar h-[425px]'>
+    <div className='flex flex-col mt-2 h-fit'>
+      <p className='mb-1'>Query History</p>
+      <div className='flex flex-col h-fit'>
         {savedQueries.length ?
           savedQueries.map(savedQuery => {
             return (
-              <div
-                key={savedQuery.id}
-                className='
-                  flex 
-                  items-center
-                  justify-between
-                  rounded-md
-                  border
-                  border-neutralc-500
-                  bg-neutralc-100
-                  dark:bg-neutralc-900
-                  m-1
-                  pl-2
-                  h-12
-                  group
-                '
-              >
-                <p className='truncate max-w-[640px] group-hover:max-w-[550px]'>{savedQuery.query}</p>
-                <div>
+              // min-h-[50px] h-fit
+              <div key={savedQuery.id}
+                className='flex flex-nowrap items-center justify-between rounded-md border border-neutralc-500 bg-neutralc-100 dark:bg-neutralc-900 mb-1 group overflow-hidden relative'>
+                <p className='flex ml-2 break-all text-wrap'>{savedQuery.query}</p>
+                <div className='min-h-[50px] min-w-[55px] flex items-center w-fit'>
                   <ButtonIcon
-                    buttonIcon="play_arrow"
-                    type="btn-ghost"
-                    disabled={inQueryDeleteProcess}
+                    buttonIcon={mdiPlay}
+                    type="btn-primary"
+                    iconText='Run Query'
+                    disabled={inQueryDeleteProcess || !connectedDBProfile}
                     onClick={async () => {
                       const [numVerticiesAdded, numEdgesAdded] = await queryToGraph(savedQuery.query, cyInstance);
                       if (numVerticiesAdded < 0 && numEdgesAdded < 0) {
@@ -57,27 +56,36 @@ export default function DBQueryHistory({ inQueryDeleteProcess, setInQueryDeleteP
                       } else {
                         addNotification("Imported " + numVerticiesAdded + " node(s) and " + numEdgesAdded + " edge(s)", "success");
                       }
-                      // Close the dialog
-                      const dialogElement = document.getElementById("DBQueryModal") as HTMLDialogElement;
-                      dialogElement.close();
                     }}
-                    additionalClasses="hidden group-hover:inline hover:!text-success !text-success-dark"
+                    additionalClasses="hidden group-hover:inline btn-xs hover:!text-white hover:!bg-black hover:dark:!text-black hover:dark:!bg-white "
                   />
                   <ButtonIcon
-                    buttonIcon="delete"
+                    buttonIcon={mdiDeleteForever}
                     type="btn-ghost"
                     disabled={inQueryDeleteProcess}
                     onClick={() => {
                       setInQueryDeleteProcess(true);
-                      setQueryToDelteId(savedQuery.id);
+                      setQueryToDeleteId(savedQuery.id);
                     }}
-                    additionalClasses="hidden group-hover:inline hover:!text-error !text-error-dark"
+                    additionalClasses="hidden group-hover:inline hover:!text-error-dark hover:dark:!text-white !text-error h-fit w-fit"
                   />
                 </div>
+
+                {savedQuery.id === queryToDeleteId && inQueryDeleteProcess &&
+                  <DeleteCancelAlert
+                    displayMessage={
+                      <span>Delete this query?</span>
+                    }
+                    onDeleteClick={deleteQuery}
+                    onCancelClick={cancelDeleteQuery}
+                    className='w-full py-0 px-2 absolute inset-0 flex items-center justify-center'
+                  />
+                }
               </div>
+
             );
           })
-          : <AlertComponent alertText={`No query history`} alertType="info" />
+          : <AlertComponent alertText={`No Query History. No queries have been executed yet.`} alertType="info" />
         }
       </div>
     </div>

@@ -21,7 +21,8 @@ type Props = {
   infoIcon?: string;
   infoText?: string;
   multiple?: boolean;
-  property?: SchemaSTIXProperty
+  property?: SchemaSTIXProperty,
+  tooltip?: string
 };
 
 const FormElementFileInput: React.FC<Props> = ({
@@ -39,7 +40,8 @@ const FormElementFileInput: React.FC<Props> = ({
   infoIcon,
   infoText,
   multiple,
-  property
+  property,
+  tooltip
 }) => {
 
   const [filename, setFilename] = useState('');
@@ -104,6 +106,7 @@ const FormElementFileInput: React.FC<Props> = ({
           type={'btn-neutralc'}
           additionalClasses={`${additionalBtnClasses}`}
           onClick={handleButtonClick}
+          tooltip={tooltip}
         />
         <InfoButton
           visible={includeInfo}
@@ -112,6 +115,7 @@ const FormElementFileInput: React.FC<Props> = ({
           additionalStyle={{ transform: 'translate(50%, -50%)' }}
           parentRef={parentRef}
           infoIcon={infoIcon}
+          iconSize={.7}
         />
       </div>
       {showInfo && includeInfo && infoText && infoText?.length > 0 &&

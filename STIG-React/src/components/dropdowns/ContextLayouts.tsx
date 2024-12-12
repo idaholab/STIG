@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Dropdown from '../core/Dropdown';
 import { useStigContext } from '@/contexts/StigContext';
 import { getLayoutSettingsFromStore, GraphUtils, runGraphLayout } from '@/util/GraphUtils';
@@ -86,35 +86,35 @@ const killChainSchema = {
           "aliases": ["Privilege Escalation"]
         },
         {
-          "name":"evasion",
+          "name": "evasion",
           "aliases": ["Evasion"]
         },
         {
-          "name":"discovery",
+          "name": "discovery",
           "aliases": ["Discovery"]
         },
         {
-          "name":"lateral-movement",
+          "name": "lateral-movement",
           "aliases": ["Lateral Movement"]
         },
         {
-          "name":"collection",
+          "name": "collection",
           "aliases": ["Collection"]
         },
         {
           "name": "command-and-control",
-          "aliases": ["Command and Control","Command & Control",]
+          "aliases": ["Command and Control", "Command & Control",]
         },
         {
-          "name":"inhibit-response-function",
+          "name": "inhibit-response-function",
           "aliases": ["Inhibit Response Function"]
         },
         {
-          "name":"impair-process-control",
+          "name": "impair-process-control",
           "aliases": ["Impair Process Control"]
         },
         {
-          "name":"impact",
+          "name": "impact",
           "aliases": ["Impact"]
         }
       ]
@@ -226,51 +226,64 @@ const defenseExtension = {
 }
 
 const ContextLayouts: React.FC = () => {
-  const { cyInstance } = useStigContext();
+  const { cyInstance, activeContextLayout, setActiveContextLayout } = useStigContext();
+
+  const handleClick = (index: number, callback: Function) => {
+    setActiveContextLayout(index);
+    callback(cyInstance);
+  }
+
+  const renderList = (item: { id: number, label: string; callback: Function, className: string }) => {
+    const classes = `hover:bg-primary hover:text-white ${item.className} ${activeContextLayout === item.id ? 'bg-primary text-white' : ''}`;
+    return (
+      <li key={item.id} className={classes}>
+        <a className='flex w-full' onClick={() => handleClick(item.id, item.callback)}>{item.label}</a>
+      </li>
+    );
+  }
+
+  const nonKillChainItems = [
+    { id: 0, label: "None", callback: contextLayoutNone, className: 'px-4 py-2' },
+    { id: 1, label: "Defense in Depth", callback: contextLayoutDefenseInDepth, className: 'px-4 py-2' },
+  ];
+
+  const killchainItems = [
+    { id: 2, label: "Lockheed Martin Cyber Kill Chain", callback: contextLayoutLockheedMartinKC, className: 'px-8 py-2' },
+    { id: 3, label: "MITRE-ICS", callback: contextLayoutMitreKC, className: 'px-8 py-2' },
+    { id: 4, label: "Other", callback: contextLayoutOtherKC, className: 'px-8 py-2' },
+  ];
 
   return (
-    <Dropdown
-      title="Context Layouts"
-      includeDropdownArrow
-      additionalButtonClasses={'text-neutral-600 dark:text-neutral-300'}
-      fixed
-    >
-      <li className='hover:bg-primary hover:text-white'><a onClick={() => fLay_none(cyInstance)}>None</a></li>
-      <li className='hover:bg-primary hover:text-white'><a onClick={() => fLay_defenseInDepth(cyInstance)}>Defense in Depth</a></li>
-
-      <p className="menu-title text-neutralc-500 dark:text-neutralc-300 font-normal py-2 ">Kill Chains:</p>
-
-
-      <li className='hover:bg-primary hover:text-white'><a onClick={() => { fLay_lockheedKC(cyInstance) }}>Lockheed Martin Cyber Kill Chain</a></li>
-      <li className='hover:bg-primary hover:text-white'><a onClick={() => fLay_MitreKC(cyInstance)}>MITRE-ICS</a></li>
-      <li className='hover:bg-primary hover:text-white'><a onClick={() => fLay_otherKC(cyInstance)}>Other</a></li>
-
-    </Dropdown>
+    <ul className='flex-1 p-1'>
+      {nonKillChainItems.map(renderList)}
+      <p className="menu-title text-neutralc-500 dark:text-neutralc-100  px-4">Kill Chains:</p>
+      {killchainItems.map(renderList)}
+    </ul>
   );
 };
 
-function fLay_none(cy: cytoscape.Core | undefined) {
+function contextLayoutNone(cy: cytoscape.Core | undefined) {
   if (cy === undefined) { return console.error("cytoscape.Core is undefined"); }
   removeCompoundNodes(cy);
   runGraphLayout(getLayoutSettingsFromStore(), cy);
 }
-function fLay_defenseInDepth(cy: cytoscape.Core | undefined) {
+function contextLayoutDefenseInDepth(cy: cytoscape.Core | undefined) {
   if (cy === undefined) { return console.error("cytoscape.Core is undefined"); }
   removeCompoundNodes(cy);
   initDefenseGraph(cy);
   organizeOrphans(cy);
 }
-function fLay_lockheedKC(cy: cytoscape.Core | undefined) {
+function contextLayoutLockheedMartinKC(cy: cytoscape.Core | undefined) {
   if (cy === undefined) { return console.error("cytoscape.Core is undefined"); }
   removeCompoundNodes(cy);
   initKillChainGraph(cy, "lockheed-martin-cyber-kill-chain");
 }
-function fLay_MitreKC(cy: cytoscape.Core | undefined) {
+function contextLayoutMitreKC(cy: cytoscape.Core | undefined) {
   if (cy === undefined) { return console.error("cytoscape.Core is undefined"); }
   removeCompoundNodes(cy);
   initKillChainGraph(cy, "mitre-ics-attack");
 }
-function fLay_otherKC(cy: cytoscape.Core | undefined) {
+function contextLayoutOtherKC(cy: cytoscape.Core | undefined) {
   if (cy === undefined) { return console.error("cytoscape.Core is undefined"); }
   removeCompoundNodes(cy);
   initKillChainGraph(cy, "other");

@@ -6,16 +6,18 @@ import ButtonBasic from './ButtonBasic';
 type DeleteCancelAlertProps = {
     displayMessage: React.ReactNode,
     onDeleteClick: () => void,
-    onCancelClick: () => void
+    onCancelClick: () => void,
+    className?: string
 };
 
 export const DeleteCancelAlert: React.FC<DeleteCancelAlertProps> = ({
     displayMessage,
     onDeleteClick,
-    onCancelClick
+    onCancelClick,
+    className = 'absolute w-1/2 left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-40'
 }) => {
     return (
-        <div role="alert" className="alert text-base mb-8 w-1/2 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-40 text-neutralc-900 bg-warning-light border-primary-900 dark:bg-warning-dark dark:text-neutralc-100 dark:border-primary-100">
+        <div role="alert" className={`alert ${className} text-base text-neutralc-900 bg-warning-light border-primary-900 dark:bg-warning-dark dark:text-neutralc-100 dark:border-primary-100`}>
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"

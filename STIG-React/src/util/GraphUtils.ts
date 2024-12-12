@@ -241,11 +241,6 @@ export function setupCtxMenu(
                 select(ele: cytoscape.CollectionElements) {
                     const element = ele as unknown as CollectionArgument;
                     try {
-                        // const eleList = element.toArray();
-                        // eleList.forEach((value) => {
-                        //     cy.remove(value);
-                        //     void db_delete(value.data('raw_data'));
-                        // });
                         if (selectedSTIXObject?.id === element.data("id")) {
                             setSelectedSTIXObject(undefined);
                             setSelectionExists(false);
@@ -260,19 +255,21 @@ export function setupCtxMenu(
             },
             {
                 content: 'Query Incoming',
-                async select(ele: cytoscape.CollectionElements) {
-                    const elements = ele as unknown as CollectionArgument;
-                    for (const value of elements.toArray()) {
-                        let data = value.data('raw_data');
-                        if (typeof data === 'string') {
-                            data = JSON.parse(data);
-                        }
-                        let incoming = await query_incoming(data)
-                        const coreObjects: StixObject[] = incoming.map(obj => obj as StixObject);
-                        graph_utils.buildNodes(coreObjects, 'DB');
-                        runGraphLayout(getLayoutSettingsFromStore(), cy);
-                    }
-                }
+                select: (ele: cytoscape.CollectionElements) => queryIncoming(ele, graph_utils, cy)
+
+                // async select(ele: cytoscape.CollectionElements) {
+                //     const elements = ele as unknown as CollectionArgument;
+                //     for (const value of elements.toArray()) {
+                //         let data = value.data('raw_data');
+                //         if (typeof data === 'string') {
+                //             data = JSON.parse(data);
+                //         }
+                //         let incoming = await query_incoming(data)
+                //         const coreObjects: StixObject[] = incoming.map(obj => obj as StixObject);
+                //         graph_utils.buildNodes(coreObjects, 'DB');
+                //         runGraphLayout(getLayoutSettingsFromStore(), cy);
+                //     }
+                // }
             },
             {
                 content: 'Select Incoming',
@@ -350,27 +347,6 @@ export function setupCtxMenu(
                         setIsPropertyPanelOpen(false);
                     }
                     cy.remove(element);
-                }
-            },
-            {
-                content: 'DB Delete',
-                select(ele: CollectionElements) {
-                    const element = ele as unknown as CollectionArgument;
-                    try {
-                        const eleList = element.toArray();
-                        eleList.forEach((value) => {
-                            const selectedSTIXObjectId = selectedSTIXObject?.id.replace("relationship--", "");
-                            if (selectedSTIXObjectId === element.data("id") || selectedSTIXObject?.id === element.data("id")) {
-                                setSelectedSTIXObject(undefined);
-                                setSelectionExists(false);
-                                setIsPropertyPanelOpen(false);
-                            }
-                            cy.remove(value);
-                            void db_delete(value.data('raw_data'));
-                        });
-                    } catch (e) {
-                        console.warn("Relationship was not removed from DB", e);
-                    }
                 }
             },
             {
@@ -568,7 +544,88 @@ export const runGraphLayout = (layoutType: keyof LayoutsType, cyInstance: cytosc
 }
 
 
+export async function queryIncoming(
+    elements: cytoscape.CollectionElements,
+    graph_utils: GraphUtils,
+    cy: cytoscape.Core
+) {
+    const collection = elements as unknown as CollectionArgument;
+    for (const value of collection.toArray()) {
+        let data = value.data('raw_data');
+        if (typeof data === 'string') {
+            data = JSON.parse(data);
+        }
+        let incoming = await query_incoming(data);
+        const coreObjects: StixObject[] = incoming.map(obj => obj as StixObject);
+        graph_utils.buildNodes(coreObjects, 'DB');
+        runGraphLayout(getLayoutSettingsFromStore(), cy);
+    }
+}
 
+
+export function deleteNodeFromDB(
+    cy: cytoscape.Core,
+    element: cytoscape.CollectionArgument,
+    selectedSTIXObject: StixObject | undefined,
+    setSelectedSTIXObject: (obj: StixObject | undefined) => void,
+    setSelectionExists: React.Dispatch<React.SetStateAction<boolean>>,
+    setIsPropertyPanelOpen: (b: boolean) => void
+) {
+    try {
+        if (selectedSTIXObject?.id === element.data("id")) {
+            setSelectedSTIXObject(undefined);
+            setSelectionExists(false);
+            setIsPropertyPanelOpen(false);
+        }
+        cy.remove(element);
+        db_delete(element.data('raw_data'));  // Assuming `db_delete` is already defined elsewhere
+    } catch (e) {
+        // Handle error: probably want to indicate that it wasn't deleted from DB
+        console.error("Error deleting from DB: ", e);
+    }
+}
+
+
+
+// { //NODE
+//     content: 'DB Delete',
+//         select(ele: cytoscape.CollectionElements) {
+//         const element = ele as unknown as CollectionArgument;
+//         try {
+//             if (selectedSTIXObject?.id === element.data("id")) {
+//                 setSelectedSTIXObject(undefined);
+//                 setSelectionExists(false);
+//                 setIsPropertyPanelOpen(false);
+//             }
+//             cy.remove(element);
+//             db_delete(element.data('raw_data'));
+//         } catch (e) {
+//             // Handle error: probably want to indicate that it wasn't deleted from DB
+//         }
+//     }
+// },
+
+// { // EDGE
+//     content: 'DB Delete',
+//         select(ele: CollectionElements) {
+//         const element = ele as unknown as CollectionArgument;
+//         try {
+//             const eleList = element.toArray();
+//             eleList.forEach((value) => {
+//                 const selectedSTIXObjectId = selectedSTIXObject?.id.replace("relationship--", "");
+//                 if (selectedSTIXObjectId === element.data("id") || selectedSTIXObject?.id === element.data("id")) {
+//                     setSelectedSTIXObject(undefined);
+//                     setSelectionExists(false);
+//                     setIsPropertyPanelOpen(false);
+//                 }
+//                 cy.remove(value);
+//                 void db_delete(value.data('raw_data'));
+//             });
+//         } catch (e) {
+//             console.warn("Relationship was not removed from DB", e);
+//         }
+//     }
+// },
 
 
 export function layoutByTimeframe(cy: cytoscape.Core) {

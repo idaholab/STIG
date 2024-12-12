@@ -110,7 +110,7 @@ module.exports = {
           'neutral': '#64748b',
           'warning': '#fed7aa',
           'error': '#fecaca',
-          'info': '#c4dcf3'
+          'info': '#c4dcf3',
         },
       },
       {
@@ -121,10 +121,10 @@ module.exports = {
           "primary-focus": "",
           "primary-content": "#ffffff",
           'primary-inactive': '#1e4a85',
-          'warning': '#ea580c',
+          'warning': '#c24a0c',
           'neutral': '#6b7280',
           'error': '#7f1d1d',
-          'info': '#1a4772'
+          'info': '#1a4772',
         },
       },
     ],

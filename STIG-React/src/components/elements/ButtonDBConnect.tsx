@@ -5,6 +5,8 @@ import { connectToNeo4jDB, disconnectFromNeo4jDB } from '@/data/neo4j-connection
 import { DBProfile } from '@/types/DBProfile';
 import { editDBConfig } from '@/data/db-profile-storage';
 import { close_db, use_db } from '@/util/DbFunctions';
+import Icon from '@mdi/react';
+import { mdiAlertCircleOutline } from '@mdi/js';
 
 interface ButtonDBConnectProps {
     dbProfile?: DBProfile;
@@ -31,10 +33,8 @@ const ButtonDBConnect: React.FC<ButtonDBConnectProps> = ({
                     : null
                 }
                 {dbProfile && !dbProfile?.LastDBOperationSuccessful ?
-                    <div className="mx-1 tooltip tooltip-bottom tooltip-error" data-tip="ERROR: Unable to Connect">
-                        <span className="material-icons !text-base dark:text-error text-error-light">
-                            error_outline
-                        </span>
+                    <div className="flex items-center ml-1 tooltip tooltip-bottom tooltip-error" data-tip="ERROR: Unable to Connect">
+                        <Icon path={mdiAlertCircleOutline} size={.7} className="!dark:text-error text-error-light" />
                     </div>
                     : null
                 }

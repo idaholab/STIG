@@ -16,36 +16,36 @@ const SaveButtons: React.FC = () => {
   const { selectedSTIXObject } = useStixPropsContext();
   const { connectedDBProfile } = useContext(ConnectedDBContext) as ConnectedDBContextType;
   const { cyInstance } = useStigContext();
-  //-------------------------------------
-  const saverNeo4j = () => {
-    addNotification("Saving to Database....", "info");
-    try {
-      if (selectedSTIXObject !== undefined) {
-        (async () => {
-          try {
-            const { nodes, edges, errors } = await (
-              isRelationship(selectedSTIXObject) ?
-                commit([], [selectedSTIXObject]) :
-                commit([selectedSTIXObject], [])
-            );
-            const toastType: AlertType = errors === 0 ? "success" : "warning";
-            addNotification(`Submitted ${nodes} node(s) and ${edges} edge(s) with ${errors} error(s)`, toastType);
-          } catch (err) {
-            addNotification((err as Error).message, "warning");
-          }
-        })();
-      } else {
-        addNotification("object undefined", "error");
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-  //-------------------------------------
+  // //-------------------------------------
+  // const saverNeo4j = () => {
+  //   addNotification("Saving to Database....", "info");
+  //   try {
+  //     if (selectedSTIXObject !== undefined) {
+  //       (async () => {
+  //         try {
+  //           const { nodes, edges, errors } = await (
+  //             isRelationship(selectedSTIXObject) ?
+  //               commit([], [selectedSTIXObject]) :
+  //               commit([selectedSTIXObject], [])
+  //           );
+  //           const toastType: AlertType = errors === 0 ? "success" : "warning";
+  //           addNotification(`Submitted ${nodes} node(s) and ${edges} edge(s) with ${errors} error(s)`, toastType);
+  //         } catch (err) {
+  //           addNotification((err as Error).message, "warning");
+  //         }
+  //       })();
+  //     } else {
+  //       addNotification("object undefined", "error");
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
+  // //-------------------------------------
   return (
     <>
       <div className='place-self-end mt-8 flex gap-2 mb-4'>
-        <DialogBasic
+        {/* <DialogBasic
           dialogId="SaveToNeo4jModal"
           title="Update Database"
           showFormButtons={true}
@@ -56,7 +56,7 @@ const SaveButtons: React.FC = () => {
           onSave={saverNeo4j}
         >
           <DBUpdateModal cy={cyInstance} selector={`#${selectedSTIXObject?.id}`}/>
-        </DialogBasic>
+        </DialogBasic> */}
         <DialogBasic
           dialogId="ExportObjectModal"
           title="Save JSON"
