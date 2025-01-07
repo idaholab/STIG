@@ -57,7 +57,7 @@ const MainScaffold: React.FC<Props> = ({ children }) => {
 
               {isPropertyPanelOpen && (
                 <div
-                  className={`dark:bg-neutralc-800 bg-neutralc-200 h-full shadow-xl transition-transform duration-300 relative `}
+                  className={`dark:bg-neutralc-700 bg-neutralc-200 shadow-xl transition-transform duration-300 relative scrollbar `}
                   style={{ width: panelWidth }}
                 >
                   <StixPropsPanel />
@@ -76,6 +76,6 @@ const MainScaffold: React.FC<Props> = ({ children }) => {
         </ConnectedDBProvider>
       </StixPropsContextProvider>
     </ThemeContextComponent>
-  );
+  )
 }
 export default MainScaffold;
