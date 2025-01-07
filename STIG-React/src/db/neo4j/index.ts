@@ -7,6 +7,7 @@ import { isRelationship } from './isRelationship';
 import { StixObject } from '@/types/stixTypes/StixObject';
 import { StixRelationshipObject } from '@/types/stixTypes/StixRelationshipObject';
 import { Delta, DiffPatcher } from 'diffpatch';
+import { stencilItems } from '@/components/elements/StencilItems';
 
 const get_node_query = `
 UNWIND $ids AS id
@@ -180,10 +181,19 @@ export class Neo4jStigDB implements StigDB {
   public updateDB(stix_nodes: StixObject[], stix_edges: StixRelationshipObject[]): Promise<{ nodes: number; edges: number; errors: number; }> {
     const time = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
     const node_params = stix_nodes.map(stix => {
-      stix.modified = time;
-      if (!moment(stix.created).isValid()) {
-        stix.created = time;
+      const stixCoreType = stencilItems.find(stencilItem => stencilItem.id === stix.type)?.type;
+      if (stixCoreType == "sdo"){
+        stix.modified = time;
+        if (!moment(stix.created).isValid()) {
+          stix.created = time;
+        }
+      }else if (stixCoreType == "sco"){
+        if (stix.created != undefined){console.warn("the 'created' property is not valid for SCO's, so it has been removed from "+stix.id)}
+        if (stix.modified != undefined){console.warn("the 'modified' property is not valid for SCO's, so it has been removed from "+stix.id)}
+        stix.created = undefined;
+        stix.modified = undefined;
       }
+      
       const props = toNeo4j(stix);
       delete props.type;
       return { id: props.id, type: stix.type, props };

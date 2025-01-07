@@ -444,7 +444,6 @@ function stackCompoundNodes(cy: cytoscape.Core, clss: string) {
   }
 }
 function handleDropNode(e: cytoscape.EventObject) {
-  console.debug("handleDropNode")
   const ele = e.target;
 
   const hasClass = ele.hasClass('stix_node');
@@ -525,7 +524,6 @@ function handleDropNode(e: cytoscape.EventObject) {
   ele.parent().data('prevBounds', null);
 }
 function handleDrag(e: cytoscape.EventObject) {
-  console.debug("handleDrag")
   const ele = e.target;
 
   if (ele.hasClass('stix_node') && ele.isChild()) {
@@ -626,7 +624,6 @@ function canRemove(parent: any, dX: any, dY: any): boolean {
 }
 
 function handleDblClickNode(e: cytoscape.EventObject) {
-  console.debug("handleDblClickNode")
   const ele = e.target;
 
   if (ele.hasClass('stix_node') && ele.isChild()) {
@@ -662,7 +659,6 @@ function compareNames(name: string, parent: string, aliases: string[] | null): b
       }
     });
   }
-
   return match;
 }
 
