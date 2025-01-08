@@ -46,7 +46,7 @@ const Dropdown: React.FC<DropdownProps> = ({
     </div>
     <ul
       tabIndex={0}
-      className={`dark:bg-neutralc-950 border border-neutralc-300 dark:border-none dropdown-content menu bg-neutralc-100 rounded-[4px] z-40 p-2 shadow absolute`}
+      className={`dark:bg-neutralc-950 border border-neutralc-300 dark:border-none dropdown-content menu bg-neutralc-100 rounded-[4px] z-40 p-2 shadow absolute `}
       style={{ outline: 'none', position: fixed ? 'fixed' : undefined }}
     >
       {React.Children.map(children, (child) => {
