@@ -35,12 +35,6 @@ const PageMainLanding: React.FC<Props> = () => {
           }}>
           <div className='relative flex m-4 justify-between flex-wrap w-full z-[10]'>
             <Menu />
-
-            {/* Slide In */}
-            {/* <div className={`overflow-hidden transition-transform duration-300 ${isSearchOpen ? 'transform translate-x-0 opacity-100' : 'transform translate-x-full opacity-0'}`}>
-              {isSearchOpen && <Search />}
-            </div> */}
-
             {/* Fade In */}
             <div className={`transition-opacity duration-700 ${isSearchOpen ? 'opacity-100' : 'opacity-0'}`}>
               {showSearch && <Search />}

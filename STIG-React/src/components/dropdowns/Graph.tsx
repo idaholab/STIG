@@ -21,9 +21,7 @@ const Graph: React.FC = () => {
     includeDropdownArrow
     additionalOptionClasses={'w-[220px] hover:text-black hover:text-white dark:hover:bg-primary hover:bg-primary '}
   >
-    {/* <li className='hover:bg-primary hover:text-white'><a>Copy Selected Elements</a></li>
-    <li className='hover:bg-primary hover:text-white'><a>Cut Selected Elements</a></li>
-    <li className='hover:bg-primary hover:text-white'><a>Paste Elements</a></li>
+    {/* 
     <li className='hover:bg-primary hover:text-white'><a>Commit All Elements</a></li>
     <li className='hover:bg-primary hover:text-white'><a>Delete Selected from Database</a></li>
     <li className='hover:bg-primary hover:text-white'><a>Select All Elements</a></li>

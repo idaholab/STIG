@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useStigContext } from '@/contexts/StigContext';
 import { mdiClose, mdiLayersSearchOutline, mdiMagnify, mdiRefresh } from '@mdi/js';
 import ButtonIcon from './ButtonIcon';
@@ -9,6 +9,7 @@ import { SchemaSTIXProperty, SchemaSTIXStringType } from '@/types/stixSchemaType
 import Icon from '@mdi/react';
 import ButtonBasic from './ButtonBasic';
 import AlertComponent from './AlertComponent';
+import { sanitizeInput } from '@/util/SanitizeInput';
 
 const SearchComponent: React.FC = () => {
     const [searchText, setSearchText] = useState<string>('');
@@ -17,7 +18,6 @@ const SearchComponent: React.FC = () => {
     const [filterOptions, setFilterOptions] = useState<SchemaSTIXProperty[]>([]);
     const [selectedProperties, setSelectedProperties] = useState<SchemaSTIXProperty[]>([]);
 
-    // Function to handle removing a filter
     const removeFilter = useCallback((filterToRemove: SchemaSTIXProperty) => {
         setSelectedProperties(selectedProperties.filter(filter => filter !== filterToRemove));
     }, [selectedProperties]);
@@ -29,7 +29,6 @@ const SearchComponent: React.FC = () => {
         function getAllProperties(classes: Class[]): SchemaSTIXProperty[] { // replace SchemaSTIXProperty with your actual type
             const properties: SchemaSTIXProperty[] = [];
             const uniqueProps = new Set();
-            let count: number = 0;
             for (const klass of classes) {
                 for (const prop of klass.properties) {
                     const propObj = {
@@ -38,12 +37,10 @@ const SearchComponent: React.FC = () => {
                     } as SchemaSTIXProperty;
                     if (!uniqueProps.has(propObj.name)) {
                         properties.push(propObj);
-                        count++;
                         uniqueProps.add(propObj.name);
                     }
                 }
             }
-            console.log(`Property count: ${count}`);
             return properties.sort((a, b) => a.name.localeCompare(b.name));
         }
         setFilterOptions(getAllProperties(schema));
@@ -56,7 +53,7 @@ const SearchComponent: React.FC = () => {
     function searchGraph(cy: cytoscape.Core, prop: string, searchterm: string | number): cytoscape.CollectionReturnValue {
         let prop2: string | null = null;
         let prop3: string | null = null;
-        searchterm = searchterm.toString().trim();
+        searchterm = sanitizeInput(searchterm.toString().trim());
         if (prop.includes('.')) {
             const s = prop.split('.');
             prop2 = s[0];
@@ -68,7 +65,7 @@ const SearchComponent: React.FC = () => {
             if (ele.data('raw_data')) {
                 if (prop3 !== null) {
                     if (ele.data('raw_data')[prop2!]?.length > 0) {
-                        ele.data('raw_data')[prop2!].forEach((eleArr: Record<string, string>) => {
+                        ele.data('raw_data')[prop2!].forEach((eleArr: Record<string, any>) => {
                             //ret = eleArr[prop3 as any].trim() === searchterm;
                             ret = eleArr[prop3 as any]?.trim()?.includes(searchterm);
                         });
@@ -90,20 +87,20 @@ const SearchComponent: React.FC = () => {
         return returnValue
     }
 
-    const handleReset = () => {
+    const handleReset = useCallback(() => {
         setSelectedProperties([]);
         setSearchText('');
         setSearchStatus('');
-    }
+    }, []);
 
     // Searchs activeFilters rather than just the property that is specified by prop = s[0];
-    const handleSearch = () => {
+    const handleSearch = useCallback(() => {
         if (!cyInstance) {
             return
         }
 
         setSearchStatus('');
-        const text = searchText;
+        const text = sanitizeInput(searchText);
         let prop = '';
         let searchparam = '';
 
@@ -159,7 +156,7 @@ const SearchComponent: React.FC = () => {
         } else {
             setSearchStatus('Found 0 elements');
         }
-    };
+    }, [cyInstance, searchText, selectedProperties]);
 
     const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
         e.preventDefault();
@@ -168,6 +165,22 @@ const SearchComponent: React.FC = () => {
             handleSearch();
         }
     };
+
+    const filterBadges = useMemo(() => (
+        <div className={`flex items-center h-min min-h-min overflow-hidden`}>
+            {selectedProperties.slice(-3).map((filter, index) => (
+                <div key={index} className="badge badge-sm badge-secondary gap-2 mr-1 mt-2">
+                    {filter.name}
+                    <button onClick={() => removeFilter(filter)} className="text-xs">x</button>
+                </div>
+            ))}
+            {selectedProperties.length > 3 && (
+                <div className="badge badge-sm badge-secondary gap-2 whitespace-nowrap mr-1 mt-2">
+                    <span>+{selectedProperties.length - 3} more</span>
+                </div>
+            )}
+        </div>
+    ), [selectedProperties, removeFilter]);
 
     return (
         <div className={`flex flex-col bg-neutralc-200 dark:bg-neutralc-950 pt-3 pb-2 px-4 rounded-lg w-max h-max z-10 min-w-[400px]`}>
@@ -194,19 +207,8 @@ const SearchComponent: React.FC = () => {
                     size={'standard'}
                 />
             </div>
-            <div className={`flex items-center h-min min-h-min overflow-hidden`}>
-                {selectedProperties.slice(-3).map((filter, index) => (
-                    <div key={index} className="badge badge-sm badge-secondary gap-2 mr-1 mt-2">
-                        {filter.name}
-                        <button onClick={() => removeFilter(filter)} className="text-xs">x</button>
-                    </div>
-                ))}
-                {selectedProperties.length > 3 && (
-                    <div className="badge badge-sm badge-secondary gap-2 whitespace-nowrap mr-1 mt-2">
-                        <span>+{selectedProperties.length - 3} more</span>
-                    </div>
-                )}
-            </div>
+
+            {filterBadges}
 
             {/* Divider */}
             <div className="border-t border-neutralc-300 dark:border-neutralc-700 my-5" />
@@ -216,6 +218,7 @@ const SearchComponent: React.FC = () => {
                 <input
                     type="text"
                     placeholder="Enter Search Term"
+                    aria-label="Search Term"
                     className="flex-1 input input-bordered input-sm  dark:bg-neutralc-950"
                     value={searchText}
                     onChange={(e) => setSearchText(e.target.value)}
@@ -249,5 +252,4 @@ const SearchComponent: React.FC = () => {
     );
 };
 
-export default SearchComponent;
-
+export default React.memo(SearchComponent);

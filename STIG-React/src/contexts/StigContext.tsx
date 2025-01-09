@@ -82,7 +82,6 @@ export const StigContextProvider: React.FC<Props> = ({ children }) => {
     setActivePropertiesPanelTab(activeTab);
   };
 
-
   return (
     <StigContext.Provider value={{
       activeContextLayout, setActiveContextLayout, togglePropertiesSetTab, activePropertiesPanelTab, setActivePropertiesPanelTab, isPropertyPanelOpen, setIsPropertyPanelOpen,

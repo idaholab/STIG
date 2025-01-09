@@ -2,7 +2,7 @@ import { mdiMenuDown } from '@mdi/js';
 import Icon from '@mdi/react';
 import React from 'react';
 
-interface DropdownProps {
+type DropdownProps = {
   title: string;
   includeDropdownArrow?: boolean;
   filter?: string;

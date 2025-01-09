@@ -16,8 +16,6 @@ export function graphCopy(cy: cytoscape.Core): void {
   clipboard.writeText(JSON.stringify(copied));
 }
 
-
-
 export function graphPaste(cy: cytoscape.Core): void {
   try {
     const parsed = JSON.parse(clipboard.readText());
