@@ -7,7 +7,7 @@ import Export from '../dropdowns/Export';
 
 const Menu: React.FC = () => {
   return (
-    <div className="flex join dark:bg-neutralc-950 bg-neutralc-200 border-transparent relative overflow-hidden w-max">
+    <div className="flex join dark:bg-neutralc-950 bg-neutralc-200 border-transparent relative h-max">
       <main>
         <Graph />
         <Edit />

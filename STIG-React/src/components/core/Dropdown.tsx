@@ -7,11 +7,13 @@ interface DropdownProps {
   includeDropdownArrow?: boolean;
   filter?: string;
   setFilter?: (f: string) => void;
+  additionalLabelClasses?: string;
+  iconSize?: number;
   additionalClasses?: string;
   additionalButtonClasses?: string;
+  additionalOptionContainerClasses?: string;
   additionalOptionClasses?: string;
   children?: React.ReactNode;
-  fixed?: boolean;
 }
 
 const Dropdown: React.FC<DropdownProps> = ({
@@ -19,18 +21,20 @@ const Dropdown: React.FC<DropdownProps> = ({
   includeDropdownArrow,
   filter,
   setFilter,
+  additionalLabelClasses,
+  iconSize = 1,
   additionalClasses,
   additionalButtonClasses,
+  additionalOptionContainerClasses,
   additionalOptionClasses,
-  children,
-  fixed,
+  children
 }) => <div className={`dropdown dropdown-bottom ${additionalClasses ?? ''} `}>
     <div
       tabIndex={0}
       role="button"
       className={filter === undefined ? `btn btn-ghost ${additionalButtonClasses ?? ''}` : "flex"}
     >
-      {filter === undefined ? <span>{title}</span> : <input
+      {filter === undefined ? <span className={`${additionalLabelClasses}`}>{title}</span> : <input
         type="text"
         placeholder={title}
         value={filter}
@@ -38,16 +42,15 @@ const Dropdown: React.FC<DropdownProps> = ({
         onFocus={e => e.target.placeholder = ""}
         onBlur={(e => e.target.placeholder = title)}
         style={{ marginLeft: "7px", outline: "none" }}
-        className={`w-full rounded-md bg-neutralc-100 dark:bg-neutralc-900 placeholder-neutralc-500 dark:placeholder-neutralc-300 hide-placeholder`}
+        className={`w-full rounded-md bg-neutralc-100 dark:bg-neutralc-950 placeholder-neutralc-500 dark:placeholder-neutralc-300 hide-placeholder`}
       />}
       {includeDropdownArrow &&
-        <Icon path={mdiMenuDown} size={1} />
+        <Icon path={mdiMenuDown} size={iconSize} />
       }
     </div>
     <ul
       tabIndex={0}
-      className={`dark:bg-neutralc-950 border border-neutralc-300 dark:border-none dropdown-content menu bg-neutralc-100 rounded-[4px] z-40 p-2 shadow absolute `}
-      style={{ outline: 'none', position: fixed ? 'fixed' : undefined }}
+      className={`bg-neutralc-100 dark:bg-neutralc-950 border border-neutralc-300 dark:border-neutralc-700 rounded-[4px] dropdown-content menu z-10 p-2 absolute ${additionalOptionContainerClasses}`}
     >
       {React.Children.map(children, (child) => {
         if (React.isValidElement(child)) {

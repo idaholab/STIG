@@ -12,6 +12,7 @@ type Props = {
   selectedProperties: SchemaSTIXProperty[];
   setSelectedProperties: React.Dispatch<React.SetStateAction<SchemaSTIXProperty[]>>;
   includeAddNew?: boolean;
+  label?: string;
   size: 'standard' | 'small';
   onAdd?: (p: SchemaSTIXProperty) => void;
 };
@@ -22,6 +23,7 @@ const FormSTIXPropertySelection: React.FC<Props> = ({
   selectedProperties,
   setSelectedProperties,
   includeAddNew,
+  label = 'Properties',
   size,
   onAdd,
 }) => {
@@ -37,11 +39,11 @@ const FormSTIXPropertySelection: React.FC<Props> = ({
   const [filter, setFilter] = useState('');
 
   return <Dropdown
-    title="Properties"
+    title={label}
     filter={filter}
     setFilter={setFilter}
     includeDropdownArrow
-    additionalClasses={`flex items-center bg-white dark:bg-neutralc-900 border border-black dark:border-transparent rounded-md ${buttonContainerSize}`}
+    additionalClasses={`flex items-center bg-white dark:bg-neutralc-950 border border-neutralc-900 dark:border-neutralc-500 rounded-md ${buttonContainerSize} w-max`}
     additionalButtonClasses={`${buttonSize}`}
   >
     <div className="relative">
@@ -76,7 +78,7 @@ const FormSTIXPropertySelection: React.FC<Props> = ({
               placeholder="Property name..."
               value={newPropertyName}
               onChange={(event) => { setNewPropertyName(event.target.value) }}
-              additionalInputClasses='bg-neutralc dark:bg-neutralc p-2 dark:placeholder:text-neutralc-100 placeholder:text-neutralc-900 dark:text-white text-black btn-xs'
+              additionalInputClasses='p-2 dark:placeholder:text-neutralc-100 placeholder:text-neutralc-900 dark:text-white text-black btn-xs'
               includeInfo={false}
             />
             <ButtonBasic
@@ -97,8 +99,8 @@ const FormSTIXPropertySelection: React.FC<Props> = ({
                 propertyOptions.push(p);
                 selectedProperties.push(p);
 
-                setPropertyOptions(propertyOptions.toSorted((a,b) => a.name.localeCompare(b.name)));
-                setSelectedProperties(selectedProperties.toSorted((a,b) => a.name.localeCompare(b.name)));
+                setPropertyOptions(propertyOptions.toSorted((a, b) => a.name.localeCompare(b.name)));
+                setSelectedProperties(selectedProperties.toSorted((a, b) => a.name.localeCompare(b.name)));
 
                 setNewPropertyName("");
                 onAdd && onAdd(p);

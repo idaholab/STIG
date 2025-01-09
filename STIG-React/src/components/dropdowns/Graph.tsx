@@ -20,7 +20,6 @@ const Graph: React.FC = () => {
     title="Graph"
     includeDropdownArrow
     additionalOptionClasses={'w-[220px] hover:text-black hover:text-white dark:hover:bg-primary hover:bg-primary '}
-    fixed={true}
   >
     {/* <li className='hover:bg-primary hover:text-white'><a>Copy Selected Elements</a></li>
     <li className='hover:bg-primary hover:text-white'><a>Cut Selected Elements</a></li>

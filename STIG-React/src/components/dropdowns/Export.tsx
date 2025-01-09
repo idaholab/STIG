@@ -9,7 +9,6 @@ const Export: React.FC = () => {
     <Dropdown
       title="Export"
       includeDropdownArrow
-      fixed
     >
       <div className="hover:text-black hover:text-white dark:hover:bg-primary hover:bg-primary">
         <DialogBasic
@@ -23,7 +22,7 @@ const Export: React.FC = () => {
           <ExportModal exporter={exportSelected} />
         </DialogBasic>
       </div>
-{/* ----------------------------------------------------------------------------------------------- */}
+      {/* ----------------------------------------------------------------------------------------------- */}
       <div className="hover:text-black hover:text-white dark:hover:bg-primary hover:bg-primary">
         <DialogBasic
           dialogId="ExportAllModal"

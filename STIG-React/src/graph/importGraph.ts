@@ -12,7 +12,7 @@ export interface ImportResult {
     layout: boolean;
 };
 
-export async function * importGraphToView(cyInstance: Core, files: ArrayLike<File>): AsyncGenerator<ImportResult> {
+export async function* importGraphToView(cyInstance: Core, files: ArrayLike<File>): AsyncGenerator<ImportResult> {
     let layout = false;
     const fileData = await readFiles(files);
     for (const { name, data } of fileData) {
@@ -43,18 +43,20 @@ export async function * importGraphToView(cyInstance: Core, files: ArrayLike<Fil
             if (numVerticiesAdded < 0 && numEdgesAdded < 0) {
                 yield { alert: { message: `Import of ${name} failed`, type: "error" }, layout };
             } else {
-                yield { alert: {
-                    message: `Imported ${numVerticiesAdded} node(s) and ${numEdgesAdded} edge(s)`,
-                    type: numVerticiesAdded === 0 && numEdgesAdded === 0 ? "warning" : "success",
-                }, layout };
+                yield {
+                    alert: {
+                        message: `Imported ${numVerticiesAdded} node(s) and ${numEdgesAdded} edge(s)`,
+                        type: numVerticiesAdded === 0 && numEdgesAdded === 0 ? "warning" : "success",
+                    }, layout
+                };
             }
-        } catch(_) {
+        } catch (_) {
             yield { alert: { message: `Import of ${name} failed`, type: "error" }, layout };
         }
     }
 }
 
-export async function * importGraphToDB(files: ArrayLike<File>): AsyncGenerator<ImportResult, undefined, undefined> {
+export async function* importGraphToDB(files: ArrayLike<File>): AsyncGenerator<ImportResult, undefined, undefined> {
     const nodes: StixObject[] = [];
     const rels: StixRelationshipObject[] = [];
     for (const file of Array.from(files)) {
@@ -68,7 +70,7 @@ export async function * importGraphToDB(files: ArrayLike<File>): AsyncGenerator<
             errors += ec;
             nodes.length = 0;
             rels.length = 0;
-        
+
             return [{
                 alert: {
                     message: `Imported ${ncommit} node(s) and ${rcommit} edge(s) from ${file.name} with ${errors} error(s).`,
@@ -81,9 +83,9 @@ export async function * importGraphToDB(files: ArrayLike<File>): AsyncGenerator<
         yield { alert: { message: `Reading ${file.name}`, type: "info" }, layout: false };
         for await (const obj of streamStixFile(file)) {
             (isRelationship(obj) ? rels : nodes).push(obj);
-            if (nodes.length + rels.length >= 250) yield * await commitBatch();
+            if (nodes.length + rels.length >= 250) yield* await commitBatch();
         }
-        if (nodes.length + rels.length > 0) yield * await commitBatch();
+        if (nodes.length + rels.length > 0) yield* await commitBatch();
         yield {
             alert: { message: `Imported all objects from ${file.name} with ${errors} error(s).`, type: "info" },
             layout: false,
