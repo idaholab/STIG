@@ -242,11 +242,9 @@ const SearchComponent: React.FC = () => {
             </div>
 
             {/* Status Message */}
-            {/* <div className={`mt-2 flex-1 text-sm`}> */}
             {searchStatus &&
                 <AlertComponent alertText={searchStatus || ''} alertType={'info'} userClosable={true} onClose={() => setSearchStatus('')} className={'mx-0 !mt-4 mb-2 py-2 px-3 text-sm'}></AlertComponent>
             }
-            {/* </div> */}
         </div>
     );
 };

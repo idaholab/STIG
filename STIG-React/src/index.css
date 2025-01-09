@@ -578,9 +578,7 @@ body,
 background-color: rgb(var(--color-neutral-rgb-600));
 }
 
-.light .numInputWrapper span.arrowUp:after {
-  /* border-bottom: green; */
-}
+
 
 
 .btn.btn-disabled,
