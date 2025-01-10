@@ -17,21 +17,26 @@ const ExampleQueryListContainer: React.FC = () => {
     const { cyInstance } = useStigContext();
     const { addNotification } = useNotificationContext();
 
-    const exampleQueryList: Array<ExampleQuery> = [{
-        title: 'Find Attack Pattern/Tool/Malware Paths',
-        description: 'Returns paths between attack-pattern, tool, and malware nodes. The query is looking for any connections between attack-pattern, tool, and malware nodes that are within two relationships of one another. This could be used, for example, in a cybersecurity context to find potential links between different attack patterns, the tools used in those patterns, and the malware associated with those tools, which could help in understanding complex cyber threat scenarios.',
-        query: 'match p=(a:`attack-pattern`)-[*..2]-(t:tool)-[*..2]-(m:malware) return p'
-    },
-    {
-        title: 'Malware Tool AttackPattern Correlation',
-        description: 'This query identifies and returns the paths that correlate malware with tools and attack patterns within a range of up to two relationships. It is designed to explore the potential connections and interactions between different   malware, tool, and attack-pattern nodes, which can provide insights into the methods and sequences of cyber threats.',
-        query: 'MATCH p=(m:`malware`)-[*..2]-(t:`tool`)-[*..2]-(a:`attack-pattern`) RETURN p'
-    },
-    {
-        title: 'Vulnerability KEV Connections',
-        description: 'This query returns paths that link vulnerability nodes with Known Exploited Vulnerabilities (KEV) nodes within a maximum distance of two hops. The purpose of this query is to identify potential direct or indirect associations between recorded vulnerabilities and their exploitation status, aiding in prioritizing responses and understanding the exploitation landscape.',
-        query: 'MATCH p=(m:`vulnerability`)-[*..2]-(t:`kev`) RETURN p'
-    }];
+    const exampleQueryList: Array<ExampleQuery> = [
+        {
+            title: 'Basic Object Match',
+            description: 'This query matches up to 50 objects of any type and returns them. Note that Neo4j keywords are not case-sensitive. However, capitalizing them can make queries clearer.',
+            query: 'MATCH (x) RETURN x LIMIT 50'
+        },
+        {
+            title: 'Match Object with Nested Dictionary',
+            description: `STIG augments STIX 2.1 objects with nested dictionaries before storing it in Neo4j to make accessing those fields possible. The following query follows the pattern necessary to access a nested field. 
+            This queries for an object matching the PDF File Extension Example from the STIX 2.1 Schema. See it here: 
+            https://docs.oasis-open.org/cti/stix/v2.1/os/stix-v2.1-os.html#_q5ytzmajn6re:~:text=the%20PDF%20file.-,Examples,-Basic%20PDF%20file`,
+            query: 'MATCH (f:file) WHERE f.`extensions.pdf-ext.document_info_dict.Title`="Sample document" RETURN f'
+        },
+        {
+            title: 'Malware/Tool/Attack-Pattern Correlation',
+            description: `This query identifies and returns the paths that correlate malware with tools and attack patterns within a range of up to two relationships. 
+            It is designed to explore the potential connections and interactions between different malware, tool, and attack-pattern nodes, which can provide insights into the methods and sequences of cyber threats.`,
+            query: 'MATCH p=(m:`malware`)-[*..2]-(t:`tool`)-[*..2]-(a:`attack-pattern`) RETURN p'
+        }
+    ];
 
     const runQuery = async (query: string) => {
         console.log('Running query:', query);
@@ -45,9 +50,6 @@ const ExampleQueryListContainer: React.FC = () => {
         }
         // Add the query to the query history
         addDBQuery(query);
-        // Close the dialog
-        // const dialogElement = document.getElementById("DBQueryModal") as HTMLDialogElement;
-        // dialogElement.close();
     };
 
     return (
