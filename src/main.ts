@@ -427,6 +427,50 @@ export class Main {
         hist_dialog.open();
       });
 
+      // handler for default query kev
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      $('#btn-db-kev-search').on('click', async (e: JQuery.Event) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        //get vulns from cytoscape
+        let nodes = window.cycore.$(':visible');
+        nodes = nodes.union(nodes.connectedEdges());
+  
+        let vulns: string[] = [];
+
+        //create a list of CVEs
+        nodes.each((ele) => {
+          const obj = ele.data('raw_data');
+          if (obj !== undefined && obj.type == 'vulnerability' && obj.external_references) {
+            let refs = obj.external_references;
+            refs.forEach(ref => {
+              if (ref.source_name == "cve" || ref.source_name == "CVE") {
+                vulns.push('"' + ref.external_id + '"')
+              }
+            });
+          }
+        });
+
+        //create query
+        const text = "MATCH (v:vulnerability) WHERE ANY(substring IN [" + vulns + "] WHERE ANY(ref IN v.external_references WHERE ref CONTAINS substring)) AND v.description CONTAINS 'kev' RETURN v";
+    
+        //query db for vlns
+        storage.add(text);
+        const result = await query(text);
+
+        let vertices = 0;
+        let edges = 0;
+        result.forEach((item: StixObject) => {
+          if (cy.getElementById(item.id_!).length !== 0) { return; }
+          if (isRelationship(item)) { edges++; }
+          else { vertices++; }
+        });
+        $('.message-status').html(`Returned ${vertices} nodes.`);
+        addToGraph({ type: 'bundle', objects: result }, 'DB');
+        
+      });
+
       // handler for DB search button click
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       $('#btn-db-search').on('click', async (e: JQuery.Event) => {
