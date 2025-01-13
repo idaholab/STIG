@@ -78,6 +78,6 @@ export async function query(query: string): Promise<StixObject[]> {
 }
 
 export async function get_diff(nodes: StixObject[], edges: StixRelationshipObject[]): Promise<[StixObject, Delta][]> {
-  if (!nodes.every(checkProps) || !edges.every(checkProps)) throw new Error('Invalid stix');
+  //if (!nodes.every(checkProps) || !edges.every(checkProps)) throw new Error('Invalid stix');
   return wrapReturn({nodes, edges}, () => [], ({ nodes, edges }) => currentDB.getDiff(nodes, edges));
 }
