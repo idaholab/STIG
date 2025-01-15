@@ -14,14 +14,13 @@ import { CreatedByRelationshipFactory } from './CreatedByRelationshipFactory';
 import { layouts, LayoutsType } from '@/graph/graphOptions';
 import { createObjectMarkingRelationship, createCytoscapeNode } from '../stix/stix';
 import { CollectionArgument } from 'cytoscape';
-import { db_delete, query_incoming, query_outgoing } from './DbFunctions';
+import { query_incoming, query_outgoing } from './DbFunctions';
 import { ContextMenu } from '@/types/cytoscapeTypes/ContextMenu';
 import { getCssRGBVarColor } from './GetCssVarColor';
 import { query } from '@/util/DbFunctions';
 import { STIGBundle } from '@/types/STIGBundle';
 import { v4 as uuidv4 } from 'uuid';
 import { exportGraph } from '@/graph/exportGraph';
-
 
 export class GraphUtils {
     public cy: cytoscape.Core;

@@ -7,19 +7,6 @@ import { checkProps } from "@/stix/stix";
 
 export let currentDB: StigDB;
 
-async function wrapVoid<T>(stix: T, cb: (stix: T) => Promise<void>) {
-  if (currentDB) {
-    try {
-      await cb(stix);
-      return true;
-    } catch (e) {
-      console.error(e); // eslint-disable-line no-console
-      return false;
-    }
-  }
-  return false;
-}
-
 async function wrapReturn<T, V>(
   stix: V, def: () => T, cb: ((s: V) => Promise<T>)
 ): Promise<T> {
@@ -60,7 +47,7 @@ export async function commit(nodes: StixObject[], edges: StixRelationshipObject[
 }
 
 export function db_delete(stix: StixObject[]) {
-  return wrapVoid(stix, s => currentDB.delete(s));
+  return wrapReturn(stix, () => ({ nodes: 0, rels: 0 }), s => currentDB.delete(s));
 }
 
 export async function query_incoming({ id }: StixObject): Promise<StixObject[]> {
