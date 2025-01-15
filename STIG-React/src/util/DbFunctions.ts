@@ -1,5 +1,3 @@
-// import diffpatch from 'jsondiffpatch';
-
 import { StigDB } from "@/db/dbi";
 import { DBProfile } from "@/types/DBProfile";
 import { StixObject } from "@/types/stixTypes/StixObject";

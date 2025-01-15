@@ -10,18 +10,6 @@ const ThemeToggle: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
-    // const htmlElement = document.querySelector('html');
-    // if (htmlElement) {
-    //   htmlElement.setAttribute('class', theme);
-    //   htmlElement.setAttribute('data-theme', theme);
-    // }
-
-    // Load from storage
-    // useEffect(() => {
-    //   const storedTheme = localStorage.getItem('theme') || 'dark';
-    //   document.documentElement.setAttribute('data-theme', storedTheme);
-    // }, []);
-
     const htmlElement = document.documentElement;
     if (htmlElement) {
       htmlElement.setAttribute('class', theme);
@@ -31,12 +19,10 @@ const ThemeToggle: React.FC = () => {
     }
   }, [theme]);
 
-  return (
-    <label className="swap swap-rotate text-neutralc-300 hover:text-white" >
+  return <label className="swap swap-rotate text-neutralc-300 hover:text-white" >
       <input onClick={toggleTheme} type="checkbox" />
       <Icon path={mdiThemeLightDark} size={1} title='Switch between light and dark themes' />
-    </label>
-  );
+    </label>;
 };
 
 export default ThemeToggle;

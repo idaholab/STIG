@@ -4,16 +4,22 @@ import { Driver } from "neo4j-driver";
 import React, { createContext, useState } from "react";
 
 export type ConnectedDBContextType = {
-    connectedDBProfile: DBProfile | undefined;
+    connectedDBProfile?: DBProfile;
     setConnectedDBProfile: React.Dispatch<React.SetStateAction<DBProfile | undefined>>;
-    connectedDBDriver: Driver | undefined;
+    connectedDBDriver?: Driver;
     setConnectedDBDriver: React.Dispatch<React.SetStateAction<Driver | undefined>>;
     savedDBProfiles: DBProfile[];
     setSavedDBProfiles: React.Dispatch<React.SetStateAction<DBProfile[]>>;
-    selectedProfile: DBProfile | undefined;
+    selectedProfile?: DBProfile;
     setSelectedProfile: React.Dispatch<React.SetStateAction<DBProfile | undefined>>;
 }
-export const ConnectedDBContext = createContext<ConnectedDBContextType | null>(null);
+export const ConnectedDBContext = createContext<ConnectedDBContextType>({
+    savedDBProfiles: [],
+    setConnectedDBProfile() {},
+    setConnectedDBDriver() {},
+    setSavedDBProfiles() {},
+    setSelectedProfile() {},
+});
 export function ConnectedDBProvider({ children }: { children: React.ReactNode }){
     const [connectedDBProfile, setConnectedDBProfile] = useState<DBProfile | undefined>(undefined);
     const [connectedDBDriver, setConnectedDBDriver] = useState<Driver | undefined>(undefined);
