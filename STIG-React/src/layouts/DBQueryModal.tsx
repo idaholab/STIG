@@ -46,7 +46,6 @@ const DBQueryModal: React.FC = () => {
           <DBQueryHistory
             inQueryDeleteProcess={inQueryDeleteProcess}
             setInQueryDeleteProcess={setInQueryDeleteProcess}
-            setQueryToDeleteId={setQueryToDeleteId}
           />
         }
       </div>

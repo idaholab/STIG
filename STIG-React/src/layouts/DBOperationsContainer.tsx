@@ -3,7 +3,6 @@ import ButtonBasic from '../components/elements/ButtonBasic';
 import ConnectedDBContext, { ConnectedDBContextType } from '../contexts/ConnectedDBContext';
 import FormCustomDBQuery from '@/components/forms/FormCustomDBQuery';
 import DBQueryHistory from './DBQueryHistory';
-import { deleteNodeFromDB } from '@/util/GraphUtils';
 import { useStigContext } from '@/contexts/StigContext';
 import { useStixPropsContext } from '@/contexts/StixPropsContext';
 import { CollectionReturnValue, EdgeCollection, NodeCollection } from 'cytoscape';
@@ -20,29 +19,12 @@ import FormElementFileInput from '@/components/forms/formElements/FormElementFil
 import ConnectedProfilePanelLayout from './ConnectedProfilePanelLayout';
 
 const DBOperationsContainer: React.FC = () => {
-    // const { savedDBProfiles, setSavedDBProfiles, selectedProfile, setSelectedProfile } = useContext(ConnectedDBContext) as ConnectedDBContextType;
-    // const graph_utils = cyInstance ? new GraphUtils(cyInstance) : undefined;
     const { connectedDBProfile } = useContext(ConnectedDBContext) as ConnectedDBContextType;
     const [inQueryDeleteProcess, setInQueryDeleteProcess] = useState(false);
-    const { cyInstance, setIsPropertyPanelOpen, getStigLayoutSettingsFromStore, runLayout } = useStigContext();
+    const { cyInstance, getStigLayoutSettingsFromStore, runLayout } = useStigContext();
     const { selectedSTIXObject, setSelectedSTIXObject, selectionExists, setSelectionExists, nodesExist, setNodesExist } = useStixPropsContext();
     const { addNotification } = useNotificationContext();
     const [selectedFiles, setSelectedFiles] = useState<ArrayLike<File>>([]);
-
-
-    // const handleQueryIncoming = async () => {
-    //     if (cyInstance && graph_utils) {
-    //         const selectedElements = cyInstance.$(':selected');
-    //         await queryIncoming(selectedElements as unknown as cytoscape.CollectionElements, graph_utils, cyInstance);
-    //     }
-    // };
-
-    const handleDeleteMutation = async () => {
-        if (cyInstance) {
-            const selectedElements = cyInstance.$(':selected');
-            deleteNodeFromDB(cyInstance, selectedElements, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists, setIsPropertyPanelOpen);
-        }
-    }
 
     function deleteSelectedGraphElementsFromDatabase() {
         if (cyInstance !== undefined) {
@@ -76,9 +58,6 @@ const DBOperationsContainer: React.FC = () => {
         })();
     }
 
-
-
-    // TODO: REFACTOR to utility function! currently 2 instances
     const importFile = async () => {
         let gen: AsyncGenerator<ImportResult> = importGraphToDB(selectedFiles);
         let need_layout = false;

@@ -547,28 +547,6 @@ async function queryInOut(
     }
 }
 
-export function deleteNodeFromDB(
-    cy: cytoscape.Core,
-    element: cytoscape.CollectionArgument,
-    selectedSTIXObject: StixObject | undefined,
-    setSelectedSTIXObject: (obj: StixObject | undefined) => void,
-    setSelectionExists: React.Dispatch<React.SetStateAction<boolean>>,
-    setIsPropertyPanelOpen: (b: boolean) => void
-) {
-    try {
-        if (selectedSTIXObject?.id === element.data("id")) {
-            setSelectedSTIXObject(undefined);
-            setSelectionExists(false);
-            setIsPropertyPanelOpen(false);
-        }
-        cy.remove(element);
-        db_delete(element.data('raw_data'));
-    } catch (e) {
-        // Handle error: probably want to indicate that it wasn't deleted from DB
-        console.error("Error deleting from DB: ", e);
-    }
-}
-
 export function layoutByTimeframe(cy: cytoscape.Core) {
     const startX = 0;
     const gap = 200; // Spacing between nodes
