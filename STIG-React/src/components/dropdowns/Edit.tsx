@@ -20,13 +20,13 @@ const Edit: React.FC = () => {
     };
 
     const updateSelectionState = () => {
-      if (cyInstance) {
+      if (cyInstance !== undefined) {
         setIsSelectionEmpty(cyInstance.$(':selected').length === 0);
       }
     };
 
     const updateDiagramNodeState = () => {
-      if (cyInstance) {
+      if (cyInstance !== undefined) {
         setDiagramHasNodes(cyInstance.nodes().length > 0);
       }
     };
@@ -44,7 +44,7 @@ const Edit: React.FC = () => {
     }, 1000);
 
     return () => clearInterval(intervalId);
-  }, []);
+  }, [cyInstance]);
 
   return (
     <Dropdown

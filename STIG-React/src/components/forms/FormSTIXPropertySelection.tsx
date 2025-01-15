@@ -38,6 +38,12 @@ const FormSTIXPropertySelection: React.FC<Props> = ({
 
   const [filter, setFilter] = useState('');
 
+  useEffect(() => {
+    if (selectedProperties.length === 0) {
+      setFilter('');
+    }
+  }, [selectedProperties, setSelectedProperties]);
+
   return <Dropdown
     title={label}
     filter={filter}
