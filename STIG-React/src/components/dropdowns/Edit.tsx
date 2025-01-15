@@ -41,7 +41,7 @@ const Edit: React.FC = () => {
       updateClipboardState();
       updateSelectionState();
       updateDiagramNodeState();
-    }, 1000);
+    }, 300);
 
     return () => clearInterval(intervalId);
   }, [cyInstance]);

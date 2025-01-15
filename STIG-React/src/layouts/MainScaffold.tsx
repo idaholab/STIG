@@ -65,7 +65,7 @@ const MainScaffold: React.FC<Props> = ({ children }) => {
                   <div id='PropertyPanelHandle'
                     onMouseDown={handleMouseDown}
                     className="absolute left-0 top-0 h-full cursor-ew-resize flex items-center justify-center dark:bg-neutralc-700"
-                    style={{ width: '8px', zIndex: 100 }}
+                    style={{ width: '8px', zIndex: 10 }}
                   >
                     <div className="w-1 h-8 bg-neutralc-500 dark:bg-neutralc-500 rounded-full hover:dark:bg-neutralc-400 hover:bg-neutralc-700"></div>
                   </div>
