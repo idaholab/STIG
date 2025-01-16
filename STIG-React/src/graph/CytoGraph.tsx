@@ -389,10 +389,13 @@ const Graph: React.FC = () => {
         ele.classes('edge');
     });
 
-    return <div ref={cyContainerRef}
-        style={{ width: '100%', height: '100%' }}
-        onDrop={handleDrop}
-        onDragOver={handleDragOver} />;
+    return (
+        <div ref={cyContainerRef}
+            style={{ width: '100%', height: '100%' }}
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+        />
+    );
 };
 
 export default Graph;

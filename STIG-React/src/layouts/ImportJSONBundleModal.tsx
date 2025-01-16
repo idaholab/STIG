@@ -37,31 +37,33 @@ const ImportJSONBundleModal: React.FC = () => {
         setSelectedFiles([]);
     };
 
-    return <DialogBasic
-        dialogId="ImportJSONBundleModal"
-        title="Import a JSON Bundle File to the Graph"
-        buttonColor='btn-ghost'
-        showFormButtons={true}
-        buttonLabel="JSON Bundle"
-        additionalButtonClasses={"btn-sm justify-start w-[120px]"}
-        saveLabel='Import'
-        saveEnabled={selectedFiles.length > 0}
-        onSave={importFile}
-    >
-        <div className='h-full grid'>
-            {/* <select className='dark:bg-neutralc-700' onChange={e => setTarget(e.target.value as any)} defaultValue={"view"}>
-                <option value="view">To View</option>
-                { connectedDBProfile && <option value="db">To DB</option> }
-            </select> */}
-            <FormElementFileInput
-                placeholder='Choose a JSON Bundle File'
-                buttonLabel='Choose File'
-                acceptedFileTypes='.json'
-                multiple={true}
-                onFileChange={setSelectedFiles}
-            />
-        </div>
-    </DialogBasic>;
+    return (
+        <DialogBasic
+            dialogId="ImportJSONBundleModal"
+            title="Import a JSON Bundle File to the Graph"
+            buttonColor='btn-ghost'
+            showFormButtons={true}
+            buttonLabel="JSON Bundle"
+            additionalButtonClasses={"btn-sm justify-start w-[120px]"}
+            saveLabel='Import'
+            saveEnabled={selectedFiles.length > 0}
+            onSave={importFile}
+        >
+            <div className='h-full grid'>
+                {/* <select className='dark:bg-neutralc-700' onChange={e => setTarget(e.target.value as any)} defaultValue={"view"}>
+                    <option value="view">To View</option>
+                    { connectedDBProfile && <option value="db">To DB</option> }
+                </select> */}
+                <FormElementFileInput
+                    placeholder='Choose a JSON Bundle File'
+                    buttonLabel='Choose File'
+                    acceptedFileTypes='.json'
+                    multiple={true}
+                    onFileChange={setSelectedFiles}
+                />
+            </div>
+        </DialogBasic>
+    );
 }
 
 export default ImportJSONBundleModal;

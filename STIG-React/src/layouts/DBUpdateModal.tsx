@@ -43,21 +43,23 @@ const DBUpdateModal: React.FC<DBUpdateProps> = ({ cy, selector }) => {
       get_diff(nodes, edges).then(diffs => setState({ nodes: nodes.length, edges: edges.length, diffs, isCalculated: true }));
     }
   }
-  return <div className='h-full relative'>{
-    !currentDB || currentDB.is_closed() ? <h2>Error: No Database Connection</h2> :
-    (state.isCalculated && state.diffs.length == 0) ? <h2>No Changes</h2> :
-    !state.isCalculated ? <h3>Calculating Diff... ({state.nodes}/{state.edges})</h3> : <>
-      <h2>Commit These Changes? ({state.nodes}/{state.edges})</h2>
-      {state.diffs.map(([obj, diff], i) =>
-        <div key={i}>
-          <h3>{obj.type}: {obj.id}</h3>
-          {"{"}
-          {[...formatDiff(diff)]}
-          {"}"}
-        </div>
-      )}
-    </>
-  }</div>;
+  return (
+    <div className='h-full relative'>{
+      !currentDB || currentDB.is_closed() ? <h2>Error: No Database Connection</h2> :
+      (state.isCalculated && state.diffs.length == 0) ? <h2>No Changes</h2> :
+      !state.isCalculated ? <h3>Calculating Diff... ({state.nodes}/{state.edges})</h3> : <>
+        <h2>Commit These Changes? ({state.nodes}/{state.edges})</h2>
+        {state.diffs.map(([obj, diff], i) =>
+          <div key={i}>
+            <h3>{obj.type}: {obj.id}</h3>
+            {"{"}
+            {[...formatDiff(diff)]}
+            {"}"}
+          </div>
+        )}
+      </>
+    }</div>
+  );
 };
 
 export default DBUpdateModal;

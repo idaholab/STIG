@@ -17,6 +17,7 @@ import { StixRelationshipObject } from '@/types/stixTypes/StixRelationshipObject
 import { importGraphToDB, ImportResult } from '@/graph/importGraph';
 import FormElementFileInput from '@/components/forms/formElements/FormElementFileInput';
 import ConnectedProfilePanelLayout from './ConnectedProfilePanelLayout';
+import DBDeleteModal from './DBDeleteModal';
 
 const DBOperationsContainer: React.FC = () => {
     const { connectedDBProfile } = useContext(ConnectedDBContext) as ConnectedDBContextType;
@@ -37,10 +38,10 @@ const DBOperationsContainer: React.FC = () => {
         }
     }
 
-    function commitNodes(cy: cytoscape.Core | undefined, selector: string) {
-        if (cy !== undefined) {
-            const nodes = cy.nodes(selector);
-            const edges = cy.edges(selector);
+    function commitNodes(selector: string) {
+        if (cyInstance !== undefined) {
+            const nodes = cyInstance.nodes(selector);
+            const edges = cyInstance.edges(selector);
             addNotification("Saving to Database....", "info");
             submitter(nodes, edges);
         }
@@ -71,76 +72,79 @@ const DBOperationsContainer: React.FC = () => {
         setSelectedFiles([]);
     };
 
-    return <div className='dbOperationsContainer flex flex-col h-fit w-full px-4 py-2 mb-4 text-black dark:text-neutralc-200'>
-        {/* Connected Profile */}
-        <ConnectedProfilePanelLayout />
+    return (
+        <div className='dbOperationsContainer flex flex-col h-fit w-full px-4 py-2 mb-4 text-black dark:text-neutralc-200'>
+            {/* Connected Profile */}
+            <ConnectedProfilePanelLayout />
 
-        <div className='flex flex-col basis-full h-fit mb-4 gap-1'>
-            <span>Mutations</span>
-            <span className='flex items-center justify-between gap-1'>
+            <div className='flex flex-col basis-full h-fit mb-4 gap-1'>
+                <span>Mutations</span>
+                <span className='flex items-center justify-between gap-1'>
+                    <DialogBasic
+                        dialogId="SaveAllModal"
+                        title="Update Database"
+                        buttonColor='btn-neutralc'
+                        showFormButtons={true}
+                        buttonLabel="COMMIT ALL RECORDS"
+                        disabled={!connectedDBProfile || !nodesExist}
+                        additionalButtonClasses={`btn-xs flex-auto`}
+                        onSave={() => commitNodes('')}
+                    >
+                        <DBUpdateModal cy={cyInstance} selector='' />
+                    </DialogBasic>
+                    <DialogBasic
+                        dialogId="SaveToNeo4jModal"
+                        title="Update Database"
+                        showFormButtons={true}
+                        buttonLabel="COMMIT SELECTED RECORDS"
+                        buttonColor="btn-neutralc"
+                        additionalButtonClasses={`uppercase btn-xs flex-auto`}
+                        disabled={!cyInstance || !connectedDBProfile || !selectionExists}
+                        onSave={() => commitNodes(':selected')}
+                    >
+                        <DBUpdateModal cy={cyInstance} selector={`#${selectedSTIXObject?.id}`} />
+                    </DialogBasic>
+                </span>
                 <DialogBasic
-                    dialogId="SaveAllModal"
-                    title="Update Database"
+                    dialogId="DBDeleteModal"
+                    title="Delete Selected"
                     buttonColor='btn-neutralc'
                     showFormButtons={true}
-                    buttonLabel="COMMIT ALL RECORDS"
-                    disabled={!connectedDBProfile || !nodesExist}
-                    additionalButtonClasses={`btn-xs flex-auto`}
-                    onSave={() => commitNodes(cyInstance, '')}
-                >
-                    <DBUpdateModal cy={cyInstance} selector='' />
-                </DialogBasic>
-
-                <DialogBasic
-                    dialogId="SaveToNeo4jModal"
-                    title="Update Database"
-                    showFormButtons={true}
-                    buttonLabel="COMMIT SELECTED RECORDS"
-                    buttonColor="btn-neutralc"
+                    buttonLabel="DELETE SELECTED RECORDS"
+                    disabled={!cyInstance || !connectedDBProfile || !selectionExists}
                     additionalButtonClasses={`uppercase btn-xs flex-auto`}
-                    disabled={!cyInstance || !selectedSTIXObject || !connectedDBProfile}
-                    onSave={() => commitNodes(cyInstance, ':selected')}
+                    saveLabel='Delete'
+                    onSave={deleteSelectedGraphElementsFromDatabase}
                 >
-                    <DBUpdateModal cy={cyInstance} selector={`#${selectedSTIXObject?.id}`} />
+                    <DBDeleteModal cy={cyInstance} />
                 </DialogBasic>
-            </span>
-            <ButtonBasic
-                label={'DELETE SELECTED RECORDS'}
-                type={'btn-neutralc'}
-                additionalClasses={`${'btn-xs flex-auto'}`}
-                disabled={!cyInstance || !selectionExists || !connectedDBProfile}
-                onClick={() => {
-                    deleteSelectedGraphElementsFromDatabase();
-                    setSelectionExists(false);
-                }}
-            />
+                <span className='mt-4 mb-1'>Import a File</span>
+                <FormElementFileInput
+                    placeholder='Choose a JSON Bundle File'
+                    buttonLabel='Choose File'
+                    acceptedFileTypes='.json'
+                    multiple={true}
+                    className={'h-fit'}
+                    additionalInputClasses={'h-7'}
+                    additionalBtnClasses={'!h-7 !min-h-7'}
+                    onFileChange={setSelectedFiles}
+                    tooltip={'Import a JSON Bundle into the databse for the connected profile'}
+                />
+                <ButtonBasic
+                    label={'IMPORT'}
+                    type={'btn-neutralc'}
+                    additionalClasses={`${'btn-xs'}`}
+                    disabled={selectedFiles?.length === 0 || !connectedDBProfile || !cyInstance}
+                    onClick={importFile}
+                />
+            </div>
 
-            <span className='mt-4 mb-1'>Import a File</span>
-            <FormElementFileInput
-                placeholder='Choose a JSON Bundle File'
-                buttonLabel='Choose File'
-                acceptedFileTypes='.json'
-                multiple={true}
-                className={'h-fit'}
-                additionalInputClasses={'h-7'}
-                additionalBtnClasses={'!h-7 !min-h-7'}
-                onFileChange={setSelectedFiles}
-                tooltip={'Import a JSON Bundle into the databse for the connected profile'}
-            />
-            <ButtonBasic
-                label={'IMPORT'}
-                type={'btn-neutralc'}
-                additionalClasses={`${'btn-xs'}`}
-                disabled={selectedFiles?.length === 0 || !connectedDBProfile || !cyInstance}
-                onClick={importFile}
+            <FormCustomDBQuery></FormCustomDBQuery>
+            <DBQueryHistory
+                inQueryDeleteProcess={inQueryDeleteProcess}
+                setInQueryDeleteProcess={setInQueryDeleteProcess}
             />
         </div>
-
-        <FormCustomDBQuery></FormCustomDBQuery>
-        <DBQueryHistory
-            inQueryDeleteProcess={inQueryDeleteProcess}
-            setInQueryDeleteProcess={setInQueryDeleteProcess}
-        />
-    </div>;
+    );
 };
 export default DBOperationsContainer;

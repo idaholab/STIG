@@ -29,10 +29,12 @@ export function ConnectedDBProvider({ children }: { children: React.ReactNode })
     }
     const [selectedProfile, setSelectedProfile] = useState<DBProfile | undefined>();
 
-    return <ConnectedDBContext.Provider value={{
-        connectedDBProfile, setConnectedDBProfile, connectedDBDriver, setConnectedDBDriver,
-        savedDBProfiles, setSavedDBProfiles, selectedProfile, setSelectedProfile
-    }}>{children}</ConnectedDBContext.Provider>
+    return (
+        <ConnectedDBContext.Provider value={{
+            connectedDBProfile, setConnectedDBProfile, connectedDBDriver, setConnectedDBDriver,
+            savedDBProfiles, setSavedDBProfiles, selectedProfile, setSelectedProfile
+        }}>{children}</ConnectedDBContext.Provider>
+    );
 }
 
 export default ConnectedDBContext;
