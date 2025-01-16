@@ -41,9 +41,10 @@ WITH
   object.props AS props
 MATCH (a:stixnode {id:srcid}),(b:stixnode {id:dstid})
 WITH type, id, props, a, b
-MERGE (a)-[r:stixrel {id: id}]-(b)
-WITH type, props, r
-CALL apoc.refactor.setType(r, type) YIELD output
+OPTIONAL MATCH (a)-[r {id: id}]-(b) DELETE r
+MERGE (a)-[n:stixrel {id: id}]-(b)
+WITH type, props, n
+CALL apoc.refactor.setType(n, type) YIELD output
 SET output = props
 RETURN output AS n`;
 
@@ -68,10 +69,14 @@ function bulkRequest(objs: StixObject[], query: string) {
 }
 
 function * diffAgainstDB(patcher: DiffPatcher, objs: StixObject[], records: Record[]): Generator<[StixObject, Delta]> {
-  const l = records.length;
-  for (let i = 0; i < l; i++) {
-    const res = records[i].get('n');
-    const obj = objs[i];
+  const recs_by_id = new Map<string, object>();
+  for (const rec of records) {
+    const res = rec.get('n');
+    if (!res) continue;
+    recs_by_id.set(res.properties.id, res);
+  }
+  for (const obj of objs) {
+    const res = recs_by_id.get(obj.id);
     const diff = patcher.diff(res ? toNeo4j(fromNeo4j(res)[0]) : {}, toNeo4j(obj));
     if (diff && Object.keys(diff).length > 0) yield [obj, diff];   
   }
@@ -163,10 +168,10 @@ export class Neo4jStigDB implements StigDB {
    * @memberof StigDB
    */
   public async getDiff(nodes: StixObject[], edges: StixRelationshipObject[]): Promise<[StixObject, Delta][]> {
-    const [nres, eres] = await this.wrapSession(s => {
-      const np = nodes.length === 0 ? Promise.resolve([]) : bulkRequest(nodes, get_node_query)(s);
-      const ep = edges.length === 0 ? Promise.resolve([]) : bulkRequest(edges, get_rel_query)(s);
-      return Promise.all([np, ep]);
+    const [nres, eres] = await this.wrapSession(async (s) => {
+      const np = nodes.length === 0 ? [] : await bulkRequest(nodes, get_node_query)(s);
+      const ep = edges.length === 0 ? [] : await bulkRequest(edges, get_rel_query)(s);
+      return [np, ep];
     });
     const patcher = new DiffPatcher();
     return [...diffAgainstDB(patcher, nodes, nres), ...diffAgainstDB(patcher, edges, eres)];
