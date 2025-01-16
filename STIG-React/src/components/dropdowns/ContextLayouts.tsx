@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import Dropdown from '../core/Dropdown';
 import { useStigContext } from '@/contexts/StigContext';
-import { getLayoutSettingsFromStore, GraphUtils, runGraphLayout } from '@/util/GraphUtils';
+import { getLayoutSettingsFromStore, runGraphLayout } from '@/util/GraphUtils';
 const killChainSchema = {
   "kill-chain": [
     {
@@ -411,16 +410,12 @@ function initDefenseGraph(cy: cytoscape.Core) {
 function stackCompoundNodes(cy: cytoscape.Core, clss: string) {
   console.log("stackCompoundNodes")
   const layers = cy.$(clss);
-
   let prevPosition = { x: 0, y: 0 };
 
   for (let i = 0; i < layers.length; i++) {
     const layer = layers[i];
     const layerNum = layer.data('number');
     const children = layer.children();
-    // console.log(`${layer.data('name')} (${layerNum}): ${children.length}`);
-    // console.log(layer.position());
-
     if (children.length === 1) {
       if (i > 0) {
         const x = 150;
@@ -439,8 +434,6 @@ function stackCompoundNodes(cy: cytoscape.Core, clss: string) {
         prevPosition = { x, y };
       }
     }
-
-    // console.log(layer.position());
   }
 }
 function handleDropNode(e: cytoscape.EventObject) {
@@ -456,10 +449,6 @@ function handleDropNode(e: cytoscape.EventObject) {
       if (Math.abs(ele.position().x - layer.position().x) < layer.width() &&
         Math.abs(ele.position().y - layer.position().y) < layer.height()) {
         ele.move({ parent: layer.id() });
-        // if (layer.children().length > 0) {
-        //     const dX = ele.width() * layer.children().length + 20
-        //     ele.shift({x: dX})
-        // }
         const data = ele.data('raw_data');
         const property: any = {};
         const extId = Object.getOwnPropertyNames(defenseExtension.property)[0];
@@ -491,11 +480,6 @@ function handleDropNode(e: cytoscape.EventObject) {
     phases.forEach(phase => {
       if (Math.abs(ele.position().x - phase.position().x) < phase.width() &&
         Math.abs(ele.position().y - phase.position().y) < phase.height()) {
-        // if (layer.children().length > 0) {
-        //     const dX = ele.width() * layer.children().length + 20
-        //     ele.shift({x: dX})
-        // }
-
         const objType = ele.data('raw_data').type;
         // Find the schema in schema_map
         if (['malware', 'infrastructure', "attack-pattern", 'indicator', 'tool'].includes(objType)) {
@@ -518,8 +502,6 @@ function handleDropNode(e: cytoscape.EventObject) {
       }
     });
   }
-
-  // console.log("Reset prevPosition")
   ele.data('prevPosition', null);
   ele.parent().data('prevBounds', null);
 }
@@ -534,7 +516,6 @@ function handleDrag(e: cytoscape.EventObject) {
     if (!ele.data('prevPosition')) {
       prevPosition.x = ele.position().x;
       prevPosition.y = ele.position().y;
-      // console.log(prevPosition)
       ele.data('prevPosition', prevPosition);
     } else {
       prevPosition = ele.data('prevPosition');
@@ -558,24 +539,16 @@ function handleDrag(e: cytoscape.EventObject) {
         } else {
           // There are multiple extensions defined. Find the right one and delete it.
           const extId = Object.getOwnPropertyNames(defenseExtension.property)[0];
-          // console.log("removing:", extId)
           delete data.extensions[extId];
         }
       } else if (parent.hasClass('phase')) {
         if (data.kill_chain_phases.length === 1) {
           // There is only one kill chain phase. Delete the kill_chain_phases property.
           delete data.kill_chain_phases;
-          // console.log("check: ", data["kill_chain_phases"])
         } else {
           // There are multiple kill chain phases defined. Find the right one and delete it.
-
-          // console.log("Multiple kill chains")
-
           const kill_chain_name = parent.parent()[0].data('name');
           const phase_name = parent.data('name');
-
-          // console.log(kill_chain_name, phase_name)
-
           const phaseList = data.kill_chain_phases as any[];
           const newPhaseList = [] as any[];
 
@@ -592,6 +565,7 @@ function handleDrag(e: cytoscape.EventObject) {
     }
   }
 }
+
 function canRemove(parent: any, dX: any, dY: any): boolean {
   console.log("canRemove")
   let prevBounds = parent.data('prevBounds');
@@ -612,7 +586,6 @@ function canRemove(parent: any, dX: any, dY: any): boolean {
     // If there are more than two children, check the width of the bounding box and compare that to DRAG_DIST
   } else if (numChildren > 2) {
     const curBounds = parent.boundingBox({});
-    // console.log(`dx:${dX}|dy:${dY}|prevBounds:${JSON.stringify(prevBounds)}|curBounds:${JSON.stringify(curBounds)}`)
     if ((dX < 0 && Math.abs(curBounds.x1 - prevBounds.x1) > DRAG_DIST) ||
       (dX > 0 && Math.abs(curBounds.x2 - prevBounds.x2) > DRAG_DIST) ||
       (dY < 0 && Math.abs(curBounds.y1 - prevBounds.y1) > DRAG_DIST) ||
@@ -630,10 +603,10 @@ function handleDblClickNode(e: cytoscape.EventObject) {
     ele.move({ parent: null });
   }
 }
+
 function compareNames(name: string, parent: string, aliases: string[] | null): boolean {
   console.log("compareNames")
   let match = false;
-
   const convert = function (value: string): string {
     let newString = '';
     for (const c of value) {
@@ -642,19 +615,16 @@ function compareNames(name: string, parent: string, aliases: string[] | null): b
         newString += c.toLowerCase();
       }
     }
-
     return newString;
   };
 
   if (convert(name) === convert(parent)) {
     // eslint-disable-next-line no-console
-    console.log("It's a match!", name, parent);
     match = true;
   } else if (aliases) {
     aliases.forEach(alias => {
       if (convert(name) === convert(alias)) {
         // eslint-disable-next-line no-console
-        console.log("It's a match!", name, alias);
         match = true;
       }
     });
@@ -695,9 +665,6 @@ function organizeOrphans(cy: cytoscape.Core) {
       rows: undefined, // force num of rows in the grid
       cols: undefined, // force num of columns in the grid
       position: (_node) => undefined as any, // returns { row, col } for element
-      // sort: (a: cytoscape.SortableNode, b: cytoscape.SortableNode) {
-      //     return (a as cytoscape.SingularElement).degree(false) - (b as cytoscape.SingularElement).degree(false);
-      // }, // a sorting function to order the nodes; e.g. function(a, b){ return a.data('weight') - b.data('weight') }
       animate: true, // whether to transition the node positions
       animationDuration: 1500, // duration of animation in ms if enabled
       ready: undefined, // callback on layoutready
@@ -713,42 +680,13 @@ function organizeOrphans(cy: cytoscape.Core) {
         padding: 50
       }
     });
-
-    // // Based on the length, figure out how many nodes go in a row/column
-    // var numNodes = 0
-    // if (vertical) {
-    //     numNodes = Math.ceil(boundingBox.h / (movers[0].width()))
-    // } else {
-    //     numNodes = Math.ceil(boundingBox.w / (movers[0].width() + 50))
-    // }
-
-    //
-    // console.log(vertical, numNodes)
-
-    // for (var i = 0; i < movers.length; i++) {
-    //     // We only want to move the childless orphans
-    //     if (!nodes[i].isParent()) {
-    //         var floor = Math.floor(numNodes / (i + 1))
-    //         var mod = numNodes % (i + 1)
-    //         console.log("floor: ", floor)
-    //         console.log("mod: ", mod)
-    //         var newPosition = {
-    //             x: vertical ? floor + boundingBox.x2 + 50 : mod + 50,
-    //             y: vertical ? mod + 50 : floor + boundingBox.y2 + 50
-    //         }
-    //         console.log(newPosition)
-    //         movers[i].animate({position: newPosition, duration: 1000})
-    //     }
-    // }
   }
 }
 function initKillChainGraph(cy: cytoscape.Core, type: string) {
   console.log("initKillChainGraph")
   if (cy.$('.killchain').length === 0) {
     const killChain = killChainList.find(kc => { return kc.type === type; })!;
-
     const killChainId = killChain.type.replaceAll(' ', '_');
-
     const elements: cytoscape.ElementDefinition[] = [
       {
         group: 'nodes',
@@ -857,8 +795,6 @@ function alignCompoundNodes(cy: cytoscape.Core, clss: string) {
     const layer = layers[i];
     const layerNum = layer.data('number');
     const children = layer.children();
-    // console.log(`${layer.data('name')}: ${children.length}`);
-
     if (children.length === 1) {
       if (i > 0) {
         const prevPhase = layers[i - 1];

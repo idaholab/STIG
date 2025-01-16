@@ -114,8 +114,6 @@ const SearchComponent: React.FC = () => {
         }
 
         let selected = cyInstance.$(':selected');
-        selected.unselect();
-
         let eles: Array<cytoscape.CollectionReturnValue> = [];
         if (prop) {
             eles[0] = searchGraph(cyInstance, prop, searchparam);
@@ -136,7 +134,7 @@ const SearchComponent: React.FC = () => {
             });
             selected.select();
 
-            setSearchStatus(`Found ${selected.length} element${selected.length !== 1 ? 's' : ''}`);
+            setSearchStatus(`Found ${eles.length} element${eles.length !== 1 ? 's' : ''}`);
             cyInstance.animate({
                 fit: {
                     eles: cyInstance.elements(),
@@ -204,6 +202,7 @@ const SearchComponent: React.FC = () => {
                     propertyOptions={filterOptions}
                     selectedProperties={selectedProperties}
                     setSelectedProperties={setSelectedProperties}
+                    overrideIsCheckboxDisabled={true}
                     size={'standard'}
                 />
             </div>
