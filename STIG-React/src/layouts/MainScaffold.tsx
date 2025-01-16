@@ -57,7 +57,7 @@ const MainScaffold: React.FC<Props> = ({ children }) => {
 
               {isPropertyPanelOpen && (
                 <div
-                  className={`dark:bg-neutralc-700 bg-neutralc-200 shadow-xl transition-transform duration-300 relative scrollbar `}
+                  className={`dark:bg-neutralc-700 bg-neutralc-200 shadow-xl transition-transform duration-300 relative `}
                   style={{ width: panelWidth }}
                 >
                   <StixPropsPanel />

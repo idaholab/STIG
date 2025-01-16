@@ -14,6 +14,7 @@ type Props = {
   includeAddNew?: boolean;
   label?: string;
   size: 'standard' | 'small';
+  overrideIsCheckboxDisabled?: boolean;
   onAdd?: (p: SchemaSTIXProperty) => void;
 };
 
@@ -25,6 +26,7 @@ const FormSTIXPropertySelection: React.FC<Props> = ({
   includeAddNew,
   label = 'Properties',
   size,
+  overrideIsCheckboxDisabled = false,
   onAdd,
 }) => {
   const [newPropertyName, setNewPropertyName] = useState("");
@@ -61,7 +63,7 @@ const FormSTIXPropertySelection: React.FC<Props> = ({
               type="checkbox"
               className="checkbox checkbox-primary hover:checkbox-neutralc"
               checked={selectedProperties.find(selectedProperty => selectedProperty.name === prop.name) ? true : false}
-              disabled={prop.mandatory}
+              disabled={prop.mandatory && !overrideIsCheckboxDisabled}
               onChange={(event) => {
                 if (event.target.checked) {
                   selectedProperties.push(prop);

@@ -7,9 +7,8 @@ import { mdiContentCopy, mdiContentCut, mdiContentPaste, mdiLayersSearchOutline,
 import { graphCopy, graphPaste, clipboard } from '@/util/clipboard';
 
 const Edit: React.FC = () => {
-  const { cyInstance } = useStigContext();
+  const { cyInstance, setIsPropertyPanelOpen, isSearchOpen, setIsSearchOpen } = useStigContext();
   const { setSelectionExists } = useStixPropsContext();
-  const { isSearchOpen, setIsSearchOpen } = useStigContext();
   const [isClipboardEmpty, setIsClipboardEmpty] = useState(true);
   const [isSelectionEmpty, setIsSelectionEmpty] = useState(true);
   const [diagramHasNodes, setDiagramHasNodes] = useState(true);
@@ -57,7 +56,7 @@ const Edit: React.FC = () => {
       {/* <div className="divider dark:divider-neutral my-0"></div> */}
 
       <li className={`hover:bg-primary hover:text-white ${isSelectionEmpty ? 'pointer-events-none text-neutralc-500' : ''}`}>
-        <a onClick={() => !isSelectionEmpty && cutSelectedGraphElements(cyInstance, setSelectionExists)}><Icon path={mdiContentCut} size={.8} /><span>Cut</span></a>
+        <a onClick={() => !isSelectionEmpty && cutSelectedGraphElements(cyInstance, setSelectionExists, setIsPropertyPanelOpen)}><Icon path={mdiContentCut} size={.8} /><span>Cut</span></a>
       </li>
       <li className={`hover:bg-primary hover:text-white ${isSelectionEmpty ? 'pointer-events-none text-neutralc-500' : ''}`}>
         <a onClick={() => !isSelectionEmpty && copySelectedGraphElements(cyInstance)}><Icon path={mdiContentCopy} size={.8} /><span>Copy</span></a>
@@ -109,12 +108,13 @@ function copySelectedGraphElements(cy: cytoscape.Core | undefined) {
   }
 }
 
-function cutSelectedGraphElements(cy: cytoscape.Core | undefined, setSelectionExists: (v: boolean) => void) {
+function cutSelectedGraphElements(cy: cytoscape.Core | undefined, setSelectionExists: (v: boolean) => void, setIsPropertyPanelOpen: (v: boolean) => void) {
   if (cy !== undefined) {
     const selected = cy.$(':selected');
     graphCopy(cy);
     cy.remove(selected);
     setSelectionExists(selected.length > 0);
+    setIsPropertyPanelOpen(false);
   }
 }
 

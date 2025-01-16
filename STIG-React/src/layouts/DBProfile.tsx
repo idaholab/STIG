@@ -110,8 +110,8 @@ function DBProfileSelector({ dbProfiles, inDBDeleteProcess, setInDBDeleteProcess
       </div>
 
       <div className='DBProfileSelector flex rounded-md bg-neutralc-300 dark:bg-neutralc-900 p-1 h-full'>
-        <ul className="flex justify-between w-full min-h-[100px] max-h-[200px]">
-          <div className={"flex-1 flex-col h-full scrollbar"}>
+        <ul className="flex-1 justify-between w-full min-h-[100px] max-h-[200px]">
+          <div className={"flex flex-col h-full scrollbar"}>
             {dbProfiles.map((profile) => {
               return (
                 <li key={profile.Id} className={inDBDeleteProcess ? "disabled" : "flex w-full"}>
