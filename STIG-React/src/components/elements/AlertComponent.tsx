@@ -34,9 +34,9 @@ const AlertComponent: React.FC<AlertComponentProps> = ({
     const alertIcon = alertIcons[alertType];
 
     return (
-        <div className={`alert ${alertClass} ${className ?? ''}  w-[unset] shadow-lg`}>
+        <div className={`alert ${alertClass} ${className ?? ''}  w-[unset] shadow-lg flex justify-between`}>
             <Icon path={alertIcon} size={1} />
-            <span className="text-wrap">{alertText}</span>
+            <span className="flex-1 text-wrap">{alertText}</span>
             {userClosable ?
                 <ButtonIcon
                     buttonIcon={mdiClose}

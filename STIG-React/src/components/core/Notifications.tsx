@@ -13,7 +13,7 @@ const Notifications: React.FC = () => {
         alertType={type}
         userClosable
         onClose={() => removeNotification(i)}
-        className={'flex items-start max-w-[440px] max-h-[150px] overflow-y-auto z-40 whitespace-pre-line'}
+        className={'items-start max-w-[440px] max-h-[150px] overflow-y-auto z-40 whitespace-pre-line'}
       />
     )}
   </Toast>;
