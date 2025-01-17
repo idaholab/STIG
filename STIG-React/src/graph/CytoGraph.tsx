@@ -16,7 +16,7 @@ import spread from 'cytoscape-spread';
 import viewUtilities from 'cytoscape-view-utilities';
 import cxtmenu from 'cytoscape-cxtmenu';
 import { useStigContext } from '@/contexts/StigContext';
-import { setupCtxMenu } from '@/util/GraphUtils';
+import { setupNodeCtxMenu, setupEdgeCtxMenu, setupCoreCtxMenu } from '@/util/GraphUtils';
 import { createCytoscapeNode } from '@/stix/stix';
 import { stencilItems } from '@/components/elements/StencilItems';
 import { setup_edge_handles, updateEdgeHandlesStyle } from './graphEdgeHandles';
@@ -27,6 +27,7 @@ import { importGraphToView } from './importGraph';
 import { useNotificationContext } from '@/contexts/NotificationContext';
 import { calcRelTypes } from '@/util/calcSTIXRelTypes';
 import { StixRelationshipObject } from '@/types/stixTypes/StixRelationshipObject';
+import ConnectedDBContext from '@/contexts/ConnectedDBContext';
 
 cytoscape.use(viewUtilities);
 cytoscape.use(cxtmenu);
@@ -40,6 +41,7 @@ spread(cytoscape);
 const Graph: React.FC = () => {
     const cyContainerRef = useRef<HTMLDivElement>(null);
     const { addEventListener, removeEventListener } = useContext(EventContext);
+    const { connectedDBProfile } = useContext(ConnectedDBContext);
     const { theme } = useTheme();
     const { cyInstance, setCyInstance, isPropertyPanelOpen, setIsPropertyPanelOpen, getStigLayoutSettingsFromStore, runLayout, setActivePropertiesPanelTab } = useStigContext();
     const { selectedSTIXObject, setSelectedSTIXObject, setSelectionExists, setNodesExist } = useStixPropsContext();
@@ -109,18 +111,6 @@ const Graph: React.FC = () => {
             });
             runLayout(getStigLayoutSettingsFromStore(), cy);
             setup_edge_handles(cy);
-
-            // View Utilities
-            try {
-                let viewUtil = cy?.viewUtilities(view_utils_options);
-                if (viewUtil) {
-                    setupCtxMenu(cy, setIsPropertyPanelOpen,
-                        selectedSTIXObject, setSelectedSTIXObject, setSelectionExists, viewUtil);
-                }
-            }
-            catch (e) {
-                console.error('View utilities could not be initialized.', e);
-            }
             setCyInstance(cy);
 
             const handleAddNode = (event: CustomEvent) => {
@@ -154,26 +144,34 @@ const Graph: React.FC = () => {
         if (cyInstance) {
             // View Utilities
             try {
-                let viewUtil = cyInstance.viewUtilities(view_utils_options);
+                const viewUtil = cyInstance.viewUtilities(view_utils_options);
                 if (viewUtil) {
-                    setupCtxMenu(cyInstance, setIsPropertyPanelOpen,
+                    setupCoreCtxMenu(cyInstance, setIsPropertyPanelOpen,
                         selectedSTIXObject, setSelectedSTIXObject, setSelectionExists, viewUtil);
                 }
             }
             catch (e) {
                 console.error('View utilities could not be initialized.', e);
             }
-        }
-    }, [isPropertyPanelOpen, selectedSTIXObject]);
+            
+            setupEdgeCtxMenu(cyInstance, setIsPropertyPanelOpen,
+                selectedSTIXObject, setSelectedSTIXObject, setSelectionExists);
 
-    useEffect(() => {
-        if (cyInstance) {
             if (selectedSTIXObject) {
                 setActivePropertiesPanelTab(0);
             }
+        }
+    }, [selectedSTIXObject, theme]);
+
+    
+
+    useEffect(() => {
+        if (cyInstance) {
+            setupNodeCtxMenu(cyInstance, setIsPropertyPanelOpen,
+                selectedSTIXObject, setSelectedSTIXObject, setSelectionExists, !!connectedDBProfile);
 
         }
-    }, [selectedSTIXObject]);
+    }, [selectedSTIXObject, connectedDBProfile, theme]);
 
     // Needed to move handleClearGraph out of the above useEffect so that
     // isPropertyPanelOpen and cyInstance would properly update and clearing the
@@ -391,10 +389,13 @@ const Graph: React.FC = () => {
         ele.classes('edge');
     });
 
-    return <div ref={cyContainerRef}
-        style={{ width: '100%', height: '100%' }}
-        onDrop={handleDrop}
-        onDragOver={handleDragOver} />;
+    return (
+        <div ref={cyContainerRef}
+            style={{ width: '100%', height: '100%' }}
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+        />
+    );
 };
 
 export default Graph;

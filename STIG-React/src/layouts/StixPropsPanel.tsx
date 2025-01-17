@@ -14,7 +14,10 @@ import SaveButtons from '@/components/elements/SaveButtons.tsx';
 import { useStigContext } from '@/contexts/StigContext.tsx';
 import AlertComponent from '@/components/elements/AlertComponent.tsx';
 import TabsComponent from '@/components/elements/TabsComponent.tsx';
-import { mdiRocketLaunchOutline, mdiDatabaseOutline, mdiDatabaseEyeOutline, mdiLayersTripleOutline, mdiDatabaseCogOutline, mdiCogOutline } from '@mdi/js';
+import { 
+  mdiRocketLaunchOutline, mdiDatabaseOutline, mdiDatabaseEyeOutline,
+  mdiLayersTripleOutline, mdiDatabaseCogOutline, mdiCogOutline,
+} from '@mdi/js';
 import ContextLayouts from '@/components/dropdowns/ContextLayouts.tsx';
 import DBProfileLayout from './DBProfile.tsx';
 import DBOperationsContainer from './DBOperationsContainer.tsx';
@@ -44,7 +47,7 @@ const StixPropsPanel: React.FC = () => {
   const [stixTypeProps, setStixTypeProps] = useState<SchemaSTIXProperty[]>([]);
   //const [activeGraphTab, setActiveGraphTab] = useState<number>(0);
 
-  const { activePropertiesPanelTab, setActivePropertiesPanelTab, togglePropertiesSetTab } = useStigContext();
+  const { activePropertiesPanelTab, setActivePropertiesPanelTab } = useStigContext();
 
   return (
     <PropertiesAndAdvancedTabs
@@ -98,7 +101,7 @@ const PropsPanelHeader: React.FC<GraphPanelProperties> = (
   function toggleJSONPropertyView() {
     const isShowingJson: boolean = !showJsonPanel;
     setShowJsonPanel(isShowingJson);
-    setIsShowingJson(isShowingJson)
+    setIsShowingJson(isShowingJson);
   }
   return (
     <>
@@ -128,8 +131,6 @@ const PropsPanelHeader: React.FC<GraphPanelProperties> = (
     </>
   );
 }
-
-
 
 const PropertiesAndAdvancedTabs: React.FC<GraphPanelProperties> = (
   { selectedProperties,
@@ -167,7 +168,7 @@ const PropertiesAndAdvancedTabs: React.FC<GraphPanelProperties> = (
             </div>
             :
             <div className='mt-4'>
-              <AlertComponent className='dark:text-neutralc-100' alertText={`No graph element selected. Select an element on the graph to view it's properties.`} alertType='warning' ></AlertComponent>
+              <AlertComponent className='dark:text-neutralc-100' alertText={`No graph element selected. Select an element on the graph to view it's properties.`} alertType='warning' />
             </div>
           }
         </>
@@ -186,7 +187,7 @@ const PropertiesAndAdvancedTabs: React.FC<GraphPanelProperties> = (
 
   return (
     <div className="outerTabs flex mt-1 w-full h-full overflow-hidden">
-      <TabsComponent tabs={tabs} setActiveTab={setActiveGraphTab || (() => { })} activeTab={activeGraphTab} extraContainerClassName={'flex-1'}></TabsComponent>
+      <TabsComponent tabs={tabs} setActiveTab={setActiveGraphTab || (() => { })} activeTab={activeGraphTab} extraContainerClassName={'flex-1'} />
     </div>
   )
 };
@@ -241,7 +242,7 @@ const ProfileOperationsTabs: React.FC = () => {
       icon: mdiDatabaseCogOutline,
       content: (
         <div className={`dbOperationsContainer flex h-full w-full scrollbar`}>
-          <DBOperationsContainer></DBOperationsContainer>
+          <DBOperationsContainer />
         </div>
       )
     },
@@ -250,14 +251,14 @@ const ProfileOperationsTabs: React.FC = () => {
       icon: mdiDatabaseEyeOutline,
       content: (
         <div className={`dbExamplesContainer flex h-full w-full scrollbar`}>
-          <DBExamplesContainer></DBExamplesContainer>
+          <DBExamplesContainer />
         </div>
       )
     }
   ];
 
   return (
-    <TabsComponent tabs={tabs} setActiveTab={setActiveTab} activeTab={activeTab} extraContainerClassName={'flex mt-1'}></TabsComponent>
+    <TabsComponent tabs={tabs} setActiveTab={setActiveTab} activeTab={activeTab} extraContainerClassName={'flex mt-1'}/>
   )
 };
 

@@ -3,10 +3,9 @@ import ButtonBasic from '../components/elements/ButtonBasic';
 import ConnectedDBContext, { ConnectedDBContextType } from '../contexts/ConnectedDBContext';
 import FormCustomDBQuery from '@/components/forms/FormCustomDBQuery';
 import DBQueryHistory from './DBQueryHistory';
-import { deleteNodeFromDB } from '@/util/GraphUtils';
 import { useStigContext } from '@/contexts/StigContext';
 import { useStixPropsContext } from '@/contexts/StixPropsContext';
-import { CollectionReturnValue, EdgeCollection, NodeCollection } from 'cytoscape';
+import { EdgeCollection, NodeCollection } from 'cytoscape';
 import { commit, db_delete } from '@/util/DbFunctions';
 import { useNotificationContext } from '@/contexts/NotificationContext';
 import { DialogBasic } from '@/components/elements/DialogBasic';
@@ -18,50 +17,31 @@ import { StixRelationshipObject } from '@/types/stixTypes/StixRelationshipObject
 import { importGraphToDB, ImportResult } from '@/graph/importGraph';
 import FormElementFileInput from '@/components/forms/formElements/FormElementFileInput';
 import ConnectedProfilePanelLayout from './ConnectedProfilePanelLayout';
+import DBDeleteModal from './DBDeleteModal';
 
 const DBOperationsContainer: React.FC = () => {
-    // const { savedDBProfiles, setSavedDBProfiles, selectedProfile, setSelectedProfile } = useContext(ConnectedDBContext) as ConnectedDBContextType;
-    // const graph_utils = cyInstance ? new GraphUtils(cyInstance) : undefined;
     const { connectedDBProfile } = useContext(ConnectedDBContext) as ConnectedDBContextType;
     const [inQueryDeleteProcess, setInQueryDeleteProcess] = useState(false);
-    const { cyInstance, setIsPropertyPanelOpen, getStigLayoutSettingsFromStore, runLayout } = useStigContext();
-    const { selectedSTIXObject, setSelectedSTIXObject, selectionExists, setSelectionExists, nodesExist, setNodesExist } = useStixPropsContext();
+    const { cyInstance, getStigLayoutSettingsFromStore, runLayout } = useStigContext();
+    const { selectedSTIXObject, setSelectedSTIXObject, selectionExists, setSelectionExists, nodesExist } = useStixPropsContext();
     const { addNotification } = useNotificationContext();
     const [selectedFiles, setSelectedFiles] = useState<ArrayLike<File>>([]);
 
-
-    // const handleQueryIncoming = async () => {
-    //     if (cyInstance && graph_utils) {
-    //         const selectedElements = cyInstance.$(':selected');
-    //         await queryIncoming(selectedElements as unknown as cytoscape.CollectionElements, graph_utils, cyInstance);
-    //     }
-    // };
-
-    const handleDeleteMutation = async () => {
-        if (cyInstance) {
-            const selectedElements = cyInstance.$(':selected');
-            deleteNodeFromDB(cyInstance, selectedElements, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists, setIsPropertyPanelOpen);
-        }
-    }
-
-    function deleteSelectedGraphElementsFromDatabase() {
+    async function deleteSelectedGraphElementsFromDatabase() {
         if (cyInstance !== undefined) {
-            const selected: NodeCollection = cyInstance.nodes(':selected');
-            const vis: CollectionReturnValue = cyInstance.$(':visible');
-            const eW: EdgeCollection = selected.edgesWith(vis);
-            const eS: EdgeCollection = cyInstance.edges(':selected');
             const sel = cyInstance.$(':selected');
+            const objs = sel.map(ele => ele.data('raw_data')).filter(data => !!data);
+            const { nodes, rels } = await db_delete(objs);
             sel.forEach(ele => void cyInstance.remove(ele));
-            db_delete(sel.map(ele => ele.data('raw_data')));
             setSelectedSTIXObject(undefined);
-            addNotification(`Deleted ${selected.length} nodes(s) and ${eW.length + eS.length} edge(s) from database`, 'success');
+            addNotification(`Deleted ${nodes} nodes(s) and ${rels} edge(s) from database`, 'success');
         }
     }
 
-    function commitNodes(cy: cytoscape.Core | undefined, selector: string) {
-        if (cy !== undefined) {
-            const nodes = cy.nodes(selector);
-            const edges = cy.edges(selector);
+    function commitNodes(selector: string) {
+        if (cyInstance !== undefined) {
+            const nodes = cyInstance.nodes(selector);
+            const edges = cyInstance.edges(selector);
             addNotification("Saving to Database....", "info");
             submitter(nodes, edges);
         }
@@ -76,9 +56,6 @@ const DBOperationsContainer: React.FC = () => {
         })();
     }
 
-
-
-    // TODO: REFACTOR to utility function! currently 2 instances
     const importFile = async () => {
         let gen: AsyncGenerator<ImportResult> = importGraphToDB(selectedFiles);
         let need_layout = false;
@@ -111,11 +88,10 @@ const DBOperationsContainer: React.FC = () => {
                         buttonLabel="COMMIT ALL RECORDS"
                         disabled={!connectedDBProfile || !nodesExist}
                         additionalButtonClasses={`btn-xs flex-auto`}
-                        onSave={() => commitNodes(cyInstance, '')}
+                        onSave={() => commitNodes('')}
                     >
                         <DBUpdateModal cy={cyInstance} selector='' />
                     </DialogBasic>
-
                     <DialogBasic
                         dialogId="SaveToNeo4jModal"
                         title="Update Database"
@@ -123,23 +99,25 @@ const DBOperationsContainer: React.FC = () => {
                         buttonLabel="COMMIT SELECTED RECORDS"
                         buttonColor="btn-neutralc"
                         additionalButtonClasses={`uppercase btn-xs flex-auto`}
-                        disabled={!cyInstance || !selectedSTIXObject || !connectedDBProfile}
-                        onSave={() => commitNodes(cyInstance, ':selected')}
+                        disabled={!cyInstance || !connectedDBProfile || !selectionExists}
+                        onSave={() => commitNodes(':selected')}
                     >
                         <DBUpdateModal cy={cyInstance} selector={`#${selectedSTIXObject?.id}`} />
                     </DialogBasic>
                 </span>
-                <ButtonBasic
-                    label={'DELETE SELECTED RECORDS'}
-                    type={'btn-neutralc'}
-                    additionalClasses={`${'btn-xs flex-auto'}`}
-                    disabled={!cyInstance || !selectionExists || !connectedDBProfile}
-                    onClick={() => {
-                        deleteSelectedGraphElementsFromDatabase();
-                        setSelectionExists(false);
-                    }}
-                />
-
+                <DialogBasic
+                    dialogId="DBDeleteModal"
+                    title="Delete Selected"
+                    buttonColor='btn-neutralc'
+                    showFormButtons={true}
+                    buttonLabel="DELETE SELECTED RECORDS"
+                    disabled={!cyInstance || !connectedDBProfile || !selectionExists}
+                    additionalButtonClasses={`uppercase btn-xs flex-auto`}
+                    saveLabel='Delete'
+                    onSave={deleteSelectedGraphElementsFromDatabase}
+                >
+                    <DBDeleteModal cy={cyInstance} />
+                </DialogBasic>
                 <span className='mt-4 mb-1'>Import a File</span>
                 <FormElementFileInput
                     placeholder='Choose a JSON Bundle File'
