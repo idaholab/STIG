@@ -453,7 +453,7 @@ export class Main {
         });
 
         //create query
-        const text = "MATCH (v:vulnerability) WHERE ANY(substring IN [" + vulns + "] WHERE ANY(ref IN v.external_references WHERE ref CONTAINS substring)) AND v.description CONTAINS 'kev' RETURN v";
+        const text = "MATCH (r:report) WHERE ANY(substring IN [" + vulns + "] WHERE r.name CONTAINS substring) AND r.description CONTAINS 'KEV' RETURN r";
     
         //query db for vlns
         storage.add(text);
