@@ -84,7 +84,9 @@ export const StigContextProvider: React.FC<Props> = ({ children }) => {
 
   return (
     <StigContext.Provider value={{
-      activeContextLayout, setActiveContextLayout, togglePropertiesSetTab, activePropertiesPanelTab, setActivePropertiesPanelTab, isPropertyPanelOpen, setIsPropertyPanelOpen,
+      activeContextLayout, setActiveContextLayout, togglePropertiesSetTab,
+      activePropertiesPanelTab, setActivePropertiesPanelTab,
+      isPropertyPanelOpen, setIsPropertyPanelOpen,
       panelWidth, setPanelWidth, togglePropertyPanel,
       isDrawerOpen, setIsDrawerOpen,
       drawerWidth, setDrawerWidth,

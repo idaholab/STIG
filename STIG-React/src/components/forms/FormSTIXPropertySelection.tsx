@@ -118,9 +118,9 @@ const FormSTIXPropertySelection: React.FC<Props> = ({
           : null
         }
       </div>
-
     </div>
-  </Dropdown>;
+  </Dropdown>
+  );
 };
 
 export default FormSTIXPropertySelection;

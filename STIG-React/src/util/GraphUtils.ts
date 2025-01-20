@@ -185,7 +185,7 @@ export function setupCtxMenu(
     selectedSTIXObject: StixObject | undefined,
     setSelectedSTIXObject: (obj: StixObject | undefined) => void,
     setSelectionExists: React.Dispatch<React.SetStateAction<boolean>>,
-    view_util?: any
+    connected: boolean,
 ): void {
 
     // NOTE: For some reason the styles can't be changed once instantiated so light/dark mode changes won't impact the initial colors!
@@ -315,7 +315,7 @@ export function setupCtxMenu(
 
     cy.cxtmenu({
         selector: 'edge',
-        menuRadius: () => { return 120 },
+        menuRadius: () => 120,
         fillColor: getCssRGBVarColor('--context-menu-edge-background'),
         activeFillColor: getCssRGBVarColor('--context-menu-edge-active-background'),
         outsideMenuCancel: 10,
@@ -361,10 +361,20 @@ export function setupCtxMenu(
                 }
             }
         ]
-    } as ContextMenu);
+    } as ContextMenu) as unknown as typeof edge_menu;
+}
 
-    cy.cxtmenu({
-        menuRadius: () => { return 130 },
+export function setupCoreCtxMenu(
+    cy: cytoscape.Core,
+    setIsPropertyPanelOpen: (b: boolean) => void,
+    selectedSTIXObject: StixObject | undefined,
+    setSelectedSTIXObject: (obj: StixObject | undefined) => void,
+    setSelectionExists: React.Dispatch<React.SetStateAction<boolean>>,
+    view_util?: any
+): void {
+    core_menu?.destroy();
+    core_menu = cy.cxtmenu({
+        menuRadius: () => 130,
         selector: 'core',
         fillColor: getCssRGBVarColor('--context-menu-core-background'),
         activeFillColor: getCssRGBVarColor('--context-menu-core-active-background'),
@@ -419,7 +429,7 @@ export function setupCtxMenu(
                 }
             }
         ]
-    } as ContextMenu);
+    } as ContextMenu) as unknown as typeof core_menu;
 }
 
 export function create_bundle(nodes: CollectionReturnValue): STIGBundle {

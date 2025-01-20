@@ -119,17 +119,32 @@ export class Neo4jStigDB implements StigDB {
    * @returns {Promise<void>}
    * @memberof StigDB
    */
-  public delete(stix: StixObject[]): Promise<void> {
+  public delete(stix: StixObject[]): Promise<{ nodes: number; rels: number; }> {
     return this.wrapSession(s =>
-      s.executeWrite(tx =>
-        Promise.all(stix.map(obj =>
-          tx.run(isRelationship(obj)
-            ? 'MATCH ()-[r]->() WHERE r.id = $id DELETE r'
-            : 'MATCH (n: stixnode) WHERE n.id = $id DETACH DELETE n',
-            { id: obj.id })
-        ))
-      )
-    ) as Promise<unknown> as Promise<void>;
+      s.executeWrite(async (tx) => {
+        const nodes: string[] = [];
+        const rels: string[] = [];
+        let node_dels = 0;
+        let rel_dels = 0;
+        for (const obj of stix) {
+          (isRelationship(obj) ? rels : nodes).push(obj.id);
+        }
+        if (rels.length) {
+          const res = await tx.run('UNWIND $ids AS id MATCH ()-[r {id: id}]->() DELETE r', { ids: rels });
+          const { nodesDeleted, relationshipsDeleted } = res.summary.counters.updates();
+          node_dels += nodesDeleted;
+          rel_dels += relationshipsDeleted;
+
+        }
+        if (nodes.length) {
+          const res = await tx.run('UNWIND $ids AS id MATCH (n: stixnode {id: id}) DETACH DELETE n', { ids: nodes });
+          const { nodesDeleted, relationshipsDeleted } = res.summary.counters.updates();
+          node_dels += nodesDeleted;
+          rel_dels += relationshipsDeleted;
+        }
+        return { nodes: node_dels, rels: rel_dels };
+      })
+    );
   }
 
   private traverseNode(query: string, id: string): Promise<StixObject[]> {
