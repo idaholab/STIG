@@ -179,7 +179,11 @@ export function _addVertices(sdos: StixObject[], data_source: DataSourceType, cy
     }
 }
 
-export function setupCtxMenu(
+let node_menu: { destroy: () => void; };
+let edge_menu: { destroy: () => void; };
+let core_menu: { destroy: () => void; };
+
+export function setupNodeCtxMenu(
     cy: cytoscape.Core,
     setIsPropertyPanelOpen: (b: boolean) => void,
     selectedSTIXObject: StixObject | undefined,
@@ -187,133 +191,105 @@ export function setupCtxMenu(
     setSelectionExists: React.Dispatch<React.SetStateAction<boolean>>,
     connected: boolean,
 ): void {
+    const remove = {
+        content: 'Graph Remove',
+        select: (ele: cytoscape.CollectionElements) => {
+            const element = ele as unknown as CollectionArgument;
+            /*FIX!: TODO: the following steps will produce a bug:
+             * Drag a node onto the screen (Let's call that node 'A')
+             * Drag another node onto the screen (perhaps a different type of stix object for debugging. Let's call that node 'B')
+             * Click 'A' (opening the property panel for 'A')
+             * Click 'B' (opening the property panel for 'B')
+             * Shift select 'A', still keeping the selection on and property panel open for 'B'
+             * "Graph Remove" 'A'
+             * 
+             * Notice that the property panel is mistakenly closed for 'B'. See the console.debug below
+             */
+            if (selectedSTIXObject?.id === element.data("id")) {
+                setSelectedSTIXObject(undefined);
+                setSelectionExists(false);
+                setIsPropertyPanelOpen(false);
+            }
+            cy.remove(element);
+            console.debug("the selected stix object during 'Graph Remove' is ", selectedSTIXObject?.id);
+        }
+    };
+    const select_in = {
+        content: 'Select Incoming',
+        select(ele: cytoscape.CollectionElements) {
+            const elements = ele as unknown as CollectionArgument;
+            elements.toArray().forEach((value) => {
+                if (value.isNode()) {
+                    value.incomers().select();
+                }
+            });
+        }
+    };
+    const select_out = {
+        content: 'Select Outgoing',
+        select(ele: cytoscape.CollectionElements) {
+            const elements = ele as unknown as CollectionArgument;
+            elements.toArray().forEach((value) => {
+                if (value.isNode()) {
+                    value.outgoers().select();
+                }
+            });
+        }
+    };
+    const select_neighbors = {
+        content: 'Select Neighbors',
+        select(ele: cytoscape.CollectionElements) {
+            const elements = ele as unknown as CollectionArgument;
+            elements.toArray().forEach((value) => {
+                if (value.isNode()) {
+                    value.select();
+                    value.closedNeighborhood().select();
+                }
+            });
+        }
+    };
 
-    // NOTE: For some reason the styles can't be changed once instantiated so light/dark mode changes won't impact the initial colors!
-    // itemColor
-    cy.cxtmenu({
-        menuRadius: () => { return 120 },
+    const props = {
+        menuRadius: () => 120,
         selector: '.stix_node',
         fillColor: getCssRGBVarColor('--context-menu-node-background'),
         activeFillColor: getCssRGBVarColor('--context-menu-node-active-background'),
         spotlightPadding: 20,
         itemTextShadowColor: 'transparent',
         outsideMenuCancel: 10,
-        commands: [
-            {
-                content: 'Graph Remove',
-                select: (ele: cytoscape.CollectionElements) => {
-                    const element = ele as unknown as CollectionArgument;
-                    // Check if the deleted element is currently selected
-                    // and if so, close the property panel and clear
-                    // the currently selected object
-                    /*FIX!: TODO: the following steps will produce a bug:
-                     * Drag a node onto the screen (Let's call that node 'A')
-                     * Drag another node onto the screen (perhaps a different type of stix object for debugging. Let's call that node 'B')
-                     * Click 'A' (opening the property panel for 'A')
-                     * Click 'B' (opening the property panel for 'B')
-                     * Shift select 'A', still keeping the selection on and property panel open for 'B'
-                     * "Graph Remove" 'A'
-                     * 
-                     * Notice that the property panel is mistakenly closed for 'B'. See the console.debug below
-                     */
-                    if (selectedSTIXObject?.id === element.data("id")) {
-                        setSelectedSTIXObject(undefined);
-                        setSelectionExists(false);
-                        setIsPropertyPanelOpen(false);
-                    }
-                    cy.remove(element);
-                    console.debug("the selected stix object during 'Graph Remove' is ", selectedSTIXObject?.id);
-                }
-            },
-            {
-                content: 'DB Delete',
-                select(ele: cytoscape.CollectionElements) {
-                    const element = ele as unknown as CollectionArgument;
-                    try {
-                        if (selectedSTIXObject?.id === element.data("id")) {
-                            setSelectedSTIXObject(undefined);
-                            setSelectionExists(false);
-                            setIsPropertyPanelOpen(false);
-                        }
-                        cy.remove(element);
-                        db_delete(element.data('raw_data'));
-                    } catch (e) {
-                        // Handle error: probably want to indicate that it wasn't deleted from DB
-                    }
-                }
-            },
-            {
-                content: 'Query Incoming',
-                select: (ele: cytoscape.CollectionElements) => queryIncoming(ele, cy)
+    };
 
-                // async select(ele: cytoscape.CollectionElements) {
-                //     const elements = ele as unknown as CollectionArgument;
-                //     for (const value of elements.toArray()) {
-                //         let data = value.data('raw_data');
-                //         if (typeof data === 'string') {
-                //             data = JSON.parse(data);
-                //         }
-                //         let incoming = await query_incoming(data)
-                //         const coreObjects: StixObject[] = incoming.map(obj => obj as StixObject);
-                //         graph_utils.buildNodes(coreObjects, 'DB');
-                //         runGraphLayout(getLayoutSettingsFromStore(), cy);
-                //     }
-                // }
-            },
-            {
-                content: 'Select Incoming',
-                select(ele: cytoscape.CollectionElements) {
-                    const elements = ele as unknown as CollectionArgument;
-                    elements.toArray().forEach((value) => {
-                        if (value.isNode()) {
-                            value.incomers().select();
-                        }
-                    });
-                }
-            },
-            {
-                content: 'Select Out',
-                select(ele: cytoscape.CollectionElements) {
-                    const elements = ele as unknown as CollectionArgument;
-                    elements.toArray().forEach((value) => {
-                        if (value.isNode()) {
-                            value.outgoers().select();
-                        }
-                    });
-                }
-            },
-            {
-                content: 'Query Out',
-                async select(ele: cytoscape.CollectionElements) {
-                    const elements = ele as unknown as CollectionArgument;
-                    for (const value of elements.toArray()) {
-                        let data = value.data('raw_data');
-                        if (typeof data === 'string') {
-                            data = JSON.parse(data);
-                        }
-                        let outgoing = await query_outgoing(data)
-                        const coreObjects: StixObject[] = outgoing.map(obj => obj as StixObject);
-                        buildNodes(cy, coreObjects, 'DB');
-                        runGraphLayout(getLayoutSettingsFromStore(), cy);
-                    }
-                }
-            },
-            {
-                content: 'Select Neighbors',
-                select(ele: cytoscape.CollectionElements) {
-                    const elements = ele as unknown as CollectionArgument;
-                    elements.toArray().forEach((value) => {
-                        if (value.isNode()) {
-                            value.select();
-                            value.closedNeighborhood().select();
-                        }
-                    });
-                }
-            }
-        ]
-    } as ContextMenu);
+    node_menu?.destroy();
 
-    cy.cxtmenu({
+    if (connected) {
+        // NOTE: For some reason the styles can't be changed once instantiated so light/dark mode changes won't impact the initial colors!
+        // itemColor
+
+        const query_in = {
+            content: 'Query Incoming',
+            select: (ele: cytoscape.CollectionElements) => queryInOut(ele, cy, query_incoming)
+        };
+
+        const query_out = {
+            content: 'Query Out',
+            select: (ele: cytoscape.CollectionElements) => queryInOut(ele, cy, query_outgoing)
+        };
+
+        node_menu = cy.cxtmenu({ ...props, commands: [remove, query_in, select_in, select_out, query_out, select_neighbors] } as ContextMenu) as unknown as typeof node_menu;
+    } else {
+        node_menu = cy.cxtmenu({ ...props, commands: [remove, select_in, select_out, select_neighbors] } as ContextMenu) as unknown as typeof node_menu;
+    }
+}
+
+export function setupEdgeCtxMenu(
+    cy: cytoscape.Core,
+    setIsPropertyPanelOpen: (b: boolean) => void,
+    selectedSTIXObject: StixObject | undefined,
+    setSelectedSTIXObject: (obj: StixObject | undefined) => void,
+    setSelectionExists: React.Dispatch<React.SetStateAction<boolean>>,
+): void {
+    edge_menu?.destroy();
+    edge_menu = cy.cxtmenu({
         selector: 'edge',
         menuRadius: () => 120,
         fillColor: getCssRGBVarColor('--context-menu-edge-background'),
@@ -523,6 +499,23 @@ export const saveLayoutToLocalStorage = (layout: string) => {
 export const getLayoutSettingsFromStore = (): string => {
     const layout = localStorage.getItem('stigSettings');
     return layout === null ? defaultLayout : layout;
+}
+
+async function queryInOut(
+    elements: cytoscape.CollectionElements,
+    cy: cytoscape.Core,
+    query: (data: StixObject) => Promise<StixObject[]>,
+) {
+    const collection = elements as unknown as CollectionArgument;
+    for (const value of collection.toArray()) {
+        let data = value.data('raw_data');
+        if (typeof data === 'string') {
+            data = JSON.parse(data);
+        }
+        const coreObjects = await query(data);
+        buildNodes(cy, coreObjects, 'DB');
+        runGraphLayout(getLayoutSettingsFromStore(), cy);
+    }
 }
 export const runGraphLayout = (layoutType: keyof LayoutsType, cyInstance: cytoscape.Core) => {
     const orphans = cyInstance?.elements(':orphan').filter(':childless');

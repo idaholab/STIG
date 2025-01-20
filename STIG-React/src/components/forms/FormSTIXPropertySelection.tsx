@@ -46,7 +46,7 @@ const FormSTIXPropertySelection: React.FC<Props> = ({
     }
   }, [selectedProperties, setSelectedProperties]);
 
-  return <Dropdown
+  return (<Dropdown
     title={label}
     filter={filter}
     setFilter={setFilter}
