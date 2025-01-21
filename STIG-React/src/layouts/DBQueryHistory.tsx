@@ -35,7 +35,7 @@ export default function DBQueryHistory({ inQueryDeleteProcess, setInQueryDeleteP
       <p className='mb-1'>Query History</p>
       <div className='flex flex-col h-fit'>
         {savedQueries.length ?
-          savedQueries.map(savedQuery => {
+          savedQueries.toReversed().map(savedQuery => {
             return (
               // min-h-[50px] h-fit
               <div key={savedQuery.id}
