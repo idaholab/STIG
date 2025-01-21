@@ -48,7 +48,7 @@ const DBProfileLayout: React.FC = () => {
           }
           onDeleteClick={deleteProfile}
           onCancelClick={cancelDeleteProfile}
-          className='w-fit py-0 px-4 absolute inset-2 flex items-center justify-center opacity-100 z-50 left'
+          className='w-fit h-fit py-0 px-4 absolute top-[180px] inset-2 flex items-center justify-center opacity-100 z-50 left'
         />
         : undefined
       }
@@ -110,7 +110,7 @@ function DBProfileSelector({ dbProfiles, inDBDeleteProcess, setInDBDeleteProcess
       </div>
 
       <div className='DBProfileSelector flex rounded-md bg-neutralc-300 dark:bg-neutralc-900 p-1 h-full'>
-        <ul className="flex justify-between w-full min-h-[100px] max-h-[200px]">
+        <ul className="flex-1 justify-between w-full min-h-[100px] max-h-[200px]">
           <div className={"flex flex-col h-full scrollbar"}>
             {dbProfiles.map((profile) => {
               return (

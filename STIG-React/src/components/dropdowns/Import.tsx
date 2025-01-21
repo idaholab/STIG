@@ -7,7 +7,6 @@ const Import: React.FC = () => {
     <Dropdown
       title="Import"
       includeDropdownArrow
-      fixed
     >
       <div className="hover:text-black hover:text-white dark:hover:bg-primary hover:bg-primary">
         <ImportJSONBundleModal />
@@ -15,5 +14,4 @@ const Import: React.FC = () => {
     </Dropdown>
   );
 };
-
 export default Import;

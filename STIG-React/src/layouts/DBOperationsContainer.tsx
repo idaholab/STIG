@@ -51,8 +51,9 @@ const DBOperationsContainer: React.FC = () => {
         const stix_edges = edges.map(cycore2stix).filter(s => s !== undefined) as StixRelationshipObject[];
         (async () => {
             const { nodes, edges, errors } = await commit(stix_nodes, stix_edges);
-            const toastType: AlertType = errors === 0 ? "success" : "warning";
-            addNotification(`Submitted ${nodes}/${stix_nodes.length} node(s) and ${edges}/${stix_edges.length} edge(s)`, toastType);
+            const toastType: AlertType = errors === 0 ? "success" : "error";
+            const message = errors === 0 ? `Submitted ${nodes}/${stix_nodes.length} node(s) and ${edges}/${stix_edges.length} edge(s)` : `An error occurred while saving to the database`;
+            addNotification(message, toastType);
         })();
     }
 

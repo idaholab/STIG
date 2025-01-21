@@ -14,7 +14,7 @@ import { CreatedByRelationshipFactory } from './CreatedByRelationshipFactory';
 import { layouts, LayoutsType } from '@/graph/graphOptions';
 import { createObjectMarkingRelationship, createCytoscapeNode } from '../stix/stix';
 import { CollectionArgument } from 'cytoscape';
-import { query_incoming, query_outgoing } from './DbFunctions';
+import { db_delete, query_incoming, query_outgoing } from './DbFunctions';
 import { ContextMenu } from '@/types/cytoscapeTypes/ContextMenu';
 import { getCssRGBVarColor } from './GetCssVarColor';
 import { query } from '@/util/DbFunctions';
@@ -22,168 +22,160 @@ import { STIGBundle } from '@/types/STIGBundle';
 import { v4 as uuidv4 } from 'uuid';
 import { exportGraph } from '@/graph/exportGraph';
 
-export class GraphUtils {
-    public cy: cytoscape.Core;
-    public skipLayout: boolean = false;
+export function buildNodes(cy: cytoscape.Core, objects: StixObject[], data_source: DataSourceType): [number, number] {
+    const [nodes_added, relationships, sightings] = _addVertices(objects, data_source, cy);
+    const to_add: ElementDefinition[] = [];
 
-    constructor(cy: cytoscape.Core) {
-        this.cy = cy;
-    }
+    for (const r of relationships) {
+        const to_node = cy.getElementById(r.target_ref!);
+        const from_node = cy.getElementById(r.source_ref!);
+        if (from_node.length === 0 || to_node.length === 0) {
+            continue;
+        }
 
-    private _addVertices(sdos: StixObject[], data_source: DataSourceType): [CollectionReturnValue, StixRelationshipObject[], StixRelationshipObject[]] {
-        const in_graph = new Set<string>();
-        const to_add: ElementDefinition[] = [];
-        const relationships: StixRelationshipObject[] = [];
-        const sightings: StixRelationshipObject[] = [];
-        try {
-            sdos = sdos.sort((a, b) => {
-                const momentA = (a && a.modified) ? moment(a.modified)?.unix() : 0;
-                const momentB = (b && b.modified) ? moment(b.modified)?.unix() : 0;
-                return momentB - momentA;
-            });
-
-            for (const sdo of sdos) {
-                if (!sdo.id || !sdo.type) {
-                    continue;
-                }
-                if (this.cy.getElementById(sdo.id).length > 0) { continue; }
-
-                if (sdo.type.toLowerCase() !== 'relationship' && sdo.type.toLowerCase() !== 'sighting') {
-                    const st_node = createCytoscapeNode(sdo, data_source, false);
-                    if (!in_graph.has(st_node.data.id)) {
-                        to_add.push(JSON.parse(JSON.stringify(st_node)) as ElementDefinition);
-                        in_graph.add(st_node.data.id);
-                    }
-                    if (sdo.created_by_ref) {
-                        if (!in_graph.has(sdo.id)) {
-                            const cb_sro = CreatedByRelationshipFactory(sdo.id, sdo.created_by_ref, sdo.created, sdo.modified!);
-                            relationships.push(cb_sro as StixRelationshipObject);
-                            in_graph.add(sdo.id);
-                        }
-                    } else if ('object_marking_refs' in sdo && sdo.object_marking_refs) {
-                        sdo.object_marking_refs.forEach((markingID: any) => {
-                            if (!in_graph.has(sdo.id)) {
-                                relationships.push(createObjectMarkingRelationship(markingID, sdo.id, sdo.created, sdo.modified!));
-                                in_graph.add(sdo.id);
-                            }
-                        });
-                    }
-                } else if (sdo.type.toLowerCase() === 'relationship') {
-                    if (!in_graph.has(sdo.id)) {
-                        relationships.push(sdo as StixRelationshipObject);
-                        in_graph.add(sdo.id);
-                    }
-                } else if (sdo.type.toLowerCase() === 'sighting') {
-                    if (!in_graph.has(sdo.id)) {
-                        sightings.push(sdo as StixRelationshipObject);
-                        in_graph.add(sdo.id);
-                    }
-                }
-            }
-            const nodes_added = this.cy.add(to_add);
-
-            return [nodes_added, relationships, sightings];
-        } catch (e) {
-            console.error('Exception adding nodes to graph:', e);
-            throw e;
+        const edge_data: CytoscapeRelationshipData = {
+            target: to_node.id(),
+            source: from_node.id(),
+            id: r.id,
+            label: r.relationship_type!,
+            raw_data: r
+        };
+        const relationship = createStixRelationship(edge_data, data_source);
+        if (!cy.getElementById(r.id).length) {
+            to_add.push(JSON.parse(JSON.stringify(relationship)) as ElementDefinition);
         }
     }
 
-    public buildNodes(objects: StixObject[], data_source: DataSourceType): [number, number] {
-        const [nodes_added, relationships, sightings] = this._addVertices(objects, data_source);
-        const to_add: ElementDefinition[] = [];
-
-        for (const r of relationships) {
-            const to_node = this.cy.getElementById(r.target_ref!);
-            const from_node = this.cy.getElementById(r.source_ref!);
-            if (from_node.length === 0 || to_node.length === 0) {
-                continue;
-            }
-
-            const edge_data: CytoscapeRelationshipData = {
-                target: to_node.id(),
-                source: from_node.id(),
-                id: r.id,
-                label: r.relationship_type!,
-                raw_data: r
-            };
-            const relationship = createStixRelationship(edge_data, data_source);
-            if (!this.cy.getElementById(r.id).length) {
-                to_add.push(JSON.parse(JSON.stringify(relationship)) as ElementDefinition);
+    for (const r of sightings) {
+        const from_node = cy.getElementById(r.sighting_of_ref!);
+        if (r.observed_data_refs) {
+            for (const t_n of r.observed_data_refs) {
+                const to_node = cy.getElementById(t_n);
+                const edge_data: CytoscapeRelationshipData = {
+                    target: to_node.id(),
+                    source: from_node.id(),
+                    id: r.id,
+                    label: 'observed data sighting',
+                    raw_data: r,
+                    data_source: 'IGNORE' as DataSourceType
+                };
+                const relationship = createStixRelationship(edge_data, 'IGNORE');
+                if (!cy.getElementById(r.id).length) {
+                    to_add.push(JSON.parse(JSON.stringify(relationship)) as ElementDefinition);
+                }
             }
         }
-
-        for (const r of sightings) {
-            const from_node = this.cy.getElementById(r.sighting_of_ref!);
-            if (r.observed_data_refs) {
-                for (const t_n of r.observed_data_refs) {
-                    const to_node = this.cy.getElementById(t_n);
-                    const edge_data: CytoscapeRelationshipData = {
-                        target: to_node.id(),
-                        source: from_node.id(),
-                        id: r.id,
-                        label: 'observed data sighting',
-                        raw_data: r,
-                        data_source: 'IGNORE' as DataSourceType
-                    };
-                    const relationship = createStixRelationship(edge_data, 'IGNORE');
-                    if (!this.cy.getElementById(r.id).length) {
-                        to_add.push(JSON.parse(JSON.stringify(relationship)) as ElementDefinition);
-                    }
+        if (r.object_marking_refs) {
+            for (const t_n of r.object_marking_refs) {
+                const to_node = cy.getElementById(t_n);
+                const edge_data: CytoscapeRelationshipData = {
+                    target: to_node.id(),
+                    source: from_node.id(),
+                    id: r.id,
+                    label: 'object marking',
+                    raw_data: r,
+                    data_source: 'IGNORE' as DataSourceType
+                };
+                const relationship = createStixRelationship(edge_data, 'IGNORE');
+                if (!cy.getElementById(r.id).length) {
+                    to_add.push(JSON.parse(JSON.stringify(relationship)) as ElementDefinition);
                 }
             }
-            if (r.object_marking_refs) {
-                for (const t_n of r.object_marking_refs) {
-                    const to_node = this.cy.getElementById(t_n);
-                    const edge_data: CytoscapeRelationshipData = {
-                        target: to_node.id(),
-                        source: from_node.id(),
-                        id: r.id,
-                        label: 'object marking',
-                        raw_data: r,
-                        data_source: 'IGNORE' as DataSourceType
-                    };
-                    const relationship = createStixRelationship(edge_data, 'IGNORE');
-                    if (!this.cy.getElementById(r.id).length) {
-                        to_add.push(JSON.parse(JSON.stringify(relationship)) as ElementDefinition);
-                    }
-                }
-            }
-            if (r.where_sighted_refs) {
-                for (const t_n of r.where_sighted_refs) {
-                    const to_node = this.cy.getElementById(t_n);
-                    const edge_data: CytoscapeRelationshipData = {
-                        target: to_node.id(),
-                        source: from_node.id(),
-                        id: r.id,
-                        label: 'where sighted',
-                        raw_data: r
-                    };
-                    const relationship = createStixRelationship(edge_data, 'IGNORE');
-                    if (!this.cy.getElementById(r.id).length) {
-                        to_add.push(JSON.parse(JSON.stringify(relationship)) as ElementDefinition);
-                    }
-                }
-            }
-            if (r.sighting_of_ref) {
-                const to_node = this.cy.getElementById(r.sighting_of_ref);
+        }
+        if (r.where_sighted_refs) {
+            for (const t_n of r.where_sighted_refs) {
+                const to_node = cy.getElementById(t_n);
                 const edge_data: CytoscapeRelationshipData = {
                     target: to_node.id(),
                     source: from_node.id(),
                     id: r.id,
                     label: 'where sighted',
-                    raw_data: r,
-                    data_source: 'IGNORE' as DataSourceType
+                    raw_data: r
                 };
                 const relationship = createStixRelationship(edge_data, 'IGNORE');
-                if (!this.cy.getElementById(r.id).length) {
+                if (!cy.getElementById(r.id).length) {
                     to_add.push(JSON.parse(JSON.stringify(relationship)) as ElementDefinition);
                 }
             }
         }
+        if (r.sighting_of_ref) {
+            const to_node = cy.getElementById(r.sighting_of_ref);
+            const edge_data: CytoscapeRelationshipData = {
+                target: to_node.id(),
+                source: from_node.id(),
+                id: r.id,
+                label: 'where sighted',
+                raw_data: r,
+                data_source: 'IGNORE' as DataSourceType
+            };
+            const relationship = createStixRelationship(edge_data, 'IGNORE');
+            if (!cy.getElementById(r.id).length) {
+                to_add.push(JSON.parse(JSON.stringify(relationship)) as ElementDefinition);
+            }
+        }
+    }
 
-        const edges_added = this.cy.add(to_add);
-        return [nodes_added.length, edges_added.length];
+    const edges_added = cy.add(to_add);
+    return [nodes_added.length, edges_added.length];
+}
+
+
+export function _addVertices(sdos: StixObject[], data_source: DataSourceType, cy: cytoscape.Core): [CollectionReturnValue, StixRelationshipObject[], StixRelationshipObject[]] {
+    const in_graph = new Set<string>();
+    const to_add: ElementDefinition[] = [];
+    const relationships: StixRelationshipObject[] = [];
+    const sightings: StixRelationshipObject[] = [];
+    try {
+        sdos = sdos.sort((a, b) => {
+            const momentA = (a && a.modified) ? moment(a.modified)?.unix() : 0;
+            const momentB = (b && b.modified) ? moment(b.modified)?.unix() : 0;
+            return momentB - momentA;
+        });
+
+        for (const sdo of sdos) {
+            if (!sdo.id || !sdo.type) {
+                continue;
+            }
+            if (cy.getElementById(sdo.id).length > 0) { continue; }
+
+            if (sdo.type.toLowerCase() !== 'relationship' && sdo.type.toLowerCase() !== 'sighting') {
+                const st_node = createCytoscapeNode(sdo, data_source, false);
+                if (!in_graph.has(st_node.data.id)) {
+                    to_add.push(JSON.parse(JSON.stringify(st_node)) as ElementDefinition);
+                    in_graph.add(st_node.data.id);
+                }
+                if (sdo.created_by_ref) {
+                    if (!in_graph.has(sdo.id)) {
+                        const cb_sro = CreatedByRelationshipFactory(sdo.id, sdo.created_by_ref, sdo.created, sdo.modified!);
+                        relationships.push(cb_sro as StixRelationshipObject);
+                        in_graph.add(sdo.id);
+                    }
+                } else if ('object_marking_refs' in sdo && sdo.object_marking_refs) {
+                    sdo.object_marking_refs.forEach((markingID: any) => {
+                        if (!in_graph.has(sdo.id)) {
+                            relationships.push(createObjectMarkingRelationship(markingID, sdo.id, sdo.created, sdo.modified!));
+                            in_graph.add(sdo.id);
+                        }
+                    });
+                }
+            } else if (sdo.type.toLowerCase() === 'relationship') {
+                if (!in_graph.has(sdo.id)) {
+                    relationships.push(sdo as StixRelationshipObject);
+                    in_graph.add(sdo.id);
+                }
+            } else if (sdo.type.toLowerCase() === 'sighting') {
+                if (!in_graph.has(sdo.id)) {
+                    sightings.push(sdo as StixRelationshipObject);
+                    in_graph.add(sdo.id);
+                }
+            }
+        }
+        const nodes_added = cy.add(to_add);
+
+        return [nodes_added, relationships, sightings];
+    } catch (e) {
+        console.error('Exception adding nodes to graph:', e);
+        throw e;
     }
 }
 
@@ -268,20 +260,19 @@ export function setupNodeCtxMenu(
     };
 
     node_menu?.destroy();
-    
+
     if (connected) {
         // NOTE: For some reason the styles can't be changed once instantiated so light/dark mode changes won't impact the initial colors!
         // itemColor
-        const graph_utils = new GraphUtils(cy);
 
         const query_in = {
             content: 'Query Incoming',
-            select: (ele: cytoscape.CollectionElements) => queryInOut(ele, graph_utils, cy, query_incoming)
+            select: (ele: cytoscape.CollectionElements) => queryInOut(ele, cy, query_incoming)
         };
-        
+
         const query_out = {
             content: 'Query Out',
-            select: (ele: cytoscape.CollectionElements) => queryInOut(ele, graph_utils, cy, query_outgoing)
+            select: (ele: cytoscape.CollectionElements) => queryInOut(ele, cy, query_outgoing)
         };
 
         node_menu = cy.cxtmenu({ ...props, commands: [remove, query_in, select_in, select_out, query_out, select_neighbors] } as ContextMenu) as unknown as typeof node_menu;
@@ -448,18 +439,21 @@ export function exportObject(fileName: string, cy: cytoscape.Core, obj: StixObje
     }
     return bundle;
 }
+
 export function exportSelected(fileName: string, cy: cytoscape.Core) {
     const selected = cy.elements(':selected')
     let bundle = create_bundle(selected);
     exportGraph(fileName, bundle);
     return bundle
 }
+
 export function exportAll(fileName: string, cy: cytoscape.Core) {
     let allNodes = cy.$(':visible');
     let bundle = create_bundle(allNodes)
     exportGraph(fileName, bundle);
     return bundle
 }
+
 export function exportAllwPositions(fileName: string, cy: cytoscape.Core) {
     let allNodes = cy.$(':visible');
     let bundle = create_bundle(allNodes)
@@ -473,10 +467,9 @@ export function exportAllwPositions(fileName: string, cy: cytoscape.Core) {
 
 export async function queryToGraph(q: string, cyInstance: cytoscape.Core | undefined) {
     if (!(cyInstance)) { return [-1, -1]; }
-    const graph_utils = new GraphUtils(cyInstance);
     try {
         let queryReturn = await query(q);
-        const [numVerticiesAdded, numEdgesAdded] = graph_utils.buildNodes(queryReturn, "GUI");
+        const [numVerticiesAdded, numEdgesAdded] = buildNodes(cyInstance, queryReturn, "GUI");
         runGraphLayout(getLayoutSettingsFromStore(), cyInstance);
         return [numVerticiesAdded, numEdgesAdded];
     } catch (err) {
@@ -487,10 +480,9 @@ export async function queryToGraph(q: string, cyInstance: cytoscape.Core | undef
 }
 
 export function addToGraph(pkg: STIGBundle, cyInstance: cytoscape.Core) {
-    const graph_utils = new GraphUtils(cyInstance);
     let numVerticiesAdded, numEdgesAdded = 0;
     try {
-        [numVerticiesAdded, numEdgesAdded] = graph_utils.buildNodes(pkg.objects, "GUI");
+        [numVerticiesAdded, numEdgesAdded] = buildNodes(cyInstance, pkg.objects, "GUI");
     } catch (err) {
         console.warn("[Nodes could not be built. JSON may be invalid] :", err);
         //TODO: make some sort of meaningful message appear to the user informing them why the nodes couldn't be added
@@ -507,6 +499,23 @@ export const saveLayoutToLocalStorage = (layout: string) => {
 export const getLayoutSettingsFromStore = (): string => {
     const layout = localStorage.getItem('stigSettings');
     return layout === null ? defaultLayout : layout;
+}
+
+async function queryInOut(
+    elements: cytoscape.CollectionElements,
+    cy: cytoscape.Core,
+    query: (data: StixObject) => Promise<StixObject[]>,
+) {
+    const collection = elements as unknown as CollectionArgument;
+    for (const value of collection.toArray()) {
+        let data = value.data('raw_data');
+        if (typeof data === 'string') {
+            data = JSON.parse(data);
+        }
+        const coreObjects = await query(data);
+        buildNodes(cy, coreObjects, 'DB');
+        runGraphLayout(getLayoutSettingsFromStore(), cy);
+    }
 }
 export const runGraphLayout = (layoutType: keyof LayoutsType, cyInstance: cytoscape.Core) => {
     const orphans = cyInstance?.elements(':orphan').filter(':childless');
@@ -527,12 +536,9 @@ export const runGraphLayout = (layoutType: keyof LayoutsType, cyInstance: cytosc
     saveLayoutToLocalStorage(layoutType);
 }
 
-
-async function queryInOut(
+export async function queryIncoming(
     elements: cytoscape.CollectionElements,
-    graph_utils: GraphUtils,
-    cy: cytoscape.Core,
-    query: (data: StixObject) => Promise<StixObject[]>,
+    cy: cytoscape.Core
 ) {
     const collection = elements as unknown as CollectionArgument;
     for (const value of collection.toArray()) {
@@ -540,11 +546,35 @@ async function queryInOut(
         if (typeof data === 'string') {
             data = JSON.parse(data);
         }
-        const coreObjects = await query(data);
-        graph_utils.buildNodes(coreObjects, 'DB');
+        let incoming = await query_incoming(data);
+        const coreObjects: StixObject[] = incoming.map(obj => obj as StixObject);
+        buildNodes(cy, coreObjects, 'DB');
         runGraphLayout(getLayoutSettingsFromStore(), cy);
     }
 }
+
+export function deleteNodeFromDB(
+    cy: cytoscape.Core,
+    element: cytoscape.CollectionArgument,
+    selectedSTIXObject: StixObject | undefined,
+    setSelectedSTIXObject: (obj: StixObject | undefined) => void,
+    setSelectionExists: React.Dispatch<React.SetStateAction<boolean>>,
+    setIsPropertyPanelOpen: (b: boolean) => void
+) {
+    try {
+        if (selectedSTIXObject?.id === element.data("id")) {
+            setSelectedSTIXObject(undefined);
+            setSelectionExists(false);
+            setIsPropertyPanelOpen(false);
+        }
+        cy.remove(element);
+        db_delete(element.data('raw_data'));  // Assuming `db_delete` is already defined elsewhere
+    } catch (e) {
+        // Handle error: probably want to indicate that it wasn't deleted from DB
+        console.error("Error deleting from DB: ", e);
+    }
+}
+
 
 export function layoutByTimeframe(cy: cytoscape.Core) {
     const startX = 0;

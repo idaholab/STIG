@@ -12,7 +12,6 @@ import "@fontsource/source-sans-pro/600.css"; // Specify weight
 import "@fontsource/source-sans-pro/700.css"; // Specify weight
 import "@fontsource/source-sans-pro/900.css"; // Specify weight
 
-
 // Import Store
 import { store } from '../app/store/index';
 import { StigContextProvider } from './contexts/StigContext';

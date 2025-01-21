@@ -12,6 +12,9 @@ type StigContextType = {
   drawerWidth: number;
   setDrawerWidth: React.Dispatch<React.SetStateAction<number>>;
 
+  isSearchOpen: boolean;
+  setIsSearchOpen: React.Dispatch<React.SetStateAction<boolean>>;
+
   activePropertiesPanelTab: number;
   setActivePropertiesPanelTab: React.Dispatch<React.SetStateAction<number>>;
   togglePropertiesSetTab: (activeTab?: number) => void;
@@ -55,6 +58,7 @@ export const StigContextProvider: React.FC<Props> = ({ children }) => {
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(true);
   const [drawerWidth, setDrawerWidth] = useState(280); // Default width in pixels
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const [storedLayout, setStoredLayout] = useState<string>(defaultLayout);
 
@@ -86,6 +90,7 @@ export const StigContextProvider: React.FC<Props> = ({ children }) => {
       panelWidth, setPanelWidth, togglePropertyPanel,
       isDrawerOpen, setIsDrawerOpen,
       drawerWidth, setDrawerWidth,
+      isSearchOpen, setIsSearchOpen,
       cyInstance, setCyInstance,
       getStigLayoutSettingsFromStore,
       storeStigLayoutSettings,

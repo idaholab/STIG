@@ -39,7 +39,6 @@ const GraphLayouts: React.FC = () => {
       includeDropdownArrow={true}
       additionalButtonClasses={`min-w-[291px] flex justify-between`}
       additionalOptionClasses={' hover:text-black hover:text-white dark:hover:bg-primary hover:bg-primary'}
-      fixed
     >
       {graphLayoutList.map((layout) => (
         <li key={layout.name}>
