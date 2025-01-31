@@ -9,16 +9,34 @@ interface ButtonProps {
   additionalClasses?: string;
   disabled?: boolean;
   isLabelUppercase?: boolean;
-  tooltip?: string
+  tooltip?: string;
 }
 
-const ButtonBasic: React.FC<ButtonProps> = ({ label, type, link, onClick, additionalClasses, disabled, isLabelUppercase = true, tooltip }) => {
+const ButtonBasic: React.FC<ButtonProps> = ({
+  label,
+  type,
+  link,
+  onClick,
+  additionalClasses,
+  disabled,
+  isLabelUppercase = true,
+  tooltip,
+}) => {
   const baseClasses = `btn ${type} hover:opacity-100 ${isLabelUppercase ? 'uppercase' : ''}`;
-  const lightModeClasses = type === 'btn-neutralc' ? 'border border-solid border-primary text-primary hover:bg-white hover:text-black bg-neutralc-100' : '';
-  const darkModeClasses = type === 'btn-neutralc' ? 'dark:border dark:border-solid dark:!border-neutralc-400 dark:text-neutralc-300 dark:hover:!border-white dark:hover:text-white dark:bg-transparent' : '';
+  const lightModeClasses =
+    type === 'btn-neutralc'
+      ? 'border border-solid border-primary text-primary hover:bg-white hover:text-black bg-neutralc-100'
+      : '';
+  const darkModeClasses =
+    type === 'btn-neutralc'
+      ? 'dark:border dark:border-solid dark:!border-neutralc-400 dark:text-neutralc-300 dark:hover:!border-white dark:hover:text-white dark:bg-transparent'
+      : '';
 
-  const disabledClass = disabled ? (type === 'btn-ghost') ? 'cursor-not-allowed !text-neutralc-400 !bg-transparent dark:!text-neutralc-400 dark:!bg-transparent'
-    : 'cursor-not-allowed !text-neutralc-400 !bg-neutralc-300 dark:!text-neutralc-400 dark:!bg-neutralc-500' : '';
+  const disabledClass = disabled
+    ? type === 'btn-ghost'
+      ? 'cursor-not-allowed !text-neutralc-400 !bg-transparent dark:!text-neutralc-400 dark:!bg-transparent'
+      : 'cursor-not-allowed !text-neutralc-400 !bg-neutralc-300 dark:!text-neutralc-400 dark:!bg-neutralc-500'
+    : '';
   const btnClass = `${baseClasses} ${lightModeClasses} ${darkModeClasses} ${additionalClasses} ${disabledClass}`;
 
   return (

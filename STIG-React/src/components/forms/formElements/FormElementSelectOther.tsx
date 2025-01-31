@@ -1,8 +1,8 @@
-import { SchemaSTIXProperty } from "@/types/stixSchemaTypes/SchemaSTIXProperty";
-import React, { useEffect, useState } from "react";
-import FormElementSelect from "./FormElementSelect";
-import ButtonBasic from "@/components/elements/ButtonBasic";
-import FormElementTextInput from "./FormElementTextInput";
+import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
+import React, { useEffect, useState } from 'react';
+import FormElementSelect from './FormElementSelect';
+import ButtonBasic from '@/components/elements/ButtonBasic';
+import FormElementTextInput from './FormElementTextInput';
 
 type Props = {
   placeholder?: string;
@@ -18,10 +18,10 @@ type Props = {
   infoText?: string;
   additionalClasses?: string;
   additionalInputClasses?: string;
-  property?: SchemaSTIXProperty,
-  isOtherAnOption: boolean,
-  otherOptionText: string,
-  otherOptionLabel: string
+  property?: SchemaSTIXProperty;
+  isOtherAnOption: boolean;
+  otherOptionText: string;
+  otherOptionLabel: string;
 };
 
 const FormElementSelectOther: React.FC<Props> = ({
@@ -41,31 +41,24 @@ const FormElementSelectOther: React.FC<Props> = ({
   property,
   isOtherAnOption,
   otherOptionText,
-  otherOptionLabel
+  otherOptionLabel,
 }) => {
-  const [customValueSelected, setCustomValueSelected] = useState(
-    isOtherAnOption && value ?
-      !options.includes(value)
-      : false
-  );
+  const [customValueSelected, setCustomValueSelected] = useState(isOtherAnOption && value ? !options.includes(value) : false);
 
   useEffect(() => {
     // Reset customValueSelected if isOtherAnOption or value changes.
     // Needed so that customValueSelected changes when switching
     // between objects.
-    setCustomValueSelected(isOtherAnOption && value ?
-      !options.includes(value)
-      : false
-    );
+    setCustomValueSelected(isOtherAnOption && value ? !options.includes(value) : false);
   }, [isOtherAnOption, value]);
 
   return (
     <>
-      {!customValueSelected &&
+      {!customValueSelected && (
         <FormElementSelect
           placeholder={placeholder}
           label={label}
-          value={value !== "" || customValueSelected ? value : placeholder}
+          value={value !== '' || customValueSelected ? value : placeholder}
           options={isOtherAnOption ? [...options, otherOptionText] : options}
           onChange={(event) => {
             if (event.target.value === otherOptionText) {
@@ -81,8 +74,8 @@ const FormElementSelectOther: React.FC<Props> = ({
           property={property}
           className={className}
         />
-      }
-      {customValueSelected &&
+      )}
+      {customValueSelected && (
         <>
           <p>{property?.name}</p>
           <div className={`flex justify-between items-center w-full ${inputClassName}`}>
@@ -107,9 +100,9 @@ const FormElementSelectOther: React.FC<Props> = ({
             className={inputClassName}
           />
         </>
-      }
+      )}
     </>
   );
-}
+};
 
 export default FormElementSelectOther;

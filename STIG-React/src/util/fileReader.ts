@@ -1,20 +1,20 @@
-import { StixObject } from "@/types/stixTypes/StixObject";
-import { JSONStream } from "./jsonStream";
+import { StixObject } from '@/types/stixTypes/StixObject';
+import { JSONStream } from './jsonStream';
 
-export async function readFiles(files: ArrayLike<File>, type: "text" | "url" = "text") {
-  const filePromises = Array.from(files).map(file => {
-    const { promise, resolve } = Promise.withResolvers<{name: string; data?: string }>();
+export async function readFiles(files: ArrayLike<File>, type: 'text' | 'url' = 'text') {
+  const filePromises = Array.from(files).map((file) => {
+    const { promise, resolve } = Promise.withResolvers<{ name: string; data?: string }>();
     const fileReader = new FileReader();
-    if (type === "text") {
+    if (type === 'text') {
       fileReader.readAsText(file);
     } else {
       fileReader.readAsDataURL(file);
     }
 
-    fileReader.onload = event => {
+    fileReader.onload = (event) => {
       let fileValue = event.target?.result as string;
-      if (type === "url") {
-        fileValue = fileValue.split(',')[1]
+      if (type === 'url') {
+        fileValue = fileValue.split(',')[1];
       }
       resolve({ name: file.name, data: fileValue });
     };
@@ -22,11 +22,11 @@ export async function readFiles(files: ArrayLike<File>, type: "text" | "url" = "
 
     return promise;
   });
-  
+
   return Promise.all(filePromises);
 }
 
-export async function * streamStixFile(file: File): AsyncGenerator<StixObject> {
+export async function* streamStixFile(file: File): AsyncGenerator<StixObject> {
   const reader = file.stream().getReader();
   const decoder = new TextDecoder();
   const parser = new JSONStream();

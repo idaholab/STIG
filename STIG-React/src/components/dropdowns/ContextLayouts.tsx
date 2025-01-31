@@ -1,259 +1,234 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useStigContext } from '@/contexts/StigContext';
 import { getLayoutSettingsFromStore, runGraphLayout } from '@/util/GraphUtils';
 const killChainSchema = {
-  "kill-chain": [
+  'kill-chain': [
     {
-      "type": "lockheed-martin-cyber-kill-chain",
-      "id": 1,
-      "phases": [
+      type: 'lockheed-martin-cyber-kill-chain',
+      id: 1,
+      phases: [
         {
-          "name": "reconnaissance",
-          "aliases": [
-            "Reconnaissance",
-            "Recon"
-          ]
+          name: 'reconnaissance',
+          aliases: ['Reconnaissance', 'Recon'],
         },
         {
-          "name": "weaponization",
-          "aliases": [
-            "Weaponization",
-            "Weaponize"
-          ]
+          name: 'weaponization',
+          aliases: ['Weaponization', 'Weaponize'],
         },
         {
-          "name": "delivery",
-          "aliases": [
-            "Delivery",
-            "Deliver"
-          ]
+          name: 'delivery',
+          aliases: ['Delivery', 'Deliver'],
         },
         {
-          "name": "exploitation",
-          "aliases": [
-            "Exploitation",
-            "Exploit"
-          ]
+          name: 'exploitation',
+          aliases: ['Exploitation', 'Exploit'],
         },
         {
-          "name": "installation",
-          "aliases": [
-            "Installation",
-            "Install"
-          ]
+          name: 'installation',
+          aliases: ['Installation', 'Install'],
         },
         {
-          "name": "command-and-control",
-          "aliases": [
-            "Command and Control",
-            "Command & Control",
-            "C2",
-            "Callback"
-          ]
+          name: 'command-and-control',
+          aliases: ['Command and Control', 'Command & Control', 'C2', 'Callback'],
         },
         {
-          "name": "actions-on-objectives",
-          "aliases": [
-            "Actions on Objectives",
-            "Exfiltration",
-            "Actions",
-            "Act on Objectives",
-            "Persistence",
-            "Persist"
-          ]
-        }
-      ]
+          name: 'actions-on-objectives',
+          aliases: ['Actions on Objectives', 'Exfiltration', 'Actions', 'Act on Objectives', 'Persistence', 'Persist'],
+        },
+      ],
     },
     {
-      "type": "mitre-ics-attack",
-      "id": 2,
-      "phases": [
+      type: 'mitre-ics-attack',
+      id: 2,
+      phases: [
         {
-          "name": "initial-access",
-          "aliases": ["Initial Access"]
+          name: 'initial-access',
+          aliases: ['Initial Access'],
         },
         {
-          "name": "execution",
-          "aliases": ["Execution"]
+          name: 'execution',
+          aliases: ['Execution'],
         },
         {
-          "name": "persistence",
-          "aliases": ["Persistence"]
+          name: 'persistence',
+          aliases: ['Persistence'],
         },
         {
-          "name": "privilege-escalation",
-          "aliases": ["Privilege Escalation"]
+          name: 'privilege-escalation',
+          aliases: ['Privilege Escalation'],
         },
         {
-          "name": "evasion",
-          "aliases": ["Evasion"]
+          name: 'evasion',
+          aliases: ['Evasion'],
         },
         {
-          "name": "discovery",
-          "aliases": ["Discovery"]
+          name: 'discovery',
+          aliases: ['Discovery'],
         },
         {
-          "name": "lateral-movement",
-          "aliases": ["Lateral Movement"]
+          name: 'lateral-movement',
+          aliases: ['Lateral Movement'],
         },
         {
-          "name": "collection",
-          "aliases": ["Collection"]
+          name: 'collection',
+          aliases: ['Collection'],
         },
         {
-          "name": "command-and-control",
-          "aliases": ["Command and Control", "Command & Control",]
+          name: 'command-and-control',
+          aliases: ['Command and Control', 'Command & Control'],
         },
         {
-          "name": "inhibit-response-function",
-          "aliases": ["Inhibit Response Function"]
+          name: 'inhibit-response-function',
+          aliases: ['Inhibit Response Function'],
         },
         {
-          "name": "impair-process-control",
-          "aliases": ["Impair Process Control"]
+          name: 'impair-process-control',
+          aliases: ['Impair Process Control'],
         },
         {
-          "name": "impact",
-          "aliases": ["Impact"]
-        }
-      ]
+          name: 'impact',
+          aliases: ['Impact'],
+        },
+      ],
     },
     {
-      "type": "other",
-      "id": 3,
-      "phases": [
+      type: 'other',
+      id: 3,
+      phases: [
         {
-          "name": "Reconnaissance",
-          "aliases": "Recon"
+          name: 'Reconnaissance',
+          aliases: 'Recon',
         },
         {
-          "name": "Intrusion"
+          name: 'Intrusion',
         },
         {
-          "name": "Exploitation",
-          "aliases": "Exploit"
+          name: 'Exploitation',
+          aliases: 'Exploit',
         },
         {
-          "name": "Privilege Escalation"
+          name: 'Privilege Escalation',
         },
         {
-          "name": "Lateral Movement"
+          name: 'Lateral Movement',
         },
         {
-          "name": "Obfuscation/Anti-forensics",
-          "aliases": [
-            "Obfuscation",
-            "Anti-forensics",
-            "Obfuscation(anti-forensics)"
-          ]
+          name: 'Obfuscation/Anti-forensics',
+          aliases: ['Obfuscation', 'Anti-forensics', 'Obfuscation(anti-forensics)'],
         },
         {
-          "name": "Denial of Service",
-          "aliases": "DoS"
+          name: 'Denial of Service',
+          aliases: 'DoS',
         },
         {
-          "name": "Exfiltration"
-        }
-      ]
-    }
-  ]
-}
-const killChainList = killChainSchema["kill-chain"]
-const DRAG_DIST = 150
+          name: 'Exfiltration',
+        },
+      ],
+    },
+  ],
+};
+const killChainList = killChainSchema['kill-chain'];
+const DRAG_DIST = 150;
 const defense = {
-  "name": "Defense in Depth",
-  "layers": [
+  name: 'Defense in Depth',
+  layers: [
     {
-      "name": "Risk management Program",
-      "num": 1
+      name: 'Risk management Program',
+      num: 1,
     },
     {
-      "name": "Cybersecurity Architecture",
-      "num": 2
+      name: 'Cybersecurity Architecture',
+      num: 2,
     },
     {
-      "name": "Physical Security",
-      "num": 3
+      name: 'Physical Security',
+      num: 3,
     },
     {
-      "name": "ICS Network Architecture",
-      "num": 4
+      name: 'ICS Network Architecture',
+      num: 4,
     },
     {
-      "name": "ICS Network Perimeter Security",
-      "num": 5
+      name: 'ICS Network Perimeter Security',
+      num: 5,
     },
     {
-      "name": "Host Security",
-      "num": 6
+      name: 'Host Security',
+      num: 6,
     },
     {
-      "name": "Security Monitoring",
-      "num": 7
+      name: 'Security Monitoring',
+      num: 7,
     },
     {
-      "name": "Vendor Management",
-      "num": 8
+      name: 'Vendor Management',
+      num: 8,
     },
     {
-      "name": "The Human Element",
-      "num": 9
-    }
-  ]
-}
+      name: 'The Human Element',
+      num: 9,
+    },
+  ],
+};
 const defenseExtension = {
-  "node": {
-    "id": "extension-definition--d83fce45-ef58-4c6c-a3f4-1fbc32e98c6e",
-    "type": "extension-definition",
-    "spec_version": "2.1",
-    "name": "Defense in Depth",
-    "description": "This schema adds property for Defense in Depth",
-    "created": "2022-02-02T09:16:08.989000Z",
-    "modified": "2022-02-02T09:16:08.989000Z",
-    "schema": "https://github.com/idaholab/STIG",
-    "version": "1.0.0",
-    "extension_types": ["property-extension"]
+  node: {
+    id: 'extension-definition--d83fce45-ef58-4c6c-a3f4-1fbc32e98c6e',
+    type: 'extension-definition',
+    spec_version: '2.1',
+    name: 'Defense in Depth',
+    description: 'This schema adds property for Defense in Depth',
+    created: '2022-02-02T09:16:08.989000Z',
+    modified: '2022-02-02T09:16:08.989000Z',
+    schema: 'https://github.com/idaholab/STIG',
+    version: '1.0.0',
+    extension_types: ['property-extension'],
   },
-  "property": {
-    "extension-definition--d83fce45-ef58-4c6c-a3f4-1fbc32e98c6e": {
-      "extension_type": "property-extension",
-      "layer_name": "network",
-      "layer_number": 2
-    }
-
-  }
-}
+  property: {
+    'extension-definition--d83fce45-ef58-4c6c-a3f4-1fbc32e98c6e': {
+      extension_type: 'property-extension',
+      layer_name: 'network',
+      layer_number: 2,
+    },
+  },
+};
 
 const ContextLayouts: React.FC = () => {
   const { cyInstance, activeContextLayout, setActiveContextLayout } = useStigContext();
 
-  const handleClick = (index: number, callback: Function) => {
+  // const handleClick = (index: number, callback: Function) => {
+  //   setActiveContextLayout(index);
+  //   callback(cyInstance);
+  // };
+
+  const handleClick = (index: number, callback: (cy: cytoscape.Core | undefined) => void) => {
     setActiveContextLayout(index);
     callback(cyInstance);
-  }
+  };
 
-  const renderList = (item: { id: number, label: string; callback: Function, className: string }) => {
+  const renderList = (item: { id: number; label: string; callback: (cy: cytoscape.Core | undefined) => void; className: string }) => {
     const classes = `hover:bg-primary hover:text-white ${item.className} ${activeContextLayout === item.id ? 'bg-primary text-white' : ''}`;
     return (
       <li key={item.id} className={classes}>
-        <a className='flex w-full' onClick={() => handleClick(item.id, item.callback)}>{item.label}</a>
+        <button className="flex w-full" onClick={() => handleClick(item.id, item.callback)}>
+          {item.label}
+        </button>
       </li>
     );
-  }
+  };
 
   const nonKillChainItems = [
-    { id: 0, label: "None", callback: contextLayoutNone, className: 'px-4 py-2' },
-    { id: 1, label: "Defense in Depth", callback: contextLayoutDefenseInDepth, className: 'px-4 py-2' },
+    { id: 0, label: 'None', callback: contextLayoutNone, className: 'px-4 py-2' },
+    { id: 1, label: 'Defense in Depth', callback: contextLayoutDefenseInDepth, className: 'px-4 py-2' },
   ];
 
   const killchainItems = [
-    { id: 2, label: "Lockheed Martin Cyber Kill Chain", callback: contextLayoutLockheedMartinKC, className: 'px-8 py-2' },
-    { id: 3, label: "MITRE-ICS", callback: contextLayoutMitreKC, className: 'px-8 py-2' },
-    { id: 4, label: "Other", callback: contextLayoutOtherKC, className: 'px-8 py-2' },
+    { id: 2, label: 'Lockheed Martin Cyber Kill Chain', callback: contextLayoutLockheedMartinKC, className: 'px-8 py-2' },
+    { id: 3, label: 'MITRE-ICS', callback: contextLayoutMitreKC, className: 'px-8 py-2' },
+    { id: 4, label: 'Other', callback: contextLayoutOtherKC, className: 'px-8 py-2' },
   ];
 
   return (
-    <ul className='flex-1 p-1'>
+    <ul className="flex-1 p-1">
       {nonKillChainItems.map(renderList)}
       <p className="menu-title text-neutralc-500 dark:text-neutralc-100  px-4">Kill Chains:</p>
       {killchainItems.map(renderList)}
@@ -262,34 +237,44 @@ const ContextLayouts: React.FC = () => {
 };
 
 function contextLayoutNone(cy: cytoscape.Core | undefined) {
-  if (cy === undefined) { return console.error("cytoscape.Core is undefined"); }
+  if (cy === undefined) {
+    return console.error('cytoscape.Core is undefined');
+  }
   removeCompoundNodes(cy);
   runGraphLayout(getLayoutSettingsFromStore(), cy);
 }
 function contextLayoutDefenseInDepth(cy: cytoscape.Core | undefined) {
-  if (cy === undefined) { return console.error("cytoscape.Core is undefined"); }
+  if (cy === undefined) {
+    return console.error('cytoscape.Core is undefined');
+  }
   removeCompoundNodes(cy);
   initDefenseGraph(cy);
   organizeOrphans(cy);
 }
 function contextLayoutLockheedMartinKC(cy: cytoscape.Core | undefined) {
-  if (cy === undefined) { return console.error("cytoscape.Core is undefined"); }
+  if (cy === undefined) {
+    return console.error('cytoscape.Core is undefined');
+  }
   removeCompoundNodes(cy);
-  initKillChainGraph(cy, "lockheed-martin-cyber-kill-chain");
+  initKillChainGraph(cy, 'lockheed-martin-cyber-kill-chain');
 }
 function contextLayoutMitreKC(cy: cytoscape.Core | undefined) {
-  if (cy === undefined) { return console.error("cytoscape.Core is undefined"); }
+  if (cy === undefined) {
+    return console.error('cytoscape.Core is undefined');
+  }
   removeCompoundNodes(cy);
-  initKillChainGraph(cy, "mitre-ics-attack");
+  initKillChainGraph(cy, 'mitre-ics-attack');
 }
 function contextLayoutOtherKC(cy: cytoscape.Core | undefined) {
-  if (cy === undefined) { return console.error("cytoscape.Core is undefined"); }
+  if (cy === undefined) {
+    return console.error('cytoscape.Core is undefined');
+  }
   removeCompoundNodes(cy);
-  initKillChainGraph(cy, "other");
+  initKillChainGraph(cy, 'other');
 }
 
 export function removeCompoundNodes(cy: cytoscape.Core) {
-  console.log("removeCompoundNodes")
+  console.log('removeCompoundNodes');
   const comps = cy.$(':parent');
 
   // Remove child nodes from their parents
@@ -309,7 +294,7 @@ export function removeCompoundNodes(cy: cytoscape.Core) {
 }
 
 function initDefenseGraph(cy: cytoscape.Core) {
-  console.log("initDefenseGraph")
+  console.log('initDefenseGraph');
   if (cy.$('.defense').length === 0) {
     const defId = defense.name.replaceAll(' ', '_');
 
@@ -318,7 +303,7 @@ function initDefenseGraph(cy: cytoscape.Core) {
         group: 'nodes',
         data: {
           id: defId,
-          name: defense.name
+          name: defense.name,
         },
         selectable: false,
         classes: 'defense',
@@ -326,8 +311,8 @@ function initDefenseGraph(cy: cytoscape.Core) {
           content: defense.name,
           'text-valign': 'top',
           'text-halign': 'center',
-        }
-      }
+        },
+      },
     ];
 
     const y = 100;
@@ -340,11 +325,11 @@ function initDefenseGraph(cy: cytoscape.Core) {
           id: layerId,
           name: layer.name,
           number: layer.num,
-          parent: defId
+          parent: defId,
         },
         position: {
           x: 150,
-          y: y * layer.num
+          y: y * layer.num,
         },
         selectable: false,
         classes: 'layer',
@@ -352,25 +337,24 @@ function initDefenseGraph(cy: cytoscape.Core) {
           content: layer.name,
           'text-valign': 'top',
           'text-halign': 'center',
-        }
+        },
       };
-
 
       const ghost: cytoscape.ElementDefinition = {
         group: 'nodes',
         data: {
           id: 'ghost_' + layerId,
-          parent: layerId
+          parent: layerId,
         },
         position: {
           x: 100,
-          y: y * layer.num
+          y: y * layer.num,
         },
         classes: 'ghost',
         style: {
           display: 'none',
           width: 200,
-        }
+        },
       };
 
       elements.push(ele);
@@ -408,7 +392,7 @@ function initDefenseGraph(cy: cytoscape.Core) {
 }
 
 function stackCompoundNodes(cy: cytoscape.Core, clss: string) {
-  console.log("stackCompoundNodes")
+  console.log('stackCompoundNodes');
   const layers = cy.$(clss);
   let prevPosition = { x: 0, y: 0 };
 
@@ -445,24 +429,24 @@ function handleDropNode(e: cytoscape.EventObject) {
   if (hasClass && !isChild) {
     // Check to see if the node can be added to a layer
     const layers = e.cy.$('.layer');
-    layers.forEach(layer => {
-      if (Math.abs(ele.position().x - layer.position().x) < layer.width() &&
-        Math.abs(ele.position().y - layer.position().y) < layer.height()) {
+    layers.forEach((layer) => {
+      if (
+        Math.abs(ele.position().x - layer.position().x) < layer.width() &&
+        Math.abs(ele.position().y - layer.position().y) < layer.height()
+      ) {
         ele.move({ parent: layer.id() });
         const data = ele.data('raw_data');
+        // eslint-disable-next-line
         const property: any = {};
         const extId = Object.getOwnPropertyNames(defenseExtension.property)[0];
-        const extensionIdExists = (id: string): id is keyof typeof defenseExtension.property =>
-          id in defenseExtension.property;
+        const extensionIdExists = (id: string): id is keyof typeof defenseExtension.property => id in defenseExtension.property;
         if (extensionIdExists(defenseExtension.node.id)) {
           property[extId] = {
             extension_type: defenseExtension.property[defenseExtension.node.id].extension_type,
-            layer_name: "",
-            layer_number: "",
+            layer_name: '',
+            layer_number: '',
           };
         }
-        // eslint-disable-next-line no-console
-        console.log('extId: ', extId);
         property[extId].layer_name = layer.data('name');
         property[extId].layer_number = layer.data('number');
         if (data.extensions) {
@@ -477,17 +461,19 @@ function handleDropNode(e: cytoscape.EventObject) {
     });
 
     const phases = e.cy.$('.phase');
-    phases.forEach(phase => {
-      if (Math.abs(ele.position().x - phase.position().x) < phase.width() &&
-        Math.abs(ele.position().y - phase.position().y) < phase.height()) {
+    phases.forEach((phase) => {
+      if (
+        Math.abs(ele.position().x - phase.position().x) < phase.width() &&
+        Math.abs(ele.position().y - phase.position().y) < phase.height()
+      ) {
         const objType = ele.data('raw_data').type;
         // Find the schema in schema_map
-        if (['malware', 'infrastructure', "attack-pattern", 'indicator', 'tool'].includes(objType)) {
+        if (['malware', 'infrastructure', 'attack-pattern', 'indicator', 'tool'].includes(objType)) {
           ele.move({ parent: phase.id() });
           const data = ele.data('raw_data');
           const killChain = {
             kill_chain_name: phase.parent()[0].data('name'),
-            phase_name: phase.data('name')
+            phase_name: phase.data('name'),
           };
           if (data.kill_chain_phases) {
             data.kill_chain_phases.push(killChain);
@@ -549,11 +535,16 @@ function handleDrag(e: cytoscape.EventObject) {
           // There are multiple kill chain phases defined. Find the right one and delete it.
           const kill_chain_name = parent.parent()[0].data('name');
           const phase_name = parent.data('name');
+          // eslint-disable-next-line
           const phaseList = data.kill_chain_phases as any[];
+          // eslint-disable-next-line
           const newPhaseList = [] as any[];
 
           for (const phase of phaseList) {
-            if (compareNames(phase.kill_chain_name, kill_chain_name, null) || !compareNames(phase.phase_name, phase_name, parent.data('aliases'))) {
+            if (
+              compareNames(phase.kill_chain_name, kill_chain_name, null) ||
+              !compareNames(phase.phase_name, phase_name, parent.data('aliases'))
+            ) {
               newPhaseList.push(phase);
             }
           }
@@ -566,8 +557,9 @@ function handleDrag(e: cytoscape.EventObject) {
   }
 }
 
+// eslint-disable-next-line
 function canRemove(parent: any, dX: any, dY: any): boolean {
-  console.log("canRemove")
+  console.log('canRemove');
   let prevBounds = parent.data('prevBounds');
 
   if (prevBounds === null || prevBounds === undefined) {
@@ -586,10 +578,12 @@ function canRemove(parent: any, dX: any, dY: any): boolean {
     // If there are more than two children, check the width of the bounding box and compare that to DRAG_DIST
   } else if (numChildren > 2) {
     const curBounds = parent.boundingBox({});
-    if ((dX < 0 && Math.abs(curBounds.x1 - prevBounds.x1) > DRAG_DIST) ||
+    if (
+      (dX < 0 && Math.abs(curBounds.x1 - prevBounds.x1) > DRAG_DIST) ||
       (dX > 0 && Math.abs(curBounds.x2 - prevBounds.x2) > DRAG_DIST) ||
       (dY < 0 && Math.abs(curBounds.y1 - prevBounds.y1) > DRAG_DIST) ||
-      (dY > 0 && Math.abs(curBounds.y2 - prevBounds.y2) > DRAG_DIST)) {
+      (dY > 0 && Math.abs(curBounds.y2 - prevBounds.y2) > DRAG_DIST)
+    ) {
       return true;
     }
   }
@@ -605,7 +599,7 @@ function handleDblClickNode(e: cytoscape.EventObject) {
 }
 
 function compareNames(name: string, parent: string, aliases: string[] | null): boolean {
-  console.log("compareNames")
+  console.log('compareNames');
   let match = false;
   const convert = function (value: string): string {
     let newString = '';
@@ -619,12 +613,10 @@ function compareNames(name: string, parent: string, aliases: string[] | null): b
   };
 
   if (convert(name) === convert(parent)) {
-    // eslint-disable-next-line no-console
     match = true;
   } else if (aliases) {
-    aliases.forEach(alias => {
+    aliases.forEach((alias) => {
       if (convert(name) === convert(alias)) {
-        // eslint-disable-next-line no-console
         match = true;
       }
     });
@@ -633,7 +625,7 @@ function compareNames(name: string, parent: string, aliases: string[] | null): b
 }
 
 function organizeOrphans(cy: cytoscape.Core) {
-  console.log("organizeOrphans")
+  console.log('organizeOrphans');
   const nodes = cy.$(':orphan');
   const parent = nodes.filter(':parent');
   // We only want to move the childless orphans
@@ -664,11 +656,12 @@ function organizeOrphans(cy: cytoscape.Core) {
       condense: false, // uses all available space on false, uses minimal space on true
       rows: undefined, // force num of rows in the grid
       cols: undefined, // force num of columns in the grid
-      position: (_node) => undefined as any, // returns { row, col } for element
+      // eslint-disable-next-line
+      position: () => undefined as any, // returns { row, col } for element
       animate: true, // whether to transition the node positions
       animationDuration: 1500, // duration of animation in ms if enabled
       ready: undefined, // callback on layoutready
-      stop: undefined // callback on layoutstop
+      stop: undefined, // callback on layoutstop
     };
 
     const layout = movers.layout(grid_options);
@@ -677,31 +670,33 @@ function organizeOrphans(cy: cytoscape.Core) {
     cy.animate({
       fit: {
         eles: cy.$(':parents'),
-        padding: 50
-      }
+        padding: 50,
+      },
     });
   }
 }
 function initKillChainGraph(cy: cytoscape.Core, type: string) {
-  console.log("initKillChainGraph")
+  console.log('initKillChainGraph');
   if (cy.$('.killchain').length === 0) {
-    const killChain = killChainList.find(kc => { return kc.type === type; })!;
+    const killChain = killChainList.find((kc) => {
+      return kc.type === type;
+    })!;
     const killChainId = killChain.type.replaceAll(' ', '_');
     const elements: cytoscape.ElementDefinition[] = [
       {
         group: 'nodes',
         data: {
           id: killChainId,
-          name: killChain.type
+          name: killChain.type,
         },
         selectable: false,
         classes: 'killchain',
         style: {
           content: killChain.type,
           'text-valign': 'top',
-          'text-halign': 'center'
-        }
-      }
+          'text-halign': 'center',
+        },
+      },
     ];
 
     let iPhase = 1;
@@ -714,35 +709,35 @@ function initKillChainGraph(cy: cytoscape.Core, type: string) {
           name: phase.name,
           aliases: phase.aliases,
           number: iPhase,
-          parent: killChainId
+          parent: killChainId,
         },
         position: {
           x: 100 * iPhase,
-          y: 150 + ((iPhase % 2) * 50)
+          y: 150 + (iPhase % 2) * 50,
         },
         selectable: false,
         classes: 'phase',
         style: {
           content: phase.name,
           'text-valign': 'top',
-          'text-halign': 'center'
-        }
+          'text-halign': 'center',
+        },
       };
       const ghost: cytoscape.ElementDefinition = {
         group: 'nodes',
         data: {
           id: 'ghost_' + phaseId,
-          parent: phaseId
+          parent: phaseId,
         },
         position: {
           x: 100 * iPhase,
-          y: 150 + ((iPhase % 2) * 25)
+          y: 150 + (iPhase % 2) * 25,
         },
         classes: 'ghost',
         style: {
           display: 'none',
-          width: 200
-        }
+          width: 200,
+        },
       };
 
       elements.push(ele);
@@ -760,7 +755,7 @@ function initKillChainGraph(cy: cytoscape.Core, type: string) {
 
     // Add existing nodes with a kill chain phase
     const nodes = cy.nodes('.stix_node');
-    nodes.forEach(node => {
+    nodes.forEach((node) => {
       const data = node.data('raw_data');
       if (data.kill_chain_phases) {
         for (let i = 0; i < data.kill_chain_phases.length; i++) {
@@ -768,12 +763,11 @@ function initKillChainGraph(cy: cytoscape.Core, type: string) {
 
           if (compareNames(killChainName, killChain.type, null)) {
             const killChainNode = cy.$(`#${killChainId}`);
-            killChainNode.children().forEach(phase => {
+            killChainNode.children().forEach((phase) => {
               if (compareNames(data.kill_chain_phases[i].phase_name, phase.data('name'), phase.data('aliases'))) {
                 node.move({ parent: phase.id() });
               } else {
-                // eslint-disable-next-line no-console
-                console.log("Kill chain didn't match");
+                console.error("Kill chain didn't match");
               }
             });
           }
@@ -786,7 +780,7 @@ function initKillChainGraph(cy: cytoscape.Core, type: string) {
   }
 }
 function alignCompoundNodes(cy: cytoscape.Core, clss: string) {
-  console.log("alignCompoundNodes")
+  console.log('alignCompoundNodes');
   const layers = cy.$(clss);
 
   let prevPosition = { x: 0, y: 0 };
@@ -799,7 +793,7 @@ function alignCompoundNodes(cy: cytoscape.Core, clss: string) {
       if (i > 0) {
         const prevPhase = layers[i - 1];
         let x = prevPosition.x;
-        const y = 150 + ((layerNum % 2) * 50);
+        const y = 150 + (layerNum % 2) * 50;
         if (prevPhase.children().length > 1) {
           x += 150;
         } else {
@@ -814,7 +808,7 @@ function alignCompoundNodes(cy: cytoscape.Core, clss: string) {
       for (let j = 0; j < children.length; j++) {
         const child = children[j];
         const x = 150 * layerNum;
-        const y = (150 * j) + ((layerNum % 2) * 50);
+        const y = 150 * j + (layerNum % 2) * 50;
         child.animate({ position: { x, y }, duration: 1000 });
         prevPosition = { x, y };
       }

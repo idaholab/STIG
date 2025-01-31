@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 
 type Props = object;
 const PageMainLanding: React.FC<Props> = () => {
-  const { isSearchOpen, setIsSearchOpen, isDrawerOpen, drawerWidth } = useStigContext();
+  const { isSearchOpen, isDrawerOpen, drawerWidth } = useStigContext();
   const floatingContainerWidth = `calc(100% - (${isDrawerOpen ? drawerWidth : 80}px ))`;
   const floatingContainerLeft = `${isDrawerOpen ? drawerWidth : 80}px`;
 
@@ -26,14 +26,15 @@ const PageMainLanding: React.FC<Props> = () => {
   return (
     <div className="page-component">
       <div id="graphContainer" className="relative h-full w-full ">
-
-        <div id="floatingContainer"
-          className='flex relative'
+        <div
+          id="floatingContainer"
+          className="flex relative"
           style={{
             width: floatingContainerWidth,
-            marginLeft: floatingContainerLeft
-          }}>
-          <div className='relative flex m-4 justify-between flex-wrap w-full z-[10]'>
+            marginLeft: floatingContainerLeft,
+          }}
+        >
+          <div className="relative flex m-4 justify-between flex-wrap w-full z-[10]">
             <Menu />
             {/* Fade In */}
             <div className={`transition-opacity duration-700 ${isSearchOpen ? 'opacity-100' : 'opacity-0'}`}>
@@ -47,9 +48,7 @@ const PageMainLanding: React.FC<Props> = () => {
         </div>
         <Notifications />
       </div>
-    </div >
-  )
-}
+    </div>
+  );
+};
 export default PageMainLanding;
-
-

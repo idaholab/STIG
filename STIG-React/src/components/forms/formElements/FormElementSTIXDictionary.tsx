@@ -26,24 +26,24 @@ type Props = {
   showTypeSelector?: boolean;
 };
 
-const stixUIToSchemaTypeConverter: Record<string,SchemaSTIXType> = {
-  "string": "string",
-  "array": "list",
-  "boolean": "boolean",
-  "integer": "integer",
-  "object": "dictionary",
-  "number": "float"
+const stixUIToSchemaTypeConverter: Record<string, SchemaSTIXType> = {
+  string: 'string',
+  array: 'list',
+  boolean: 'boolean',
+  integer: 'integer',
+  object: 'dictionary',
+  number: 'float',
 };
 
-const typeToDefaultConverter: Record<string,any> = {
-  "string": "",
-  "array": [],
-  "boolean": false,
-  "integer": 0,
-  "object": {},
-  "number": 0,
+// eslint-disable-next-line
+const typeToDefaultConverter: Record<string, any> = {
+  string: '',
+  array: [],
+  boolean: false,
+  integer: 0,
+  object: {},
+  number: 0,
 };
-
 
 const FormElementSTIXDictionary: React.FC<Props> = ({
   dictionary,
@@ -54,7 +54,7 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
   parentSelectedProperties,
   setParentSelectedProperties,
   property,
-  showTypeSelector
+  showTypeSelector,
 }) => {
   const [localSelectedProperties, setLocalSelectedProperties] = useState<SchemaSTIXProperty[]>([]);
   const [localDictionaryProps, setLocalDictionaryProps] = useState<SchemaSTIXProperty[]>([]);
@@ -65,9 +65,10 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
       setSelectedSTIXObject(dictionary);
       setSelectionExists(true);
     }
-    setLocalDictionaryProps(_ => dictionary ?
-      Object.keys(dictionary).map(key => ({ name: key, type: inferSTIXType(dictionary[key]) } as SchemaSTIXProperty))
-      : []
+    setLocalDictionaryProps(() =>
+      dictionary
+        ? Object.keys(dictionary).map((key) => ({ name: key, type: inferSTIXType(dictionary[key]) }) as SchemaSTIXProperty)
+        : [],
     );
   }, [dictionary]);
 
@@ -78,11 +79,12 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
   }, [selectedSTIXObject]);
 
   const handlePropertyTypeChange = (
-    propName: string, newType: UIPropertyType,
+    propName: string,
+    newType: UIPropertyType,
     dictionaryProps?: SchemaSTIXProperty[],
     setDictionaryProps?: React.Dispatch<React.SetStateAction<SchemaSTIXProperty[]>>,
     selectedProperties?: SchemaSTIXProperty[],
-    setSelectedProperties?: React.Dispatch<React.SetStateAction<SchemaSTIXProperty[]>>
+    setSelectedProperties?: React.Dispatch<React.SetStateAction<SchemaSTIXProperty[]>>,
   ) => {
     // If no embedded map or selected properties are passed in, just use
     // the ones from the current component
@@ -99,19 +101,25 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
       setSelectedProperties = setLocalSelectedProperties;
     }
 
-    const dictionaryPropIndex = dictionaryProps.findIndex(prop => prop.name === propName);
+    const dictionaryPropIndex = dictionaryProps.findIndex((prop) => prop.name === propName);
     const oldType = dictionaryProps[dictionaryPropIndex].type;
     dictionaryProps[dictionaryPropIndex].type = stixUIToSchemaTypeConverter[newType];
     setDictionaryProps([...dictionaryProps]);
 
-    const selectedPropertiesIndex = selectedProperties.findIndex(prop => prop.name === propName);
+    const selectedPropertiesIndex = selectedProperties.findIndex((prop) => prop.name === propName);
     selectedProperties[selectedPropertiesIndex].type = stixUIToSchemaTypeConverter[newType];
     setSelectedProperties([...selectedProperties]);
 
-    if (oldType === "dictionary") {
+    if (oldType === 'dictionary') {
       setParentSTIXObject({ ...parentSTIXObject, [propName]: typeToDefaultConverter[newType] } as StixObject);
     } else {
-      handlePropertyUpdate(typeToDefaultConverter[newType], propName, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists);
+      handlePropertyUpdate(
+        typeToDefaultConverter[newType],
+        propName,
+        selectedSTIXObject,
+        setSelectedSTIXObject,
+        setSelectionExists,
+      );
     }
   };
 
@@ -122,19 +130,19 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
 
   return (
     <>
-      <div className={`flex ${showTypeSelector ? "gap-2 items-center" : "flex-col"}`}>
+      <div className={`flex ${showTypeSelector ? 'gap-2 items-center' : 'flex-col'}`}>
         <STIXPropertyLabel
           propName={property ? property?.name : ''}
           propertyType={property ? property.type : undefined}
           showTypeSelector={showTypeSelector}
-          additionalLabelClasses='mr-2'
+          additionalLabelClasses="mr-2"
           includeInfo={!!property.propertyDescription && property.propertyDescription?.length > 0}
           infoText={property.propertyDescription}
         />
-        {showTypeSelector ?
+        {showTypeSelector ? (
           <FormElementSelect
-            options={["array", "string", "integer", "boolean", "number", "object"]}
-            value={"object"}
+            options={['array', 'string', 'integer', 'boolean', 'number', 'object']}
+            value={'object'}
             onChange={(event) => {
               handlePropertyTypeChange(
                 property?.name || '',
@@ -142,18 +150,17 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
                 parentDictionaryProps,
                 setParentDictionaryProps,
                 parentSelectedProperties,
-                setParentSelectedProperties
+                setParentSelectedProperties,
               );
             }}
-            additionalClasses='select-xs dark:bg-neutralc-900 w-fit'
+            additionalClasses="select-xs dark:bg-neutralc-900 w-fit"
             includeInfo={false}
           />
-          : null
-        }
+        ) : null}
       </div>
-      <div className='flex gap-2 mb-2 items-center'>
-        <ButtonSTIXJSON size={'small'} type='btn-neutralc' showJson={showJsonPanel} setIsShowingJson={toggleJSONPropertyView} />
-        {!showJsonPanel ?
+      <div className="flex gap-2 mb-2 items-center">
+        <ButtonSTIXJSON size={'small'} type="btn-neutralc" showJson={showJsonPanel} setIsShowingJson={toggleJSONPropertyView} />
+        {!showJsonPanel ? (
           <FormSTIXPropertySelection
             propertyOptions={localDictionaryProps}
             setPropertyOptions={setLocalDictionaryProps}
@@ -161,28 +168,36 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
             setSelectedProperties={setLocalSelectedProperties}
             includeAddNew
             size={'small'}
-            onAdd={p => handlePropertyUpdate(typeToDefaultConverter[p.type], p.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists) }
+            onAdd={(p) =>
+              handlePropertyUpdate(
+                typeToDefaultConverter[p.type],
+                p.name,
+                selectedSTIXObject,
+                setSelectedSTIXObject,
+                setSelectionExists,
+              )
+            }
           />
-          : null
-        }
+        ) : null}
       </div>
 
       <div className="ml-4">
-        {showJsonPanel && <StixJSONView rows={10} /> }
-        {!showJsonPanel && localSelectedProperties.map((selectedProperty, i) =>
-          <STIXPropertyRenderer
-            key={i}
-            property={selectedProperty}
-            showTypeSelector
-            onTypeChange={(event) => {
-              handlePropertyTypeChange(selectedProperty.name, event.target.value as UIPropertyType);
-            }}
-            parentDictionaryProps={localDictionaryProps}
-            setParentDictionaryProps={setLocalDictionaryProps}
-            parentSelectedProperties={localSelectedProperties}
-            setParentSelectedProperties={setLocalSelectedProperties}
-          />
-        )}
+        {showJsonPanel && <StixJSONView rows={10} />}
+        {!showJsonPanel &&
+          localSelectedProperties.map((selectedProperty, i) => (
+            <STIXPropertyRenderer
+              key={i}
+              property={selectedProperty}
+              showTypeSelector
+              onTypeChange={(event) => {
+                handlePropertyTypeChange(selectedProperty.name, event.target.value as UIPropertyType);
+              }}
+              parentDictionaryProps={localDictionaryProps}
+              setParentDictionaryProps={setLocalDictionaryProps}
+              parentSelectedProperties={localSelectedProperties}
+              setParentSelectedProperties={setLocalSelectedProperties}
+            />
+          ))}
       </div>
     </>
   );

@@ -43,7 +43,7 @@ export const useStigContext = () => {
 
 export type StigSettingsOptions = {
   layout: string;
-}
+};
 
 type Props = {
   children: React.ReactNode;
@@ -64,14 +64,14 @@ export const StigContextProvider: React.FC<Props> = ({ children }) => {
 
   const storeStigLayoutSettings = (layout: string) => {
     saveLayoutToLocalStorage(layout);
-  }
+  };
   const getStigLayoutSettingsFromStore = (): string => {
     return getLayoutSettingsFromStore();
-  }
+  };
   const runLayout = (layoutType: keyof LayoutsType, cyInstance: cytoscape.Core) => {
     runGraphLayout(layoutType, cyInstance);
     setStoredLayout(getStigLayoutSettingsFromStore());
-  }
+  };
 
   const togglePropertyPanel = () => {
     setIsPropertyPanelOpen(!isPropertyPanelOpen);
@@ -83,19 +83,32 @@ export const StigContextProvider: React.FC<Props> = ({ children }) => {
   };
 
   return (
-    <StigContext.Provider value={{
-      activeContextLayout, setActiveContextLayout, togglePropertiesSetTab,
-      activePropertiesPanelTab, setActivePropertiesPanelTab,
-      isPropertyPanelOpen, setIsPropertyPanelOpen,
-      panelWidth, setPanelWidth, togglePropertyPanel,
-      isDrawerOpen, setIsDrawerOpen,
-      drawerWidth, setDrawerWidth,
-      isSearchOpen, setIsSearchOpen,
-      cyInstance, setCyInstance,
-      getStigLayoutSettingsFromStore,
-      storeStigLayoutSettings,
-      runLayout, storedLayout
-    }}>
+    <StigContext.Provider
+      value={{
+        activeContextLayout,
+        setActiveContextLayout,
+        togglePropertiesSetTab,
+        activePropertiesPanelTab,
+        setActivePropertiesPanelTab,
+        isPropertyPanelOpen,
+        setIsPropertyPanelOpen,
+        panelWidth,
+        setPanelWidth,
+        togglePropertyPanel,
+        isDrawerOpen,
+        setIsDrawerOpen,
+        drawerWidth,
+        setDrawerWidth,
+        isSearchOpen,
+        setIsSearchOpen,
+        cyInstance,
+        setCyInstance,
+        getStigLayoutSettingsFromStore,
+        storeStigLayoutSettings,
+        runLayout,
+        storedLayout,
+      }}
+    >
       {children}
     </StigContext.Provider>
   );

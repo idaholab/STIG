@@ -4,8 +4,12 @@ import { StixObject } from '@/types/stixTypes/StixObject';
 
 export const clipboard = {
   data: '',
-  writeText: (text: string) => { clipboard.data = text; },
-  readText: () => { return clipboard.data; }
+  writeText: (text: string) => {
+    clipboard.data = text;
+  },
+  readText: () => {
+    return clipboard.data;
+  },
 };
 
 export function graphCopy(cy: cytoscape.Core): void {
@@ -20,11 +24,12 @@ export function graphPaste(cy: cytoscape.Core): void {
   try {
     const parsed = JSON.parse(clipboard.readText());
     let objects: StixObject[];
-    const test_stix = (i: any) => (i instanceof Object && Object.hasOwn(i, 'type') && Object.hasOwn(i, 'created'));
+    // eslint-disable-next-line
+    const test_stix = (i: any) => i instanceof Object && Object.hasOwn(i, 'type') && Object.hasOwn(i, 'created');
     if (Array.isArray(parsed)) {
       objects = parsed.every(test_stix) ? parsed : [];
     } else if (Object.hasOwn(parsed, 'type') && parsed.type !== 'bundle') {
-      objects = test_stix(parsed) ? [parsed] as StixObject[] : [];
+      objects = test_stix(parsed) ? ([parsed] as StixObject[]) : [];
     } else {
       objects = [];
     }
@@ -34,4 +39,3 @@ export function graphPaste(cy: cytoscape.Core): void {
     console.error(e);
   }
 }
-

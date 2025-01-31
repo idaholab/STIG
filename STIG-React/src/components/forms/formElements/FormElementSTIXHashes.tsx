@@ -21,7 +21,7 @@ const FormElementSTIXHashes: React.FC<Props> = ({
   parentPropertyName,
   parentPropertyIndex,
   parentSTIXObject,
-  setParentSTIXObject
+  setParentSTIXObject,
 }) => {
   const { selectedSTIXObject, setSelectedSTIXObject, setSelectionExists } = useStixPropsContext();
 
@@ -34,11 +34,16 @@ const FormElementSTIXHashes: React.FC<Props> = ({
     }
   }, [parentSTIXObject]);
 
-  // Update the parent STIX object when its child 
+  // Update the parent STIX object when its child
   // (the one containing the hashes property) changes
   useEffect(() => {
-    if (parentPropertyName && parentPropertyIndex !== undefined &&
-      parentSTIXObject && setParentSTIXObject && selectedSTIXObject) {
+    if (
+      parentPropertyName &&
+      parentPropertyIndex !== undefined &&
+      parentSTIXObject &&
+      setParentSTIXObject &&
+      selectedSTIXObject
+    ) {
       const tempParentSTIXObject = { ...parentSTIXObject } as StixObject;
       tempParentSTIXObject[parentPropertyName][parentPropertyIndex] = selectedSTIXObject;
       setParentSTIXObject(tempParentSTIXObject);
@@ -54,30 +59,24 @@ const FormElementSTIXHashes: React.FC<Props> = ({
         includeInfo
         infoText={property.propertyDescription}
       />
-      <div className={`flex flex-col items-center w-full ml-2 pr-2`} >
-        {selectedSTIXObject && selectedSTIXObject[property.name] ?
-          Object.keys(selectedSTIXObject[property.name]).map(
-            (hashAlgName: string, i: number) =>
-              <FormElementSTIXHash
-                key={i}
-                hashAlgName={hashAlgName}
-                property={property}
-              />
-          )
-          : null
-        }
+      <div className={`flex flex-col items-center w-full ml-2 pr-2`}>
+        {selectedSTIXObject && selectedSTIXObject[property.name]
+          ? Object.keys(selectedSTIXObject[property.name]).map((hashAlgName: string, i: number) => (
+            <FormElementSTIXHash key={i} hashAlgName={hashAlgName} property={property} />
+          ))
+          : null}
         <ButtonBasic
           label="+ Hash"
           type="btn-primary"
           onClick={() => {
-            let tempSTIXObj = { ...selectedSTIXObject } as StixObject;
+            const tempSTIXObj = { ...selectedSTIXObject } as StixObject;
             if (!tempSTIXObj[property.name]) {
               // Initialize the property array
-              tempSTIXObj[property.name] = { "": "" };
+              tempSTIXObj[property.name] = { '': '' };
             } else {
               tempSTIXObj[property.name] = {
                 ...tempSTIXObj[property.name],
-                "": ""
+                '': '',
               };
             }
             setSelectedSTIXObject(tempSTIXObj);

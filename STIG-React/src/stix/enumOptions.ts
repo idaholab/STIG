@@ -2,21 +2,11 @@
 // populate the various enum selection lists
 // for the enumTypes in schema.ts
 
-const encryption_algorithm_enum = [
-  "AES-256-GCM",
-  "ChaCha20-Poly1305",
-  "mime-type-indicated"
-];
+const encryption_algorithm_enum = ['AES-256-GCM', 'ChaCha20-Poly1305', 'mime-type-indicated'];
 
-const extension_type_enum = [
-  "new-sdo",
-  "new-sco",
-  "new-sro",
-  "property-extension",
-  "toplevel-property-extension"
-];
+const extension_type_enum = ['new-sdo', 'new-sco', 'new-sro', 'property-extension', 'toplevel-property-extension'];
 
-// TODO: Uncomment once network-socket-address-family-enum, 
+// TODO: Uncomment once network-socket-address-family-enum,
 // network-socket-type-enum get referenced in schema.ts
 
 // const network_socket_address_family_enum = [
@@ -38,13 +28,7 @@ const extension_type_enum = [
 //   "SOCK_SEQPACKET"
 // ];
 
-const opinion_enum = [
-  "strongly-disagree",
-  "disagree",
-  "neutral",
-  "agree",
-  "strongly-agree"
-];
+const opinion_enum = ['strongly-disagree', 'disagree', 'neutral', 'agree', 'strongly-agree'];
 
 // TODO Uncomment once windows-integrity-level-enum,
 // windows-service-start-type-enum,
@@ -59,20 +43,20 @@ const opinion_enum = [
 // ];
 
 const windows_registry_datatype_enum = [
-  "REG_NONE",
-  "REG_SZ",
-  "REG_EXPAND_SZ",
-  "REG_BINARY",
-  "REG_DWORD",
-  "REG_DWORD_BIG_ENDIAN",
-  "REG_DWORD_LITTLE_ENDIAN",
-  "REG_LINK",
-  "REG_MULTI_SZ",
-  "REG_RESOURCE_LIST",
-  "REG_FULL_RESOURCE_DESCRIPTION",
-  "REG_RESOURCE_REQUIREMENTS_LIST",
-  "REG_QWORD",
-  "REG_INVALID_TYPE"
+  'REG_NONE',
+  'REG_SZ',
+  'REG_EXPAND_SZ',
+  'REG_BINARY',
+  'REG_DWORD',
+  'REG_DWORD_BIG_ENDIAN',
+  'REG_DWORD_LITTLE_ENDIAN',
+  'REG_LINK',
+  'REG_MULTI_SZ',
+  'REG_RESOURCE_LIST',
+  'REG_FULL_RESOURCE_DESCRIPTION',
+  'REG_RESOURCE_REQUIREMENTS_LIST',
+  'REG_QWORD',
+  'REG_INVALID_TYPE',
 ];
 
 // const windows_service_start_type_enum = [
@@ -101,20 +85,20 @@ const windows_registry_datatype_enum = [
 // ];
 
 export const enum_options = {
-  "encryption-algorithm-enum": encryption_algorithm_enum,
-  "extension-type-enum": extension_type_enum,
-  // TODO: Uncomment once network-socket-address-family-enum, 
+  'encryption-algorithm-enum': encryption_algorithm_enum,
+  'extension-type-enum': extension_type_enum,
+  // TODO: Uncomment once network-socket-address-family-enum,
   // network-socket-type-enum get referenced in schema.ts
   // "network-socket-address-family-enum": network_socket_address_family_enum,
   // "network-socket-type-enum": network_socket_type_enum,
-  "opinion-enum": opinion_enum,
+  'opinion-enum': opinion_enum,
   // TODO Uncomment once windows-integrity-level-enum,
   // windows-registry-datatype-enum, windows-service-start-type-enum,
   // windows-service-type-enum, windows-service-status-enum
   // get referenced in schema.ts
   // "windows-integrity-level-enum": windows_integrity_level_enum,
-  "windows-registry-datatype-enum": windows_registry_datatype_enum,
+  'windows-registry-datatype-enum': windows_registry_datatype_enum,
   // "windows-service-start-type-enum": windows_service_start_type_enum,
   // "windows-service-type-enum": windows_service_type_enum,
   // "windows-service-status-enum": windows_service_status_enum
-}
+};

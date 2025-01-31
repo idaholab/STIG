@@ -2,9 +2,10 @@ import { isNode, isPath, isRelationship as isNeoRelationship } from 'neo4j-drive
 import { StixObject } from '@/types/stixTypes/StixObject';
 import { StixRelationshipObject } from '@/types/stixTypes/StixRelationshipObject';
 
-export function makeDotNotation (parent: string, node: any, obj: Record<string, unknown>) {
+// eslint-disable-next-line
+export function makeDotNotation(parent: string, node: any, obj: Record<string, unknown>) {
   if (node instanceof Array) {
-    obj[parent] = node.map(o => JSON.stringify(o));
+    obj[parent] = node.map((o) => JSON.stringify(o));
   } else if (typeof node === 'object') {
     for (const [p, n] of Object.entries(node)) {
       makeDotNotation(parent + '.' + p, n, obj);
@@ -14,9 +15,10 @@ export function makeDotNotation (parent: string, node: any, obj: Record<string, 
   }
 }
 
-export function unmakeDotNotation (source: Record<string, unknown>): Record<string, unknown> {
+export function unmakeDotNotation(source: Record<string, unknown>): Record<string, unknown> {
   const node: Record<string, unknown> = {};
-  for (let [key, value] of Object.entries(source)) {
+
+  for (const [key, value] of Object.entries(source)) {
     let target = node;
     const path = key.split('.');
     const plen = path.length;
@@ -32,15 +34,15 @@ export function unmakeDotNotation (source: Record<string, unknown>): Record<stri
 
     // inflate array values which were uniformly stringified
     if (value instanceof Array) {
-      value = value.map(s => JSON.parse(s));
+      target[path[plen - 1]] = value.map((s) => JSON.parse(s)); // assign the new value to the target
+    } else {
+      target[path[plen - 1]] = value;
     }
-    target[path[plen - 1]] = value;
   }
-
   return node;
 }
 
-export function toNeo4j (stix: StixObject) {
+export function toNeo4j(stix: StixObject) {
   const props: Record<string, string> = {};
   for (const [key, val] of Object.entries(stix)) {
     if (key !== 'type') {
@@ -50,7 +52,7 @@ export function toNeo4j (stix: StixObject) {
   return props;
 }
 
-export function fromNeo4j (obj: unknown): StixObject[] {
+export function fromNeo4j(obj: unknown): StixObject[] {
   if (isNode(obj)) {
     const node = unmakeDotNotation(obj.properties);
     for (const typ of obj.labels) {
@@ -68,11 +70,13 @@ export function fromNeo4j (obj: unknown): StixObject[] {
     return res;
   }
   if (isNeoRelationship(obj)) {
-    return [{
-      type: 'relationship',
-      relationship_type: obj.type,
-      ...obj.properties,
-    } as unknown as StixRelationshipObject];
+    return [
+      {
+        type: 'relationship',
+        relationship_type: obj.type,
+        ...obj.properties,
+      } as unknown as StixRelationshipObject,
+    ];
   }
   return [];
 }

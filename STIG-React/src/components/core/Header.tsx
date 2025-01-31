@@ -7,10 +7,10 @@ const Header: React.FC = () => {
   return (
     <div className="navbar bg-primary flex items-center justify-between px-7">
       <Link to="/" className="flex items-center logo-btn cursor-pointer">
-        <img src={import.meta.env.BASE_URL + "/CyOTE_logo_23-0807_nostars.svg"} alt="COREII logo" />
-        <label className='ml-4 text-xl text-white'>STIG</label>
+        <img src={import.meta.env.BASE_URL + '/CyOTE_logo_23-0807_nostars.svg'} alt="COREII logo" />
+        <span className="ml-4 text-xl text-white">STIG</span>
       </Link>
-      <span className='flex gap-3'>
+      <span className="flex gap-3">
         <ThemeToggle />
         <AdvancedPanelToggle />
       </span>

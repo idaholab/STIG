@@ -14,9 +14,13 @@ import SaveButtons from '@/components/elements/SaveButtons.tsx';
 import { useStigContext } from '@/contexts/StigContext.tsx';
 import AlertComponent from '@/components/elements/AlertComponent.tsx';
 import TabsComponent from '@/components/elements/TabsComponent.tsx';
-import { 
-  mdiRocketLaunchOutline, mdiDatabaseOutline, mdiDatabaseEyeOutline,
-  mdiLayersTripleOutline, mdiDatabaseCogOutline, mdiCogOutline,
+import {
+  mdiRocketLaunchOutline,
+  mdiDatabaseOutline,
+  mdiDatabaseEyeOutline,
+  mdiLayersTripleOutline,
+  mdiDatabaseCogOutline,
+  mdiCogOutline,
 } from '@mdi/js';
 import ContextLayouts from '@/components/dropdowns/ContextLayouts.tsx';
 import DBProfileLayout from './DBProfile.tsx';
@@ -24,21 +28,21 @@ import DBOperationsContainer from './DBOperationsContainer.tsx';
 import DBExamplesContainer from './DBExamplesContainer.tsx';
 
 type TabContent = {
-  label: string,
-  icon: string,
-  content?: React.ReactNode
-}
+  label: string;
+  icon: string;
+  content?: React.ReactNode;
+};
 
 type GraphPanelProperties = {
-  selectedProperties: SchemaSTIXProperty[],
-  setSelectedProperties: React.Dispatch<React.SetStateAction<SchemaSTIXProperty[]>>,
-  stixTypeProps: SchemaSTIXProperty[],
-  setStixTypeProps: React.Dispatch<React.SetStateAction<SchemaSTIXProperty[]>>,
-  showJson?: boolean,
-  setIsShowingJson: React.Dispatch<React.SetStateAction<boolean>>,
-  activeGraphTab?: number,
-  setActiveGraphTab?: React.Dispatch<React.SetStateAction<number>>,
-}
+  selectedProperties: SchemaSTIXProperty[];
+  setSelectedProperties: React.Dispatch<React.SetStateAction<SchemaSTIXProperty[]>>;
+  stixTypeProps: SchemaSTIXProperty[];
+  setStixTypeProps: React.Dispatch<React.SetStateAction<SchemaSTIXProperty[]>>;
+  showJson?: boolean;
+  setIsShowingJson: React.Dispatch<React.SetStateAction<boolean>>;
+  activeGraphTab?: number;
+  setActiveGraphTab?: React.Dispatch<React.SetStateAction<number>>;
+};
 
 const StixPropsPanel: React.FC = () => {
   const [selectedProperties, setSelectedProperties] = useState<SchemaSTIXProperty[]>([]);
@@ -63,25 +67,25 @@ const StixPropsPanel: React.FC = () => {
   );
 };
 
-const PropsPanelHeader: React.FC<GraphPanelProperties> = (
-  { selectedProperties,
-    setSelectedProperties,
-    stixTypeProps,
-    setStixTypeProps,
-    setIsShowingJson,
-  }) => {
+const PropsPanelHeader: React.FC<GraphPanelProperties> = ({
+  selectedProperties,
+  setSelectedProperties,
+  stixTypeProps,
+  setStixTypeProps,
+  setIsShowingJson,
+}) => {
   const { selectedSTIXObject } = useStixPropsContext();
   const [showJsonPanel, setShowJsonPanel] = useState<boolean>(false);
 
   const [stixTypeDesc, setStixTypeDesc] = useState<SchemaSTIXClass>();
   useEffect(() => {
-    const schemaObject = schema.find(c => c.name === selectedSTIXObject?.type);
+    const schemaObject = schema.find((c) => c.name === selectedSTIXObject?.type);
     if (typeof schemaObject !== 'object') {
       return;
     }
 
     const properties = getSTIXPropsFromSchema(schemaObject);
-    const propertyDescriptionObject = propertyDescriptions.find(group => group.name === selectedSTIXObject?.type);
+    const propertyDescriptionObject = propertyDescriptions.find((group) => group.name === selectedSTIXObject?.type);
     if (propertyDescriptionObject) {
       const propertyDescriptions = getSTIXPropDescriptions(propertyDescriptionObject);
       properties.forEach((prop) => {
@@ -91,12 +95,14 @@ const PropsPanelHeader: React.FC<GraphPanelProperties> = (
 
     setStixTypeProps(properties);
     setStixTypeDesc(schemaObject);
-  }, [selectedSTIXObject?.id]);
+  }, [selectedSTIXObject?.id, selectedSTIXObject, setSelectedProperties, setStixTypeProps]);
+
+
   // When stixTypeProps gets set for the object or changes
   // when clicking on a different object, update the selectedProperties
   useEffect(() => {
-    setSelectedProperties(stixTypeProps.filter(prop => prop.mandatory || selectedSTIXObject?.[prop.name] != undefined));
-  }, [stixTypeProps]);
+    setSelectedProperties(stixTypeProps.filter((prop) => prop.mandatory || selectedSTIXObject?.[prop.name] != undefined));
+  }, [stixTypeProps, selectedSTIXObject, setSelectedProperties]);
 
   function toggleJSONPropertyView() {
     const isShowingJson: boolean = !showJsonPanel;
@@ -107,41 +113,39 @@ const PropsPanelHeader: React.FC<GraphPanelProperties> = (
     <>
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-xl">
-          {selectedSTIXObject && ("type" in selectedSTIXObject) ?
-            stencilItems.find(stencilItem => {
-              return selectedSTIXObject.type === stencilItem.id
-            })?.alt ?? "Relationship"
-            : null
-          }
+          {selectedSTIXObject && 'type' in selectedSTIXObject
+            ? (stencilItems.find((stencilItem) => {
+              return selectedSTIXObject.type === stencilItem.id;
+            })?.alt ?? 'Relationship')
+            : null}
         </h1>
       </div>
-      <div className='flex gap-2 mb-4'>
+      <div className="flex gap-2 mb-4">
         <ButtonSTIXJSON size={'standard'} showJson={showJsonPanel} setIsShowingJson={toggleJSONPropertyView} />
-        {!showJsonPanel ?
+        {!showJsonPanel ? (
           <FormSTIXPropertySelection
             propertyOptions={stixTypeProps}
             selectedProperties={selectedProperties}
             setSelectedProperties={setSelectedProperties}
             size={'standard'}
           />
-          : null
-        }
+        ) : null}
       </div>
-      <p className='mb-4'>{stixTypeDesc?.description}</p>
+      <p className="mb-4">{stixTypeDesc?.description}</p>
     </>
   );
-}
+};
 
-const PropertiesAndAdvancedTabs: React.FC<GraphPanelProperties> = (
-  { selectedProperties,
-    setSelectedProperties,
-    stixTypeProps,
-    setStixTypeProps,
-    showJson,
-    setIsShowingJson,
-    activeGraphTab,
-    setActiveGraphTab
-  }) => {
+const PropertiesAndAdvancedTabs: React.FC<GraphPanelProperties> = ({
+  selectedProperties,
+  setSelectedProperties,
+  stixTypeProps,
+  setStixTypeProps,
+  showJson,
+  setIsShowingJson,
+  activeGraphTab,
+  setActiveGraphTab,
+}) => {
   const { selectedSTIXObject } = useStixPropsContext();
   // const [activeTab, setActiveTab] = useState(0);
   const tabs: TabContent[] = [
@@ -150,7 +154,7 @@ const PropertiesAndAdvancedTabs: React.FC<GraphPanelProperties> = (
       icon: mdiCogOutline,
       content: (
         <>
-          {selectedSTIXObject ?
+          {selectedSTIXObject ? (
             <div className={`drawer flex flex-col w-full h-full p-4 scrollbar`}>
               <PropsPanelHeader
                 selectedProperties={selectedProperties}
@@ -166,13 +170,17 @@ const PropertiesAndAdvancedTabs: React.FC<GraphPanelProperties> = (
               />
               <SaveButtons />
             </div>
-            :
-            <div className='mt-4'>
-              <AlertComponent className='dark:text-neutralc-100' alertText={`No graph element selected. Select an element on the graph to view it's properties.`} alertType='warning' />
+          ) : (
+            <div className="mt-4">
+              <AlertComponent
+                className="dark:text-neutralc-100"
+                alertText={`No graph element selected. Select an element on the graph to view it's properties.`}
+                alertType="warning"
+              />
             </div>
-          }
+          )}
         </>
-      )
+      ),
     },
     {
       label: 'Advanced',
@@ -181,17 +189,21 @@ const PropertiesAndAdvancedTabs: React.FC<GraphPanelProperties> = (
         <div className={`flex w-full h-full overflow-hidden`}>
           <DatabaseContextLayoutsTabs />
         </div>
-      )
-    }
+      ),
+    },
   ];
 
   return (
     <div className="outerTabs flex mt-1 w-full h-full overflow-hidden">
-      <TabsComponent tabs={tabs} setActiveTab={setActiveGraphTab || (() => { })} activeTab={activeGraphTab} extraContainerClassName={'flex-1'} />
+      <TabsComponent
+        tabs={tabs}
+        setActiveTab={setActiveGraphTab || (() => { })}
+        activeTab={activeGraphTab}
+        extraContainerClassName={'flex-1'}
+      />
     </div>
-  )
+  );
 };
-
 
 const DatabaseContextLayoutsTabs: React.FC = () => {
   const [activeTab, setActiveTab] = useState<number>(0);
@@ -205,7 +217,7 @@ const DatabaseContextLayoutsTabs: React.FC = () => {
         <div className={`profileOperationsTabs flex h-full w-full overflow-hidden`}>
           <ProfileOperationsTabs />
         </div>
-      )
+      ),
     },
     {
       label: 'Context Layouts',
@@ -214,13 +226,18 @@ const DatabaseContextLayoutsTabs: React.FC = () => {
         <div className={`ContextLayouts flex h-full w-full scrollbar`}>
           <ContextLayouts />
         </div>
-      )
-    }
+      ),
+    },
   ];
 
   return (
-    <TabsComponent tabs={tabs} setActiveTab={setActiveTab} activeTab={activeTab} extraContainerClassName={'flex mt-1'}></TabsComponent>
-  )
+    <TabsComponent
+      tabs={tabs}
+      setActiveTab={setActiveTab}
+      activeTab={activeTab}
+      extraContainerClassName={'flex mt-1'}
+    ></TabsComponent>
+  );
 };
 
 const ProfileOperationsTabs: React.FC = () => {
@@ -235,7 +252,7 @@ const ProfileOperationsTabs: React.FC = () => {
         <div className={`dbProfileContainer flex w-full h-full scrollbar`}>
           <DBProfileLayout />
         </div>
-      )
+      ),
     },
     {
       label: 'Operations',
@@ -244,7 +261,7 @@ const ProfileOperationsTabs: React.FC = () => {
         <div className={`dbOperationsContainer flex h-full w-full scrollbar`}>
           <DBOperationsContainer />
         </div>
-      )
+      ),
     },
     {
       label: 'Examples',
@@ -253,13 +270,11 @@ const ProfileOperationsTabs: React.FC = () => {
         <div className={`dbExamplesContainer flex h-full w-full scrollbar`}>
           <DBExamplesContainer />
         </div>
-      )
-    }
+      ),
+    },
   ];
 
-  return (
-    <TabsComponent tabs={tabs} setActiveTab={setActiveTab} activeTab={activeTab} extraContainerClassName={'flex mt-1'}/>
-  )
+  return <TabsComponent tabs={tabs} setActiveTab={setActiveTab} activeTab={activeTab} extraContainerClassName={'flex mt-1'} />;
 };
 
 export default StixPropsPanel;

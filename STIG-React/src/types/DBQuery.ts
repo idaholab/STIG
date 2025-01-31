@@ -1,4 +1,4 @@
 export type DBQuery = {
-    id: string;
-    query: string;
-}
+  id: string;
+  query: string;
+};

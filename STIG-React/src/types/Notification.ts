@@ -1,7 +1,7 @@
-import { AlertType } from "@/components/elements/AlertComponent";
+import { AlertType } from '@/components/elements/AlertComponent';
 
 export type Notification = {
-    text: string;
-    type: AlertType;
-    s: symbol;
-}
+  text: string;
+  type: AlertType;
+  s: symbol;
+};

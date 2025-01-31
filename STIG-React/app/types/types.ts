@@ -1,4 +1,4 @@
 export type AppState = {
-    openDrawerLeft: boolean;
-    openDrawerLeftWidth: number;
+  openDrawerLeft: boolean;
+  openDrawerLeftWidth: number;
 };

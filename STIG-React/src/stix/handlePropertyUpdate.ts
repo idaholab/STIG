@@ -1,8 +1,8 @@
-import { StixObject } from "@/types/stixTypes/StixObject";
-import { getNodeLabel } from "./stix";
+import { StixObject } from '@/types/stixTypes/StixObject';
+import { getNodeLabel } from './stix';
 
 export const handlePropertyUpdate = (
-  newVal: string | boolean | number | Date | ArrayBuffer | null | undefined | Object | [],
+  newVal: string | boolean | number | Date | ArrayBuffer | null | undefined | unknown | [],
   propName: string,
   selectedSTIXObject: StixObject | undefined,
   setSelectedSTIXObject: (obj: StixObject | undefined) => void,
@@ -11,7 +11,6 @@ export const handlePropertyUpdate = (
   // Pass a prop index in for updating a value
   // inside a list or hash
   propIndex?: number | string,
-
 ) => {
   const tempSelectedSTIXObject = { ...selectedSTIXObject } as StixObject;
   if (propIndex !== undefined) {

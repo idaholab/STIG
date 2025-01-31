@@ -1,4 +1,4 @@
-import neo4j, { Driver, Session, ManagedTransaction, Record } from 'neo4j-driver';
+import neo4j, { Driver, Session, ManagedTransaction, Record, Neo4jError } from 'neo4j-driver';
 import { DBProfile } from '@/types/DBProfile';
 import { StigDB } from '../dbi';
 import moment from 'moment';
@@ -48,14 +48,14 @@ CALL apoc.refactor.setType(n, type) YIELD output
 SET output = props
 RETURN output AS n`;
 
+// eslint-disable-next-line
 function dbWrite(query: string, objects: any[]) {
   return async (tx: ManagedTransaction) => {
     try {
       const res = await tx.run(query, { objects });
       return res.records.length;
     } catch (e) {
-      console.log(objects);
-      console.error(e); // eslint-disable-line no-console
+      console.error(e);
       return 0;
     }
   };
@@ -63,12 +63,12 @@ function dbWrite(query: string, objects: any[]) {
 
 function bulkRequest(objs: StixObject[], query: string) {
   return async (s: Session) => {
-    const { records } = await s.executeRead(tx => tx.run(query, { ids: objs.map(o => o.id) }));
+    const { records } = await s.executeRead((tx) => tx.run(query, { ids: objs.map((o) => o.id) }));
     return records;
-  }
+  };
 }
 
-function * diffAgainstDB(patcher: DiffPatcher, objs: StixObject[], records: Record[]): Generator<[StixObject, Delta]> {
+function* diffAgainstDB(patcher: DiffPatcher, objs: StixObject[], records: Record[]): Generator<[StixObject, Delta]> {
   const recs_by_id = new Map<string, object>();
   for (const rec of records) {
     const res = rec.get('n');
@@ -78,7 +78,7 @@ function * diffAgainstDB(patcher: DiffPatcher, objs: StixObject[], records: Reco
   for (const obj of objs) {
     const res = recs_by_id.get(obj.id);
     const diff = patcher.diff(res ? toNeo4j(fromNeo4j(res)[0]) : {}, toNeo4j(obj));
-    if (diff && Object.keys(diff).length > 0) yield [obj, diff];   
+    if (diff && Object.keys(diff).length > 0) yield [obj, diff];
   }
 }
 
@@ -105,9 +105,13 @@ export class Neo4jStigDB implements StigDB {
     const session = this.driver.session(this.config?.DatabaseName ? { database: this.config?.DatabaseName } : undefined);
     try {
       return await cb(session);
-    } catch (e: any) {
-      e.stack += (new Error()).stack;
-      throw e;
+    } catch (e: unknown) {
+      if (e instanceof Neo4jError || e instanceof Error) {
+        e.stack += (new Error().stack ?? '');
+        throw e;
+      } else {
+        throw new Error('Unexpected error: ');
+      }
     } finally {
       await session.close();
     }
@@ -119,8 +123,8 @@ export class Neo4jStigDB implements StigDB {
    * @returns {Promise<void>}
    * @memberof StigDB
    */
-  public delete(stix: StixObject[]): Promise<{ nodes: number; rels: number; }> {
-    return this.wrapSession(s =>
+  public delete(stix: StixObject[]): Promise<{ nodes: number; rels: number }> {
+    return this.wrapSession((s) =>
       s.executeWrite(async (tx) => {
         const nodes: string[] = [];
         const rels: string[] = [];
@@ -134,7 +138,6 @@ export class Neo4jStigDB implements StigDB {
           const { nodesDeleted, relationshipsDeleted } = res.summary.counters.updates();
           node_dels += nodesDeleted;
           rel_dels += relationshipsDeleted;
-
         }
         if (nodes.length) {
           const res = await tx.run('UNWIND $ids AS id MATCH (n: stixnode {id: id}) DETACH DELETE n', { ids: nodes });
@@ -143,16 +146,14 @@ export class Neo4jStigDB implements StigDB {
           rel_dels += relationshipsDeleted;
         }
         return { nodes: node_dels, rels: rel_dels };
-      })
+      }),
     );
   }
 
   private traverseNode(query: string, id: string): Promise<StixObject[]> {
     return this.wrapSession(async (s: Session) => {
-      const res = await s.executeRead((tx: ManagedTransaction) =>
-        tx.run(query, { id })
-      );
-      return res.records.flatMap(rec => rec.map(fromNeo4j).flat());
+      const res = await s.executeRead((tx: ManagedTransaction) => tx.run(query, { id }));
+      return res.records.flatMap((rec) => rec.map(fromNeo4j).flat());
     });
   }
 
@@ -198,33 +199,40 @@ export class Neo4jStigDB implements StigDB {
    * @returns  Promise<string>
    * @memberof StigDB
    */
-  public updateDB(stix_nodes: StixObject[], stix_edges: StixRelationshipObject[]): Promise<{ nodes: number; edges: number; errors: number; }> {
+  public updateDB(
+    stix_nodes: StixObject[],
+    stix_edges: StixRelationshipObject[],
+  ): Promise<{ nodes: number; edges: number; errors: number }> {
     const time = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
-    const node_params = stix_nodes.map(stix => {
-      const stixCoreType = stencilItems.find(stencilItem => stencilItem.id === stix.type)?.type;
-      if (stixCoreType == "sdo"){
+    const node_params = stix_nodes.map((stix) => {
+      const stixCoreType = stencilItems.find((stencilItem) => stencilItem.id === stix.type)?.type;
+      if (stixCoreType == 'sdo') {
         stix.modified = time;
         if (!moment(stix.created).isValid()) {
           stix.created = time;
         }
-      }else if (stixCoreType == "sco"){
-        if (stix.created != undefined){console.warn("the 'created' property is not valid for SCO's, so it has been removed from "+stix.id)}
-        if (stix.modified != undefined){console.warn("the 'modified' property is not valid for SCO's, so it has been removed from "+stix.id)}
+      } else if (stixCoreType == 'sco') {
+        if (stix.created != undefined) {
+          console.warn("the 'created' property is not valid for SCO's, so it has been removed from " + stix.id);
+        }
+        if (stix.modified != undefined) {
+          console.warn("the 'modified' property is not valid for SCO's, so it has been removed from " + stix.id);
+        }
         stix.created = undefined;
         stix.modified = undefined;
       }
-      
+
       const props = toNeo4j(stix);
       delete props.type;
       return { id: props.id, type: stix.type, props };
     });
 
-    const edge_params = stix_edges.map(stix => {
+    const edge_params = stix_edges.map((stix) => {
       stix.modified = time;
       if (!moment(stix.created).isValid()) {
         stix.created = time;
       }
-      const props = toNeo4j((stix as StixObject));
+      const props = toNeo4j(stix as StixObject);
       delete props.type;
       delete props.relationship_type;
       return {
@@ -248,15 +256,15 @@ export class Neo4jStigDB implements StigDB {
    * @returns
    */
   public async executeQuery(query: string): Promise<StixObject[]> {
-    const res = await this.wrapSession(s => s.executeRead(tx => tx.run(query)));
-    return res.records.flatMap(rec => rec.map(fromNeo4j).flat());
+    const res = await this.wrapSession((s) => s.executeRead((tx) => tx.run(query)));
+    return res.records.flatMap((rec) => rec.map(fromNeo4j).flat());
   }
 
   public async close() {
     await this.driver?.close();
     this.driver = undefined;
   }
-  public is_closed(){
-    return this.driver == undefined
+  public is_closed() {
+    return this.driver == undefined;
   }
 }

@@ -56,30 +56,48 @@ const Edit: React.FC = () => {
       {/* <div className="divider dark:divider-neutral my-0"></div> */}
 
       <li className={`hover:bg-primary hover:text-white ${isSelectionEmpty ? 'pointer-events-none text-neutralc-500' : ''}`}>
-        <a onClick={() => !isSelectionEmpty && cutSelectedGraphElements(cyInstance, setSelectionExists, setIsPropertyPanelOpen)}><Icon path={mdiContentCut} size={.8} /><span>Cut</span></a>
+        <button onClick={() => !isSelectionEmpty && cutSelectedGraphElements(cyInstance, setSelectionExists, setIsPropertyPanelOpen)}>
+          <Icon path={mdiContentCut} size={0.8} />
+          <span>Cut</span>
+        </button>
       </li>
       <li className={`hover:bg-primary hover:text-white ${isSelectionEmpty ? 'pointer-events-none text-neutralc-500' : ''}`}>
-        <a onClick={() => !isSelectionEmpty && copySelectedGraphElements(cyInstance)}><Icon path={mdiContentCopy} size={.8} /><span>Copy</span></a>
+        <button onClick={() => !isSelectionEmpty && copySelectedGraphElements(cyInstance)}>
+          <Icon path={mdiContentCopy} size={0.8} />
+          <span>Copy</span>
+        </button>
       </li>
 
       <li className={`hover:bg-primary hover:text-white ${isClipboardEmpty ? 'pointer-events-none text-neutralc-500' : ''}`}>
-        <a onClick={() => !isClipboardEmpty && pasteGraphElements(cyInstance)}><Icon path={mdiContentPaste} size={.8} /><span>Paste</span></a>
+        <button onClick={() => !isClipboardEmpty && pasteGraphElements(cyInstance)}>
+          <Icon path={mdiContentPaste} size={0.8} />
+          <span>Paste</span>
+        </button>
       </li>
 
       <div className="border-t border-neutralc-300 dark:border-neutralc-700 my-0" />
 
       <li className={`hover:bg-primary hover:text-white ${!diagramHasNodes ? 'pointer-events-none text-neutralc-500' : ''}`}>
-        <a onClick={() => diagramHasNodes && selectAll(cyInstance, setSelectionExists)}><Icon path={mdiSelectAll} size={.8} /><span>Select All</span></a>
+        <button onClick={() => diagramHasNodes && selectAll(cyInstance, setSelectionExists)}>
+          <Icon path={mdiSelectAll} size={0.8} />
+          <span>Select All</span>
+        </button>
       </li>
       <li className={`hover:bg-primary hover:text-white ${!diagramHasNodes ? 'pointer-events-none text-neutralc-500' : ''}`}>
-        <a onClick={() => diagramHasNodes && invertSelection(cyInstance, setSelectionExists)}><Icon path={mdiSelectInverse} size={.8} /><span>Invert Selection</span></a>
+        <button onClick={() => diagramHasNodes && invertSelection(cyInstance, setSelectionExists)}>
+          <Icon path={mdiSelectInverse} size={0.8} />
+          <span>Invert Selection</span>
+        </button>
       </li>
 
       <div className="border-t border-neutralc-300 dark:border-neutralc-700 my-0" />
-      <li className={`hover:bg-primary hover:text-white ${!diagramHasNodes || isSearchOpen ? 'pointer-events-none text-neutralc-500' : ''}`}>
-        <a onClick={() => !isSearchOpen && toggleSearchVisibility(isSearchOpen, setIsSearchOpen)}>
-          <Icon path={mdiLayersSearchOutline} size={.8} /><span>Find</span>
-        </a>
+      <li
+        className={`hover:bg-primary hover:text-white ${!diagramHasNodes || isSearchOpen ? 'pointer-events-none text-neutralc-500' : ''}`}
+      >
+        <button onClick={() => !isSearchOpen && toggleSearchVisibility(isSearchOpen, setIsSearchOpen)}>
+          <Icon path={mdiLayersSearchOutline} size={0.8} />
+          <span>Find</span>
+        </button>
       </li>
     </Dropdown>
   );
@@ -108,7 +126,11 @@ function copySelectedGraphElements(cy: cytoscape.Core | undefined) {
   }
 }
 
-function cutSelectedGraphElements(cy: cytoscape.Core | undefined, setSelectionExists: (v: boolean) => void, setIsPropertyPanelOpen: (v: boolean) => void) {
+function cutSelectedGraphElements(
+  cy: cytoscape.Core | undefined,
+  setSelectionExists: (v: boolean) => void,
+  setIsPropertyPanelOpen: (v: boolean) => void,
+) {
   if (cy !== undefined) {
     const selected = cy.$(':selected');
     graphCopy(cy);

@@ -1,10 +1,10 @@
-import { DataSourceType } from "../DataSourceType";
-import { CytoscapeNodeData } from "./CytoscapeNodeData";
+import { DataSourceType } from '../DataSourceType';
+import { CytoscapeNodeData } from './CytoscapeNodeData';
 
 export type CytoscapeNode = cytoscape.ElementDefinition & {
-    data: CytoscapeNodeData;
-    data_source?: DataSourceType;
-    style?: CSSStyleDeclaration;
-    saved?: boolean;
-    classes: string;
-}
+  data: CytoscapeNodeData;
+  data_source?: DataSourceType;
+  style?: CSSStyleDeclaration;
+  saved?: boolean;
+  classes: string;
+};

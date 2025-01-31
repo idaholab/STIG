@@ -7,28 +7,27 @@ import { useStigContext } from '@/contexts/StigContext';
 import { StixPropsContextProvider } from '@/contexts/StixPropsContext';
 import { ConnectedDBProvider } from '@/contexts/ConnectedDBContext';
 
-type Props = { children: any };
+type Props = { children: React.ReactNode };
 const MainScaffold: React.FC<Props> = ({ children }) => {
   const { isPropertyPanelOpen, panelWidth, setPanelWidth } = useStigContext();
   const [isResizing, setIsResizing] = useState(false);
 
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const handleMouseDown = () => {
     setIsResizing(true);
   };
 
-  const handleMouseMove = (e: MouseEvent) => {
-    if (isResizing) {
-      const containerWidth = window.innerWidth;
-      const newWidth = Math.max(300, containerWidth - e.clientX); // Calculate the new width based on the right edge of the panel
-      setPanelWidth(newWidth);
-    }
-  };
-
-  const handleMouseUp = () => {
-    setIsResizing(false);
-  };
-
   React.useEffect(() => {
+    const handleMouseUp = () => {
+      setIsResizing(false);
+    };
+    const handleMouseMove = (e: MouseEvent) => {
+      if (isResizing) {
+        const containerWidth = window.innerWidth;
+        const newWidth = Math.max(300, containerWidth - e.clientX); // Calculate the new width based on the right edge of the panel
+        setPanelWidth(newWidth);
+      }
+    };
+
     if (isResizing) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
@@ -41,7 +40,7 @@ const MainScaffold: React.FC<Props> = ({ children }) => {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isResizing]);
+  }, [isResizing, setPanelWidth]);
 
   return (
     <ThemeContextComponent>
@@ -51,9 +50,7 @@ const MainScaffold: React.FC<Props> = ({ children }) => {
             <Header />
             <div className="flex flex-1 h-full relative overflow-hidden">
               <Drawer />
-              <main className={`flex-1 h-full overflow-hidden`}>
-                {children}
-              </main>
+              <main className={`flex-1 h-full overflow-hidden`}>{children}</main>
 
               {isPropertyPanelOpen && (
                 <div
@@ -62,20 +59,22 @@ const MainScaffold: React.FC<Props> = ({ children }) => {
                 >
                   <StixPropsPanel />
                   {/* Handle */}
-                  <div id='PropertyPanelHandle'
+                  <button
+                    id="PropertyPanelHandle"
                     onMouseDown={handleMouseDown}
                     className="absolute left-0 top-0 h-full cursor-ew-resize flex items-center justify-center dark:bg-neutralc-700"
                     style={{ width: '8px', zIndex: 10 }}
+                    type='button'
                   >
                     <div className="w-1 h-8 bg-neutralc-500 dark:bg-neutralc-500 rounded-full hover:dark:bg-neutralc-400 hover:bg-neutralc-700"></div>
-                  </div>
+                  </button>
                 </div>
               )}
             </div>
           </div>
         </ConnectedDBProvider>
       </StixPropsContextProvider>
-    </ThemeContextComponent>
-  )
-}
+    </ThemeContextComponent >
+  );
+};
 export default MainScaffold;

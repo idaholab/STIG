@@ -4,22 +4,22 @@ import ButtonBasic from './ButtonBasic';
 
 type ButtonProps = {
   /**
-  * Routing base for button click
-  */
+   * Routing base for button click
+   */
   baseRoute?: string;
   /**
-  * Button link locations and labels for each button
-  */
+   * Button link locations and labels for each button
+   */
   actions: Array<{
     /**
-    * Button contents
-    */
+     * Button contents
+     */
     label: string;
     /**
-    * Button link
-    */
+     * Button link
+     */
     link: string;
-  }>
+  }>;
 };
 
 const ButtonLinkGroup: React.FC<ButtonProps> = ({ baseRoute, actions }) => {
@@ -33,7 +33,7 @@ const ButtonLinkGroup: React.FC<ButtonProps> = ({ baseRoute, actions }) => {
     if (isBaseRoute) {
       setSelectedButton(0);
     } else {
-      const index = actions.findIndex(action => action.link.split('/').pop() === currentPath);
+      const index = actions.findIndex((action) => action.link.split('/').pop() === currentPath);
       setSelectedButton(index !== -1 ? index : 0);
     }
   }, [location, currentPath, isBaseRoute, actions]);

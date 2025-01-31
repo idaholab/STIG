@@ -9,10 +9,9 @@ import { useStigContext } from '@/contexts/StigContext';
 
 const Drawer = () => {
   const { isDrawerOpen, setIsDrawerOpen } = useStigContext();
-  const [stencilFilterText, setStencilFilterText] = useState("");
+  const [stencilFilterText, setStencilFilterText] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   const [openAccordionSections] = useState<{ [key: string]: boolean }>({ sdo: true, sco: true, smo: true });
-
   const { dispatchEvent } = useContext(EventContext);
   const handleAddStencilNode = (label: string, type: string, imageUrl: string) => {
     const customEvent = new CustomEvent('addNode', { detail: { label, type, imageUrl } });
@@ -26,15 +25,10 @@ const Drawer = () => {
   }, [isDrawerOpen]);
 
   // Define an array of sections
-  const accordionSections = isDrawerOpen ? [
-    { type: 'sdo', title: "STIX Domain Objects (SDO)" },
-    { type: 'sco', title: "STIX Cyber-Observable Objects (SCO)" },
-    { type: 'smo', title: "STIX Meta Objects (SMO)" },
-  ] : [
-    { type: 'sdo', title: "SDO" },
-    { type: 'sco', title: "SCO" },
-    { type: 'smo', title: "SMO" },
-  ];
+  const accordionSections = isDrawerOpen
+    ? [{ type: 'sdo', title: 'STIX Domain Objects (SDO)' }, { type: 'sco', title: 'STIX Cyber-Observable Objects (SCO)' }, { type: 'smo', title: 'STIX Meta Objects (SMO)' },]
+    : [{ type: 'sdo', title: 'SDO' }, { type: 'sco', title: 'SCO' }, { type: 'smo', title: 'SMO' },
+    ];
 
   const [accordionContainerHeight, setAccordionContainerHeight] = useState<string>('0px');
 
@@ -58,55 +52,53 @@ const Drawer = () => {
 
   return (
     <aside style={{ width: '0px', overflow: 'visible', zIndex: 1 }}>
-      <div className={`flex bg-neutralc-300 dark:bg-neutralc-950 text-base-content transition-all max-w-[281px]`}
-        style={{ height: accordionContainerHeight, width: isDrawerOpen ? '281px' : '81px' }}
-      >
+      <div
+        className={`flex bg-neutralc-300 dark:bg-neutralc-950 text-base-content transition-all max-w-[281px]`}
+        style={{ height: accordionContainerHeight, width: isDrawerOpen ? '281px' : '81px' }}>
         <div className="flex flex-col justify-between  w-full h-full overflow-hidden relative">
           <div className={`mt-4 flex items-center ${isDrawerOpen ? 'justify-end' : 'justify-center'}`}>
             <button
               onClick={() => setIsDrawerOpen(!isDrawerOpen)}
               className="flex items-center justify-center w-12 h-12 rounded-lg hover:bg-neutralc-200 dark:hover:bg-neutralc-700 transition"
-              aria-label={isDrawerOpen ? "Collapse drawer" : "Expand drawer"}
-            >
+              aria-label={isDrawerOpen ? 'Collapse drawer' : 'Expand drawer'}>
               <Icon path={isDrawerOpen ? mdiMenuOpen : mdiMenu} size={1} />
             </button>
           </div>
           <div className="flex items-center justify-center mt-3 mb-6">
-            {isDrawerOpen ? <FormElementTextInput
-              placeholder='FILTER STENCILS'
-              value={stencilFilterText}
-              type="text"
-              onChange={event => setStencilFilterText(event.target.value)}
-              includeX
-              onX={() => setStencilFilterText('')}
-              additionalXClasses={`hover:dark:text-white`}
-              additionalInputClasses={`h-9`}
-              includeInfo={false}
-              className="w-full mx-4"
-              prefix={mdiFilter}
-              ref={inputRef}  // Attach ref here for filter bar focus
-              badgeText={stencilFilterText?.length > 0 ? 'Stencils are Filtered!' : undefined}
-            />
-              :
-              <button onClick={handleFilterIconClick} className="flex items-center justify-center w-12 h-12 rounded-lg hover:bg-neutralc-200 dark:hover:bg-neutralc-700 transition" aria-label="Expand drawer">
+            {isDrawerOpen ? (
+              <FormElementTextInput
+                placeholder="FILTER STENCILS"
+                value={stencilFilterText}
+                type="text"
+                onChange={(event) => setStencilFilterText(event.target.value)}
+                includeX
+                onX={() => setStencilFilterText('')}
+                additionalXClasses={`hover:dark:text-white`}
+                additionalInputClasses={`h-9`}
+                includeInfo={false}
+                className="w-full mx-4"
+                prefix={mdiFilter}
+                ref={inputRef} // Attach ref here for filter bar focus
+                badgeText={stencilFilterText?.length > 0 ? 'Stencils are Filtered!' : undefined} />
+            ) : (
+              <button
+                onClick={handleFilterIconClick}
+                className="flex items-center justify-center w-12 h-12 rounded-lg hover:bg-neutralc-200 dark:hover:bg-neutralc-700 transition"
+                aria-label="Expand drawer">
                 <Icon path={mdiFilter} size={1} />
               </button>
-            }
+            )}
           </div>
 
-          <div className="flex flex-col flex-grow h-full scrollbar mb-6" >
+          <div className="flex flex-col flex-grow h-full scrollbar mb-6">
             <ul className={`menu p-0 flex flex-col justify-start`}>
-              {accordionSections.map(section => (
+              {accordionSections.map((section) => (
                 <li className="flex" key={section.type}>
-                  <AccordionSection
-                    title={section.title}
-                    isOpen={openAccordionSections[section.type]}
-                  >
+                  <AccordionSection title={section.title} isOpen={openAccordionSections[section.type]}>
                     <StencilLibrary
                       type={section.type}
                       onAddNode={handleAddStencilNode}
                       searchText={stencilFilterText}
-                      isAccordionOpen={openAccordionSections[section.type]}
                       isPanelOpen={isDrawerOpen}
                     />
                   </AccordionSection>
@@ -122,7 +114,7 @@ const Drawer = () => {
           )}
         </div>
       </div>
-    </aside>)
+    </aside>
+  );
 };
-
 export default Drawer;

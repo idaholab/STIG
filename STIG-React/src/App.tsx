@@ -1,10 +1,10 @@
 import React from 'react';
-import MainScaffold from '../src/layouts/MainScaffold'
+import MainScaffold from '../src/layouts/MainScaffold';
 import { EventProvider } from './contexts/EventContext';
 
 type Props = {
-  children: any;
-}
+  children: React.ReactNode;
+};
 
 const App: React.FC<Props> = ({ children }) => {
   return (
@@ -14,6 +14,6 @@ const App: React.FC<Props> = ({ children }) => {
       </EventProvider>
     </div>
   );
-}
+};
 
 export default App;

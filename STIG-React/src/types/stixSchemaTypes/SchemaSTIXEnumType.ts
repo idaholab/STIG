@@ -8,5 +8,4 @@
 // "windows-registry-datatype-enum", "windows-service-start-type-enum",
 // "windows-service-type-enum", "windows-service-status-enum"
 // once they are referenced in schema.ts
-export type SchemaSTIXEnumType =
-  "encryption-algorithm-enum" | "extension-type-enum" | "opinion-enum";
+export type SchemaSTIXEnumType = 'encryption-algorithm-enum' | 'extension-type-enum' | 'opinion-enum';

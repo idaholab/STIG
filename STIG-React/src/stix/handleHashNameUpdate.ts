@@ -1,4 +1,4 @@
-import { StixObject } from "@/types/stixTypes/StixObject";
+import { StixObject } from '@/types/stixTypes/StixObject';
 
 export function handleHashNameUpdate(
   newHashName: string,
@@ -17,7 +17,7 @@ export function handleHashNameUpdate(
     tempSelectedSTIXObj[propName] = {};
     // Re-create the hashes property in order, replacing
     // the changed hash name with the selected value
-    Object.keys(selectedSTIXObject[propName]).map(tempHashAlgName => {
+    Object.keys(selectedSTIXObject[propName]).map((tempHashAlgName) => {
       if (tempHashAlgName !== oldHashName) {
         tempSelectedSTIXObj[propName][tempHashAlgName] = selectedSTIXObject[propName][tempHashAlgName];
       } else {

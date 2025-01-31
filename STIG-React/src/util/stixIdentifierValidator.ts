@@ -1,25 +1,22 @@
-import { stencilItems } from "@/components/elements/StencilItems";
+import { stencilItems } from '@/components/elements/StencilItems';
 
 // Per the STIX specs:
-// "All identifiers...MUST follow the form object-type--UUID, 
-// where object-type is the exact value (all type names are lowercase strings, by definition) 
-// from the type property of the object being identified or referenced 
+// "All identifiers...MUST follow the form object-type--UUID,
+// where object-type is the exact value (all type names are lowercase strings, by definition)
+// from the type property of the object being identified or referenced
 // and where the UUID MUST be an RFC 4122-compliant UUID"
 export function stixIdentifierValidator(identifier: string) {
   // Empty/blank ids are fine:
-  if(!identifier) {
+  if (!identifier) {
     return true;
   }
   // Check that identifier can be split into two parts, separated by "--":
-  const idParts = identifier.split("--");
-  if(idParts.length !== 2) {
+  const idParts = identifier.split('--');
+  if (idParts.length !== 2) {
     return false;
   }
   // Check that identifier starts with "object-type":
-  if(!(stencilItems.find(stencilItem => 
-    stencilItem.id === idParts[0]) ||
-    idParts[0] === "relationship")
-  ) {
+  if (!(stencilItems.find((stencilItem) => stencilItem.id === idParts[0]) || idParts[0] === 'relationship')) {
     return false;
   }
   // Check that identifier ends with an RFC 4122-compliant UUID:

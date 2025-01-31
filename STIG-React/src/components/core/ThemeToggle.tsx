@@ -20,9 +20,9 @@ const ThemeToggle: React.FC = () => {
   }, [theme]);
 
   return (
-    <label className="swap swap-rotate text-neutralc-300 hover:text-white" >
+    <label className="swap swap-rotate text-neutralc-300 hover:text-white">
       <input onClick={toggleTheme} type="checkbox" />
-      <Icon path={mdiThemeLightDark} size={1} title='Switch between light and dark themes' />
+      <Icon path={mdiThemeLightDark} size={1} title="Switch between light and dark themes" />
     </label>
   );
 };

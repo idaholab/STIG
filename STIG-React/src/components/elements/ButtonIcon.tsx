@@ -12,14 +12,22 @@ interface ButtonProps {
   disabled?: boolean;
   tabIndex?: number;
   onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-  onKeyDown?: (e: React.KeyboardEvent<HTMLButtonElement>) => void;
   additionalClasses?: string;
   iconSize?: number;
 }
 
 const ButtonIcon: React.FC<ButtonProps> = ({
-  buttonIcon, iconText, buttonSize, type, link,
-  title, disabled, tabIndex, onClick, onKeyDown, additionalClasses, iconSize = 1
+  buttonIcon,
+  iconText,
+  buttonSize,
+  type,
+  link,
+  title,
+  disabled,
+  tabIndex,
+  onClick,
+  additionalClasses,
+  iconSize = 1,
 }) => {
   // Define base classes
   const baseClasses = `btn btn-circle ${type} ${buttonSize} uppercase hover:opacity-100 border-transparent`;
@@ -29,13 +37,17 @@ const ButtonIcon: React.FC<ButtonProps> = ({
   const btnGhostLightModeClasses = type === 'btn-ghost' ? 'text-neutralc-500 hover:text-black ' : '';
 
   // Define conditional dark mode classes
-  const darkModeClasses = type === 'btn-neutralc' ? 'dark:border dark:border-solid dark:!border-neutralc-400 dark:text-neutralc-300 dark:hover:text-white' : '';
+  const darkModeClasses =
+    type === 'btn-neutralc'
+      ? 'dark:border dark:border-solid dark:!border-neutralc-400 dark:text-neutralc-300 dark:hover:text-white'
+      : '';
   const btnGhostDarkModeClasses = type === 'btn-ghost' ? 'dark:text-neutralc-300 dark:hover:text-white' : '';
 
-
-  const disabledClass = disabled ? (type === 'btn-ghost') ? 'cursor-not-allowed !text-neutralc-400 !bg-transparent dark:!text-neutralc-400 dark:!bg-transparent'
-    : 'cursor-not-allowed !text-neutralc-400 !bg-neutralc-300 dark:!text-neutralc-400 dark:!bg-neutralc-500' : '';
-
+  const disabledClass = disabled
+    ? type === 'btn-ghost'
+      ? 'cursor-not-allowed !text-neutralc-400 !bg-transparent dark:!text-neutralc-400 dark:!bg-transparent'
+      : 'cursor-not-allowed !text-neutralc-400 !bg-neutralc-300 dark:!text-neutralc-400 dark:!bg-neutralc-500'
+    : '';
 
   // Combine base classes and conditional classes
   const btnClass = `${baseClasses} ${lightModeClasses} ${darkModeClasses} ${btnGhostLightModeClasses} ${btnGhostDarkModeClasses} ${additionalClasses} ${disabledClass}`;

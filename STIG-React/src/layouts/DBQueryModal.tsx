@@ -7,76 +7,67 @@ import { DeleteCancelAlert } from '@/components/elements/DeleteCancelAlert';
 const DBQueryModal: React.FC = () => {
   const [queryWriterSelected, setQueryWriterSelected] = useState(true);
   const [inQueryDeleteProcess, setInQueryDeleteProcess] = useState(false);
-  const [queryToDeleteId, setQueryToDeleteId] = useState("");
+  const [queryToDeleteId, setQueryToDeleteId] = useState('');
 
   const deleteProfile = () => {
     removeDBQuery(queryToDeleteId);
-    setQueryToDeleteId("");
+    setQueryToDeleteId('');
     setInQueryDeleteProcess(false);
-  }
+  };
   const cancelDeleteProfile = () => {
     setInQueryDeleteProcess(false);
-  }
+  };
 
   return (
-    <div className='h-full relative'>
+    <div className="h-full relative">
       {/* Query Delete Confirmation Dialog: */}
-      {inQueryDeleteProcess ?
+      {inQueryDeleteProcess ? (
         <DeleteCancelAlert
-          displayMessage={
-            <span>Are you sure you wish to delete the saved query?</span>
-          }
+          displayMessage={<span>Are you sure you wish to delete the saved query?</span>}
           onDeleteClick={deleteProfile}
           onCancelClick={cancelDeleteProfile}
         />
-        : undefined
-      }
-      <div className='flex flex-nowrap justify-between h-full'>
+      ) : undefined}
+      <div className="flex flex-nowrap justify-between h-full">
         {/* Query Writer/History Selector: */}
         <QueryWriterHistorySelector
           inQueryDeleteProcess={inQueryDeleteProcess}
           queryWriterSelected={queryWriterSelected}
           setQueryWriterSelected={setQueryWriterSelected}
         />
-        {queryWriterSelected ?
+        {queryWriterSelected ? (
           // Custom Query Form:
           <FormCustomDBQuery />
-          :
+        ) : (
           // Query History Selector:
-          <DBQueryHistory
-            inQueryDeleteProcess={inQueryDeleteProcess}
-            setInQueryDeleteProcess={setInQueryDeleteProcess}
-          />
-        }
+          <DBQueryHistory inQueryDeleteProcess={inQueryDeleteProcess} setInQueryDeleteProcess={setInQueryDeleteProcess} />
+        )}
       </div>
     </div>
   );
 };
 
-function QueryWriterHistorySelector({ inQueryDeleteProcess, queryWriterSelected, setQueryWriterSelected }:
-  {
-    inQueryDeleteProcess: boolean,
-    queryWriterSelected: boolean,
-    setQueryWriterSelected: React.Dispatch<React.SetStateAction<boolean>>
-  }
-) {
-
-  const querySelectedClass = "bg-primary-700 hover:bg-primary text-neutralc-200 hover:text-white";
-  const defaultListClass = "bg-transparent hover:bg-primary hover:text-white";
+function QueryWriterHistorySelector({
+  inQueryDeleteProcess,
+  queryWriterSelected,
+  setQueryWriterSelected,
+}: {
+  inQueryDeleteProcess: boolean;
+  queryWriterSelected: boolean;
+  setQueryWriterSelected: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
+  const querySelectedClass = 'bg-primary-700 hover:bg-primary text-neutralc-200 hover:text-white';
+  const defaultListClass = 'bg-transparent hover:bg-primary hover:text-white';
 
   const getSelectedItemClassNames = (isCustom: boolean) => {
-    return (queryWriterSelected === isCustom)
-      ? querySelectedClass
-      : defaultListClass;
+    return queryWriterSelected === isCustom ? querySelectedClass : defaultListClass;
   };
 
   return (
-    <div className='rounded-md flex h-[452px] bg-neutralc-300 dark:bg-neutralc-800 p-2 basis-1/5'>
-      <ul
-        className="h-full flex flex-col flex-auto"
-      >
-        <li className={inQueryDeleteProcess ? "disabled" : ""}>
-          <a
+    <div className="rounded-md flex h-[452px] bg-neutralc-300 dark:bg-neutralc-800 p-2 basis-1/5">
+      <ul className="h-full flex flex-col flex-auto">
+        <li className={inQueryDeleteProcess ? 'disabled' : ''}>
+          <button
             className={getSelectedItemClassNames(true)}
             onClick={() => {
               if (!inQueryDeleteProcess) {
@@ -85,10 +76,10 @@ function QueryWriterHistorySelector({ inQueryDeleteProcess, queryWriterSelected,
             }}
           >
             Custom Query
-          </a>
+          </button>
         </li>
-        <li className={inQueryDeleteProcess ? "disabled" : ""}>
-          <a
+        <li className={inQueryDeleteProcess ? 'disabled' : ''}>
+          <button
             className={getSelectedItemClassNames(false)}
             onClick={() => {
               if (!inQueryDeleteProcess) {
@@ -97,7 +88,7 @@ function QueryWriterHistorySelector({ inQueryDeleteProcess, queryWriterSelected,
             }}
           >
             Query History
-          </a>
+          </button>
         </li>
       </ul>
     </div>

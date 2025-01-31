@@ -7,5 +7,7 @@ interface ThemeContextType {
 
 export const ThemeContextBlock = createContext<ThemeContextType>({
   theme: 'dark',
-  toggleTheme: () => { console.warn('toggleTheme was called without a ThemeContext.Provider'); },
+  toggleTheme: () => {
+    console.warn('toggleTheme was called without a ThemeContext.Provider');
+  },
 });

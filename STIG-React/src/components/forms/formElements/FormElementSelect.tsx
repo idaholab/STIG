@@ -15,12 +15,11 @@ type Props = {
   disabled?: boolean;
   includeInfo?: boolean;
   infoText?: string;
-  infoIcon?: string,
   additionalClasses?: string;
   additionalInfoClasses?: string;
-  property?: SchemaSTIXProperty,
-  showTypeSelector?: boolean,
-  onTypeChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void,
+  property?: SchemaSTIXProperty;
+  showTypeSelector?: boolean;
+  onTypeChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 };
 
 const FormElementSelect: React.FC<Props> = ({
@@ -33,7 +32,6 @@ const FormElementSelect: React.FC<Props> = ({
   disabled,
   includeInfo,
   infoText,
-  infoIcon,
   additionalClasses,
   additionalInfoClasses,
   property,
@@ -42,7 +40,7 @@ const FormElementSelect: React.FC<Props> = ({
 }) => {
   const [showInfo, setShowInfo] = useState(false);
   const toggleInfo = () => {
-    setShowInfo(prevShowInfo => !prevShowInfo);
+    setShowInfo((prevShowInfo) => !prevShowInfo);
   };
   const parentRef = useRef<HTMLDivElement>(null);
   return (
@@ -74,15 +72,10 @@ const FormElementSelect: React.FC<Props> = ({
         `}
           disabled={disabled}
         >
-          {placeholder !== undefined ?
-            <option disabled>{placeholder}</option>
-            : null
-          }
+          {placeholder !== undefined ? <option disabled>{placeholder}</option> : null}
 
           {options.map((option, i) => {
-            return (
-              <option key={i}>{option}</option>
-            )
+            return <option key={i}>{option}</option>;
           })}
         </select>
         <InfoButton
@@ -93,11 +86,16 @@ const FormElementSelect: React.FC<Props> = ({
           parentRef={parentRef}
         />
       </div>
-      {showInfo && includeInfo && infoText && infoText?.length > 0 &&
-        <AlertComponent alertText={infoText || ''} alertType={'info'} userClosable={false} className={'!mx-0 !my-1 !py-1 !px-2 text-xs'}></AlertComponent>
-      }
+      {showInfo && includeInfo && infoText && infoText?.length > 0 && (
+        <AlertComponent
+          alertText={infoText || ''}
+          alertType={'info'}
+          userClosable={false}
+          className={'!mx-0 !my-1 !py-1 !px-2 text-xs'}
+        ></AlertComponent>
+      )}
     </div>
   );
-}
+};
 
 export default FormElementSelect;

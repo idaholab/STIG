@@ -12,11 +12,8 @@ const __dirname = path.dirname(__filename);
 //const dirname = path.dirname(new URL(import.meta.url).pathname);
 
 export default defineConfig({
-
   base: '/stig',
-  plugins: [
-    react(),
-  ],
+  plugins: [react()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
@@ -26,10 +23,7 @@ export default defineConfig({
   },
   css: {
     postcss: {
-      plugins: [
-        tailwindcss(),
-        autoprefixer(),
-      ],
+      plugins: [tailwindcss(), autoprefixer()],
     },
   },
 });

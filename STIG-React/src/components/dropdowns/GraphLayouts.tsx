@@ -4,31 +4,31 @@ import { EventContext } from '@/contexts/EventContext';
 import { useStigContext } from '@/contexts/StigContext';
 
 export const graphLayoutList = [
-  { name: "default", display: '-Freeform / Manual-' },
-  { name: "breadthfirst", display: 'Breadth First' },
-  { name: "circle", display: 'Circle' },
-  { name: "concentric", display: 'Concentric' },
-  { name: "cose", display: 'Cose' },
-  { name: "cose_bilkent", display: 'Cose Bilkent' },
-  { name: "attack_timeline", display: 'Cyber Attack Timeline' },
-  { name: "dagre", display: 'Dagre' },
-  { name: "grid", display: 'Grid' },
-  { name: "klay", display: 'Klay' },
-  { name: "random", display: 'Random' },
-  { name: "spread", display: 'Spread' },
+  { name: 'default', display: '-Freeform / Manual-' },
+  { name: 'breadthfirst', display: 'Breadth First' },
+  { name: 'circle', display: 'Circle' },
+  { name: 'concentric', display: 'Concentric' },
+  { name: 'cose', display: 'Cose' },
+  { name: 'cose_bilkent', display: 'Cose Bilkent' },
+  { name: 'attack_timeline', display: 'Cyber Attack Timeline' },
+  { name: 'dagre', display: 'Dagre' },
+  { name: 'grid', display: 'Grid' },
+  { name: 'klay', display: 'Klay' },
+  { name: 'random', display: 'Random' },
+  { name: 'spread', display: 'Spread' },
 ];
 
 const GraphLayouts: React.FC = () => {
   const { dispatchEvent } = useContext(EventContext);
   const { storedLayout } = useStigContext();
-  const layout = graphLayoutList.find(layout => layout.name === storedLayout);
+  const layout = graphLayoutList.find((layout) => layout.name === storedLayout);
   const displayLayout = layout ? layout.display : 'Not Found';
 
   const handleLayoutChange = (layoutName: string) => {
     const layoutChangeEvent = new CustomEvent('changeLayout', {
       detail: {
-        layout: layoutName
-      }
+        layout: layoutName,
+      },
     });
     dispatchEvent('layoutSelect', { data: layoutChangeEvent });
   };
@@ -42,9 +42,7 @@ const GraphLayouts: React.FC = () => {
     >
       {graphLayoutList.map((layout) => (
         <li key={layout.name}>
-          <a onClick={() => handleLayoutChange(layout.name)}>
-            {layout.display}
-          </a>
+          <button onClick={() => handleLayoutChange(layout.name)}>{layout.display}</button>
         </li>
       ))}
     </Dropdown>

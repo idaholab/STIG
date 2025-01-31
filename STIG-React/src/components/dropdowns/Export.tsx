@@ -6,18 +6,15 @@ import { exportAll, exportAllwPositions, exportSelected } from '@/util/GraphUtil
 
 const Export: React.FC = () => {
   return (
-    <Dropdown
-      title="Export"
-      includeDropdownArrow
-    >
+    <Dropdown title="Export" includeDropdownArrow>
       <div className="hover:text-black hover:text-white dark:hover:bg-primary hover:bg-primary">
         <DialogBasic
           dialogId="ExportSelectedModal"
           title="Export Selected Elements to File"
-          buttonColor='btn-ghost'
+          buttonColor="btn-ghost"
           showFormButtons={false}
           buttonLabel="Selected"
-          additionalButtonClasses={"btn-sm justify-start w-[120px]"}
+          additionalButtonClasses={'btn-sm justify-start w-[120px]'}
         >
           <ExportModal exporter={exportSelected} />
         </DialogBasic>
@@ -27,10 +24,10 @@ const Export: React.FC = () => {
         <DialogBasic
           dialogId="ExportAllModal"
           title="Export All Elements to File"
-          buttonColor='btn-ghost'
+          buttonColor="btn-ghost"
           showFormButtons={false}
           buttonLabel="All"
-          additionalButtonClasses={"btn-sm justify-start w-[120px]"}
+          additionalButtonClasses={'btn-sm justify-start w-[120px]'}
         >
           <ExportModal exporter={exportAll} />
         </DialogBasic>
@@ -40,16 +37,15 @@ const Export: React.FC = () => {
         <DialogBasic
           dialogId="ExportAllwPositionsModal"
           title="Export All Elements with Positions to File"
-          buttonColor='btn-ghost'
+          buttonColor="btn-ghost"
           showFormButtons={false}
           buttonLabel="All w/Positions"
-          additionalButtonClasses={"btn-sm justify-start w-[120px]"}
+          additionalButtonClasses={'btn-sm justify-start w-[120px]'}
         >
           <ExportModal exporter={exportAllwPositions} />
         </DialogBasic>
       </div>
     </Dropdown>
-
   );
 };
 

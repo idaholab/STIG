@@ -3,7 +3,6 @@ import ButtonBasic from '../../elements/ButtonBasic.tsx';
 import InfoButton from '@/components/elements/InfoButton.tsx';
 import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty.ts';
 import STIXPropertyLabel from '@/components/elements/STIXPropertyLabel.tsx';
-import { useStixPropsContext } from '@/contexts/StixPropsContext.tsx';
 import AlertComponent from '@/components/elements/AlertComponent.tsx';
 
 type Props = {
@@ -21,8 +20,8 @@ type Props = {
   infoIcon?: string;
   infoText?: string;
   multiple?: boolean;
-  property?: SchemaSTIXProperty,
-  tooltip?: string
+  property?: SchemaSTIXProperty;
+  tooltip?: string;
 };
 
 const FormElementFileInput: React.FC<Props> = ({
@@ -41,9 +40,8 @@ const FormElementFileInput: React.FC<Props> = ({
   infoText,
   multiple,
   property,
-  tooltip
+  tooltip,
 }) => {
-
   const [filename, setFilename] = useState('');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -61,7 +59,11 @@ const FormElementFileInput: React.FC<Props> = ({
     if (fileData.length == 1) {
       setFilename(fileData[0].name);
     } else {
-      setFilename(Array.from(fileData).map(({ name }) => `"${name}"`).join(' '));
+      setFilename(
+        Array.from(fileData)
+          .map(({ name }) => `"${name}"`)
+          .join(' '),
+      );
     }
   };
 
@@ -74,7 +76,7 @@ const FormElementFileInput: React.FC<Props> = ({
         propName={property ? property?.name : label || ''}
         propertyType={property ? property.type : undefined}
         showTypeSelector={false}
-        additionalLabelClasses=''
+        additionalLabelClasses=""
       />
       <div ref={parentRef} className={`relative group flex items-center w-full`}>
         <input
@@ -110,17 +112,22 @@ const FormElementFileInput: React.FC<Props> = ({
         />
         <InfoButton
           visible={includeInfo}
-          toggleInfo={() => setShowInfo(prevShowInfo => !prevShowInfo)}
+          toggleInfo={() => setShowInfo((prevShowInfo) => !prevShowInfo)}
           additionalInfoClasses={`absolute top-0 right-0 ${additionalInfoClasses}`}
           additionalStyle={{ transform: 'translate(50%, -50%)' }}
           parentRef={parentRef}
           infoIcon={infoIcon}
-          iconSize={.7}
+          iconSize={0.7}
         />
       </div>
-      {showInfo && includeInfo && infoText && infoText?.length > 0 &&
-        <AlertComponent alertText={infoText || ''} alertType={'info'} userClosable={false} className={'!mx-0 !my-1 !py-1 !px-2 text-xs'}></AlertComponent>
-      }
+      {showInfo && includeInfo && infoText && infoText?.length > 0 && (
+        <AlertComponent
+          alertText={infoText || ''}
+          alertType={'info'}
+          userClosable={false}
+          className={'!mx-0 !my-1 !py-1 !px-2 text-xs'}
+        ></AlertComponent>
+      )}
     </div>
   );
 };

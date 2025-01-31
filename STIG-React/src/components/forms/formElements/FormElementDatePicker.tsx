@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
-import "flatpickr/dist/flatpickr.min.css";
-import Flatpickr from "react-flatpickr";
-import flatpickr from "flatpickr";
+import 'flatpickr/dist/flatpickr.min.css';
+import Flatpickr from 'react-flatpickr';
+import flatpickr from 'flatpickr';
 import InfoButton from '@/components/elements/InfoButton';
 import STIXPropertyLabel from '@/components/elements/STIXPropertyLabel';
 import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
@@ -18,7 +18,7 @@ type Props = {
   additionalInputClasses?: string;
   property?: SchemaSTIXProperty;
   showTypeSelector?: boolean;
-  onTypeChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void,
+  onTypeChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   label?: string;
 };
 
@@ -34,11 +34,11 @@ const FormElementDatePicker: React.FC<Props> = ({
   property,
   showTypeSelector,
   onTypeChange,
-  label
+  label,
 }) => {
   const [showInfo, setShowInfo] = useState(false);
   const toggleInfo = () => {
-    setShowInfo(prevShowInfo => !prevShowInfo);
+    setShowInfo((prevShowInfo) => !prevShowInfo);
   };
   const parentRef = useRef<HTMLDivElement>(null);
   return (
@@ -48,7 +48,7 @@ const FormElementDatePicker: React.FC<Props> = ({
         propertyType={property ? property.type : undefined}
         showTypeSelector={showTypeSelector}
         onTypeChange={onTypeChange}
-        additionalLabelClasses='mr-2'
+        additionalLabelClasses="mr-2"
       />
       <div ref={parentRef} className={`relative group flex items-center w-full border border-neutralc-500 rounded`}>
         <Flatpickr
@@ -56,7 +56,7 @@ const FormElementDatePicker: React.FC<Props> = ({
           data-enable-time
           options={{
             time_24hr: true,
-            dateFormat: "Z"
+            dateFormat: 'Z',
           }}
           value={value}
           onChange={onChange}
@@ -68,15 +68,19 @@ const FormElementDatePicker: React.FC<Props> = ({
           additionalStyle={{ transform: 'translate(50%, -50%)' }}
           parentRef={parentRef}
           infoIcon={infoIcon}
-          iconSize={.7}
+          iconSize={0.7}
         />
       </div>
-      {
-        showInfo && includeInfo && infoText && infoText?.length > 0 &&
-        <AlertComponent alertText={infoText || ''} alertType={'info'} userClosable={false} className={'!mx-0 !my-1 !py-1 !px-2 text-xs'}></AlertComponent>
-      }
+      {showInfo && includeInfo && infoText && infoText?.length > 0 && (
+        <AlertComponent
+          alertText={infoText || ''}
+          alertType={'info'}
+          userClosable={false}
+          className={'!mx-0 !my-1 !py-1 !px-2 text-xs'}
+        ></AlertComponent>
+      )}
     </div>
   );
-}
+};
 
 export default FormElementDatePicker;

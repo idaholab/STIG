@@ -1,5 +1,5 @@
-import { CytoscapeEmbedRelationshipData } from "./CytoscapeEmbedRelationshipData";
+import { CytoscapeEmbedRelationshipData } from './CytoscapeEmbedRelationshipData';
 
 export type CytoscapeEmbedRelationship = cytoscape.EdgeDefinition & {
-    data: CytoscapeEmbedRelationshipData;
-}
+  data: CytoscapeEmbedRelationshipData;
+};

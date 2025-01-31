@@ -9,14 +9,10 @@ const ThemeContextComponent: React.FC<Props> = ({ children }) => {
   const [theme, setTheme] = useState('dark');
 
   const toggleTheme = () => {
-    setTheme(currentTheme => currentTheme === 'dark' ? 'light' : 'dark');
+    setTheme((currentTheme) => (currentTheme === 'dark' ? 'light' : 'dark'));
   };
 
-  return (
-    <ThemeContextBlock.Provider value={{ theme, toggleTheme }}>
-      {children}
-    </ThemeContextBlock.Provider>
-  );
+  return <ThemeContextBlock.Provider value={{ theme, toggleTheme }}>{children}</ThemeContextBlock.Provider>;
 };
 
 export default ThemeContextComponent;

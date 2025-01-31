@@ -16,41 +16,68 @@ const Graph: React.FC = () => {
   const { dispatchEvent } = useContext(EventContext);
   let v_isVisible = React.useContext(visualEdge_isVisible);
   let r_isVisible = React.useContext(relationship_isVisible);
-  return <Dropdown
-    title="Graph"
-    includeDropdownArrow
-    additionalOptionClasses={'w-[220px] hover:text-black hover:text-white dark:hover:bg-primary hover:bg-primary '}
-  >
-    {/* 
+  return (
+    <Dropdown
+      title="Graph"
+      includeDropdownArrow
+      additionalOptionClasses={'w-[220px] hover:text-black hover:text-white dark:hover:bg-primary hover:bg-primary '}
+    >
+      {/* 
     <li className='hover:bg-primary hover:text-white'><a>Commit All Elements</a></li>
     <li className='hover:bg-primary hover:text-white'><a>Delete Selected from Database</a></li>
     <li className='hover:bg-primary hover:text-white'><a>Select All Elements</a></li>
     <li className='hover:bg-primary hover:text-white'><a>Invert Selection</a></li>*/}
-    <li><a onClick={() => {
-      r_isVisible = !r_isVisible;
-      toggleRelationships(cyInstance, r_isVisible);
-    }}>Toggle STIX Relationships</a></li>
-    <li><a onClick={() => {
-      v_isVisible = !v_isVisible;
-      toggleEmbeddedRelationships(cyInstance, v_isVisible);
-    }}>Toggle Embedded Relationships</a></li>
-    <li><a onClick={() => {
-      const clearGraphEvent = new CustomEvent('clearGraph');
-      dispatchEvent('clearGraphClickEvent', { data: clearGraphEvent });
-    }}>Clear Graph</a></li>
-
-  </Dropdown>;
+      <li>
+        <button
+          onClick={() => {
+            r_isVisible = !r_isVisible;
+            toggleRelationships(cyInstance, r_isVisible);
+          }}
+        >
+          Toggle STIX Relationships
+        </button>
+      </li>
+      <li>
+        <button
+          onClick={() => {
+            v_isVisible = !v_isVisible;
+            toggleEmbeddedRelationships(cyInstance, v_isVisible);
+          }}
+        >
+          Toggle Embedded Relationships
+        </button>
+      </li>
+      <li>
+        <button
+          onClick={() => {
+            const clearGraphEvent = new CustomEvent('clearGraph');
+            dispatchEvent('clearGraphClickEvent', { data: clearGraphEvent });
+          }}
+        >
+          Clear Graph
+        </button>
+      </li>
+    </Dropdown>
+  );
 };
 
 function toggleRelationships(cy: cytoscape.Core | undefined, makeVisible: boolean) {
-  if (cy == undefined) { return; }
-  let rels = cy.edges().filter((ele) => { return ele?.data('raw_data') != 'visual_edge'; });
-  makeVisible ? cy.viewUtilities(view_utils_options).show(rels) : cy.viewUtilities(view_utils_options).hide(rels)
+  if (cy == undefined) {
+    return;
+  }
+  const rels = cy.edges().filter((ele) => {
+    return ele?.data('raw_data') != 'visual_edge';
+  });
+  makeVisible ? cy.viewUtilities(view_utils_options).show(rels) : cy.viewUtilities(view_utils_options).hide(rels);
 }
 function toggleEmbeddedRelationships(cy: cytoscape.Core | undefined, makeVisible: boolean) {
-  if (cy == undefined) { return; }
+  if (cy == undefined) {
+    return;
+  }
   //find all visual edges (embedded relationships)
-  let embed_rels = cy.edges().filter((ele) => { return ele?.data('raw_data') == 'visual_edge'; });
+  const embed_rels = cy.edges().filter((ele) => {
+    return ele?.data('raw_data') == 'visual_edge';
+  });
   //toggle the embedded relationships, making them if necessary
   if (makeVisible) {
     cy.viewUtilities(view_utils_options).show(embed_rels);
@@ -60,14 +87,28 @@ function toggleEmbeddedRelationships(cy: cytoscape.Core | undefined, makeVisible
   }
 }
 
+function isWindowsRegistryKey(objType: string): boolean {
+  return objType === 'windows-registry-key';
+}
+
+function isProcess(objType: string): boolean {
+  return objType === 'process';
+}
+
 function makeEmbeddedRelationships(cy: cytoscape.Core) {
-  let nodes = cy.elements(':visible');
-  let to_add: ElementDefinition[] = [];
+  const nodes = cy.elements(':visible');
+  const to_add: ElementDefinition[] = [];
   nodes.each((ele) => {
     const obj = ele.data('raw_data');
-    if (obj === undefined) { return; }
-    if (obj.object_marking_refs !== undefined) { to_add.push(...add_visual_edge(cy, 'object_marking_refs', obj.object_marking_refs, obj.id)); }
-    if (obj.created_by_ref !== undefined) { to_add.push(...add_visual_edge(cy, 'created_by_ref', obj.created_by_ref, obj.id)); }
+    if (obj === undefined) {
+      return;
+    }
+    if (obj.object_marking_refs !== undefined) {
+      to_add.push(...add_visual_edge(cy, 'object_marking_refs', obj.object_marking_refs, obj.id));
+    }
+    if (obj.created_by_ref !== undefined) {
+      to_add.push(...add_visual_edge(cy, 'created_by_ref', obj.created_by_ref, obj.id));
+    }
     switch (obj.type) {
       case 'language-content':
         to_add.push(...add_visual_edge(cy, 'object_ref', obj.object_ref, obj.id));
@@ -77,7 +118,7 @@ function makeEmbeddedRelationships(cy: cytoscape.Core) {
       case 'grouping':
       case 'note':
       case 'observed-data':
-        to_add.push(...add_visual_edge(cy, "object_refs", obj.object_refs, obj.id));
+        to_add.push(...add_visual_edge(cy, 'object_refs', obj.object_refs, obj.id));
         break;
       case 'malware':
         to_add.push(...add_visual_edge(cy, 'operating_system_refs', obj.operating_system_refs, obj.id));
@@ -125,17 +166,18 @@ function makeEmbeddedRelationships(cy: cytoscape.Core) {
         to_add.push(...add_visual_edge(cy, 'encapsulates_refs', obj.encapsulates_refs, obj.id));
         to_add.push(...add_visual_edge(cy, 'encapsulated_by_ref', obj.encapsulated_by_ref, obj.id));
         break;
-      case 'process':
-        to_add.push(...add_visual_edge(cy, 'opened_connection_refs', obj.opened_connection_refs, obj.id));
-        to_add.push(...add_visual_edge(cy, 'image_ref', obj.image_ref, obj.id));
-        to_add.push(...add_visual_edge(cy, 'parent_ref', obj.parent_ref, obj.id));
-        to_add.push(...add_visual_edge(cy, 'child_refs', obj.child_refs, obj.id));
-      //NOTE: purposefully no break;
-      case 'windows-registry-key':
-        to_add.push(...add_visual_edge(cy, 'creator_user_ref', obj.creator_user_ref, obj.id));
-        break;
+      default:
+        if (isProcess(obj.type) || isWindowsRegistryKey(obj.type)) {
+          to_add.push(...add_visual_edge(cy, 'creator_user_ref', obj.creator_user_ref, obj.id));
+          if (isProcess(obj.type)) {
+            to_add.push(...add_visual_edge(cy, 'opened_connection_refs', obj.opened_connection_refs, obj.id));
+            to_add.push(...add_visual_edge(cy, 'image_ref', obj.image_ref, obj.id));
+            to_add.push(...add_visual_edge(cy, 'parent_ref', obj.parent_ref, obj.id));
+            to_add.push(...add_visual_edge(cy, 'child_refs', obj.child_refs, obj.id));
+          }
+        }
     }
-  })
+  });
   try {
     cy.add(to_add);
   } catch (err) {
@@ -143,14 +185,12 @@ function makeEmbeddedRelationships(cy: cytoscape.Core) {
   }
 }
 
-
 function add_visual_edge(cy: cytoscape.Core, label: string, field: string[] | string, objID: string) {
-  let visualEdgeElemDefs: ElementDefinition[] = [];
+  const visualEdgeElemDefs: ElementDefinition[] = [];
   if (field !== undefined) {
-
     const f_addVisualEdge = (refID: string) => {
       //NOTE: this ensures that the UUID of the visual_edge is repeatable
-      const salt: string[] = [refID, objID]
+      const salt: string[] = [refID, objID];
       const rel_id = uuidv5(JSON.stringify(salt), NAMESPACE);
 
       const opts: CytoscapeEmbedRelationship = {
@@ -160,17 +200,21 @@ function add_visual_edge(cy: cytoscape.Core, label: string, field: string[] | st
           target: refID,
           source: objID,
           label: label,
-        }
-      }
-      visualEdgeElemDefs.push(JSON.parse(JSON.stringify(opts)) as ElementDefinition)
+        },
+      };
+      visualEdgeElemDefs.push(JSON.parse(JSON.stringify(opts)) as ElementDefinition);
     };
 
-    if (typeof field == "string") {
+    if (typeof field == 'string') {
       //don't even try to add an edge if the target object doesn't exist
-      if (cy.$id(field).length == 1) { f_addVisualEdge(field); }
+      if (cy.$id(field).length == 1) {
+        f_addVisualEdge(field);
+      }
     } else {
       for (const ref_id of field) {
-        if (cy.$id(ref_id).length == 1) { f_addVisualEdge(ref_id); }
+        if (cy.$id(ref_id).length == 1) {
+          f_addVisualEdge(ref_id);
+        }
       }
     }
   }

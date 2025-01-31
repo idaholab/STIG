@@ -4,7 +4,7 @@ import { AppState } from '../types/types.ts';
 const initialState: AppState = {
   openDrawerLeft: false,
   openDrawerLeftWidth: 64,
-}
+};
 
 const appStateSlice = createSlice({
   name: 'appState',
@@ -15,7 +15,7 @@ const appStateSlice = createSlice({
     },
     setDrawerLeftWidth: (state, action: PayloadAction<number>) => {
       state.openDrawerLeftWidth = action.payload;
-    }
+    },
   },
 });
 

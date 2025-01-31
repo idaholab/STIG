@@ -1,3 +1,1 @@
-export type UIPropertyType = 
-  "string"  | "array"   | "boolean" |
-  "integer" | "object"  | "number";
+export type UIPropertyType = 'string' | 'array' | 'boolean' | 'integer' | 'object' | 'number';

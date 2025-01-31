@@ -32,7 +32,7 @@ export const NotificationContextProvider: React.FC<Props> = ({ children }) => {
   const addNotification = (text: string, type: AlertType, sym?: symbol) => {
     let obj: Notification | undefined;
     if (typeof sym === 'symbol') {
-      obj = globalNotifications.find(n => n.s === sym && n.type === type);
+      obj = globalNotifications.find((n) => n.s === sym && n.type === type);
       if (obj) {
         obj.text = text;
         obj.type = type;
@@ -41,7 +41,7 @@ export const NotificationContextProvider: React.FC<Props> = ({ children }) => {
       }
       obj = { text, type, s: sym };
     } else {
-      obj = {text, type, s: Symbol() };
+      obj = { text, type, s: Symbol() };
     }
 
     globalNotifications.push(obj);
@@ -50,16 +50,20 @@ export const NotificationContextProvider: React.FC<Props> = ({ children }) => {
     }
     setNotification(globalNotifications.slice());
     return obj.s;
-  }
+  };
 
   const removeNotification = (i: number) => {
-    setNotification(globalNotifications.toSpliced(i,1));
-  }
+    setNotification(globalNotifications.toSpliced(i, 1));
+  };
 
   return (
-    <NotificationContext.Provider value={{ 
-      notification, addNotification, removeNotification
-     }}>
+    <NotificationContext.Provider
+      value={{
+        notification,
+        addNotification,
+        removeNotification,
+      }}
+    >
       {children}
     </NotificationContext.Provider>
   );

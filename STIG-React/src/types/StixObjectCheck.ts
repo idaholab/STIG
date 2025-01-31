@@ -1,4 +1,4 @@
 export type StixObjectCheck = {
-    isValid: boolean,
-    invalidReason: string
-}
+  isValid: boolean;
+  invalidReason: string;
+};

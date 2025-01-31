@@ -1,4 +1,4 @@
-import { GranularMarking } from "./GranularMarking";
+import { GranularMarking } from './GranularMarking';
 
 // These are the properties common to all
 // SDOs, SROs, SCOs, and SMOs.
@@ -13,5 +13,6 @@ export type StixObject = {
   granular_markings?: GranularMarking[];
   // Provides for the properties not common to all
   // SDOs, SROs, SCOs, and SMOs
+  // eslint-disable-next-line
   [propertyName: string]: any;
-}
+};

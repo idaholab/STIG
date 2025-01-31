@@ -30,11 +30,12 @@ export const StixPropsContextProvider: React.FC<Props> = ({ children }) => {
   const [selectionExists, setSelectionExists] = useState<boolean>(false);
   const [nodesExist, setNodesExist] = useState<boolean>(false);
 
-  const setSelectedSTIXObject = (o: StixObject | undefined) =>
-    setSelectedSTIXObjectBase(o && setProps(o));
+  const setSelectedSTIXObject = (o: StixObject | undefined) => setSelectedSTIXObjectBase(o && setProps(o));
 
   return (
-    <StixPropsContext.Provider value={{ selectedSTIXObject, setSelectedSTIXObject, selectionExists, setSelectionExists, nodesExist, setNodesExist }}>
+    <StixPropsContext.Provider
+      value={{ selectedSTIXObject, setSelectedSTIXObject, selectionExists, setSelectionExists, nodesExist, setNodesExist }}
+    >
       {children}
     </StixPropsContext.Provider>
   );

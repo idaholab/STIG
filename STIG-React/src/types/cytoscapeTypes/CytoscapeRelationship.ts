@@ -1,6 +1,6 @@
-import { CytoscapeRelationshipData } from "./CytoscapeRelationshipData";
+import { CytoscapeRelationshipData } from './CytoscapeRelationshipData';
 
 export type CytoscapeRelationship = cytoscape.EdgeDefinition & {
-    data: CytoscapeRelationshipData;
-    saved?: boolean;
-}
+  data: CytoscapeRelationshipData;
+  saved?: boolean;
+};

@@ -4,88 +4,44 @@ Copyright 2018 Southern California Edison Company
 ALL RIGHTS RESERVED
  */
 
-import cytoscape, { Css, KlayOptions, LayoutOptions, PresetLayoutOptions, RandomLayoutOptions, SpreadLayoutOptions, StylesheetStyle } from 'cytoscape';
+import cytoscape, { KlayOptions, LayoutOptions, PresetLayoutOptions, RandomLayoutOptions, SpreadLayoutOptions } from 'cytoscape';
 import { IColaLayoutOptions } from './colaLayoutOptions';
 import { ViewUtilitiesOptions } from '@/types/cytoscapeTypes/ViewUtilitiesOptions';
-import { getCssRGBVarColor } from '@/util/GetCssVarColor';
-
-// export const generateEdgeHandlesStyle = (): StylesheetStyle[] => {
-//   const handleBackgroundColor = getCssRGBVarColor('--node-handle-color');
-//   const nodeEdgeHandleStyles: Css.Node = {
-//     'background-color': handleBackgroundColor,
-//     width: 12,
-//     height: 12,
-//     shape: 'roundrectangle',
-//     'overlay-opacity': 0,
-//     'border-width': 0,
-//     'border-opacity': 0,
-//   };
-//   return [{
-//     selector: '.eh-handle',
-//     style: nodeEdgeHandleStyles
-//   }];
-// };
-
-// export const updateEdgeHandlesStyle = (cy: cytoscape.Core) => {
-//   const handleStyle: StylesheetStyle | undefined = generateEdgeHandlesStyle().find(style => style.selector === '.eh-handle');
-//   if (handleStyle && handleStyle.style) {
-//     cy.style()
-//       .selector('.eh-handle')
-//       .style(handleStyle.style as Css.Node)
-//       .update();
-//   }
-// };
-
-
-
-
-
-
 
 export const compound_style: cytoscape.Stylesheet = {
   selector: ':parent',
   style: {
     shape: 'roundrectangle',
-    'background-color': '#FFFFFF'
-  }
+    'background-color': '#FFFFFF',
+  },
 };
-
 
 export const modified_unselect_style: cytoscape.Stylesheet = {
   selector: '.stix_node[!saved]',
   style: {
     'border-width': 2,
-    'text-background-opacity': 1
-  }
+    'text-background-opacity': 1,
+  },
 };
 
 export const modified_select_style: cytoscape.Stylesheet = {
   selector: ':selected[?saved_]',
   style: {
-    'border-width': 4
-  }
+    'border-width': 4,
+  },
 };
 
 export const view_utils_options: ViewUtilitiesOptions = {
   node: {
-    highlighted: {
-    },
-    unhighlighted: {
-    }
+    highlighted: {},
+    unhighlighted: {},
   },
   edge: {
-    highlighted: {
-    },
-    unhighlighted: {
-    }
+    highlighted: {},
+    unhighlighted: {},
   },
-  searchBy: ['name']
+  searchBy: ['name'],
 };
-
-
-
-
-
 
 export const cola_layout_options: IColaLayoutOptions = {
   name: 'cola',
@@ -105,12 +61,12 @@ export const cola_layout_options: IColaLayoutOptions = {
   randomize: false, // use random node positions at beginning of layout
   avoidOverlap: true, // if true, prevents overlap of node bounding boxes
   handleDisconnected: true, // if true, avoids disconnected components from overlapping
-  nodeSpacing: (_node) => {
+  nodeSpacing: () => {
     return 105;
   }, // extra spacing around nodes
   flow: {
     axis: 'x',
-    minSeparation: 30
+    minSeparation: 30,
   }, // use DAG/tree flow layout if specified, e.g. { axis: 'y', minSeparation: 30 }
   alignment: undefined, // relative alignment constraints on nodes, e.g. function( node ){ return { x: 0, y: 1 } }
 
@@ -126,7 +82,7 @@ export const cola_layout_options: IColaLayoutOptions = {
   allConstIter: undefined, // initial layout iterations with all constraints including non-overlap
 
   // infinite layout options
-  infinite: false // overrides all other options for a forces-all-the-time mode
+  infinite: false, // overrides all other options for a forces-all-the-time mode
 };
 
 export const cose_options: cytoscape.LayoutOptions & { animationThreshold: number } = {
@@ -157,13 +113,13 @@ export const cose_options: cytoscape.LayoutOptions & { animationThreshold: numbe
   // Extra spacing between components in non-compound graphs
   componentSpacing: 200,
   // Node repulsion (non overlapping) multiplier
-  nodeRepulsion: (_node) => 800000,
+  nodeRepulsion: () => 800000,
   // Node repulsion (overlapping) multiplier
   nodeOverlap: 10,
   // Ideal edge (non nested) length
-  idealEdgeLength: (_edge) => 200,
+  idealEdgeLength: () => 200,
   // Divisor to compute edge forces
-  edgeElasticity: (_edge) => 100,
+  edgeElasticity: () => 100,
   // Nesting factor (multiplier) to compute ideal edge length for nested edges
   nestingFactor: 5,
   // Gravity force (constant)
@@ -177,7 +133,7 @@ export const cose_options: cytoscape.LayoutOptions & { animationThreshold: numbe
   // Lower temperature threshold (below this point the layout will end)
   minTemp: 1.0,
   // Pass a reference to weaver to use threads for calculations
-  weaver: false
+  weaver: false,
 };
 
 export const cose_bilkent_options = {
@@ -223,7 +179,7 @@ export const cose_bilkent_options = {
   // Gravity range (constant)
   gravityRange: 3.8,
   // Initial cooling factor for incremental layout
-  initialEnergyOnIncremental: 0.8
+  initialEnergyOnIncremental: 0.8,
 };
 
 export const klay_options: KlayOptions = {
@@ -236,7 +192,7 @@ export const klay_options: KlayOptions = {
   animationEasing: undefined, // easing of animation if enabled
   ready: undefined, // callback on layoutready
   stop: undefined, // callback on layoutstop
-  priority: (_edge) => null, // Edges with a non-nil value are skipped when geedy edge cycle breaking is enabled
+  priority: () => null, // Edges with a non-nil value are skipped when geedy edge cycle breaking is enabled
   klay: {
     // following descriptions taken from http://layout.rtsys.informatik.uni-kiel.de:9444/Providedlayout.html?algorithm=de.cau.cs.kieler.klay.layered
     // for more info see https://github.com/OpenKieler/klayjs
@@ -280,8 +236,8 @@ export const klay_options: KlayOptions = {
     routeSelfLoopInside: false, // Whether a self-loop is routed around or inside its node.
     separateConnectedComponents: true, // Whether each connected component should be processed separately
     spacing: 100, // Overall setting for the minimal amount of space to be left between objects
-    thoroughness: 7 // How much effort should be spent to produce a nice layout..
-  }
+    thoroughness: 7, // How much effort should be spent to produce a nice layout..
+  },
 };
 
 export const spread_options: SpreadLayoutOptions = {
@@ -300,7 +256,7 @@ export const spread_options: SpreadLayoutOptions = {
   maxFruchtermanReingoldIterations: 5000, // Maximum number of initial force-directed iterations
   maxExpandIterations: 250, // Maximum number of expanding iterations
   boundingBox: undefined, // Constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
-  randomize: false // uses random initial node positions on true
+  randomize: false, // uses random initial node positions on true
 };
 
 export const random_options: RandomLayoutOptions = {
@@ -314,7 +270,7 @@ export const random_options: RandomLayoutOptions = {
   // animationEasing: 'linear', // easing of animation if enabled
   // animateFilter: (node, i) => { return true; }, // a function that determines whether the node should be animated.  All nodes animated by default on animate enabled.  Non-animated nodes are positioned immediately when the layout starts
   ready: undefined, // callback on layoutready
-  stop: undefined // callback on layoutstop
+  stop: undefined, // callback on layoutstop
   // transform: (node, position)=> { return position; } // transform a given node position. Useful for changing flow direction in discrete layouts
 };
 
@@ -330,6 +286,7 @@ export const grid_options: cytoscape.GridLayoutOptions = {
   condense: false, // uses all available space on false, uses minimal space on true
   rows: undefined, // force num of rows in the grid
   cols: undefined, // force num of columns in the grid
+  // eslint-disable-next-line
   position: (_node) => undefined as any, // returns { row, col } for element
   // sort: (a: cytoscape.SortableNode, b: cytoscape.SortableNode) {
   //     return (a as cytoscape.SingularElement).degree(false) - (b as cytoscape.SingularElement).degree(false);
@@ -337,7 +294,7 @@ export const grid_options: cytoscape.GridLayoutOptions = {
   animate: true, // whether to transition the node positions
   animationDuration: 1500, // duration of animation in ms if enabled
   ready: undefined, // callback on layoutready
-  stop: undefined // callback on layoutstop
+  stop: undefined, // callback on layoutstop
 };
 
 export const circle_options: cytoscape.CircleLayoutOptions = {
@@ -349,7 +306,7 @@ export const circle_options: cytoscape.CircleLayoutOptions = {
   nodeDimensionsIncludeLabels: true, // Excludes the label when calculating node bounding boxes for the layout algorithm
   spacingFactor: undefined, // Applies a multiplicative factor (>0) to expand or compress the overall area that the nodes take up
   radius: undefined, // the radius of the circle
-  startAngle: 3 / 2 * Math.PI, // where nodes start in radians
+  startAngle: (3 / 2) * Math.PI, // where nodes start in radians
   sweep: undefined, // how many radians should be between the first and last node (defaults to full circle)
   clockwise: true, // whether the layout should go clockwise (true) or counterclockwise/anticlockwise (false)
   // sort:  (a, _b) => {
@@ -358,14 +315,14 @@ export const circle_options: cytoscape.CircleLayoutOptions = {
   animate: true, // whether to transition the node positions
   animationDuration: 1500, // duration of animation in ms if enabled
   ready: undefined, // callback on layoutready
-  stop: undefined // callback on layoutstop
+  stop: undefined, // callback on layoutstop
 };
 
 export const concentric_options: cytoscape.ConcentricLayoutOptions = {
   name: 'concentric',
   fit: true, // whether to fit the viewport to the graph
   padding: 30, // the padding on fit
-  startAngle: 3 / 2 * Math.PI, // where nodes start in radians
+  startAngle: (3 / 2) * Math.PI, // where nodes start in radians
   sweep: undefined, // how many radians should be between the first and last node (defaults to full circle)
   clockwise: true, // whether the layout should go clockwise (true) or counterclockwise/anticlockwise (false)
   equidistant: false, // whether levels have an equal radial distance betwen them, may cause bounding box overflow
@@ -376,10 +333,12 @@ export const concentric_options: cytoscape.ConcentricLayoutOptions = {
   height: undefined, // height of layout area (overrides container height)
   width: undefined, // width of layout area (overrides container width)
   spacingFactor: undefined, // Applies a multiplicative factor (>0) to expand or compress the overall area that the nodes take up
-  concentric: (node) => { // returns numeric value for each node, placing higher nodes in levels towards the centre
+  concentric: (node) => {
+    // returns numeric value for each node, placing higher nodes in levels towards the centre
     return node.degree();
   },
-  levelWidth: (nodes) => { // the letiation of concentric values in each level
+  levelWidth: (nodes) => {
+    // the letiation of concentric values in each level
     // return nodes.maxDegree() / 6;
     return nodes.maxDegree() / 8;
   },
@@ -387,7 +346,7 @@ export const concentric_options: cytoscape.ConcentricLayoutOptions = {
   animationDuration: 2000, // duration of animation in ms if enabled
   animationEasing: undefined, // easing of animation if enabled
   ready: undefined, // callback on layoutready
-  stop: undefined // callback on layoutstop
+  stop: undefined, // callback on layoutstop
 };
 
 export const breadthfirst_options: cytoscape.BreadthFirstLayoutOptions = {
@@ -407,9 +366,10 @@ export const breadthfirst_options: cytoscape.BreadthFirstLayoutOptions = {
   // animationEasing: 'ease-in-out', // easing of animation if enabled,
   // animateFilter: function (node, i) { return true; }, // a function that determines whether the node should be animated.  All nodes animated by default on animate enabled.  Non-animated nodes are positioned immediately when the layout starts
   ready: undefined, // callback on layoutready
-  stop: undefined // callback on layoutstop
+  stop: undefined, // callback on layoutstop
 };
 
+// eslint-disable-next-line
 export const dagre_options: any = {
   name: 'dagre',
   // dagre algo options, uses default value on undefined
@@ -418,7 +378,9 @@ export const dagre_options: any = {
   rankSep: undefined, // the separation between adjacent nodes in the same rank
   rankDir: undefined, // 'TB' for top to bottom flow, 'LR' for left to right,
   ranker: 'network-simplex', // Type of algorithm to assign a rank to each node in the input graph. Possible values: 'network-simplex', 'tight-tree' or 'longest-path'
+  // eslint-disable-next-line
   minLen: (_edge: any) => 1, // number of ranks to keep between the source and target of the edge
+  // eslint-disable-next-line
   edgeWeight: (_edge: any) => 1, // higher weight edges are generally made shorter and straighter than lower weight edges
 
   // general layout options
@@ -427,31 +389,37 @@ export const dagre_options: any = {
   spacingFactor: undefined, // Applies a multiplicative factor (>0) to expand or compress the overall area that the nodes take up
   nodeDimensionsIncludeLabels: true, // whether labels should be included in determining the space used by a node (default true)
   animate: true, // whether to transition the node positions
+  // eslint-disable-next-line
   animateFilter: (_node: any, _i: any) => true, // whether to animate specific nodes when animation is on; non-animated nodes immediately go to their final positions
   animationDuration: 1500, // duration of animation in ms if enabled
   animationEasing: 'ease-in-out', // easing of animation if enabled
   boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+  // eslint-disable-next-line
   transform: (_node: any, pos: any) => pos, // a function that applies a transform to the final node position
   ready: () => { }, // on layoutready
-  stop: () => { } // on layoutstop
+  stop: () => { }, // on layoutstop
 };
 
+// eslint-disable-next-line
 export const euler_options: any = {
   name: 'euler',
 
   // The ideal length of a spring
   // - This acts as a hint for the edge length
   // - The edge length can be longer or shorter if the forces are set to extreme values
+  // eslint-disable-next-line
   springLength: (_edge: any) => 200,
 
   // Hooke's law coefficient
   // - The value ranges on [0, 1]
   // - Lower values give looser springs
   // - Higher values give tighter springs
+  // eslint-disable-next-line
   springCoeff: (_edge: any) => 0.0008,
 
   // The mass of the node in the physics simulation
   // - The mass affects the gravity node repulsion/attraction
+  // eslint-disable-next-line
   mass: (_node: any) => 4,
 
   // Coulomb's law coefficient
@@ -527,11 +495,11 @@ export const euler_options: any = {
   // Whether to randomize the initial positions of the nodes
   // true : Use random positions within the bounding box
   // false : Use the current node positions as the initial positions
-  randomize: false
+  randomize: false,
 };
 
 export const preset_options: PresetLayoutOptions = {
-  name: "preset",
+  name: 'preset',
   positions: undefined,
   zoom: undefined,
   // the pan level to set (prob want fit = false if set)
@@ -561,5 +529,3 @@ export const layouts: LayoutsType = {
   attack_timeline: preset_options,
   default: preset_options,
 };
-
-
