@@ -1,14 +1,28 @@
-# STIG - Structured Threat Intelligence Graph
+# Structured Threat Intelligence Graph (STIG)
 
-[![STIG Video](/images/stig_youtube.png)](https://youtube.com/watch?v=vMgb-yx7PVA)
+Structured Threat Intelligence Graph (STIG) is a tool for creating, editing, querying, analyzing and visualizing threat intelligence. It uses STIX version 2 as its data format. STIG uses a graph database (Neo4j) to store the data.
 
-<img align="right" width="260" src="/images/STIG_rev1.png"> Structured Threat Intelligence Graph (STIG) is a tool for creating, editing, querying, analyzing and visualizing threat intelligence. It uses STIX version 2 as its data format. STIG uses a graph database (Neo4j) to store the data.
 
-See the [STIG Innovation Sheet](18-179_STIG_Innovation_Sheet.pdf) for an overview.
+For more information on STIX, see the **[STIX 2.1 specification](https://oasis-open.github.io/cti-documentation/resources)**, the **[introduction](https://oasis-open.github.io/cti-documentation/stix/intro.html)**, and the **[walkthrough](https://oasis-open.github.io/cti-documentation/stix/walkthrough.html)**.
 
-The STIX version 2.1 specification can be found at **<https://oasis-open.github.io/cti-documentation/resources>**.
-An introduction and walk through of STIX can be found at **<https://oasis-open.github.io/cti-documentation/stix/intro.html>**, and **<https://oasis-open.github.io/cti-documentation/stix/walkthrough.html>**.
+**For installation and usage instructions, see our [documentation](https://stig.readthedocs.io/en/latest/).**
 
-## Repository Structure
-- The **STIG-Old** directory is where the codebase for the existing version of STIG is stored. See the README.md within that folder for instructions on how to run that project and for further information.
-- The **STIG-React** directory is where the codebase for the new version of STIG we are working on developing is stored. This is where we will make the majority of code changes as this project progresses. See the README.md within that folder for instructions on how to run that project.
+## Quickstart:
+STIG can be run from a docker container and built from source using npm.
+
+1) Clone this repository
+2) `cd` into this repository
+
+**Using Docker:**
+
+3) Install Docker and docker-compose
+4) Run `docker-compose up -d`
+
+**Or Using NPM:**
+
+3) Ensure you have Node.js and npm installed: https://nodejs.org/en/download/package-manager
+4) Run `npm i && npm run dev`
+
+**Finally:**
+
+5) Open http://localhost:5173/ in a web browser
