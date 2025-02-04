@@ -7,7 +7,7 @@ const Header: React.FC = () => {
   return (
     <div className="navbar bg-primary flex items-center justify-between px-7">
       <Link to="/" className="flex items-center logo-btn cursor-pointer">
-        <img src={import.meta.env.BASE_URL + '/CyOTE_logo_23-0807_nostars.svg'} alt="COREII logo" />
+        <img src={import.meta.env.BASE_URL + '/stig-logo-white.svg'} alt="Stig logo" />
         <span className="ml-4 text-xl text-white">STIG</span>
       </Link>
       <span className="flex gap-3">
