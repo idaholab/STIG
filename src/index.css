@@ -223,11 +223,9 @@ body,
   background-color: rgb(var(--color-primary-rgb-900));
   color: white;
 }
-
-
-.logo-btn{
-  height: 35px !important;
-  width: 35px !important;
+.logo-btn {
+  height: 40px !important;
+  width: 40px !important;
   min-height: unset !important;
 }
 
