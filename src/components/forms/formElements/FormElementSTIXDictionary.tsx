@@ -61,6 +61,9 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
   const { selectedSTIXObject, setSelectedSTIXObject, setSelectionExists } = useStixPropsContext();
 
   useEffect(() => {
+    if (!dictionary) {
+      return;
+    }
     if (!selectedSTIXObject) {
       setSelectedSTIXObject(dictionary);
       setSelectionExists(true);
@@ -72,11 +75,15 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
     );
   }, [dictionary]);
 
-  // Update the parent STIX object when its
-  // embedded map child changes
-  useEffect(() => {
-    setParentSTIXObject({ ...parentSTIXObject, [property?.name || '']: selectedSTIXObject } as StixObject);
-  }, [selectedSTIXObject]);
+  // NOTE: This useEffect was causing problems with extensions being added then immediately removed.
+  // Uncertain what 'Update the parent STIX object when its embedded map child changes' means??
+  // Commenting it out for now since there doesn't 'appear' to be a negative impact but commenting it 
+  // out fixes the issue with extensions.
+
+  // Update the parent STIX object when its embedded map child changes'
+  // useEffect(() => {
+  //   setParentSTIXObject({ ...parentSTIXObject, [property?.name || '']: selectedSTIXObject } as StixObject);
+  // }, [selectedSTIXObject]);
 
   const handlePropertyTypeChange = (
     propName: string,
@@ -195,7 +202,7 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
               parentDictionaryProps={localDictionaryProps}
               setParentDictionaryProps={setLocalDictionaryProps}
               parentSelectedProperties={localSelectedProperties}
-              setParentSelectedProperties={setLocalSelectedProperties}
+            // setParentSelectedProperties={setLocalSelectedProperties}
             />
           ))}
       </div>

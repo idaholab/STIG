@@ -35,7 +35,7 @@ const FormSTIXPropertySelection: React.FC<Props> = ({
 
   useEffect(() => {
     setButtonSize(size === 'standard' ? 'btn-sm' : 'btn-xs');
-    setButtonContainerSize(size === 'standard' ? 'w-[150px]' : 'w-[105px] h-[24px]');
+    setButtonContainerSize(size === 'standard' ? 'w-[150px]' : 'w-[105px] h-fit');
   }, [size]);
 
   const [filter, setFilter] = useState('');
@@ -44,7 +44,7 @@ const FormSTIXPropertySelection: React.FC<Props> = ({
     if (selectedProperties.length === 0) {
       setFilter('');
     }
-  }, [selectedProperties, setSelectedProperties]);
+  }, [selectedProperties]);
 
   return (
     <Dropdown

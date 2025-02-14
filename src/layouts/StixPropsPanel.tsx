@@ -95,14 +95,14 @@ const PropsPanelHeader: React.FC<GraphPanelProperties> = ({
 
     setStixTypeProps(properties);
     setStixTypeDesc(schemaObject);
-  }, [selectedSTIXObject?.id, selectedSTIXObject, setSelectedProperties, setStixTypeProps]);
+  }, [selectedSTIXObject?.id, selectedSTIXObject]);
 
 
   // When stixTypeProps gets set for the object or changes
   // when clicking on a different object, update the selectedProperties
   useEffect(() => {
     setSelectedProperties(stixTypeProps.filter((prop) => prop.mandatory || selectedSTIXObject?.[prop.name] != undefined));
-  }, [stixTypeProps, selectedSTIXObject, setSelectedProperties]);
+  }, [stixTypeProps, selectedSTIXObject]);
 
   function toggleJSONPropertyView() {
     const isShowingJson: boolean = !showJsonPanel;

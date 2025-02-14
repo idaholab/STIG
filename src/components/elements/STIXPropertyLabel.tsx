@@ -49,7 +49,7 @@ const STIXPropertyLabel = forwardRef<HTMLParagraphElement, Props>(
       <>
         {propName && (
           <div className="flex items-center mb-1" ref={parentRef}>
-            <p ref={ref} className={`${additionalLabelClasses}`}>
+            <p ref={ref} className={`${additionalLabelClasses ? additionalLabelClasses : 'mr-1'}`}>
               {propName}
             </p>
             {showTypeSelector && propertyType && onTypeChange ? (
