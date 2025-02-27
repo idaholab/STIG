@@ -48,6 +48,7 @@ const Dropdown: React.FC<DropdownProps> = ({
       {includeDropdownArrow && <Icon path={mdiMenuDown} size={iconSize} />}
     </div>
     <ul
+      tabIndex={0}
       className={`bg-neutralc-100 dark:bg-neutralc-950 border border-neutralc-300 dark:border-neutralc-700 rounded-[4px] dropdown-content menu z-10 p-2 absolute ${additionalOptionContainerClasses}`}>
       {React.Children.map(children, (child) => {
         if (React.isValidElement(child)) {
