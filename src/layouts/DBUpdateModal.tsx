@@ -19,13 +19,33 @@ function * formatDiff(diff: Delta) {
   const entries = Object.entries(diff) as [string, any[]][];
   entries.sort(([a],[b]) => a.localeCompare(b));
   for (const [key, val] of entries) {
-    switch(val.length) {
-      case 1: yield <div key={k++} style={insertStyle}>"{key}": {JSON.stringify(val[0])}</div>; continue;
-      case 2: yield <>
-        <div key={k++} style={deleteStyle}>"{key}": {JSON.stringify(val[0])}</div>
-        <div key={k++} style={insertStyle}>"{key}": {JSON.stringify(val[1])}</div>
-      </>; continue;
-      case 3: yield <div key={k++} style={deleteStyle}>"{key}": {JSON.stringify(val[0])}</div>; continue;
+    switch (val.length) {
+      case 1:
+        yield (
+          <div key={k++} style={insertStyle}>
+            "{key}": {JSON.stringify(val[0])}
+          </div>
+        );
+        continue;
+      case 2:
+        yield (
+          <>
+            <div key={k++} style={deleteStyle}>
+              "{key}": {JSON.stringify(val[0])}
+            </div>
+            <div key={k++} style={insertStyle}>
+              "{key}": {JSON.stringify(val[1])}
+            </div>
+          </>
+        );
+        continue;
+      case 3:
+        yield (
+          <div key={k++} style={deleteStyle}>
+            "{key}": {JSON.stringify(val[0])}
+          </div>
+        );
+        continue;
     }
   }
 }
