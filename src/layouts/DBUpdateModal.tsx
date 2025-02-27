@@ -23,7 +23,7 @@ function* formatDiff(diff: Delta) {
       case 1:
         yield (
           <div key={k++} style={insertStyle}>
-            &quot{key}&quot: {JSON.stringify(val[0])}
+            "{key}": {JSON.stringify(val[0])}
           </div>
         );
         continue;
@@ -31,10 +31,10 @@ function* formatDiff(diff: Delta) {
         yield (
           <>
             <div key={k++} style={deleteStyle}>
-              &quot{key}&quot: {JSON.stringify(val[0])}
+              "{key}": {JSON.stringify(val[0])}
             </div>
             <div key={k++} style={insertStyle}>
-              &quot{key}&quot: {JSON.stringify(val[1])}
+              "{key}": {JSON.stringify(val[1])}
             </div>
           </>
         );
@@ -42,7 +42,7 @@ function* formatDiff(diff: Delta) {
       case 3:
         yield (
           <div key={k++} style={deleteStyle}>
-            &quot{key}&quot: {JSON.stringify(val[0])}
+            "{key}": {JSON.stringify(val[0])}
           </div>
         );
         continue;
