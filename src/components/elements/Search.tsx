@@ -125,7 +125,9 @@ const SearchComponent: React.FC = () => {
     });
 
     if (eles.length) {
+      let eleCount = 0; //count up total matching elements for each property that was searched
       eles.forEach((ele) => {
+        eleCount += ele.length;
         if (ele.isEdge()) {
           selected = selected.add(ele.sources());
           selected = selected.add(ele.targets());
@@ -133,8 +135,7 @@ const SearchComponent: React.FC = () => {
         selected = selected.add(ele);
       });
       selected.select();
-
-      setSearchStatus(`Found ${eles.length} element${eles.length !== 1 ? 's' : ''}`);
+      setSearchStatus(`Found ${eleCount} element${eleCount !== 1 ? 's' : ''}`);
       cyInstance.animate({
         fit: {
           eles: cyInstance.elements(),
