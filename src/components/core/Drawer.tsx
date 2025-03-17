@@ -73,7 +73,7 @@ const Drawer = () => {
           </div>
           <div className="flex items-center justify-center mt-3 mb-6">
             {isDrawerOpen ? <FormElementTextInput
-              placeholder='FILTER STENCILS'
+              placeholder='FILTER STIX NODES'
               value={stencilFilterText}
               type="text"
               onChange={event => setStencilFilterText(event.target.value)}
