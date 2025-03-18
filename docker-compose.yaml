@@ -1,6 +1,6 @@
 version: "3.3"
 services:
-  stig-v3.0.0.alpha:
+  stig-v3.0.1:
     build:
       context: .
       dockerfile: Dockerfile
