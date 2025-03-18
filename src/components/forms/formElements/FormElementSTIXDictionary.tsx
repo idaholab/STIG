@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
-import ButtonSTIXJSON from '../../elements/ButtonSTIXJSON';
-import FormSTIXPropertySelection from '../FormSTIXPropertySelection';
-import { inferSTIXType } from '@/stix/inferSTIXType';
-import { useStixPropsContext } from '@/contexts/StixPropsContext';
-import { UIPropertyType } from '@/types/UIPropertyType';
-import { SchemaSTIXType } from '@/types/stixSchemaTypes/SchemaSTIXType';
-import FormElementSelect from './FormElementSelect';
-import { StixObject } from '@/types/stixTypes/StixObject';
-import { STIXPropertyRenderer } from '../STIXPropertyRenderer';
-import STIXPropertyLabel from '@/components/elements/STIXPropertyLabel';
-import { handlePropertyUpdate } from '@/stix/handlePropertyUpdate';
-import StixJSONView from '@/layouts/StixJSONView';
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { SchemaSTIXProperty } from "@/types/stixSchemaTypes/SchemaSTIXProperty";
+import ButtonSTIXJSON from "../../elements/ButtonSTIXJSON";
+import FormSTIXPropertySelection from "../FormSTIXPropertySelection";
+import { inferSTIXType } from "@/stix/inferSTIXType";
+import { useStixPropsContext } from "@/contexts/StixPropsContext";
+import { UIPropertyType } from "@/types/UIPropertyType";
+import { SchemaSTIXType } from "@/types/stixSchemaTypes/SchemaSTIXType";
+import FormElementSelect from "./FormElementSelect";
+import { StixObject } from "@/types/stixTypes/StixObject";
+import { STIXPropertyRenderer } from "../STIXPropertyRenderer";
+import STIXPropertyLabel from "@/components/elements/STIXPropertyLabel";
+import { handlePropertyUpdate } from "@/stix/handlePropertyUpdate";
+import StixJSONView from "@/layouts/StixJSONView";
 
 type Props = {
   dictionary: StixObject;
@@ -26,24 +26,23 @@ type Props = {
   showTypeSelector?: boolean;
 };
 
-const stixUIToSchemaTypeConverter: Record<string,SchemaSTIXType> = {
-  "string": "string",
-  "array": "list",
-  "boolean": "boolean",
-  "integer": "integer",
-  "object": "dictionary",
-  "number": "float"
+const stixUIToSchemaTypeConverter: Record<string, SchemaSTIXType> = {
+  string: "string",
+  array: "list",
+  boolean: "boolean",
+  integer: "integer",
+  object: "dictionary",
+  number: "float",
 };
 
-const typeToDefaultConverter: Record<string,any> = {
-  "string": "",
-  "array": [],
-  "boolean": false,
-  "integer": 0,
-  "object": {},
-  "number": 0,
+const typeToDefaultConverter: Record<string, any> = {
+  string: "",
+  array: [],
+  boolean: false,
+  integer: 0,
+  object: {},
+  number: 0,
 };
-
 
 const FormElementSTIXDictionary: React.FC<Props> = ({
   dictionary,
@@ -54,34 +53,70 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
   parentSelectedProperties,
   setParentSelectedProperties,
   property,
-  showTypeSelector
+  showTypeSelector,
 }) => {
   const [localSelectedProperties, setLocalSelectedProperties] = useState<SchemaSTIXProperty[]>([]);
   const [localDictionaryProps, setLocalDictionaryProps] = useState<SchemaSTIXProperty[]>([]);
   const { selectedSTIXObject, setSelectedSTIXObject, setSelectionExists } = useStixPropsContext();
+  const prevParentSTIXObject = useRef<StixObject | undefined>(undefined);
 
   useEffect(() => {
-    if (!dictionary){
+    if (!dictionary) {
       return;
     }
     if (!selectedSTIXObject) {
       setSelectedSTIXObject(dictionary);
       setSelectionExists(true);
     }
-    setLocalDictionaryProps(_ => dictionary ?
-      Object.keys(dictionary).map(key => ({ name: key, type: inferSTIXType(dictionary[key]) } as SchemaSTIXProperty))
-      : []
+    setLocalDictionaryProps((_) =>
+      dictionary ? Object.keys(dictionary).map((key) => ({ name: key, type: inferSTIXType(dictionary[key]) } as SchemaSTIXProperty)) : []
     );
   }, [dictionary]);
 
   // Update the parent STIX object when its
   // embedded map child changes
+  // useEffect(() => {
+  //   setParentSTIXObject({ ...parentSTIXObject, [property?.name || '']: selectedSTIXObject } as StixObject);
+  // }, [selectedSTIXObject]);
+
+  // CHANGES ********************************************************************************************************
+  // AUTO SELECT Properties
   useEffect(() => {
-    setParentSTIXObject({ ...parentSTIXObject, [property?.name || '']: selectedSTIXObject } as StixObject);
-  }, [selectedSTIXObject]);
+    if (JSON.stringify(prevParentSTIXObject.current) !== JSON.stringify(parentSTIXObject)) {
+      if (parentSTIXObject && selectedSTIXObject && property?.name) {
+        setLocalSelectedProperties(() =>
+          dictionary ? Object.keys(dictionary).map((key) => ({ name: key, type: inferSTIXType(dictionary[key]) } as SchemaSTIXProperty)) : []
+        );
+      }
+    }
+  }, [parentSTIXObject, selectedSTIXObject, property?.name]);
+
+  // FIX FOR LARGE IMPORTED DATASETS
+  const updateParentSTIXObject = useCallback(
+    (parent: StixObject | undefined, selected: StixObject | undefined, propName: string | undefined): StixObject | undefined => {
+      if (parent && selected) {
+        return { ...parent, [propName || ""]: selected };
+      }
+      return parent || undefined;
+    },
+    [setParentSTIXObject]
+  );
+
+  useEffect(() => {
+    if (parentSTIXObject && selectedSTIXObject && setParentSTIXObject) {
+      const updatedParent = updateParentSTIXObject(parentSTIXObject, selectedSTIXObject, property?.name);
+      if (JSON.stringify(prevParentSTIXObject.current) === JSON.stringify(parentSTIXObject)) {
+        if (JSON.stringify(updatedParent) !== JSON.stringify(parentSTIXObject)) {
+          setParentSTIXObject(updatedParent);
+        }
+      }
+      prevParentSTIXObject.current = parentSTIXObject;
+    }
+  }, [parentSTIXObject, selectedSTIXObject, property?.name, setParentSTIXObject]);
 
   const handlePropertyTypeChange = (
-    propName: string, newType: UIPropertyType,
+    propName: string,
+    newType: UIPropertyType,
     dictionaryProps?: SchemaSTIXProperty[],
     setDictionaryProps?: React.Dispatch<React.SetStateAction<SchemaSTIXProperty[]>>,
     selectedProperties?: SchemaSTIXProperty[],
@@ -102,12 +137,12 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
       setSelectedProperties = setLocalSelectedProperties;
     }
 
-    const dictionaryPropIndex = dictionaryProps.findIndex(prop => prop.name === propName);
+    const dictionaryPropIndex = dictionaryProps.findIndex((prop) => prop.name === propName);
     const oldType = dictionaryProps[dictionaryPropIndex].type;
     dictionaryProps[dictionaryPropIndex].type = stixUIToSchemaTypeConverter[newType];
     setDictionaryProps([...dictionaryProps]);
 
-    const selectedPropertiesIndex = selectedProperties.findIndex(prop => prop.name === propName);
+    const selectedPropertiesIndex = selectedProperties.findIndex((prop) => prop.name === propName);
     selectedProperties[selectedPropertiesIndex].type = stixUIToSchemaTypeConverter[newType];
     setSelectedProperties([...selectedProperties]);
 
@@ -127,20 +162,20 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
     <>
       <div className={`flex ${showTypeSelector ? "gap-2 items-center" : "flex-col"}`}>
         <STIXPropertyLabel
-          propName={property ? property?.name : ''}
+          propName={property ? property?.name : ""}
           propertyType={property ? property.type : undefined}
           showTypeSelector={showTypeSelector}
-          additionalLabelClasses='mr-2'
+          additionalLabelClasses="mr-2"
           includeInfo={!!property.propertyDescription && property.propertyDescription?.length > 0}
           infoText={property.propertyDescription}
         />
-        {showTypeSelector ?
+        {showTypeSelector ? (
           <FormElementSelect
             options={["array", "string", "integer", "boolean", "number", "object"]}
             value={"object"}
             onChange={(event) => {
               handlePropertyTypeChange(
-                property?.name || '',
+                property?.name || "",
                 event.target.value as UIPropertyType,
                 parentDictionaryProps,
                 setParentDictionaryProps,
@@ -148,44 +183,43 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
                 setParentSelectedProperties
               );
             }}
-            additionalClasses='select-xs dark:bg-neutralc-900 w-fit'
+            additionalClasses="select-xs dark:bg-neutralc-900 w-fit"
             includeInfo={false}
           />
-          : null
-        }
+        ) : null}
       </div>
-      <div className='flex gap-2 mb-2 items-center'>
-        <ButtonSTIXJSON size={'small'} type='btn-neutralc' showJson={showJsonPanel} setIsShowingJson={toggleJSONPropertyView} />
-        {!showJsonPanel ?
+      <div className="flex gap-2 mb-2 items-center">
+        <ButtonSTIXJSON size={"small"} type="btn-neutralc" showJson={showJsonPanel} setIsShowingJson={toggleJSONPropertyView} />
+        {!showJsonPanel ? (
           <FormSTIXPropertySelection
             propertyOptions={localDictionaryProps}
             setPropertyOptions={setLocalDictionaryProps}
             selectedProperties={localSelectedProperties}
             setSelectedProperties={setLocalSelectedProperties}
             includeAddNew
-            size={'small'}
-            onAdd={p => handlePropertyUpdate(typeToDefaultConverter[p.type], p.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists) }
+            size={"small"}
+            onAdd={(p) => handlePropertyUpdate(typeToDefaultConverter[p.type], p.name, selectedSTIXObject, setSelectedSTIXObject, setSelectionExists)}
           />
-          : null
-        }
+        ) : null}
       </div>
 
       <div className="ml-4">
-        {showJsonPanel && <StixJSONView rows={10} /> }
-        {!showJsonPanel && localSelectedProperties.map((selectedProperty, i) =>
-          <STIXPropertyRenderer
-            key={i}
-            property={selectedProperty}
-            showTypeSelector
-            onTypeChange={(event) => {
-              handlePropertyTypeChange(selectedProperty.name, event.target.value as UIPropertyType);
-            }}
-            parentDictionaryProps={localDictionaryProps}
-            setParentDictionaryProps={setLocalDictionaryProps}
-            parentSelectedProperties={localSelectedProperties}
-            setParentSelectedProperties={setLocalSelectedProperties}
-          />
-        )}
+        {showJsonPanel && <StixJSONView rows={10} />}
+        {!showJsonPanel &&
+          localSelectedProperties.map((selectedProperty, i) => (
+            <STIXPropertyRenderer
+              key={i}
+              property={selectedProperty}
+              showTypeSelector
+              onTypeChange={(event) => {
+                handlePropertyTypeChange(selectedProperty.name, event.target.value as UIPropertyType);
+              }}
+              parentDictionaryProps={localDictionaryProps}
+              setParentDictionaryProps={setLocalDictionaryProps}
+              parentSelectedProperties={localSelectedProperties}
+              setParentSelectedProperties={setLocalSelectedProperties}
+            />
+          ))}
       </div>
     </>
   );

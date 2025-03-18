@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import Dropdown from '@/components/core/Dropdown';
-import { SchemaSTIXProperty } from '@/types/stixSchemaTypes/SchemaSTIXProperty';
-import FormElementTextInput from './formElements/FormElementTextInput';
-import ButtonBasic from '../elements/ButtonBasic';
-import { mdiPlus } from '@mdi/js';
-import Icon from '@mdi/react';
+import React, { useEffect, useState } from "react";
+import Dropdown from "@/components/core/Dropdown";
+import { SchemaSTIXProperty } from "@/types/stixSchemaTypes/SchemaSTIXProperty";
+import FormElementTextInput from "./formElements/FormElementTextInput";
+import ButtonBasic from "../elements/ButtonBasic";
+import { mdiPlus } from "@mdi/js";
+import Icon from "@mdi/react";
 
 type Props = {
   propertyOptions: SchemaSTIXProperty[];
@@ -13,7 +13,7 @@ type Props = {
   setSelectedProperties: React.Dispatch<React.SetStateAction<SchemaSTIXProperty[]>>;
   includeAddNew?: boolean;
   label?: string;
-  size: 'standard' | 'small';
+  size: "standard" | "small";
   overrideIsCheckboxDisabled?: boolean;
   onAdd?: (p: SchemaSTIXProperty) => void;
 };
@@ -24,102 +24,109 @@ const FormSTIXPropertySelection: React.FC<Props> = ({
   selectedProperties,
   setSelectedProperties,
   includeAddNew,
-  label = 'Properties',
+  label = "Properties",
   size,
   overrideIsCheckboxDisabled = false,
   onAdd,
 }) => {
   const [newPropertyName, setNewPropertyName] = useState("");
-  const [buttonSize, setButtonSize] = useState<string>('');
-  const [buttonContainerSize, setButtonContainerSize] = useState<string>('');
+  const [buttonSize, setButtonSize] = useState<string>("");
+  const [buttonContainerSize, setButtonContainerSize] = useState<string>("");
 
   useEffect(() => {
-    setButtonSize((size === 'standard') ? 'btn-sm' : 'btn-xs');
-    setButtonContainerSize((size === 'standard') ? 'w-[150px]' : 'w-[105px] h-fit');
+    setButtonSize(size === "standard" ? "btn-sm" : "btn-xs");
+    setButtonContainerSize(size === "standard" ? "w-[150px]" : "w-[105px] h-fit");
   }, [size]);
 
-  const [filter, setFilter] = useState('');
+  const [filter, setFilter] = useState("");
 
   useEffect(() => {
     if (selectedProperties.length === 0) {
-      setFilter('');
+      setFilter("");
     }
   }, [selectedProperties, setSelectedProperties]);
 
-  return (<Dropdown
-    title={label}
-    filter={filter}
-    setFilter={setFilter}
-    includeDropdownArrow
-    additionalClasses={`flex items-center bg-white dark:bg-neutralc-950 border border-neutralc-900 dark:border-neutralc-500 rounded-md ${buttonContainerSize} w-max`}
-    additionalButtonClasses={`${buttonSize}`}
-  >
-    <div className="relative">
-      <div className={`max-h-60 overflow-y-scroll scrollbar w-60 ${includeAddNew ? 'mb-8' : ''} `}>
-        {propertyOptions?.filter(o => o.name.includes(filter)).toSorted((a, b) => a.name.localeCompare(b.name)).map((prop, i) =>
-          <label key={i} className="label cursor-pointer dark:text-neutralc-300 dark:hover:text-white dark:hover:bg-neutralc-800 text-neutralc-700 hover:text-black hover:bg-neutralc-200">
-            <span className="mr-2">{prop.name}</span>
-            <input
-              type="checkbox"
-              className="checkbox checkbox-primary hover:checkbox-neutralc"
-              checked={selectedProperties.find(selectedProperty => selectedProperty.name === prop.name) ? true : false}
-              disabled={prop.mandatory && !overrideIsCheckboxDisabled}
-              onChange={(event) => {
-                if (event.target.checked) {
-                  selectedProperties.push(prop);
-                  // Need this so that React recognizes the variable change and updates the checkbox
-                  setSelectedProperties(selectedProperties.toSorted((a, b) => a.name.localeCompare(b.name)));
-                } else {
-                  setSelectedProperties(selectedProperties.filter(p => p.name !== prop.name));
+  return (
+    <Dropdown
+      title={label}
+      filter={filter}
+      setFilter={setFilter}
+      includeDropdownArrow
+      additionalClasses={`flex items-center bg-white dark:bg-neutralc-950 border border-neutralc-900 dark:border-neutralc-500 rounded-md ${buttonContainerSize} w-fit`}
+      additionalButtonClasses={`${buttonSize}`}
+    >
+      <div className="relative">
+        <div className={`max-h-60 overflow-y-scroll scrollbar w-60 ${includeAddNew ? "mb-8" : ""} `}>
+          {propertyOptions
+            ?.filter((o) => o.name.includes(filter))
+            .toSorted((a, b) => a.name.localeCompare(b.name))
+            .map((prop, i) => (
+              <label
+                key={i}
+                className="label cursor-pointer dark:text-neutralc-300 dark:hover:text-white dark:hover:bg-neutralc-800 text-neutralc-700 hover:text-black hover:bg-neutralc-200"
+              >
+                <span className="mr-2">{prop.name}</span>
+                <input
+                  type="checkbox"
+                  className="checkbox checkbox-primary hover:checkbox-neutralc"
+                  checked={selectedProperties.find((selectedProperty) => selectedProperty.name === prop.name) ? true : false}
+                  disabled={prop.mandatory && !overrideIsCheckboxDisabled}
+                  onChange={(event) => {
+                    if (event.target.checked) {
+                      selectedProperties.push(prop);
+                      // Need this so that React recognizes the variable change and updates the checkbox
+                      setSelectedProperties(selectedProperties.toSorted((a, b) => a.name.localeCompare(b.name)));
+                    } else {
+                      setSelectedProperties(selectedProperties.filter((p) => p.name !== prop.name));
+                    }
+                  }}
+                />
+              </label>
+            ))}
+        </div>
+        <div className="absolute bottom-0 left-0 w-full px-2">
+          {includeAddNew && setPropertyOptions ? (
+            <div className="flex items-center gap-2">
+              <FormElementTextInput
+                type="text"
+                placeholder="Property name..."
+                value={newPropertyName}
+                onChange={(event) => {
+                  setNewPropertyName(event.target.value);
+                }}
+                additionalInputClasses="p-2 dark:placeholder:text-neutralc-100 placeholder:text-neutralc-900 dark:text-white text-black btn-xs"
+                includeInfo={false}
+              />
+              <ButtonBasic
+                label={
+                  <div className="flex items-center justify-between">
+                    <Icon path={mdiPlus} size={1} />
+                    <span>Add</span>
+                  </div>
                 }
-              }}
-            />
-          </label>
-        )}
+                type={"btn-primary"}
+                additionalClasses="btn-xs"
+                disabled={newPropertyName === undefined || newPropertyName === ""}
+                onClick={() => {
+                  // Can't add a property with no name
+                  if (!newPropertyName) return;
 
+                  const p: SchemaSTIXProperty = { name: newPropertyName, type: "string" };
+                  propertyOptions.push(p);
+                  selectedProperties.push(p);
+
+                  setPropertyOptions(propertyOptions.toSorted((a, b) => a.name.localeCompare(b.name)));
+                  setSelectedProperties(selectedProperties.toSorted((a, b) => a.name.localeCompare(b.name)));
+
+                  setNewPropertyName("");
+                  onAdd && onAdd(p);
+                }}
+              />
+            </div>
+          ) : null}
+        </div>
       </div>
-      <div className="absolute bottom-0 left-0 w-full px-2">
-        {includeAddNew && setPropertyOptions ?
-          <div className='flex items-center gap-2'>
-            <FormElementTextInput
-              type="text"
-              placeholder="Property name..."
-              value={newPropertyName}
-              onChange={(event) => { setNewPropertyName(event.target.value) }}
-              additionalInputClasses='p-2 dark:placeholder:text-neutralc-100 placeholder:text-neutralc-900 dark:text-white text-black btn-xs'
-              includeInfo={false}
-            />
-            <ButtonBasic
-              label={
-                <div className='flex items-center justify-between'>
-                  <Icon path={mdiPlus} size={1} />
-                  <span>Add</span>
-                </div>
-              }
-              type={'btn-primary'}
-              additionalClasses='btn-xs'
-              disabled={newPropertyName === undefined || newPropertyName === ''}
-              onClick={() => {
-                // Can't add a property with no name
-                if (!newPropertyName) return;
-
-                const p: SchemaSTIXProperty = { name: newPropertyName, type: "string" };
-                propertyOptions.push(p);
-                selectedProperties.push(p);
-
-                setPropertyOptions(propertyOptions.toSorted((a, b) => a.name.localeCompare(b.name)));
-                setSelectedProperties(selectedProperties.toSorted((a, b) => a.name.localeCompare(b.name)));
-
-                setNewPropertyName("");
-                onAdd && onAdd(p);
-              }}
-            />
-          </div>
-          : null
-        }
-      </div>
-    </div>
-  </Dropdown>
+    </Dropdown>
   );
 };
 
