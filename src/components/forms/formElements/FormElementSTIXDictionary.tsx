@@ -61,6 +61,9 @@ const FormElementSTIXDictionary: React.FC<Props> = ({
   const { selectedSTIXObject, setSelectedSTIXObject, setSelectionExists } = useStixPropsContext();
 
   useEffect(() => {
+    if (!dictionary){
+      return;
+    }
     if (!selectedSTIXObject) {
       setSelectedSTIXObject(dictionary);
       setSelectionExists(true);
