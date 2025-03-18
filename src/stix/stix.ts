@@ -75,7 +75,7 @@ export const createObjectMarkingRelationship = (
 
 export const getNodeLabel = (node: CytoscapeNodeData): string | undefined => {
   let nodelabel: string = '';
-  const labelorder = ['name', 'value', 'key', 'path', 'product', 'dst_port', 'command_line', 'labels', 'type', 'id'];
+  const labelorder = ['name', 'value', 'key', 'path', 'product', 'dst_port', 'command_line', 'display_name', 'user_id', 'account_login', 'labels', 'type', 'id'];
   for (const element of labelorder) {
     if (Object.prototype.hasOwnProperty.call(node, element)) {
       if (element === 'dst_port') {
@@ -86,6 +86,8 @@ export const getNodeLabel = (node: CytoscapeNodeData): string | undefined => {
       } else if (element === 'labels') {
         const nodeLabelslabel = (node?.labels && node?.labels?.length > 0) ? node.labels.join(', ') : '';
         nodelabel = `${nodeLabelslabel ? nodeLabelslabel : node[element]}`;
+      } else if (node[element] == "") {
+        continue; //skip this label if it is an empty string
       } else {
         nodelabel = node[element];
       }
