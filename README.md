@@ -5,7 +5,7 @@ Structured Threat Intelligence Graph (STIG) is a tool for creating, editing, que
 
 For more information on STIX, see the **[STIX 2.1 specification](https://oasis-open.github.io/cti-documentation/resources)**, the **[introduction](https://oasis-open.github.io/cti-documentation/stix/intro.html)**, and the **[walkthrough](https://oasis-open.github.io/cti-documentation/stix/walkthrough.html)**.
 
-**For installation and usage instructions, see our [documentation](https://stig.readthedocs.io/en/latest/).**
+**For installation and usage instructions, see our [documentation](https://stig.readthedocs.io/en/v3.0.1/).**
 
 ## Quickstart:
 STIG can be run from a docker container and built from source using npm.
