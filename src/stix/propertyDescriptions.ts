@@ -8,7 +8,7 @@ export const propertyDescriptions: SchemaSTIXPropertyDescription[] = [
             type: "The type property identifies the type of STIX Object (SDO, Relationship Object, etc). The value of the type field MUST be one of the types defined by a STIX Object (e.g., indicator).",
             spec_version: "The version of the STIX specification used to represent this object.",
             id: "The id property universally and uniquely identifies this object.",
-            created_by_ref: "The ID of the Source object that describes who created this object.",
+            created_by_ref: "The created_by_ref property specifies the id property of the identity object that describes the entity that created this object.",
             labels: "The labels property specifies a set of terms used to describe this object.",
             created: "The created property represents the time at which the first version of this object was created. The timstamp value MUST be precise to the nearest millisecond.",
             modified: "The modified property represents the time that this particular version of the object was modified. The timstamp value MUST be precise to the nearest millisecond.",
