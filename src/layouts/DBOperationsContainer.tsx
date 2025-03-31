@@ -50,10 +50,17 @@ const DBOperationsContainer: React.FC = () => {
         const stix_nodes: StixObject[] = nodes.map(cycore2stix).filter(s => s !== undefined);
         const stix_edges = edges.map(cycore2stix).filter(s => s !== undefined) as StixRelationshipObject[];
         (async () => {
-            const { nodes, edges, errors } = await commit(stix_nodes, stix_edges);
+            const { nodes, edges, errors, invalIds} = await commit(stix_nodes, stix_edges);
             const toastType: AlertType = errors === 0 ? "success" : "error";
-            const message = errors === 0 ? `Submitted ${nodes}/${stix_nodes.length} node(s) and ${edges}/${stix_edges.length} edge(s)` : `An error occurred while saving to the database`;
+            const message = errors === 0 ? `Submitted ${nodes}/${stix_nodes.length} node(s) and ${edges}/${stix_edges.length} edge(s)` : `${errors} error(s) occurred while saving to the database`;
             addNotification(message, toastType);
+            if (invalIds !== undefined && invalIds.length>0){
+                let mesg = "The following STIX objects were invalid: "
+                invalIds.forEach(objID => {
+                    mesg+="\n"+objID
+                });
+                addNotification(mesg, "error")
+            }
         })();
     }
 

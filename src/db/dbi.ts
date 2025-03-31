@@ -15,7 +15,7 @@ export abstract class StigDB {
   abstract traverseNodeIn(id: string): Promise<StixObject[]>;
   abstract traverseNodeOut(id: string): Promise<StixObject[]>;
   abstract getDiff(nodes: StixObject[], edges: StixRelationshipObject[]): Promise<[StixObject, Delta][]>;
-  abstract updateDB(stix_nodes: StixObject[], stix_edges: StixRelationshipObject[]): Promise<{ nodes: number; edges: number; errors: number; }> ;
+  abstract updateDB(stix_nodes: StixObject[], stix_edges: StixRelationshipObject[]): Promise<{ nodes: number; edges: number; errors: number; invalIds:string[]|undefined}> ;
   abstract executeQuery(query: string): Promise<StixObject[]>;
   abstract close(): void;
   abstract is_closed(): boolean;

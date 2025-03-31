@@ -38,19 +38,25 @@ export async function use_db(config: DBProfile) {
   }
 }
 
-export async function commit(nodes: StixObject[], edges: StixRelationshipObject[]): (Promise<{ nodes: number; edges: number; errors: number; }>) {
+export async function commit(nodes: StixObject[], edges: StixRelationshipObject[]): (Promise<{ nodes: number; edges: number; errors: number; invalIds:string[]|undefined;}>) {
   let filteredNodes = [];
   let filteredEdges = [];
   try {
-    if (!nodes.every(checkProps) || !edges.every(checkProps)) throw new Error('Invalid stix');
+    // if (!nodes.every(checkProps) || !edges.every(checkProps)) throw new Error('Invalid stix');
+    let invalIds:string[] = [];
+    nodes.forEach(n=>{if (!checkProps(n)){invalIds.push(n.id);}})
+    edges.forEach(e=>{if (!checkProps(e)){invalIds.push(e.id);}})
+    if (invalIds.length > 0){
+      return { nodes: 0, edges: 0, errors: invalIds.length, invalIds: invalIds };
+    }
     filteredNodes = nodes;//.filter(checkProps);
     filteredEdges = edges;//.filter(checkProps);
   } catch (error) {
     console.error(error);
-    return { nodes: 0, edges: 0, errors: 1 };
+    return { nodes: 0, edges: 0, errors: 1, invalIds: undefined };
   }
   const pair: [StixObject[], StixRelationshipObject[]] = [filteredNodes, filteredEdges];
-  return wrapReturn(pair, () => ({ nodes: 0, edges: 0, errors: 0 }), ([n, e]) => currentDB.updateDB(n, e));
+  return wrapReturn(pair, () => ({ nodes: 0, edges: 0, errors: 0, invalIds: undefined }), ([n, e]) => currentDB.updateDB(n, e));
 }
 
 export function db_delete(stix: StixObject[]) {

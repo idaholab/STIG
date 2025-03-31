@@ -198,7 +198,7 @@ export class Neo4jStigDB implements StigDB {
    * @returns  Promise<string>
    * @memberof StigDB
    */
-  public updateDB(stix_nodes: StixObject[], stix_edges: StixRelationshipObject[]): Promise<{ nodes: number; edges: number; errors: number; }> {
+  public updateDB(stix_nodes: StixObject[], stix_edges: StixRelationshipObject[]): Promise<{ nodes: number; edges: number; errors: number; invalIds: string[]|undefined}> {
     const time = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
     const node_params = stix_nodes.map(stix => {
       const stixCoreType = stencilItems.find(stencilItem => stencilItem.id === stix.type)?.type;
@@ -239,7 +239,7 @@ export class Neo4jStigDB implements StigDB {
     return this.wrapSession(async (s: Session) => {
       const nodes = node_params.length === 0 ? 0 : await s.executeWrite(dbWrite(set_node_query, node_params));
       const edges = edge_params.length === 0 ? 0 : await s.executeWrite(dbWrite(set_rel_query, edge_params));
-      return { nodes, edges, errors: stix_edges.length + stix_nodes.length - nodes - edges };
+      return { nodes, edges, errors: stix_edges.length + stix_nodes.length - nodes - edges, invalIds:undefined};
     });
   }
 
