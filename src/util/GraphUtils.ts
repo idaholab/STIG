@@ -518,20 +518,22 @@ async function queryInOut(
     }
 }
 export const runGraphLayout = (layoutType: keyof LayoutsType, cyInstance: cytoscape.Core) => {
-    const orphans = cyInstance?.elements(':orphan').filter(':childless');
-    const layout = orphans?.layout(layouts[layoutType]);
+    const stop = () => {
+        cyInstance.animate({ zoom: { level: cyInstance.zoom()-0.25, renderedPosition: { x: cyInstance.width() / 2, y : cyInstance.height() / 2 } } });
+    }
     if (layoutType === 'attack_timeline') {
         layoutByTimeframe(cyInstance);
         // Run the preset layout
-        cyInstance.layout({ name: 'preset' }).run();
+        cyInstance.layout({ name: 'preset', stop }).run();
         saveLayoutToLocalStorage(layoutType);
     }
     else if (layoutType === 'default') {
-        cyInstance.layout({ name: 'preset' }).run();
+        cyInstance.layout({ name: 'preset', stop }).run();
         saveLayoutToLocalStorage(layoutType);
     }
     else {
-        layout?.run();
+        const orphans = cyInstance?.elements(':orphan').filter(':childless');
+        orphans?.layout({ ...layouts[layoutType], stop }).run();
     }
     saveLayoutToLocalStorage(layoutType);
 }
