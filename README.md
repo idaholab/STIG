@@ -1,4 +1,7 @@
 # STIG – Structured Threat Intelligence Graph
+### Attention: STIG Version 3 is currently in user testing!
+Try out the [stig-v3 branch](https://github.com/idaholab/STIG/tree/stig-v3) or go to our releases page and download the [newest STIG-v3 release](https://github.com/idaholab/STIG/releases/tag/v3.0.1).<br>
+We encourage user feedback through the [issues page](https://github.com/idaholab/STIG/issues). Please add the label `stig-v3` to any issues related to STIG version 3.
 
 [![STIG Video](/images/stig_youtube.png)](https://youtube.com/watch?v=vMgb-yx7PVA)
 
