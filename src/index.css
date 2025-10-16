@@ -1,0 +1,593 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@layer base {
+  :root {
+    --color-white-rgb: 255 255 255;
+    --color-black-rgb: 0 0 0;
+
+    /* 50: #f2f7fd; */
+      --color-primary-rgb-50: 242 247 253;
+      /* 100: #e5eef9; */
+      --color-primary-rgb-100: 229 238 249;
+      /* 200: #c4dcf3; */
+      --color-primary-rgb-200: 196 220 243;
+      /* 300: #90c0e9; */
+      --color-primary-rgb-300: 144 192 233;
+      /* 400: #559fdb; */
+      --color-primary-rgb-400: 85 159 219;
+      /* Primary main 500: #2c7aba;*/
+      --color-primary-rgb-500: 44 122 186;
+      /* 600: #2067a9; */
+      --color-primary-rgb-600: 32 103 169;
+      /* 700: #1b5389; */
+      --color-primary-rgb-700: 27 83 137;
+      /* 800: #1a4772; */
+      --color-primary-rgb-800: 26 71 114;
+      /* 900: #1b3c5f; */
+      --color-primary-rgb-900: 27 60 95;
+      /* 950: #12273f; */
+      --color-primary-rgb-950: 18 39 63;
+      /* 1000: #09121F; */
+      --color-primary-rgb-1000: 9 18 31;
+
+      /* Info #2c7aba; */
+      --color-info-rgb: var(--color-primary-rgb-500);
+      /* Info Light #e5eef9 */
+      --color-info-light-rgb: var(--color-primary-rgb-200);
+      /* Info Dark #1a4772 */
+      --color-info-dark-rgb: var(--color-primary-rgb-800);
+
+      /* Error #dc2626; */
+      --color-error-rgb: 220 38 38;
+      /* Error Light #fecaca */
+      --color-error-light-rgb: 254 202 202;
+      /* Error Dark #7f1d1d */
+      --color-error-dark-rgb: 127 29 29;
+    
+      /* Success #22c55e */
+      --color-success-rgb: 34 197 94;
+      /* Success Light #dcfce7 */
+      --color-success-light-rgb: 220 252 231;
+      /* Success Dark #166534 */
+      --color-success-dark-rgb: 22 101 52;
+    
+      /* Warning #f97316 */
+      --color-warning-rgb: 249 115 22;
+      /* Warning Light #fed7aa */
+      --color-warning-light-rgb: 254 215 170;
+      /* Warning Dark: #c24a0c */
+      --color-warning-dark-rgb: 194 74 12;
+
+      /* Neutral Colors Light (tailwind slate) */
+      /* Neutral 50: #f8fafc */
+      --color-neutral-rgb-50: 248 250 252;
+      /* Neutral 75: #f5f8fb */
+      --color-neutral-rgb-75: 245 248 251;
+      /* Neutral 100: #f1f5f9 */
+      --color-neutral-rgb-100: 241 245 249;
+      /* Neutral 150: #dee5ed */
+      --color-neutral-rgb-150: 222 229 237;
+      /* Neutral 200: #e2e8f0 */
+      --color-neutral-rgb-200: 226 232 240;
+      /* Neutral 300: #cbd5e1 */
+      --color-neutral-rgb-300: 203 213 225;
+      /* Neutral 400: #94a3b8 */
+      --color-neutral-rgb-400: 148 163 184;
+      /* Neutral 500: #64748b */
+      --color-neutral-rgb-500: 100 116 139;
+      /* Neutral 600: #475569 */
+      --color-neutral-rgb-600: 71 85 105;
+      /* Neutral 700: #334155 */
+      --color-neutral-rgb-700: 51 65 85;
+      /* Neutral 800: #1e293b */
+      --color-neutral-rgb-800: 30 41 59;
+      /* Neutral 900: #0f172a */
+      --color-neutral-rgb-900: 15 23 42;
+      /* Neutral 925: #080f21 */
+      --color-neutral-rgb-925: 8 15 33;
+      /* Neutral 950: #020617 */
+      --color-neutral-rgb-950: 2 6 23;
+      /* Neutral 1000: #00000b */
+      --color-neutral-rgb-1000: 0 0 11;
+
+      /* Selected #a68b02 */
+      --color-selected-rgb: var(--color-warning-rgb);
+
+    --node-text-color: var(--color-neutral-rgb-800);
+    --edge-text-color: var(--color-neutral-rgb-800);
+    --edge-target-arrow-color: var(--color-neutral-rgb-400);
+    --edge-color: var(--color-neutral-rgb-400);
+    
+    --node-handle-color: var(--edge-color);
+    --selected-node-color: var(--color-selected-rgb);
+    --selected-edge-color: var(--color-selected-rgb);
+
+    --context-menu-node-background: var(--color-neutral-rgb-950) 0.85;
+    --context-menu-node-active-background: var(--color-primary-rgb-900) 0.95;
+    --context-menu-edge-background: var(--color-neutral-rgb-950) 0.85;
+    --context-menu-edge-active-background: var(--color-primary-rgb-900) 0.95;
+    --context-menu-core-background: var(--color-primary-rgb-800) 0.85;
+    --context-menu-core-active-background: var(--color-neutral-rgb-950) 0.95;
+
+    color-scheme: light dark;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+[data-theme='dark'] {
+  /* Selected #a68b02 */
+  --color-selected-rgb: 255 255 0;
+
+  /* Neutral Colors Dark (tailwind gray) */
+  /* Neutral 50: #f9fafb */
+  --color-neutral-rgb-50: 249 250 251;
+  /* Neutral 75: #f6f7f9 */
+  --color-neutral-rgb-75: 246 247 249;
+  /* Neutral 100: #f3f4f6 */
+  --color-neutral-rgb-100: 243 244 246;
+  /* Neutral 150: #ecedf0 */
+  --color-neutral-rgb-150: 236 237 240;
+  /* Neutral 200: #e5e7eb */
+  --color-neutral-rgb-200: 229 231 235;
+  /* Neutral 300: #d1d5db */
+  --color-neutral-rgb-300: 209 213 219;
+  /* Neutral 400: #9ca3af */
+  --color-neutral-rgb-400: 156 163 175;
+  /* Neutral 500: #6b7280 */
+  --color-neutral-rgb-500: 107 114 128;
+  /* Neutral 600: #4b5563 */
+  --color-neutral-rgb-600: 75 85 99;
+  /* Neutral 700: #374151 */
+  --color-neutral-rgb-700: 55 65 81;
+  /* Neutral 800: #1f2937 */
+  --color-neutral-rgb-800: 31 41 55;
+  /* Neutral 900: #111827 */
+  --color-neutral-rgb-900: 17 24 39;
+  /* Neutral 925: #0A101C */
+  --color-neutral-rgb-925: 10 16 28;
+  /* Neutral 950: #030712 */
+  --color-neutral-rgb-950: 3 7 18;
+  /* Neutral 1000: #000008 */
+  --color-neutral-rgb-1000: 0 0 8;
+
+  --node-text-color: var(--color-neutral-rgb-200);
+  --edge-text-color: var(--color-neutral-rgb-200);
+  --edge-target-arrow-color: var(--color-neutral-rgb-400);
+  --edge-color: var(--color-neutral-rgb-400);
+  
+  --node-handle-color: var(--edge-color);
+  --selected-node-color: var(--color-selected-rgb);
+  --selected-edge-color: var(--color-selected-rgb);
+}
+
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  font-family: 'Source Sans Pro';
+  font-weight: 500;
+}
+
+#root > div {
+  height: 100%;
+}
+
+
+@layer components {
+  [data-theme='light'] {
+      color: rgb(var(--color-neutral-rgb-600));
+  }
+
+
+  [data-theme='dark'] {
+    background-color: rgb(var(--color-neutral-rgb-800));
+    color: rgb(var(--color-neutral-rgb-300));
+
+    /* Scroll Track */
+    ::-webkit-scrollbar-track {
+        background: rgb(var(--color-neutral-rgb-1000));
+      }
+  }
+
+  /* Scroll Track */
+  ::-webkit-scrollbar-track {
+    background: rgb(var(--color-neutral-rgb-300));
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--color-primary-rgb-700));
+  }
+
+
+.btn-primary {
+  background-color: rgb(var(--color-primary-rgb-500));
+  color: rgb(var(--color-neutral-rgb-100));
+}
+
+.btn-primary.inactive {
+  background-color: rgb(var(--color-primary-rgb-800));
+  color: rgb(var(--color-neutral-rgb-100));
+}
+
+.btn-primary:hover,
+.btn-primary.inactive:hover {
+  background-color: rgb(var(--color-primary-rgb-900));
+  color: white;
+}
+.logo-btn {
+  height: 40px !important;
+  width: 40px !important;
+  min-height: unset !important;
+}
+
+.jsonEditor {
+  white-space: pre;
+  overflow: auto;
+  font-family: monospace;
+}
+
+.scrollbar {
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-color: rgb(var(--color-primary-rgb-600) / 1) rgba(0,0,0,0);
+  scrollbar-width: thin;
+}
+
+.dark .scrollbar {
+  scrollbar-color: rgb(var(--color-primary-rgb-600) / 1) rgba(0,0,0,0);
+}
+
+/* Uncertain why scrollbar customization isn't working??!!... */
+.scrollbar ::-webkit-scrollbar {
+  width: 10px;
+}
+  
+
+.page-component {
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  /* padding-bottom: 100px!important; */
+}
+
+/* NOTE: This is overriding some unwanted Tailwind/Daisy styles for stencil-list */
+ul .stencil-list::before {
+  width: 0px!important;
+  background-color: transparent;
+}
+
+
+.card-responsive-value {
+  font-size: clamp(1rem, 3.75rem, 3.75rem); /* Adjust the 3.75rem middle value as needed. clamp(min, preferred, max) */
+  display: flex; /* Set the element as a flex container */
+  align-items: center; /* Center the content vertically */
+  justify-content: center; /* Center the content horizontally */
+  overflow: hidden; /* Hide any content that overflows */
+  box-sizing: border-box; /* Consider padding and border in the width calculation */
+  width: 100%; /* Ensure the element takes full width */
+}
+
+.card-responsive-value > h2 {
+  width: fit-content; /* Calculate the ideal width for the content */
+}
+
+.carousel-item:not(.current-slide) img {
+    filter: grayscale(100%);
+  }
+
+.embla {
+  overflow: hidden;
+  --mask: linear-gradient(to right, 
+    rgba(0,0,0, 0) 0, rgba(0,0,0, 1) 0.5in, 
+    rgba(0,0,0, 1) calc(100% - 0.5in), rgba(0,0,0, 0) 100%
+  ) 100% 50% / 100% 100% repeat-x;
+  -webkit-mask: var(--mask); 
+  mask: var(--mask);
+}
+
+.embla__container {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 600px;
+  grid-column-gap: 20px;
+}
+
+
+.single-break {
+    break-after: always;
+}
+
+.double-break {
+    margin-bottom: 1.6rem; /* Adjust based on your font-size */
+}
+
+.allow-column-break {
+    break-inside: auto;
+}
+
+svg {
+  display: unset;
+  vertical-align: unset;
+}
+
+.tooltip {
+    z-index: 1000;
+}
+
+.modal {
+  /* Other modal styles */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-box {
+  /* Other modal box styles */
+  max-height: 80vh;
+  /* Set max height for modal box */
+  /* overflow-y: auto; */
+  /* Enable vertical scrolling */
+}
+.modal-text-container {
+  max-height: 400px;
+  /* Set max height for the modal text container */
+  overflow-y: auto;
+  /* Enable vertical scrolling */
+}
+.modal-text {
+  /* Other modal text styles */
+  max-height: 100%;
+  /* Set max height for modal text */
+  /* overflow-y: auto; */
+  /* Enable vertical scrolling */
+}
+
+.transition-height {
+  transition: height 300ms ease-in-out;
+}
+
+.page-component {
+  height: 100%;
+}
+
+.cursor-col-resize {
+  cursor: col-resize;
+}
+
+.collapse-content {
+  transition: transform 5s ease, opacity 5s ease;
+}
+
+.collapse-content > div {
+  transition: transform 5s ease, opacity 5s ease;
+}
+
+/* DARK */
+/* *********************************************************************** */
+.ag-theme-material.ag-theme-material.dark {
+  --ag-foreground-color: white;
+  --ag-background-color: rgb(var(--color-neutral-rgb-700));
+  --ag-odd-row-background-color: rgb(var(--color-neutral-rgb-600));
+  --ag-header-foreground-color: white;
+  --ag-header-background-color: rgb(var(--color-neutral-rgb-800));
+  --ag-header-column-resize-handle-color: rgb(var(--color-neutral-rgb-950));
+  --ag-header-cell-hover-background-color: rgb(var(--color-neutral-rgb-700));
+  --ag-header-cell-hover-foreground-color: white;
+  --ag-selected-row-background-color:rgb(var(--color-neutral-rgb-800));
+  --ag-borders: none;
+  --ag-font-size: 14px;
+  --ag-font-family: 'Roboto', sans-serif;
+}
+
+.ag-theme-material.ag-theme-material.dark .ag-header-row,
+.ag-theme-material.ag-theme-material.dark .ag-paging-panel {
+  color: var(--ag-header-foreground-color);
+  background-color: var(--ag-header-background-color);
+}
+
+.ag-theme-material.ag-theme-material.dark .ag-row-hover::before,
+.ag-theme-material.ag-theme-material.dark .ag-row-hover {
+    color: white;
+    background-color: rgb(var(--color-neutral-rgb-800));
+}
+
+.ag-theme-material.ag-theme-material.dark .ag-row-focus.ag-row-hover::before {
+    color: white;
+    background-color: rgb(var(--color-neutral-rgb-900));
+}
+
+.ag-theme-material.ag-theme-material.dark .ag-row-focus {
+  color: white;
+  background-color: rgb(var(--color-neutral-rgb-800));
+}
+
+.ag-theme-material.ag-theme-material.dark .ag-row-no-focus {
+  color: white;
+}
+.ag-theme-material.ag-theme-material.dark .ag-paging-panel {
+  color: white;
+}
+
+.ag-theme-material.ag-theme-material.dark .ag-header-cell:hover .ag-icon {
+    color: white;
+}
+/* *********************************************************************** */
+
+
+
+
+
+/* LIGHT */
+/* *********************************************************************** */
+.ag-theme-material.ag-theme-material {
+  --ag-foreground-color: black;
+  --ag-background-color: white;
+  --ag-odd-row-background-color: rgb(var(--color-neutral-rgb-100));
+  --ag-header-foreground-color: black;
+  --ag-header-background-color: rgb(var(--color-neutral-rgb-200));
+  --ag-header-column-resize-handle-color: rgb(var(--color-neutral-rgb-50));
+  --ag-header-cell-hover-background-color: rgb(var(--color-neutral-rgb-300));
+  --ag-header-cell-hover-foreground-color: black;
+  --ag-selected-row-background-color: rgb(var(--color-neutral-rgb-200));
+  --ag-borders: none;
+  --ag-font-size: 14px;
+  --ag-font-family: 'Roboto', sans-serif;
+}
+
+.ag-theme-material.ag-theme-material .ag-header-row,
+.ag-theme-material.ag-theme-material .ag-paging-panel {
+  color: var(--ag-header-foreground-color);
+  background-color: var(--ag-header-background-color);
+}
+
+.ag-theme-material.ag-theme-material .ag-row-hover::before,
+.ag-theme-material.ag-theme-material .ag-row-hover {
+  color: black;
+  background-color: rgb(var(--color-neutral-rgb-200));
+}
+
+.ag-theme-material.ag-theme-material .ag-row-focus.ag-row-hover::before {
+  color: black;
+  background-color: rgb(var(--color-neutral-rgb-100));
+}
+
+.ag-theme-material.ag-theme-material .ag-row-focus {
+  color: black;
+  background-color: rgb(var(--color-neutral-rgb-200));
+}
+
+.ag-theme-material.ag-theme-material .ag-row,
+.ag-theme-material.ag-theme-material .ag-header,
+.ag-theme-material.ag-theme-material .ag-paging-panel {
+  border: none;
+}
+
+.ag-theme-material.ag-theme-material .ag-row-no-focus {
+  color: black;
+}
+
+.ag-theme-material.ag-theme-material .ag-paging-panel {
+  color: black;
+}
+
+.ag-theme-material.ag-theme-material .ag-header-cell:hover .ag-icon {
+  color: black;
+}
+/* *********************************************************************** */
+
+html,
+body,
+#root,
+.App {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+
+
+
+@media (min-width: 500px) and (max-width: 511px) {
+  .button-clear-graph {
+    top: 20rem;
+    right: 1rem;
+  }
+}
+@media (min-width: 512px) and (max-width: 570px) {
+  .button-clear-graph {
+    top: 17rem;
+    right: 1rem;
+  }
+}
+@media (min-width: 571px) and (max-width: 644px) {
+  .button-clear-graph {
+    top: 14rem;
+    right: 1rem;
+  }
+}
+@media (min-width: 645px) and (max-width: 810px) {
+  .button-clear-graph {
+    top: 11rem;
+    right: 1rem;
+  }
+}
+@media (min-width: 810px) and (max-width: 1185px) {
+  .button-clear-graph {
+    top: 8rem;
+    right: 1rem;
+  }
+}
+@media (min-width: 1185px) and (max-width: 1320px) {
+  .button-clear-graph {
+    top: 5rem;
+    right: 1rem;
+  }
+}
+@media (min-width: 1320px) {
+  .button-clear-graph {
+    top: 1rem;
+    right: 1rem;
+  }
+}
+
+
+
+.dark .flatpickr-calendar {
+  background-color: rgb(var(--color-neutral-rgb-200));
+
+}
+.light .flatpickr-calendar {
+  background-color: rgb(var(--color-neutral-rgb-800));
+}
+
+.dark .flatpickr-day,
+.dark .flatpickr-months .flatpickr-month,
+.dark .flatpickr-months .flatpickr-prev-month,
+.dark .flatpickr-months .flatpickr-next-month,
+.dark span.flatpickr-weekday,
+.dark .flatpickr-time input,
+.dark .flatpickr-time .numInputWrapper span.arrowUp:after {
+  color: rgb(var(--color-neutral-rgb-800));
+  fill: rgb(var(--color-neutral-rgb-800));
+}
+
+.light .flatpickr-day,
+.light .flatpickr-months .flatpickr-month,
+.light .flatpickr-months .flatpickr-prev-month,
+.light .flatpickr-months .flatpickr-next-month,
+.light span.flatpickr-weekday,
+.light .flatpickr-time input,
+.light .flatpickr-time .numInputWrapper span.arrowUp:after {
+  color: rgb(var(--color-neutral-rgb-200));
+  fill: rgb(var(--color-neutral-rgb-200));
+}
+
+
+.light .flatpickr-time input:hover,
+.light .flatpickr-time input:focus {
+background-color: rgb(var(--color-neutral-rgb-600));
+}
+
+
+
+
+.btn.btn-disabled,
+.btn[disabled],
+.btn:disabled {
+  cursor: not-allowed !important;
+}
+}
+
+
+
+
+
+
