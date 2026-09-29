@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
 import ConnectedDBContext, { ConnectedDBContextType } from '@/contexts/ConnectedDBContext';
 import ButtonBasic from '../elements/ButtonBasic';
-import { connectToNeo4jDB, disconnectFromNeo4jDB } from '@/data/neo4j-connection';
 import { DBProfile } from '@/types/DBProfile';
 import { editDBConfig } from '@/data/db-profile-storage';
 import { close_db, use_db } from '@/util/DbFunctions';
@@ -22,7 +21,7 @@ const ButtonDBConnect: React.FC<ButtonDBConnectProps> = ({
     inDBDeleteProcess
 }) => {
     const { connectedDBProfile, setConnectedDBProfile,
-        connectedDBDriver, setConnectedDBDriver,
+        isDBConnected, setIsDBConnected,
     } = useContext(ConnectedDBContext) as ConnectedDBContextType;
     return (
         <ButtonBasic
@@ -46,23 +45,21 @@ const ButtonDBConnect: React.FC<ButtonDBConnectProps> = ({
                 setIsConnectProcessing(true);
                 if (dbProfile && dbProfile?.Id === connectedDBProfile?.Id) {
                     // Disconnect
-                    await disconnectFromNeo4jDB(connectedDBDriver);
                     close_db();
                     setConnectedDBProfile(undefined);
-                    setConnectedDBDriver(undefined);
+                    setIsDBConnected(false);
                     dbProfile.LastDBOperationSuccessful = true;
                     editDBConfig(dbProfile);
                 } else {
                     // Connect
                     if (dbProfile) {
-                        const [newDriver, successfulConnection] = await connectToNeo4jDB(connectedDBDriver, dbProfile)
-                        if (successfulConnection) {
-                            setConnectedDBDriver(newDriver);
+                        try {
+                            await use_db(dbProfile);
+                            setIsDBConnected(true);
                             setConnectedDBProfile(dbProfile);
                             dbProfile.LastDBOperationSuccessful = true;
                             editDBConfig(dbProfile);
-                            await use_db(dbProfile);
-                        } else {
+                        } catch {
                             dbProfile.LastDBOperationSuccessful = false;
                             editDBConfig(dbProfile);
                         }

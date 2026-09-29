@@ -1,5 +1,5 @@
 import { DBProfile } from '@/types/DBProfile';
-import { Neo4jStigDB } from './neo4j';
+import { ApiStigDB } from './api';
 import { StixObject } from '@/types/stixTypes/StixObject';
 import { StixRelationshipObject } from '@/types/stixTypes/StixRelationshipObject';
 import { Delta } from "diffpatch"
@@ -21,7 +21,7 @@ export abstract class StigDB {
   abstract is_closed(): boolean;
 
   public static async getDB(_backend: StigDBBackends, config: DBProfile): Promise<StigDB> {
-    const db = new Neo4jStigDB();
+    const db = new ApiStigDB();
     await db.configure(config);
     return db;
   }

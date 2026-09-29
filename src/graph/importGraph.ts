@@ -1,5 +1,5 @@
 import { AlertType } from "@/components/elements/AlertComponent";
-import { isRelationship } from "@/db/neo4j/isRelationship";
+import { isRelationship } from "@/util/isRelationship";
 import { isValidStix } from "@/stix/stix";
 import { StixObjectCheck } from "@/types/StixObjectCheck";
 import { StixObject } from "@/types/stixTypes/StixObject";

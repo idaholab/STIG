@@ -17,7 +17,7 @@ const ConnectedProfilePanelLayout: React.FC = () => {
                     }
                 </span>
                 <span className={`truncate h-fit ${connectedDBProfile !== undefined ? '' : 'text-neutralc-500 dark:text-neutralc-400'}`}>
-                    {connectedDBProfile !== undefined ? connectedDBProfile?.ProfileName : 'Not Connected'}
+                    {connectedDBProfile !== undefined ? (connectedDBProfile.DatabaseName || connectedDBProfile.ProfileName) : 'Not Connected'}
                 </span>
             </span>
         </span>

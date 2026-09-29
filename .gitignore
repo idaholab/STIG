@@ -25,3 +25,7 @@ dist-ssr
 
 #neo4j storage volume
 neo4jdata/
+dist-server
+
+# Environment secrets
+.env

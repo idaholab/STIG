@@ -1,0 +1,32 @@
+FROM node:20
+
+# Corporate proxy support (opt-in, off by default). Preferred: if you're
+# behind a proxy that intercepts TLS and its root CA is fetchable via URL,
+# pass --build-arg CORP_PROXY_CA_URL=<url> to install and trust it -- this
+# alone is enough for npm to verify certificates correctly. Only fall back
+# to --build-arg CORP_PROXY_INSECURE_SSL=true (disables certificate
+# verification for the build) if installing a CA isn't possible.
+ARG CORP_PROXY_CA_URL=""
+ARG CORP_PROXY_INSECURE_SSL=false
+
+RUN apt install -y wget ca-certificates
+RUN if [ -n "$CORP_PROXY_CA_URL" ]; then \
+        mkdir -p /usr/local/share/ca-certificates && \
+        wget -q -P /usr/local/share/ca-certificates/ "$CORP_PROXY_CA_URL" && \
+        update-ca-certificates; \
+    fi
+
+ENV NODE_EXTRA_CA_CERTS=/etc/ssl/certs/ca-certificates.crt
+
+WORKDIR /STIG
+
+COPY package*.json ./
+RUN if [ "$CORP_PROXY_INSECURE_SSL" = "true" ]; then \
+        npm config set strict-ssl false; \
+        export NODE_TLS_REJECT_UNAUTHORIZED=0; \
+    fi; \
+    npm install
+
+EXPOSE 5173 3000
+
+CMD ["npm", "run", "dev:all"]
