@@ -1,0 +1,7 @@
+node_modules
+dist
+dist-server
+neo4jdata
+neo4j-certs
+.git
+*.md

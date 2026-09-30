@@ -1,4 +1,4 @@
-import { isRelationship } from "@/db/neo4j/isRelationship";
+import { isRelationship } from "@/util/isRelationship";
 import { StixObject } from "@/types/stixTypes/StixObject";
 
 const relTypes: [string, [string, string][]][] = [

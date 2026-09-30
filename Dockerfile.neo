@@ -1,0 +1,16 @@
+FROM neo4j:latest
+
+# Pre-install APOC plugin so it doesn't need to download at runtime
+# (Azure Gov / restricted networks may block the download)
+RUN if ls /var/lib/neo4j/labs/apoc-*-core.jar 1>/dev/null 2>&1; then \
+        cp /var/lib/neo4j/labs/apoc-*-core.jar /var/lib/neo4j/plugins/; \
+        echo "APOC plugin installed from labs/"; \
+    else \
+        echo "WARNING: APOC jar not found in labs/, will rely on NEO4J_PLUGINS at runtime"; \
+    fi
+
+# Custom entrypoint that imports a dump file on first start if present
+COPY docker-neo4j-entrypoint.sh /docker-neo4j-entrypoint.sh
+RUN chmod +x /docker-neo4j-entrypoint.sh
+
+ENTRYPOINT ["/docker-neo4j-entrypoint.sh"]

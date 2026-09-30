@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "strict": true,
+    "outDir": "../dist-server",
+    "rootDir": ".",
+    "resolveJsonModule": true,
+    "declaration": true,
+    "paths": {
+      "@shared/*": ["../src/types/*"]
+    }
+  },
+  "include": ["./**/*.ts"]
+}

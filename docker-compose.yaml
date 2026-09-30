@@ -1,37 +1,62 @@
-version: "3.3"
 services:
-  stig-v3.0.1:
+  stig:
     build:
       context: .
-      dockerfile: Dockerfile
-    container_name: stig-v3
+      dockerfile: Dockerfile.dev
+      args:
+        - CORP_PROXY_CA_URL=${CORP_PROXY_CA_URL:-}
+        - CORP_PROXY_INSECURE_SSL=${CORP_PROXY_INSECURE_SSL:-false}
+    container_name: stig-api
     ports:
       - '5173:5173'
+      - '3000:3000'
+    depends_on:
+      - neo4j
+    volumes:
+      - ./app:/STIG/app
+      - ./public:/STIG/public
+      - ./src:/STIG/src
+      - ./server:/STIG/server
+      - ./index.html:/STIG/index.html
+      - ./vite.config.ts:/STIG/vite.config.ts
+      - ./tsconfig.json:/STIG/tsconfig.json
+      - ./tsconfig.node.json:/STIG/tsconfig.node.json
+      - ./tailwind.config.cjs:/STIG/tailwind.config.cjs
+      - ./package.json:/STIG/package.json
+      - /STIG/node_modules
+    environment:
+      - PORT=3000
+      - CHOKIDAR_USEPOLLING=true
+      # Set NEO4J_AUTOCONNECT=true in .env to have the server connect to
+      # Neo4j on startup instead of requiring it to be entered in the UI.
+      - NEO4J_AUTOCONNECT=${NEO4J_AUTOCONNECT:-false}
+      - NEO4J_HOST=${NEO4J_HOST:-}
+      - NEO4J_USER=${NEO4J_USER:-}
+      - NEO4J_PASSWORD=${NEO4J_PASSWORD:-}
+      - NEO4J_DATABASE=${NEO4J_DATABASE:-}
 
-  # ATTENTION: the neo4j docker container is merely an example of how to run neo4j alongside the stig-v3.0.1 container.
-  # You may need to adjust volumes, environment variables, and other settings to fit your specific use case.
-  # For production use, consider using a more robust setup with proper security measures.
+  # ATTENTION: this neo4j container is an example for local development.
+  # For production use, see docker-compose.prod.yaml.
   neo4j:
-    image: neo4j:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.neo
     hostname: neo4j
     container_name: neo4j
     ports:
       - "7474:7474"
       - "7687:7687"
     volumes:
-      - ./neo4jdata/data:/data 
-      - ./neo4jdata/logs:/logs 
+      - ./neo4jdata/data:/data
+      - ./neo4jdata/logs:/logs
       - ./neo4jdata/conf:/conf/
-      - ./neo4jdata/import:/var/lib/neo4j/import 
-      - ./neo4jdata/plugins:/plugins 
+      - ./neo4jdata/import:/var/lib/neo4j/import
+      - ./neo4jdata/plugins:/plugins
     environment:
-      - NEO4J_AUTH=neo4j/toor
+      - NEO4J_AUTH=${NEO4J_AUTH}
       - NEO4J_db_import_csv_buffer__size=14680064
-      - NEO4J_PLUGINS=["apoc"] #to install the APOC plugin, allowing for user defined functions
+      - NEO4J_PLUGINS=["apoc"]
       - NEO4J_dbms_security_procedures_unrestricted="apoc.*"
       - NEO4J_dbms_security_auth__minimum__password__length=3
     extra_hosts:
       - "host.docker.internal:host-gateway"
-      # NEO4J_dbms_logs_debug_level: DEBUG
-
-

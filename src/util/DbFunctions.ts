@@ -7,12 +7,16 @@ import { checkProps } from "@/stix/stix";
 
 export let currentDB: StigDB;
 
+export function setCurrentDB(db: StigDB) {
+  currentDB = db;
+}
+
 async function wrapReturn<T, V>(
   stix: V, def: () => T, cb: ((s: V) => Promise<T>)
 ): Promise<T> {
   if (currentDB && !currentDB.is_closed()) {
     try {
-      return cb(stix);
+      return await cb(stix);
     } catch {
       return def();
     }
